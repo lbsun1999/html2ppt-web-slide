@@ -7,7 +7,7 @@ import {chromium} from 'playwright';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const examples=[
  {name:'example-project',columns:2,width:1920,focus:1,inspect:true},
- {name:'media-layout',columns:1,width:1720,focus:0,inspect:true},
+ {name:'media-layout',columns:1,width:1720,focus:1,inspect:true},
  {name:'navigation',columns:3,width:1920,focus:1},
  {name:'notes-presenter',columns:5,width:2400,focus:21,notes:true},
  {name:'text-styles-example',columns:3,width:1920,focus:4,inspect:true}

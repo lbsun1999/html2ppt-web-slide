@@ -8,7 +8,7 @@
 
 ## 普通模块
 
-正文默认区域`{x:58,y:256,w:1484,h:554}`。建议模块间隙12px，可按空间缩小，不把建议留白作为错误。用`moduleOf(type,rect,count)`创建模块，type为text、media、table、shape、formula。实际可用边界用`contentBounds(!!slide.summary)`取得：普通正文底边834px、启用summary时750px，均不得遮挡真实页脚或总结。`lead`可空，`footer,source,sourceUrl`可编辑。
+正文默认区域`{x:58,y:256,w:1484,h:554}`。建议模块间隙12px，可按空间缩小，不把建议留白作为错误。用`moduleOf(type,rect,count)`创建模块，type为text、media、table、shape、formula、timeline。实际可用边界用`contentBounds(!!slide.summary)`取得：普通正文底边834px、启用summary时750px，均不得遮挡真实页脚或总结。`lead`可空，`footer,source,sourceUrl`可编辑。
 
 独立文本块仍为text模块，设置`textBox:true,boxTone:'dark'|'light'`，仅使用parts[0].text，不附带标题。深底白字或白底深字，圈定范围与移动／缩放吸附网格；最小高40px，真实文本溢出仍报错。默认上下内边距在紧凑时可适当收减，不能自动缩字号或行距。
 
@@ -17,6 +17,27 @@
 `paragraphs[field]` 为逐段数组，顺序对应纯文本的换行，单项 `{bullet,marker,after}`。`after` 为 PPT pt，缺省 6；例如首行 `{bullet:false}`，后三行 `{bullet:true,marker:'•',after:12}`。字符级加粗／颜色／字号仍写入 rich，不用整字段格式覆盖选区。表格单元格的逐段格式为 `cellParagraphs['行,列']`。模块级统一列表是初始设置，人工可继续逐段修改。
 
 每块通常不超过四点，分段间距至少 6pt；末行只余一两个字必须修整，三四字也检查。先改文案和组织，再调模块，不自动缩字号硬塞。伪代码保留缩进与清楚的步骤间隔。
+
+单个普通内容子区域不选C3编号样式，避免孤立“01”；优先默认、A3或B1。由C3转换后若需继续显示原`subheading`及`annotation`，设置`preserveExtras:true`，保留启用标记、文字及富文本，不将补充说明丢掉。
+
+## 时间轴模块
+
+用`moduleOf('timeline',rect,count)`创建，支持1–6阶段；常用2–5阶段。`parts[i]`包含`year,title,text,asset`，资产格式与媒体模块相同；可通过`timelinePart(i)`生成新阶段。`columns`随阶段数保持一致，当前一行排列，无需手工计算各列。年份深底、圆点、连线和短名统一使用`theme.primary`；不设置逐阶段颜色，增减和重排保持配色一致。照片／视频双击走统一媒体上传入口。
+
+```js
+const m = moduleOf('timeline', {x:58,y:306,w:1484,h:508}, 4);
+m.parts[0].year = '2026年';
+m.parts[0].title = '方法提出';
+m.parts[0].text = '说明代表工作、证据与贡献，并交代适用范围及未解决的问题。';
+m.parts[0].asset = {kind:'image',src:imageDataUrl,fit:'cover',zoom:1,cx:50,cy:50};
+slide.modules = [m];
+```
+
+渲染按数量均分卡片，统一实际媒体高度，按段落占用压缩媒体高度，最低72px；不缩文字字号。默认年份24pt、段落14pt、箭头短名18pt。图文连续浅底、图片上下16px间距、圆心与卡片左沿对齐，连接线直达年份块顶端，箭头超出内容两端各32px。长首句需要相应下移模块，逐页检查真实间隙。内容无法容纳时报溢出，不能裁掉说明、覆盖页脚或通过缩字硬塞。
+
+已有`history`快照可用`modularizeHistory(slide,assets)`一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；[reference/media-layout.html](../reference/media-layout.html)第2页是可直接操作的例子。迁移后使用标准`modules[].parts`迭代，不再修改`legacy_*`。
+
+## 媒体、表格与格式编辑
 
 媒体子区域含 `asset:{src,kind,ratio,naturalRatio,fit,zoom,cx,cy}` 与 `caption,note,showCaption`。同排画面实际等高、图注底沿对齐；无图注设置 `showCaption:false`，不预留图注高度。表格用 `rows,headerRows,merges`，数字单元格左右各至少半字符间距。
 
@@ -30,7 +51,7 @@
 
 通过 `applyReferenceLayout(slide,name)` 复用 history、formula、summary、references、profile。快照在`src/reference-layouts.json`，局部CSS在`reference-layouts.css`，运行不依赖外部模板目录。文字映射为页面`legacy_*`字段；页标题、首句和来源使用标准字段。字段未变时保留原数学字形与链接。此函数会写入快照默认字段并清空modules，仅用于新页或明确重建的页面；迭代已有页直接修改相应字段，不能重复应用默认值覆盖人工内容。
 
-优先保留成熟固定结构：四阶段时间轴共底色、统一裁剪与对齐连接线；公式深色标题贴浅色解释框；参考文献无表头两列且顶端对齐；作者页五列履历与对齐身份区。不能简化成几个普通卡片。结构性修改同步调整快照与局部样式；快照及局部样式已内置，生成文稿不调用旧模板导入脚本。
+优先保留成熟信息关系：时间轴用上述原生模块复现共底色、统一裁剪与对齐连接线；公式深色标题贴浅色解释框；参考文献无表头两列且顶端对齐；作者页五列履历与对齐身份区。不能简化成几个普通卡片。结构性修改同步调整对应渲染与局部样式；快照及局部样式已内置，生成文稿不调用旧模板导入脚本。
 
 公式用 `referenceLatex[index]` 修改，普通公式模块用 `parts[index].latex`。头像覆盖为 `referencePortrait` 图片 data URL。原矢量公式与修改后的 KaTeX 只显示一份；变量、函数、单位、向量与矩阵样式按材料统一。
 
@@ -50,5 +71,7 @@ node scripts/build-document.mjs ect/文稿.json 正式文稿.html --export
 
 目录配置：tocIncludeAppendix 默认 false；tocExcluded 保存隐藏章节 ID，tocExtras 保存具有 tocCustomId 的自定义子区域。同步只更新自动章节，不能覆盖用户的增删与自定义文本。
 
+页面复制通过`duplicatePages(pages)`克隆，重新生成页面／模块ID并重映射副本内章节引用、目录说明键和`#slide-ID`链接；复制范围外的链接保持指向原页面。拖排用`movePages`保持选中页相对顺序，修改后调用`syncSections`重新派生章节及目录。多选和剪贴板属于工作台临时状态，不写进HTML项目数据。
 
-学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference 目录为人工认可的完整 HTML 快照，需原样保留，截图和说明写入该目录 README。
+
+学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference目录为人工认可的完整HTML快照，未经要求不重做；本次media-layout按用户要求增加时间轴页，其他四份保留原样。更新实例时同步其哈希、实际多页截图与该目录README。

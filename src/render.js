@@ -1,4 +1,5 @@
 import {renderReferenceLayout} from './reference-layouts.js';
+import {timelineHTML,fitTimeline,timelineHeight} from './timeline.js';
 import {formulaHTML} from './formula.js';
 import {richHTML,textStyle} from './rich-text.js';
 import {W,SAFE} from './model.js';
@@ -10,6 +11,7 @@ function field(owner,key,fallback=''){return richHTML(owner[key]??fallback,owner
 function textBody(p,i,edit){return `<div class="paragraph ${p.chapterId?'toc-note ':''}${p.bullet?'bulleted':''}" data-marker="${esc(p.marker||'•')}" data-text data-part="${i}" data-field="text" ${textStyle(p,'text')} ${editable(edit,'')}>${richHTML(p.text,p.rich?.text,p.bullet,true,p.marker,p.paragraphs?.text)}</div>`;}
 export function renderModule(m,edit=false){
  let content='';const cols=Math.min(m.columns||m.parts.length,m.parts.length)||1;
+ if(m.type==='timeline')content=timelineHTML(m,{esc,edit});
  if(m.type==='text')content=m.textBox?`<div class="text-parts standalone-text ${m.boxTone==='light'?'standalone-light':'standalone-dark'}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0],0,edit)}</div></div>`:textModuleHTML(m,{esc,editable,textBody,edit});
  if(m.type==='media')content=`<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length/cols)},minmax(0,1fr))">${m.parts.map((p,i)=>`<figure class="media-part" data-shape><div class="media-window ${p.asset?'has-asset':''}" data-media-part="${i}" data-ratio="${p.asset?.ratio||16/9}">${p.asset?`<div class="media-crop"><${p.asset.kind==='video'?'video controls preload="metadata"':'img'} src="${esc(p.asset.src)}" ${p.asset.kind==='video'?'muted playsinline':''} alt="${esc(p.caption)}" style="object-fit:${p.asset.fit||'cover'};object-position:${p.asset.cx??50}% ${p.asset.cy??50}%;transform:scale(${p.asset.zoom||1});transform-origin:${p.asset.cx??50}% ${p.asset.cy??50}%"></${p.asset.kind==='video'?'video':'img'}></div>`:`<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption!==false&&(Boolean(p.caption?.trim())||(p.captionMode!=="title"&&Boolean(p.note?.trim())))?`<figcaption><div class="figure-title" data-text data-part="${i}" data-field="caption" ${textStyle(p,'caption')} ${editable(edit,'')}>${field(p,'caption')}</div>${p.captionMode!=='title'&&p.note?.trim()?`<div class="figure-note" data-text data-part="${i}" data-field="note" ${textStyle(p,'note')} ${editable(edit,'')}>${field(p,'note')}</div>`:''}</figcaption>`:''}</figure>`).join('')}</div>`;
  if(m.type==='table'){
@@ -19,7 +21,7 @@ export function renderModule(m,edit=false){
  }
  if(m.type==='formula')content=`<div class="formula-parts" style="--cols:${cols}">${m.parts.map((p,i)=>{let math;try{math=formulaHTML(p.latex);}catch(error){math='<span class="formula-error">'+esc(error.message)+'</span>';}return `<section class="formula-card" data-shape><h3 data-text data-part="${i}" data-field="title" ${textStyle(p,'title')} ${editable(edit,'')}>${field(p,'title')}</h3><div class="formula-expression" data-formula-part="${i}" data-raster aria-label="双击修改 LaTeX">${math}</div><div class="paragraph" data-text data-part="${i}" data-field="text" ${textStyle(p,'text')} ${editable(edit,'')}>${field(p,'text')}</div></section>`;}).join('')}</div>`;
  if(m.type==='shape')content=`<div class="graphic-shape" data-shape style="background:var(--primary)"></div>`;
- return `<div class="module ${m.type}-module ${m.isToc?'toc-module':''} ${esc(m.role||'')}" data-module="${m.id}" style="left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{text:'文字',media:'图像 / 视频',table:'表格',shape:'图形',formula:'公式'}[m.type]}</span></div>`;
+ return `<div class="module ${m.type}-module ${m.isToc?'toc-module':''} ${esc(m.role||'')}" data-module="${m.id}" style="left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{text:'文字',media:'图像 / 视频',table:'表格',shape:'图形',formula:'公式',timeline:'时间轴'}[m.type]}</span></div>`;
 }
 export function renderSlide(s,theme,index,total,edit=false,project=null){
  if(s.referenceLayout)return renderReferenceLayout(s,theme,index,total,edit,themeCSS(theme),project);
@@ -30,7 +32,7 @@ export function renderSlide(s,theme,index,total,edit=false,project=null){
 }
 export function fitMedia(el){
  const scope=el.closest('.slide')||el,scale=scope.classList.contains('slide')?scope.getBoundingClientRect().width/W:1;
- const windows=[...scope.querySelectorAll('.media-window')];
+ const windows=[...scope.querySelectorAll('.media-window:not(.timeline-media)')];
  // Reset first: an earlier fit must not constrain the next fit after editing captions.
  for(const window of windows){window.closest('figure').style.height='100%';const cap=window.closest('figure').querySelector('figcaption');if(cap)cap.style.minHeight='';window.style.width='100%';window.style.height='';window.style.flex='1 1 0';window.style.minHeight='80px';}
  const rows=[];
@@ -52,6 +54,7 @@ export function fitMedia(el){
  }
 }
 export function fitTable(el){
+ fitTimeline(el);
  for(const part of el.querySelectorAll('.text-part')){
   if(!part.dataset.basePadding){const cs=getComputedStyle(part);part.dataset.basePadding=JSON.stringify([parseFloat(cs.paddingTop)||0,parseFloat(cs.paddingBottom)||0]);}
   const [top,bottom]=JSON.parse(part.dataset.basePadding);part.style.paddingTop=top+'px';part.style.paddingBottom=bottom+'px';
@@ -77,6 +80,7 @@ function flowHeight(element){
  return children.reduce((sum,child)=>sum+child.getBoundingClientRect().height/scale+(parseFloat(getComputedStyle(child).marginTop)||0)+(parseFloat(getComputedStyle(child).marginBottom)||0),0)+Math.max(0,children.length-1)*gap+(parseFloat(style.paddingTop)||0)+(parseFloat(style.paddingBottom)||0)+(parseFloat(style.borderTopWidth)||0)+(parseFloat(style.borderBottomWidth)||0);
 }
 export function measuredHeight(el,m){
+ if(m.type==='timeline')return timelineHeight(el);
  if(m.type==='table')return flowHeight(el.querySelector('.table-wrap'));
  if(m.type==='text'){
   const grid=el.querySelector('.text-parts'),cols=Number(getComputedStyle(grid).getPropertyValue('--cols'))||1,parts=[...grid.querySelectorAll('.text-part')];let height=0;
@@ -97,7 +101,7 @@ export function audit(slideEl,model){
  const errors=[];if(model.referenceLayout){const footer=slideEl.querySelector('.slide-footer')?.getBoundingClientRect();for(const table of slideEl.querySelectorAll('table'))if(footer&&table.getBoundingClientRect().bottom>footer.top+2)errors.push('表格进入页脚区域，请减小行高或拆页。');for(const node of slideEl.querySelectorAll('[data-slide-field],.formula-card,.math-expression')){if(node.scrollHeight>node.clientHeight+3||node.scrollWidth>node.clientWidth+3)errors.push('文字超出原版式区域，请删改或调整行距。');}return errors;}if(model.kind==='transition'){const content=slideEl.querySelector('.transition-content'),title=content.querySelector('h1');if(title.scrollWidth>title.clientWidth+2)errors.push('\u8fc7\u6e21\u9875\u6807\u9898\u4e0d\u5141\u8bb8\u81ea\u52a8\u6362\u884c\uff0c\u8bf7\u7cbe\u7b80\u6216\u6309\u8bed\u4e49\u624b\u52a8\u5206\u884c\u3002');if(content.scrollHeight>content.clientHeight+2)errors.push('过渡页文字过长，请精简。');return errors;}
  if(model.kind==='cover'||model.kind==='closing'){const band=slideEl.querySelector('.cover-band');if(band.scrollHeight>band.clientHeight+2)errors.push('封面标题过长，请精简或手动分成两行。');const info=slideEl.querySelector('.cover-info');if(info.offsetTop+info.offsetHeight>880)errors.push('署名内容过长，请精简。');return errors;}
  const heading=slideEl.querySelector('h2');if(heading.scrollHeight>heading.clientHeight+2)errors.push('页面标题过长，请精简。');
- const lead=slideEl.querySelector('.slide-lead');if(lead.offsetTop+lead.scrollHeight>SAFE.y-16)errors.push('页首句过长：请精简或分成其他页面。');
+ const lead=slideEl.querySelector('.slide-lead'),contentTop=Math.max(SAFE.y,model.modules.length?Math.min(...model.modules.map(m=>m.y)):SAFE.y);if(lead.offsetTop+lead.scrollHeight>contentTop-16)errors.push('页首句过长：请精简或分成其他页面。');
  const summary=slideEl.querySelector('.slide-summary');if(summary&&summary.scrollHeight>summary.clientHeight+2)errors.push('页尾总结过长，请精简为一行。');
  for(const m of model.modules){
   if(model.summary&&m.y+m.h>750+.1)errors.push('模块进入页尾总结区域，请缩小或上移。');

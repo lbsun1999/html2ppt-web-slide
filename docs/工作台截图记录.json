@@ -1,6 +1,6 @@
 {
   "source": "北京科技大学_WebSlide科研汇报示例.html",
-  "sha256": "9ff4c6f602fcd93443c11bbc165cf812b21ddb90ce2d64d10f5607dfc2d81b89",
+  "sha256": "e8aaf091a9d98a22490cbe51fd870365cb3472b13eb61f7a9c86c19cf59b2f9f",
   "viewport": {
     "width": 1920,
     "height": 1200
@@ -56,6 +56,40 @@
       },
       "mode": "edit",
       "currentPage": 15
+    },
+    {
+      "image": "images/timeline-controls.png",
+      "description": "第8页原生时间轴：年份、共底图文、箭头和连线；右侧可添加、删除或重排阶段。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 8
+    },
+    {
+      "image": "images/page-controls.png",
+      "description": "左侧多选页面，底部固定复制、粘贴、上移、下移和删除；缩略图列表独立滚动。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 8
     },
     {
       "image": "images/formula-editor.png",

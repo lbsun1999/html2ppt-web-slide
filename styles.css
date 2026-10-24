@@ -12,3 +12,22 @@
 .scenario-table tbody tr:nth-child(n+3) td:first-child{border-right:1px solid black}.toc-module .part-title-text{font-size:33.333px}.toc-module .paragraph{font-size:26.667px}
 .text-parts.standalone-text{gap:0}.standalone-text .text-part{padding:10px 18px;gap:0;justify-content:center;background:white;color:var(--ink)}.standalone-dark .text-part{background:var(--primary);color:white}.standalone-text .text-part .paragraph{color:inherit}.standalone-dark .paragraph>div[data-bullet="true"]::before{color:white}.standalone-light .text-part{background:white;color:var(--ink)}
 #format-bold[aria-pressed="true"]{background:#dceaf4;border-color:#88adca}#format-bold[aria-pressed="mixed"]{background:linear-gradient(135deg,#dceaf4 50%,white 50%)}
+.timeline-grid{height:100%;position:relative;display:grid;grid-template-columns:repeat(var(--stages),minmax(0,1fr));gap:16px;padding:0 32px;--timeline-media-height:148px;--timeline-year-height:58px}
+.timeline-arrow{position:absolute;bottom:0;left:0;width:100%;height:62px;pointer-events:none}
+.timeline-stage{position:relative;min-width:0;display:grid;grid-template-rows:minmax(0,1fr) 62px;gap:16px}
+.timeline-card{display:flex;flex-direction:column;min-width:0;min-height:0;gap:16px;background:var(--tint)}
+.timeline-year{background:var(--stage-color);color:white;padding:6px 16px;min-height:var(--timeline-year-height);flex-shrink:0;font-size:40px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.timeline-year [data-text]{white-space:pre-wrap}
+.timeline-card .timeline-media{display:block;position:relative;flex:0 0 var(--timeline-media-height);height:var(--timeline-media-height);min-height:0;width:calc(100% - 32px);margin:0 16px;overflow:hidden;border:0;background:white}
+.timeline-media .media-crop,.timeline-media img,.timeline-media video{width:100%;height:100%;display:block;overflow:hidden}
+.timeline-copy{flex:1 1 0;min-height:0;padding:0 16px 12px;border-bottom:3px solid var(--stage-color);font-size:23.333333px;line-height:1.5;text-align:justify;text-align-last:left;overflow-wrap:break-word}
+.timeline-copy [data-paragraph]{margin:0 0 10px}.timeline-copy [data-paragraph]:last-child{margin-bottom:0}
+.timeline-event{display:flex;align-items:center;position:relative;min-width:0;padding:0 12px 0 20px}
+.timeline-event-title{font-size:30px;line-height:1.25;font-weight:700;color:var(--primary);overflow-wrap:break-word}
+.timeline-line{position:absolute;left:-2px;top:0;width:4px;height:calc(100% - 31px);pointer-events:none}
+.timeline-dot{position:absolute;width:24px;height:24px;left:-12px;bottom:19px;pointer-events:none}
+.timeline-placeholder{font-size:20px;line-height:1.6;color:var(--primary);text-align:center;display:grid;place-content:center;height:100%}
+.timeline-stage-controls{display:grid;grid-template-columns:minmax(0,1fr);min-width:0;gap:8px}.timeline-stage-controls .field-line{min-width:0;gap:3px}.timeline-stage-controls .stage-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.timeline-stage-controls button{flex:0 0 auto;padding:5px 6px;font-size:12px}
+.style-band .part-subheading,.style-band .part-annotation{padding:0 20px}
+.slide-thumb.is-selected{border-color:#277cae;background:#e5f1fa;box-shadow:0 0 0 1px #277cae inset}.slide-thumb.dragging{opacity:.45}.slide-thumb.drop-before{border-top:4px solid #005b94}.slide-thumb.drop-after{border-bottom:4px solid #005b94}.sidebar-selection-info{font-size:11px;color:#627c90;line-height:1.6;margin:8px 2px}.sidebar-clipboard{display:flex;gap:5px;margin:6px 0}.sidebar-clipboard button{flex:1;padding:7px 4px;font-size:12px}.sidebar:focus-within .sidebar-selection-info{color:#005b94}
+.sidebar{display:flex;flex-direction:column;overflow:hidden;min-height:0;padding-bottom:0}.sidebar #slides{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:3px 2px 8px}.sidebar-heading{flex-shrink:0}.sidebar-bottom{flex-shrink:0;position:relative;background:#f7f9fb;border-top:1px solid #d6e1e9;padding:8px 2px 12px;z-index:2}.sidebar-bottom .sidebar-actions{margin:6px 0}.sidebar-bottom>[data-action="delete-slide"]{width:100%;padding:7px}.sidebar-bottom .sidebar-selection-info{margin:0;line-height:1.5}

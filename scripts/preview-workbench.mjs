@@ -34,6 +34,14 @@ try{
  await open('主图与关键信息');await mode('edit');await page.locator('#canvas .text-module').click();assert.equal(await page.locator('#adjust-multiplier').count(),1);
  await shot('module-controls','模块模式：固定顶点、网格步进、尺寸和位置，以及文本样式与子区域。');
 
+ await open('研究现状分析');await mode('edit');await page.locator('#canvas .timeline-module').click();
+ await shot('timeline-controls','第8页原生时间轴：年份、共底图文、箭头和连线；右侧可添加、删除或重排阶段。');
+
+ await page.locator('[data-page="6"]').click();await page.locator('[data-page="7"]').click({modifiers:['Shift']});
+ await page.locator('#canvas .timeline-module').click();
+ assert.equal(await page.locator('.slide-thumb.is-selected').count(),2);
+ assert.ok(await ui('copy-pages').isVisible());await shot('page-controls','左侧多选页面，底部固定复制、粘贴、上移、下移和删除；缩略图列表独立滚动。');
+
  await open('目标函数与参数更新');await mode('preview');await page.locator('#canvas [data-reference-formula]').first().dblclick();assert.equal(await page.locator('#formula-dialog').isVisible(),true);
  await shot('formula-editor','公式编辑框：LaTeX源码、复制按钮、数学预览、取消和确定。');await page.locator('#formula-dialog button[value="cancel"]').last().click();
 

@@ -15,16 +15,16 @@
   },
   {
     "file": "media-layout.html",
-    "sha256": "544865b4e26ebdff2d7dd23f00adb3d760e58ec65476f0d6459ecb4c16ef753a",
+    "sha256": "cdd2eede23de2e4d8504a5fae2a6cd7f524a9ce381eba1dc0b95b66da35d6a4a",
     "preview": "images/media-layout.png",
     "view": "grid",
     "columns": 1,
-    "pages": 1,
-    "focusPage": 1,
+    "pages": 2,
+    "focusPage": 2,
     "notesVisible": false,
     "viewport": {
       "width": 1720,
-      "height": 1236
+      "height": 1801
     }
   },
   {

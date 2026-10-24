@@ -1,5 +1,6 @@
 import {augmentExample} from './example-pages.js';
 import {applyLishuiVariant} from './school-variants.js';
+import {modularizeHistory} from './timeline.js';
 import {blankSlide,makePage,moduleOf,part,syncSections} from './model.js';
 
 // Shared editable guide; school variants are derived from the USTB master.
@@ -97,4 +98,4 @@ function baseExample({logo='',wordmark=''}={}){
  return syncSections({version:1,title:'丽水学院_WebSlide制作与演示指南',theme,grid:20,slides:pages});
 }
 
-export function createExample(options={}){const p=augmentExample(baseExample(options),options);return options.school==='lishui'?applyLishuiVariant(p,options):p;}
+export function createExample(options={}){const p=augmentExample(baseExample(options),options);for(const s of p.slides){modularizeHistory(s,options.assets);if(s.title==='从占位区域插入图片或视频')for(const m of s.modules)if(m.type==='text'&&m.style==='numbered'&&m.parts.length===1){m.style='band';m.preserveExtras=true;}}return options.school==='lishui'?applyLishuiVariant(p,options):p;}
