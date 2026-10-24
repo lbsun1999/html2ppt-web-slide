@@ -1,0 +1,41 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {createProject,blankSlide,moduleOf} from '../src/model.js';
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+const page=await browser.newPage({viewport:{width:1536,height:1000},acceptDownloads:true});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+const ui=k=>page.locator(`[data-action="${k}"]`).first();
+const state=()=>page.evaluate(()=>window.slideStudio.getProject());
+const view=()=>page.evaluate(()=>window.slideStudio.getView());
+const go=async n=>{await page.locator(`[data-page="${n}"]`).click();await page.waitForTimeout(150);};
+async function load(p,name='测试文稿'){await page.locator('#html-file').setInputFiles({name:name+'.html',mimeType:'text/html',buffer:Buffer.from(`<script id="project-data" type="application/json">${JSON.stringify(p)}</script>`)});await page.waitForTimeout(150);}
+let passed=0;const ok=s=>console.log(`PASS ${++passed}: ${s}`);
+try{
+ await fs.mkdir('ect',{recursive:true});await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});await page.goto('http://127.0.0.1:4317');await page.waitForFunction(()=>window.slideStudio);
+ await load(createProject());assert.equal((await state()).slides.length,10);await page.locator('#view-mode').selectOption('single');await go(3);
+ assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);assert.equal(await page.locator('#canvas .overflowing').count(),0);ok('正文第一页无误报');
+ for(const width of [1100,1366,1920]){await page.setViewportSize({width,height:1000});assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);}
+ await page.setViewportSize({width:1536,height:1000});
+ const styles=await page.locator('#canvas').evaluate(el=>({title:getComputedStyle(el.querySelector('h2')).color,section:getComputedStyle(el.querySelector('.section-line')).whiteSpace,thumb:[...document.querySelectorAll('.thumb-preview')].every(p=>p.querySelector('.slide').getBoundingClientRect().width<=p.clientWidth+1)}));
+ assert.equal(styles.title,'rgb(0, 88, 148)');assert.equal(styles.section,'nowrap');assert.ok(styles.thumb);ok('主题标题、章节单行与缩略图适配');
+ await ui('mode-text').click();assert.equal(await page.evaluate(()=>window.slideStudio.getMode()),'preview');assert.equal(await page.locator('#canvas [contenteditable]').count(),0);await ui('mode-edit').click();await ui('mode-edit').click();assert.equal(await page.evaluate(()=>window.slideStudio.getMode()),'preview');ok('重复点击编辑按钮返回无选中预览');
+ await page.locator('#view-mode').selectOption('scroll');assert.equal(await page.locator('#pages-surface .view-page').count(),10);await page.locator('#view-mode').selectOption('grid');await page.locator('#view-columns').selectOption('3');assert.equal((await view()).columns,3);await page.locator('#view-mode').selectOption('single');assert.equal(await page.locator('#pages-surface .view-page').count(),1);ok('单页、单列和自定义多列浏览');
+ await go(0);assert.equal(await page.locator('#canvas .top-trim').count(),0);assert.equal(await page.locator('#canvas .cover-band').evaluate(e=>getComputedStyle(e).borderRightWidth),'0px');
+ assert.equal(await ui('save').count(),0);assert.equal(await ui('open').count(),0);await ui('rename').click();await page.locator('#document-name-input').fill('导航测试');await ui('rename-dialog-apply').click();assert.match(await page.locator('#document-caption').innerText(),/导航测试.html/);ok('纯色封面、HTML 文稿名称和保存入口');
+ await go(1);await ui('mode-text').click();const notes=page.locator('#canvas .toc-note');await notes.first().fill('研究问题与背景说明');await go(2);await page.locator('#canvas [data-slide-field="title"]').fill('背景分析');await go(1);assert.match(await page.locator('#canvas .toc-title').first().innerText(),/背景分析/);assert.equal(await notes.first().innerText(),'研究问题与背景说明');await go(3);assert.equal((await state()).slides[3].group,'背景分析');ok('章节标题、目录注释和正文归属联动');
+ await ui('add-slide').click();await page.locator('#new-page-kind').selectOption('transition');await page.locator('#new-page-title').fill('补充章节');await ui('add-page-dialog-apply').click();await ui('add-slide').click();await page.locator('#new-page-kind').selectOption('body');await ui('add-page-dialog-apply').click();assert.equal((await state()).slides[5].group,'补充章节');ok('新增过渡页与内容页自动继承章节');
+ await ui('page-settings').click();await page.locator('#page-lead').fill('');await page.locator('#page-summary').fill('这是本页结论');await page.locator('#page-footer').fill('示例研究团队');await ui('page-dialog-apply').click();assert.equal(await page.locator('#canvas .slide-summary').innerText(),'这是本页结论');assert.match(await page.locator('#canvas .slide-footer').innerText(),/示例研究团队/);ok('可选页首句、页尾总结和可编辑左脚注');
+ await page.locator('[data-page="3"]').dblclick();await page.waitForTimeout(200);assert.equal((await view()).present,true);
+ await page.locator('#canvas').dispatchEvent('wheel',{ctrlKey:true,deltaY:-260,clientX:700,clientY:450});assert.ok((await view()).zoom>1);
+ const box=await page.locator('#canvas').boundingBox(),before=(await view()).pan;await page.mouse.move(box.x+box.width*.6,box.y+box.height*.6);await page.mouse.down();await page.mouse.move(box.x+box.width*.4,box.y+box.height*.4);await page.mouse.up();assert.notDeepEqual((await view()).pan,before);
+ await page.keyboard.press('Escape');assert.equal((await view()).zoom,1);assert.equal((await view()).present,true);await page.keyboard.press('Escape');assert.equal((await view()).present,false);ok('缩略图双击放映、缩放、拖动与两次 Esc');
+ await ui('present').click();await page.waitForTimeout(200);await page.locator('#canvas').dblclick();assert.equal((await view()).overview,true);assert.equal(await page.locator('#pages-surface').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length),4);await page.locator('[data-view-page="1"] .canvas-frame').dblclick();assert.equal((await view()).overview,false);await page.keyboard.press('ArrowRight');await page.keyboard.press('Escape');ok('放映双击四列总览、定位返回和方向键');
+ const p=createProject();const s=blankSlide();s.modules=[moduleOf('shape',{x:58,y:256,w:300,h:160})];p.slides=[s];await load(p);await ui('mode-edit').click();await page.locator('#canvas .module').click();await page.locator('#adjust-multiplier').selectOption('2');await page.locator('[data-resize="w+"]').click();assert.equal((await state()).slides[0].modules[0].w,340);
+ const bw=await page.locator('[data-resize="w+"]').boundingBox();await page.mouse.move(bw.x+bw.width/2,bw.y+bw.height/2);await page.mouse.down();await page.waitForTimeout(720);await page.mouse.up();const grown=(await state()).slides[0].modules[0].w;assert.ok(grown>380);await page.waitForTimeout(250);assert.equal((await state()).slides[0].modules[0].w,grown);await ui('undo').click();assert.equal((await state()).slides[0].modules[0].w,340);await page.locator('#canvas .module').click();await page.locator('[data-resize="w+"]').click({modifiers:['Shift']});assert.equal((await state()).slides[0].modules[0].w,440);ok('步进、长按重复、释放停止、整体撤销与 Shift 快调');
+ const text=moduleOf('text',{x:58,y:256,w:700,h:400});text.style='numbered';const c=createProject();c.slides=[{...blankSlide(),modules:[text]}];await load(c);const number=await page.locator('#canvas .number-value').evaluate(e=>({font:getComputedStyle(e).fontFamily,size:parseFloat(getComputedStyle(e).fontSize),weight:getComputedStyle(e).fontWeight}));assert.match(number.font,/Times New Roman/);assert.ok(Math.abs(number.size-20/.6)<.01);assert.equal(number.weight,'700');ok('C3 序号 20pt Times New Roman 粗体');
+ await load(createProject(),'完整示例');await page.locator('#view-mode').selectOption('single');await go(3);await page.screenshot({path:'ect/navigation-preview.png'});
+ const download=page.waitForEvent('download');await ui('html').click();const saved=await download;await saved.saveAs('ect/navigation.html');assert.equal(saved.suggestedFilename(),'完整示例.html');
+ const offline=await browser.newPage();await offline.goto(new URL('../ect/navigation.html',import.meta.url).href);await offline.waitForFunction(()=>window.slideStudio);assert.equal((await offline.evaluate(()=>window.slideStudio.getProject())).slides.length,10);await offline.close();ok('自包含 HTML 离线恢复');
+ assert.deepEqual(errors,[]);console.log(`ALL ${passed} CHECKS PASSED`);
+}finally{await browser.close();}

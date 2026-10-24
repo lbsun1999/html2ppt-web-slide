@@ -1,0 +1,1926 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Web Slide</title><style id="app-style">*{box-sizing:border-box} :root{--primary:#005b94;--secondary:#1766a9;--accent:#2ba3c0;--emphasis:#a31418;--tint:#eef5f9;--ink:#12374e;--grid:20px;font-family:'Microsoft YaHei','PingFang SC',Arial,sans-serif;color:#233747;background:#edf1f5}body{margin:0}button,input,select,textarea{font:inherit}button,select,input[type=range]{cursor:pointer}button{border:1px solid #d7dfe7;background:#fff;color:#334a5a;padding:9px 13px;border-radius:6px;font-size:13px;white-space:nowrap}button:hover{background:#edf4fa;border-color:#8cb6d1}button.primary,button.active{background:#005b94;color:#fff;border-color:#005b94}button.danger{color:#a31418}button:disabled{opacity:.35;cursor:not-allowed}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #64bde4;outline-offset:2px}input,textarea,select{border:1px solid #ccd7e0;border-radius:5px;background:white;color:#253e50;padding:9px;min-width:0}textarea{resize:vertical;line-height:1.6}label{font-size:13px}small,.hint{color:#647b8d;font-size:12px;line-height:1.7}.topbar{height:70px;padding:0 24px;display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1px solid #dbe3ea}.brand{display:flex;align-items:center;gap:12px;margin-right:auto}.brand-icon{display:grid;place-items:center;width:35px;height:35px;background:#005b94;color:white;border-radius:8px;font-size:19px}.brand strong{display:block;font-size:17px;letter-spacing:.3px}.brand small{display:block;font-size:10px;letter-spacing:1.7px}.toolbar{padding:10px 22px;display:flex;align-items:center;gap:8px;background:#f9fbfd;border-bottom:1px solid #dbe3ea;min-height:56px;flex-wrap:wrap}.toolbar .divider{height:22px;border-left:1px solid #dbe3ea;margin:0 6px}.toolbar label{display:flex;align-items:center;gap:9px}.toolbar input[type=range]{width:110px}.toolbar .grow{margin-left:auto}.shell{display:grid;grid-template-columns:190px minmax(400px,1fr) 250px;min-height:calc(100vh - 126px)}.sidebar{padding:20px 15px;background:#f9fbfd;border-right:1px solid #dbe3ea;overflow-y:auto;height:calc(100vh - 126px);position:sticky;top:0}.sidebar-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:12px;color:#678091}.slide-thumb{width:100%;text-align:left;padding:8px;margin-bottom:12px;background:white;border-radius:7px}.thumb-preview{position:relative;width:142px;height:80px;background:#f2f7fa;overflow:hidden;pointer-events:none;outline:1px solid #e2e9ef}.thumb-preview>.slide{transform:scale(.08875);transform-origin:top left}.slide-thumb.current{border:2px solid #005b94;padding:7px;background:#eaf3fa}.thumb-caption{display:flex;align-items:center;gap:8px;margin-top:8px;line-height:1.5;font-size:11px;color:#526c80}.thumb-caption b{font-size:11px;color:#005b94}.workspace{padding:30px 26px 18px;overflow:hidden;min-width:0}.workspace-head{display:flex;align-items:center;justify-content:space-between;margin:0 auto 18px;max-width:1600px}.workspace-head span{font-size:13px;color:#5d7689}.mode-pill{padding:5px 9px;background:#dfeaf2;border-radius:4px;font-size:11px;color:#345b76}.canvas-frame{position:relative;background:white;box-shadow:0 10px 35px #152f4a17;overflow:hidden;margin:auto}.canvas-frame .slide{transform-origin:top left}.canvas-frame.show-grid .body-slide::after{content:'';position:absolute;inset:280px 58px 90px;background-image:linear-gradient(to right,#005b941c 1px,transparent 1px),linear-gradient(to bottom,#005b941c 1px,transparent 1px);background-size:var(--grid) var(--grid);pointer-events:none;z-index:5}.canvas-frame.draw-mode{cursor:crosshair}.draw-rect{position:absolute;border:3px dashed #008ec4;background:#008ec41f;z-index:20;pointer-events:none}.below-canvas{display:flex;justify-content:space-between;margin-top:17px;font-size:12px;color:#778b9b}.status{max-width:100%;line-height:1.6;min-height:26px}.status.error{color:#b52731;font-weight:600}.inspector{border-left:1px solid #dbe3ea;background:white;padding:23px 17px;overflow:auto;height:calc(100vh - 126px);position:sticky;top:0}.inspector h2{font-size:14px;margin:0 0 18px}.inspector h3{font-size:12px;color:#60798c;margin:25px 0 12px}.inspector .empty{font-size:13px;color:#7890a0;line-height:1.9;padding:18px 0}.inspector label{display:block;margin:12px 0 6px}.inspector select,.inspector input{width:100%}.size-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.size-grid button{padding:9px 4px}.inspector hr{border:0;border-top:1px solid #e4ebf0;margin:22px 0}.inspector .stat{padding:10px;background:#f4f7fa;line-height:1.8;font-size:12px;color:#506a7f;border-radius:5px}.slide{position:relative;width:1600px;height:900px;overflow:hidden;background:white;color:var(--ink);font-size:26.6667px;line-height:1.55;font-family:'Microsoft YaHei','PingFang SC','Noto Sans CJK SC',Arial,sans-serif}.slide *{box-sizing:border-box}.slide .top-trim{position:absolute;top:0;left:0;right:0;height:7px;background:var(--primary);border-right:320px solid var(--accent)}.slide-header{position:relative;height:168px;padding:34px 208px 20px 58px}.section-line{display:flex;align-items:center;gap:14px;height:30px;font-size:23.333px;font-weight:600;color:var(--primary)}.section-index{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:30px;padding:0 5px;border-radius:4px;background:var(--tint);font:600 20px Arial,sans-serif;white-space:nowrap}.slide-header h2{font-size:46.6667px;line-height:1.22;font-weight:700;margin:16px 0 0;letter-spacing:.5px;color:var(--ink);max-height:58px;overflow:hidden}.slide-logo{position:absolute;top:26.5px;right:58px;width:120px;height:120px;object-fit:contain}.logo-placeholder{border:2px dashed #c2d2de;border-radius:50%;display:grid;place-items:center;font-size:20px;color:var(--primary)}.header-rule{position:absolute;left:58px;right:58px;bottom:0;height:2px;background:var(--primary)}.slide-lead{position:absolute;left:58px;top:192px;width:1484px;font-size:26.6667px;line-height:1.55;white-space:pre-wrap}.slide-footer{position:absolute;bottom:16px;left:58px;right:58px;height:50px;display:grid;grid-template-columns:390px minmax(0,1fr) auto;align-items:center;gap:24px;padding-top:8px;font-size:17px;line-height:1.4;color:#617b8b}.slide-footer a{color:inherit;text-decoration:underline}.slide-footer .source{text-align:right;overflow-wrap:anywhere}.footer-rule{position:absolute;left:0;right:0;top:0;height:1px;background:#d8e2e9}.module-layer{position:absolute;inset:0;pointer-events:none}.module{position:absolute;pointer-events:auto}.module-content{height:100%;width:100%;overflow:hidden}.module-badge{display:none;position:absolute;left:0;top:-26px;background:#005b94;color:white;font-size:13px;line-height:24px;padding:0 10px;z-index:12;pointer-events:none}.mode-edit .module,.mode-delete .module{cursor:pointer;outline:1px dashed #9bb4c7}.module.selected{outline:3px solid #008ac4;outline-offset:3px}.module.selected .module-badge{display:block}.module.overflowing{outline:5px solid #b81d2c!important;outline-offset:1px}.mode-edit .module [contenteditable],.mode-delete .module [contenteditable]{pointer-events:none}.mode-text [contenteditable]{cursor:text;min-height:1em;outline:0}.mode-text [contenteditable]:focus{outline:2px solid #70bce0;outline-offset:4px;background:#eaf6ff30}.mode-insert .module{pointer-events:none}.text-parts,.media-parts{display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));height:100%;min-height:0;gap:24px;align-content:stretch}.text-part{min-width:0;min-height:0;padding:20px 22px;overflow:hidden;display:flex;flex-direction:column;gap:14px}.text-part h3{font-size:30px;line-height:1.3;margin:0;font-weight:700;flex-shrink:0;color:var(--primary);white-space:pre-wrap;overflow-wrap:anywhere}.paragraph{font-size:26.6667px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;flex-shrink:0;text-align:justify;text-align-last:left}.paragraph.bulleted{padding-left:32px;position:relative}.paragraph.bulleted::before{content:attr(data-marker);position:absolute;left:0;color:var(--primary);font-weight:700}.style-plain .text-part{padding:18px 0;border-top:2px solid #c7d8e4}.style-unified{background:var(--tint);gap:0}.style-unified .text-part{border-right:1px solid #bfd0dd;border-bottom:1px solid #bfd0dd}.style-unified .text-part:last-child{border:0}.style-cards .text-part,.style-band .text-part{background:var(--tint)}.style-band .text-part{padding:0 0 20px;gap:18px}.style-band .text-part h3{background:var(--primary);color:white;padding:14px 20px}.style-band .paragraph{padding:0 20px}.style-band .paragraph.bulleted{padding-left:52px}.style-band .paragraph.bulleted::before{left:20px}.media-part{margin:0;display:flex;flex-direction:column;min-width:0;min-height:0;height:100%;gap:16px;background:var(--tint);padding:16px}.media-window{flex:1;min-height:80px;overflow:hidden;position:relative;width:100%;display:flex;align-items:center;justify-content:center;background:var(--tint)}.media-window img,.media-window video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;max-width:none}.media-placeholder{width:100%;height:100%;border:2px dashed #a4bdce;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#63849a;background:var(--tint);gap:8px}.media-placeholder span{font-size:54px;line-height:1}.media-placeholder p{margin:0;font-size:23.333px}.media-placeholder small{font-size:20px;color:inherit}.media-part figcaption{flex-shrink:0;min-height:0;display:flex;flex-direction:column;gap:6px}.figure-title{font-weight:700;font-size:23.333px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--primary)}.figure-note{font-size:20px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.table-wrap{height:100%;width:100%;padding:0;overflow:hidden}.data-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:23.333px;line-height:1.35}.data-table th,.data-table td{padding:var(--cell-pad,7px) .5em;overflow-wrap:anywhere;text-align:center;vertical-align:middle;border-bottom:1px solid #c1d2de;border-right:1px solid #a5b8c5}.data-table th{background:var(--primary);color:white;border-right-color:white;font-weight:700}.data-table th:first-child,.data-table td:first-child{text-align:left}.data-table tbody tr:nth-child(odd) td{background:var(--tint)}.table-note{font-size:17px;line-height:1.5;color:#617b8b;margin:12px 0 0}.graphic-shape{width:100%;height:100%;clip-path:polygon(0 0,93% 0,100% 50%,93% 100%,0 100%)}.cover-logo{height:235px;display:flex;align-items:center;justify-content:center}.wordmark{height:120px;max-width:1300px;object-fit:contain}.wordmark-placeholder{font-size:38px;font-weight:600;color:var(--primary);border:2px dashed #ccdce8;padding:20px 80px}.cover-band{height:330px;background:var(--primary);border-right:240px solid var(--secondary);color:white;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px 90px;margin-right:-120px;padding-left:210px}.cover-band h1{font-size:66.6667px;line-height:1.3;letter-spacing:4px;font-weight:700;margin:0;white-space:pre-wrap}.cover-band p{font-size:23.333px;line-height:1.5;margin:18px 0 0}.cover-info{border-collapse:separate;border-spacing:28px 12px;margin:35px auto;font-size:30px;line-height:1.4}.cover-info th{font-size:26.6667px;text-align:justify;text-align-last:justify;width:112px;color:#6b8598;font-weight:400}.cover-info td{text-align:left;min-width:320px;font-weight:600;white-space:pre-wrap}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:12px 22px;background:#173c53;color:white;z-index:300;border-radius:8px;max-width:80vw;font-size:13px;box-shadow:0 6px 24px #12374e33}.toast.error{background:#9d2430}.toast:empty{display:none}dialog{border:1px solid #d4dfe8;border-radius:12px;box-shadow:0 20px 90px #173c5344;padding:0;width:min(700px,94vw);max-height:90vh;color:#233d50}dialog::backdrop{background:#122c4166;backdrop-filter:blur(3px)}.dialog-head{padding:22px 26px 16px;border-bottom:1px solid #e3eaf0;display:flex;align-items:center;justify-content:space-between;gap:20px}.dialog-head h2{font-size:19px;margin:0}.dialog-body{padding:22px 26px;display:grid;gap:17px;overflow:auto;max-height:65vh}.dialog-body label{display:grid;gap:8px}.dialog-body .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}.dialog-actions{padding:16px 26px;border-top:1px solid #e3eaf0;display:flex;align-items:center;justify-content:flex-end;gap:10px}.field-line{display:flex;gap:8px;align-items:center}.field-line input[type=color]{width:48px;height:40px;padding:4px;flex-shrink:0}.field-line input[type=text]{width:100%}.radio-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.radio-cards label{padding:13px;border:1px solid #d4e1ea;border-radius:6px;display:flex;align-items:center;gap:8px}.crop-preview{width:100%;height:220px;background:#eef3f7;display:flex;align-items:center;justify-content:center;overflow:hidden}.crop-box{position:relative;overflow:hidden;max-width:100%;max-height:220px;background:white}.crop-box img,.crop-box video{width:100%;height:100%;object-fit:cover;display:block}.file-note{padding:13px;background:#f0f6fa;border-radius:6px;font-size:12px;color:#567286;line-height:1.7}.presenting .topbar,.presenting .toolbar,.presenting .sidebar,.presenting .inspector,.presenting .workspace-head,.presenting .below-canvas{display:none}.presenting{background:#101820}.presenting .shell{display:block;min-height:100vh}.presenting .workspace{height:100vh;padding:0;display:grid;place-items:center}.presenting .canvas-frame{box-shadow:none}.presenting .slide [contenteditable]{outline:none!important}.presenting .module{outline:none!important}.presenting .module-badge{display:none!important}.export-view{background:white}.export-view .slide{break-after:page;page-break-after:always}.export-view .module-badge{display:none!important}.export-view .module.overflowing{outline:none!important}.export-view .slide:last-child{break-after:auto;page-break-after:auto}@page{size:13.333333in 7.5in;margin:0}@media print{html,body{background:white!important;margin:0;padding:0}.export-view .slide{zoom:.8}body:not(.export-view) .topbar,body:not(.export-view) .toolbar,body:not(.export-view) .sidebar,body:not(.export-view) .inspector,body:not(.export-view) .workspace-head,body:not(.export-view) .below-canvas{display:none}}@media(max-width:1150px){.shell{grid-template-columns:155px minmax(350px,1fr) 220px}.sidebar{padding:15px 6px}.thumb-preview{width:126px;height:71px}.thumb-preview>.slide{transform:scale(.07875)}.topbar{padding:10px 14px;height:auto;flex-wrap:wrap}.topbar .brand{min-width:220px}.workspace{padding:20px 15px}.toolbar{padding:9px 14px}}@media(max-width:850px){.shell{grid-template-columns:140px minmax(300px,1fr)}.inspector{grid-column:1/-1;height:auto;position:static}.workspace{padding:15px 8px}.brand{width:100%}}
+
+.media-crop{position:relative;overflow:hidden;flex:none}.paragraph.bulleted{padding-left:0}.paragraph.bulleted::before{content:none}.paragraph.bulleted>div{position:relative;padding-left:32px}.paragraph.bulleted>div::before{content:attr(data-marker);position:absolute;left:0}.paragraph.bulleted>div::before{content:var(--marker,"•");color:var(--primary);font-weight:700}.style-band .paragraph.bulleted{padding:0 20px}.style-band .paragraph.bulleted::before{content:none}
+
+/* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
+.text-parts{position:relative;gap:24px;grid-auto-rows:auto}
+.text-part{position:relative;isolation:isolate;gap:14px;overflow:hidden;padding:22px 24px;min-width:0;color:var(--ink)}
+.text-part .paragraph{color:var(--ink)}
+.text-part>.paragraph,.text-part>.part-subheading,.text-part>.part-annotation{position:relative;z-index:2;flex-shrink:0}
+.part-title-wrap{position:relative;flex:none;min-width:0}
+.text-part .part-title-text{position:relative;z-index:2;padding:0;margin:0;font:700 30px/1.3 'Microsoft YaHei','PingFang SC',sans-serif;color:var(--primary);overflow-wrap:anywhere;white-space:pre-wrap}
+.style-plain,.style-unified{gap:0}
+.style-plain .text-part{padding:22px 24px;border:0;background:white}
+.style-unified{background:var(--tint)}
+.style-unified .text-part{border:0;padding:22px 24px;background:transparent}
+.part-divider{position:absolute;z-index:2;display:block;background:#9ea8ae;pointer-events:none}
+.part-divider.horizontal{height:1px;bottom:0;left:20px;right:20px}
+.part-divider.vertical{width:1px;right:0;top:20px;bottom:20px}
+.style-cards .text-part{background:var(--tint);padding:22px 24px}
+.style-band .text-part{background:var(--tint);padding:0 0 22px;gap:16px}
+.style-band .part-title-wrap{width:100%;background:var(--primary)}
+.text-parts.style-band .text-part .part-title-text{padding:10px 20px;color:white;background:var(--primary)}
+.style-band .paragraph{padding:0 20px}
+.style-band .paragraph.bulleted{padding:0 20px}
+.text-box-decoration{position:absolute;inset:0;z-index:0;overflow:visible;pointer-events:none;display:block}
+.title-decoration{position:absolute;inset:0;width:100%;height:100%;overflow:visible;display:block;pointer-events:none;z-index:0}
+.style-ribbon .text-part,.style-arrow .text-part{padding:0 24px 26px;background:transparent;gap:20px}
+.style-ribbon .part-title-wrap,.style-arrow .part-title-wrap{width:var(--title-width,65%);min-height:60px;margin-left:-16px}
+.style-ribbon .part-title-text,.style-arrow .part-title-text{color:white;text-align:center;padding:11px 28px}
+.ribbon-face{clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.ribbon-fold{position:absolute;width:14px;height:18px;left:0;top:100%;z-index:0;pointer-events:none}
+.style-ribbon .text-part>.paragraph{margin-left:12px}
+.arrow-face{clip-path:polygon(0 0,calc(100% - 30px) 0,100% 50%,calc(100% - 30px) 100%,0 100%)}
+.style-arrow .part-title-text{padding-right:40px}
+.style-capsule .text-part{padding:20px 24px;background:white;gap:22px}
+.style-capsule .part-title-wrap{width:var(--title-width,90%);align-self:center;min-height:60px}
+.style-capsule .part-title-text{padding:10px 46px;color:white;text-align:center}
+.style-note{gap:24px}
+.style-note .text-part{padding:18px 24px;background:var(--tint);justify-content:center}
+.note-rule{position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--primary);z-index:1}
+.text-group-shell{position:relative;isolation:isolate;height:100%;min-height:0;padding:0 20px 22px;display:flex;flex-direction:column;gap:16px}
+.module-group-title{align-self:center;width:var(--title-width,70%);min-height:64px;z-index:1}
+.module-group-title .part-title-text{position:relative;z-index:2;color:white;text-align:center;margin:0;padding:12px 28px;font-size:33.3333px;line-height:1.3;white-space:pre-wrap}
+.group-face{clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
+.text-group-shell>.group-inner{flex:1;height:auto;min-height:0;z-index:1}
+.group-inner .text-part{padding:14px 20px}
+.group-inner,.group-inner .text-part{background:transparent!important}
+.style-numbered .text-part{padding:16px 20px;background:white;gap:13px}
+.numbered-heading{display:flex;align-items:center;gap:16px;position:relative;flex:none;min-height:48px;padding-bottom:0}
+.number-tag{position:relative;width:90px;min-width:90px;align-self:stretch;display:flex;align-items:center;min-height:48px}
+.number-decoration{position:absolute;inset:0;width:100%;height:100%;clip-path:polygon(0 0,calc(100% - 48px) 0,100% 100%,0 100%);pointer-events:none}
+.number-value{position:relative;z-index:1;color:white;font:700 33.3333px/1.3 'Times New Roman',serif;padding-left:12px;white-space:nowrap}
+.style-numbered .numbered-heading .part-title-text{color:var(--ink);font-size:30px;min-width:0;flex:1}
+.number-rule{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--primary)}
+.part-subheading{font-size:26.6667px;font-weight:700;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.part-annotation{font-size:23.3333px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+/* Numbered chooser is keyboard-accessible; preview is not a bitmap of the PDF. */
+#style-dialog{width:min(1100px,96vw)}
+.style-picker{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;align-items:start}
+.style-list{display:grid;gap:7px}
+.style-option{display:flex;align-items:center;gap:12px;text-align:left;width:100%;position:relative}
+.style-option[aria-pressed=true]{border-color:#005894;background:#eaf3fa;color:#005894}
+.style-code{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:29px;background:#edf3f7;border-radius:4px;font-size:13px;font-weight:700}
+.style-option[aria-pressed=true] .style-code{background:#005894;color:white}
+.style-live-preview{border:1px solid #d6e1ea;border-radius:8px;padding:16px;background:#f6f9fc;position:sticky;top:0;min-width:0}
+.style-preview-frame{position:relative;overflow:hidden;background:white;margin:0 auto;border:1px solid #cedee8}
+.style-preview-canvas{position:absolute;left:0;top:0;transform-origin:top left;width:600px;height:520px;font-family:'Microsoft YaHei','PingFang SC',sans-serif;font-size:26.6667px;line-height:1.55;color:var(--ink)}
+.style-preview-canvas .module-badge{display:none}
+.style-preview-copy{font-size:12px;line-height:1.8;color:#536e82;margin-top:10px}
+.style-picker-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.style-picker-options label{display:flex;align-items:center;gap:8px}
+.style-picker-options input[type=range]{width:145px}
+.inspector input[type=checkbox]{width:auto;margin:0 7px 0 0}
+@media(max-width:750px){.style-picker{grid-template-columns:1fr}.style-list{grid-template-columns:1fr 1fr}.style-live-preview{position:static}.style-option{padding:8px;font-size:12px}}
+
+/* Shared navigation: single page, vertical scroll, grid and transient presentation. */
+html,body{height:100%;overflow:hidden}
+.sidebar{overflow-x:hidden}
+.slide-thumb{display:block;min-width:0;overflow:hidden}
+.thumb-preview{width:100%;height:auto;aspect-ratio:16/9}
+.thumb-caption{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.thumb-caption b{flex:none}
+.slide .section-line{white-space:nowrap;flex-wrap:nowrap;width:100%;min-width:0}
+.section-line>span{flex-shrink:0}
+.section-line>span:last-child{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;max-width:calc(100% - 52px)}
+.slide-header h2{color:var(--primary)}
+.cover-band{margin-right:0;padding:30px 90px;border-right:0;background:var(--primary)}
+.slide-summary{position:absolute;left:58px;right:58px;top:750px;height:60px;display:flex;align-items:center;justify-content:center;padding:8px 22px;background:var(--primary);color:white;font-size:26.6667px;font-weight:700;line-height:1.5;overflow:hidden;text-align:center;white-space:pre-wrap}
+.canvas-frame.show-grid .body-slide::after{top:256px}
+.size-grid button{touch-action:none;user-select:none}
+.topbar{min-height:70px;height:auto;padding-top:10px;padding-bottom:10px}
+.document-caption{margin-right:auto;max-width:290px;overflow:hidden;text-overflow:ellipsis;color:#365b73;background:#f2f7fa;border-color:#dfE8ef;font-weight:600;text-align:left}
+.topbar .brand{margin-right:12px}
+.shell{height:calc(100vh - var(--chrome-height,126px));min-height:0}
+.sidebar,.inspector{position:static;height:100%;min-height:0}
+.workspace{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.workspace-head{position:sticky;top:-30px;z-index:25;background:#edf1f5ef;padding:12px 0;backdrop-filter:blur(8px)}
+.pages-surface{display:grid;grid-template-columns:repeat(var(--view-columns,1),minmax(0,1fr));gap:28px;width:100%;align-items:start}
+.view-page{min-width:0;scroll-margin-top:60px}
+.view-page-label{display:flex;gap:10px;align-items:center;font-size:12px;line-height:1.5;color:#607d92;margin:0 0 9px;min-height:22px}
+.view-page-label b{color:#005894;flex-shrink:0}
+.view-page-label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.view-page-label small{margin-left:auto;white-space:nowrap;font-size:10px}
+.view-page.is-current>.canvas-frame{outline:2px solid #78b8d8;outline-offset:3px}
+.view-single .view-page-label{display:none}
+.view-grid .view-page{cursor:default}
+.below-canvas{position:sticky;bottom:-18px;z-index:22;background:#edf1f5f5;padding:12px 0 4px;margin-top:20px;backdrop-filter:blur(8px);gap:18px}
+.sidebar-actions{display:flex;gap:7px;margin:10px 0}
+.sidebar-actions button{padding:7px 9px;flex:1}
+.toolbar .view-controls select{max-width:115px;background:white;color:#334d60;border:1px solid #cbd8e2}
+.presenting .shell{height:100vh;display:block}
+.presenting .workspace{display:block;height:100vh;overflow:hidden;padding:0;scrollbar-gutter:auto}
+.presenting .pages-surface.presentation-stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.presenting .presentation-stage .view-page{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.presenting .presentation-stage .view-page-label{display:none}
+.presenting .view-page>.canvas-frame{outline:0;touch-action:none;user-select:none}
+.presenting .canvas-frame.zoomed{cursor:grab}
+.presenting .canvas-frame.dragging{cursor:grabbing}
+.presenting.presentation-overview-mode .workspace{overflow-y:auto;padding:22px 24px 64px}
+.presenting .pages-surface.presentation-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 18px;align-items:start}
+.presenting .presentation-overview .view-page-label{color:#b9ceda;cursor:default}
+.presenting .presentation-overview .view-page-label b{color:#75ccf1}
+.presenting .presentation-overview .view-page.is-current>.canvas-frame{outline:3px solid #52c6f7;outline-offset:4px}
+.presenting .presentation-overview .canvas-frame{cursor:pointer}
+.present-hud{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:7px 9px 7px 15px;background:#102b3fdf;color:#d5e8f3;display:flex;align-items:center;gap:15px;border-radius:8px;font-size:12px;z-index:200;white-space:nowrap;max-width:95vw}
+.present-hud[hidden]{display:none!important}
+.present-hud button{font-size:11px;padding:5px 8px;border-color:#608199;background:transparent;color:white}
+.transition-slide{background:var(--tint)}
+.transition-content{position:absolute;left:160px;right:160px;top:190px;bottom:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.transition-number{font-size:120px;line-height:1.1;font-weight:700;color:var(--primary)}
+.transition-rule{height:4px;width:75px;background:var(--primary);margin:30px 0}
+.transition-content h1{font-size:56px;line-height:1.35;color:var(--ink);margin:0;white-space:pre-wrap;max-width:100%;overflow-wrap:anywhere}
+.transition-content p{font-size:26.6667px;line-height:1.55;color:#607b8e;margin:18px 0 0;white-space:pre-wrap;max-width:100%}
+.toc-list{position:absolute;left:58px;right:58px;top:280px;bottom:90px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(0,1fr);gap:18px 50px;overflow:hidden}
+.toc-list.two-columns{grid-template-columns:repeat(2,minmax(0,1fr))}
+.toc-item{position:relative;display:flex;gap:24px;min-height:0;padding:12px 0 16px;overflow:hidden}
+.toc-number{font-size:60px;line-height:1.2;font-weight:700;color:var(--primary);min-width:90px;padding-top:0;align-self:flex-start}
+.toc-info{min-width:0;min-height:0;flex:1;display:flex;flex-direction:column;gap:9px;overflow:hidden}
+.toc-title{font-size:30px;line-height:1.3;font-weight:700;color:var(--primary);text-decoration:none;flex-shrink:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.toc-note{font-size:26.6667px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere;flex-shrink:0;min-height:1.55em;color:var(--ink)}
+.toc-note[contenteditable]:empty::before{content:attr(data-placeholder);color:#8a9eac;font-size:23.333px;pointer-events:none}
+.toc-divider{position:absolute;height:1px;bottom:0;left:114px;right:0;background:#d9e4eb}
+.toc-empty{font-size:30px;color:#7590a2;align-self:center;text-align:center}
+.toc-list.overflowing{outline:5px solid #b81d2c;outline-offset:-5px}
+body.export-view{height:auto;overflow:visible}
+body.export-view .toc-note:empty{display:none}
+@media print{.present-hud{display:none!important}html,body{height:auto;overflow:visible}}
+@media(max-width:1150px){.workspace-head{top:-20px}.document-caption{max-width:210px}.topbar .brand{width:auto;min-width:auto}.view-controls{margin-left:0}}
+@media(max-width:850px){.shell{grid-template-columns:140px minmax(300px,1fr)}.inspector{position:fixed;right:12px;bottom:12px;top:auto;height:30vh;width:230px;z-index:30;border:1px solid #d5e2eb;box-shadow:0 6px 25px #163b5122;opacity:.98}.document-caption{max-width:240px}.present-hud span{overflow:hidden;text-overflow:ellipsis}.workspace-head{top:-15px}}
+</style></head><body><div id="app"></div><script id="project-data" type="application/json">{"version":1,"title":"文本块样式示例","theme":{"name":"北京科技大学","primary":"#005894","secondary":"#1766A9","accent":"#2BA3C0","emphasis":"#A31418","tint":"#EEF5F9","ink":"#000000","logo":"","wordmark":""},"grid":20,"slides":[{"id":"3b375c30-a156-4b93-8382-5be40c2c921d","kind":"body","section":"01","group":"研究背景","title":"默认 · 白底分段","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"6c4177e7-b3b7-4f08-a473-e74a21b56109","type":"text","style":"plain","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"ec0e2b9c-f7f3-451f-b59b-84ae663514d1","kind":"body","section":"01","group":"研究背景","title":"A1 · 一体浅底","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"e1f1232c-e1f8-4550-bf48-8cfb78f7af8c","type":"text","style":"unified","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"a7e26d4a-dfa1-4e4a-85b0-ae7573ace82a","kind":"body","section":"01","group":"研究背景","title":"A2 · 分立浅卡","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"9c485c3f-1c8c-461c-a2cc-db3559082e95","type":"text","style":"cards","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"7e65ee29-2257-4bfe-a1fa-af387b4a0f2e","kind":"body","section":"01","group":"研究背景","title":"A3 · 深底标题","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"2d6b3ac0-53cc-4951-ba88-945581928d77","type":"text","style":"band","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"acb9cfa7-c220-49d8-8e22-435f52d0ca9c","kind":"body","section":"01","group":"研究背景","title":"B1 · 折角飘带","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"9005bc65-04fe-4fbe-b2d7-70bf1115cec9","type":"text","style":"ribbon","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"47950117-b032-4a49-b220-380c80045aae","kind":"body","section":"01","group":"研究背景","title":"B2 · 圆角圆点","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"8896a35a-53a1-4d90-8ea6-401f1159ab65","type":"text","style":"capsule","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"927b76c2-36d8-49c6-aab0-69c3c8f02ade","kind":"body","section":"01","group":"研究背景","title":"B3 · 五角箭头","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"44c265e2-5ed8-4b60-953f-d39c106dbf90","type":"text","style":"arrow","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"ae350921-2ead-488e-a229-9989e3fb4dc9","kind":"body","section":"01","group":"研究背景","title":"C1 · 无标题备注","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"6c3f8616-c839-465e-a83a-90e8f5a8cc3d","type":"text","style":"note","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":1,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]},{"id":"1212b522-c1e1-4c47-8f25-893b626811c9","kind":"body","section":"01","group":"研究背景","title":"C2 · 组合分组","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"f442046e-5736-41c5-959f-44f273cb69b8","type":"text","style":"group","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":false,"showAnnotation":false,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题","innerStyle":"plain"}]},{"id":"b876ce12-a6d2-4d39-83ed-f8b986a26320","kind":"body","section":"01","group":"研究背景","title":"C3 · 序号标题","lead":"十种文本块共用标题与正文层级，切换样式时保留内容。","source":"","sourceUrl":"","summary":"","modules":[{"id":"0b69fd19-4658-4fc8-93cb-7923ec3b0376","type":"text","style":"numbered","x":58,"y":256,"w":1484,"h":554,"parts":[{"title":"研究板块 1","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":true,"showAnnotation":true,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null},{"title":"研究板块 2","text":"正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。","bullet":false,"marker":"•","subheading":"正文加粗子标题","annotation":"注释信息使用 14pt。","showSubheading":true,"showAnnotation":true,"caption":"图 1　图片标题","note":"","showCaption":true,"captionMode":"note","asset":null}],"columns":2,"rows":[["算法","场景一 / ↑","场景二 / ↓"],["方法 A","00.00 ± 00.00","00.00 ± 00.00"],["方法 B","00.00 ± 00.00","00.00 ± 00.00"]],"merges":[],"headerRows":1,"headerWidth":70,"groupTitle":"模块大标题"}]}]}</script><script id="app-code">(() => {
+  // src/text-styles.js
+  var TEXT_STYLES = [
+    ["plain", "默认", "白底分段", "标题与正文分层，子区域之间用细线区分"],
+    ["unified", "A1", "一体浅底", "同一块浅底，内部细线分隔"],
+    ["cards", "A2", "分立浅卡", "独立浅底卡片，卡片之间保留间隙"],
+    ["band", "A3", "深底标题", "浅底卡片搭配深底白字标题"],
+    ["ribbon", "B1", "折角飘带", "可调长平行四边形标题、折角与渐变阴影边框"],
+    ["capsule", "B2", "圆角圆点", "深色圆角标题居中，叠加白色圆形，正文白底"],
+    ["arrow", "B3", "五角箭头", "可调长五角箭头标题、渐变阴影边框"],
+    ["note", "C1", "无标题备注", "浅底左侧色条，竖向分隔备注"],
+    ["group", "C2", "组合分组", "可调长模块大标题，内部仅用无底色默认分组"],
+    ["numbered", "C3", "序号标题", "45° 梯形序号、正文加粗子标题及 14pt 注释"]
+  ];
+  var styleInfo = (id) => TEXT_STYLES.find((s) => s[0] === id) || TEXT_STYLES[0];
+  function textModuleHTML(m, { esc: esc2, editable: editable2, textBody: textBody2, edit }) {
+    const style = styleInfo(m.style)[0], cols = Math.max(1, Math.min(m.columns || m.parts.length, m.parts.length));
+    const percent = Math.max(25, Math.min(100, Number(m.headerWidth) || (["capsule", "group"].includes(style) ? 90 : 65)));
+    const groupId = "decor-" + String(m.id).replace(/[^\w-]/g, "");
+    const box = (id, top = 22, left = 8) => `<svg class="text-box-decoration" data-decoration aria-hidden="true" width="100%" height="100%"><defs><linearGradient id="${id}-line" x1="0" y1="0" x2="100%" y2="100%"><stop stop-color="var(--primary)" stop-opacity=".24"/><stop offset="1" stop-color="var(--primary)"/></linearGradient><filter id="${id}-shadow" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="var(--primary)" flood-opacity=".28"/></filter></defs><rect x="${left}" y="${top}" width="calc(100% - ${left + 10}px)" height="calc(100% - ${top + 10}px)" fill="white" stroke="url(#${id}-line)" stroke-width="2" filter="url(#${id}-shadow)"/></svg>`;
+    const decoration = (kind) => {
+      if (kind === "ribbon") return `<svg class="title-decoration ribbon-face" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><svg class="ribbon-fold" viewBox="0 0 14 18" data-decoration aria-hidden="true"><path d="M0 0H14V18Z" fill="var(--primary)"/><path d="M0 0H14V18Z" fill="black" opacity=".45"/></svg>`;
+      if (kind === "capsule") return `<svg class="title-decoration" data-decoration aria-hidden="true"><rect width="100%" height="100%" rx="32" fill="var(--primary)"/><circle cx="26" cy="50%" r="12" fill="white"/></svg>`;
+      if (kind === "arrow") return `<svg class="title-decoration arrow-face" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg>`;
+      if (kind === "group") return `<svg class="title-decoration group-face" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/><path d="M0 34H20V68Z" fill="var(--tint)"/><svg x="calc(100% - 20px)" y="50%" width="20" height="50%" viewBox="0 0 20 34" preserveAspectRatio="none"><path d="M0 0H20L0 34Z" fill="var(--tint)"/></svg></svg>`;
+      return "";
+    };
+    const title = (p, i, kind = style) => `<div class="part-title-wrap">${decoration(kind)}<h3 class="part-title-text" ${kind === "band" ? "data-shape" : ""} data-text data-part="${i}" data-field="title" ${editable2(edit, "")}>${esc2(p.title)}</h3></div>`;
+    function parts(innerStyle = style) {
+      return m.parts.map((p, i) => {
+        const row = Math.floor(i / cols), col = i % cols, lastRow = Math.floor((m.parts.length - 1) / cols);
+        const separators = ["plain", "unified"].includes(innerStyle) ? `${row < lastRow ? '<span class="part-divider horizontal" data-shape></span>' : ""}${col < cols - 1 && i < m.parts.length - 1 ? '<span class="part-divider vertical" data-shape></span>' : ""}` : "";
+        const backdrop = ["ribbon", "arrow"].includes(innerStyle) ? box(groupId + "-" + i, 22, innerStyle === "ribbon" ? 22 : 8) : "";
+        let heading = innerStyle === "note" ? "" : innerStyle === "numbered" ? `<div class="numbered-heading"><div class="number-tag"><svg class="number-decoration" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><span data-text class="number-value">${String((Number(m.numberStart) || 1) + i).padStart(2, "0")}</span></div><h3 class="part-title-text" data-text data-part="${i}" data-field="title" ${editable2(edit, "")}>${esc2(p.title)}</h3><span class="number-rule" data-shape></span></div>` : title(p, i, innerStyle);
+        const extras = innerStyle === "numbered" ? `${p.showSubheading && p.subheading ? `<div class="part-subheading" data-text data-part="${i}" data-field="subheading" ${editable2(edit, "")}>${esc2(p.subheading)}</div>` : ""}${p.showAnnotation && p.annotation ? `<div class="part-annotation" data-text data-part="${i}" data-field="annotation" ${editable2(edit, "")}>${esc2(p.annotation)}</div>` : ""}` : "";
+        return `<section class="text-part" data-shape>${backdrop}${innerStyle === "note" ? '<span class="note-rule" data-shape></span>' : ""}${heading}${textBody2(p, i, edit)}${extras}${separators}</section>`;
+      }).join("");
+    }
+    const styleAttrs = `--cols:${cols};--title-width:${percent}%`;
+    if (style === "group") {
+      const inner = "plain";
+      return `<div class="text-group-shell" style="${styleAttrs}">${box(groupId + "-group", 30)}<div class="module-group-title part-title-wrap">${decoration("group")}<h3 class="part-title-text" data-text data-module-field="groupTitle" ${editable2(edit, "")}>${esc2(m.groupTitle || "模块大标题")}</h3></div><div data-shape class="text-parts style-${inner} group-inner" style="--cols:${cols}">${parts(inner)}</div></div>`;
+    }
+    return `<div data-shape class="text-parts style-${style}" style="${styleAttrs}">${parts()}</div>`;
+  }
+
+  // src/model.js
+  var W = 1600;
+  var H = 900;
+  var GAP = 24;
+  var SAFE = { x: 58, y: 256, w: 1484, h: 554 };
+  var STYLES = TEXT_STYLES;
+  var clone = (x) => structuredClone(x);
+  var uid = () => globalThis.crypto?.randomUUID?.() || `m${Date.now()}${Math.random().toString(16).slice(2)}`;
+  var defaultTheme = { name: "北京科技大学", primary: "#005894", secondary: "#1766A9", accent: "#2BA3C0", emphasis: "#A31418", tint: "#EEF5F9", ink: "#000000", logo: "", wordmark: "" };
+  function part() {
+    return { title: "分项标题", text: "在此输入正文。按完整语义组织内容，明确本段的证据与结论。", bullet: false, marker: "•", subheading: "", annotation: "", showSubheading: false, showAnnotation: false, caption: "图 1　图片标题", note: "", showCaption: true, captionMode: "note", asset: null };
+  }
+  function moduleOf(type, rect, count = 1) {
+    return { id: uid(), type, style: "plain", ...rect, parts: Array.from({ length: count }, part), columns: count, rows: [["算法", "场景一 / ↑", "场景二 / ↓"], ["方法 A", "00.00 ± 00.00", "00.00 ± 00.00"], ["方法 B", "00.00 ± 00.00", "00.00 ± 00.00"]], merges: [], headerRows: 1 };
+  }
+  function blankSlide() {
+    return { id: uid(), kind: "body", section: "01", group: "研究背景", title: "新的研究页面", lead: "用一句话说明本页研究问题、证据或结论。", source: "", sourceUrl: "", summary: "", modules: [] };
+  }
+  function makePage(kind = "body") {
+    const s = { ...blankSlide(), kind };
+    if (kind === "toc") Object.assign(s, { title: "汇报目录", group: "汇报概览", lead: "围绕研究问题、方法设计与实验结果展开汇报。", tocNotes: {} });
+    if (kind === "transition") Object.assign(s, { title: "新章节", lead: "本章概览" });
+    if (kind === "cover" || kind === "closing") Object.assign(s, { title: kind === "cover" ? "科研汇报" : "感谢聆听，恳请批评指正", lead: "研究问题 · 方法设计 · 实验验证", presenter: "汇报人姓名", institute: "学院 / 研究团队", date: "汇报日期" });
+    return s;
+  }
+  function documentSections(p) {
+    return p.slides.flatMap((s, index2) => s.kind === "transition" ? [{ id: s.id, title: s.title, number: s.section, index: index2 }] : []);
+  }
+  function syncSections(p) {
+    let active = null, n = 0;
+    for (const s of p.slides) {
+      if (s.kind === "transition") {
+        s.section = String(++n).padStart(2, "0");
+        s.group = s.title;
+        active = s;
+      } else if (s.kind === "body" && active) {
+        s.section = active.section;
+        s.group = active.title;
+        s.chapterId = active.id;
+      } else if (s.kind === "body" && s.chapterId) {
+        delete s.chapterId;
+        s.section = "00";
+        s.group = "未分章";
+      }
+    }
+    return p;
+  }
+  function newDocument(title = "未命名文稿", examples = false) {
+    const p = createProject();
+    p.title = title;
+    if (!examples) {
+      const t = makePage("transition");
+      t.title = "研究背景";
+      p.slides = [makePage("cover"), makePage("toc"), t, blankSlide(), makePage("closing")];
+    }
+    return syncSections(p);
+  }
+  function createProject({ withSections = true } = {}) {
+    const background = blankSlide();
+    background.title = "研究背景与问题定义";
+    const a = moduleOf("text", { x: 58, y: 256, w: 724, h: 554 }, 3);
+    a.columns = 1;
+    a.style = "unified";
+    a.parts = [{ ...part(), title: "问题定义", text: "说明研究对象、输入与输出，以及需要解决的核心约束。\n研究问题应能对应后续实验的评价指标。" }, { ...part(), title: "现有方法的局限", text: "现有方案在动态环境或资源约束下仍存在不足。\n用具体证据描述局限，避免笼统评价。", bullet: true }, { ...part(), title: "本页结论", text: "明确当前工作的切入点，为方法设计建立依据。" }];
+    const b = moduleOf("media", { x: 806, y: 256, w: 736, h: 554 }, 1);
+    b.parts[0].caption = "图 1　研究对象与应用场景";
+    b.parts[0].note = "上传自己的研究图片，替换占位区域。";
+    background.modules = [a, b];
+    const methods = blankSlide();
+    methods.section = "02";
+    methods.group = "研究方法";
+    methods.title = "方法框架与模块协同";
+    methods.lead = "分别说明各模块的目标、关键操作及输出，形成可验证的方法链条。";
+    const c = moduleOf("text", { ...SAFE }, 3);
+    c.style = "band";
+    c.parts = [{ ...part(), title: "01　输入与表征", text: "明确研究对象与样本构成。\n统一训练、验证与测试口径。\n说明数据清洗和特征选择依据。\n标注缺失数据的处理方式。\n记录资源预算与环境约束。\n输出可追踪的标准化表征。", bullet: true }, { ...part(), title: "02　策略与优化", text: "将研究目标写成可计算的指标。\n说明核心策略与决策变量。\n解释约束如何进入求解过程。\n给出迭代步骤与终止条件。\n讨论计算开销及适用范围。\n保留关键参数与配置记录。", bullet: true }, { ...part(), title: "03　输出与验证", text: "对应研究问题选择评价指标。\n明确统计口径与重复次数。\n利用消融实验核验关键模块。\n给出不同场景的对比结果。\n记录运行环境与资源消耗。\n分析误差来源和方法边界。", bullet: true }];
+    methods.modules = [c];
+    const results = blankSlide();
+    results.section = "03";
+    results.group = "实验与分析";
+    results.title = "实验结果与方法比较";
+    results.lead = "统一实验口径，用可编辑的表格呈现结果；↑ 表示越大越好，↓ 表示越小越好。";
+    const t = moduleOf("table", { ...SAFE });
+    t.rows = [["算法", "场景一 / 质量 ↑", "场景一 / 耗时 ↓", "场景二 / 质量 ↑", "场景二 / 耗时 ↓"], ...["随机策略", "启发式方法", "基线方法 A", "基线方法 B", "对比方法 C", "局部搜索", "传统优化", "轻量模型", "消融模型", "本文方法"].map((n) => [n, ...Array(4).fill("00.00 ± 00.00")])];
+    results.modules = [t];
+    const figures = blankSlide();
+    figures.section = "03";
+    figures.group = "实验与分析";
+    figures.title = "图像证据与结果解释";
+    figures.lead = "并列呈现图像或视频，图标题和说明占用独立空间，不覆盖媒体区域。";
+    const f = moduleOf("media", { ...SAFE }, 2);
+    f.parts[0].caption = "图 2　对比实验";
+    f.parts[1].caption = "图 3　运行过程";
+    figures.modules = [f];
+    const p = { version: 1, title: "科研汇报", theme: { ...defaultTheme }, grid: 20, slides: [{ ...blankSlide(), kind: "cover", title: "科研汇报\n研究进展与方法讨论", lead: "研究问题 · 方法设计 · 实验验证", presenter: "汇报人姓名", institute: "学院 / 研究团队", date: "汇报日期" }, background, methods, results, figures, { ...blankSlide(), kind: "closing", title: "感谢聆听，恳请批评指正", lead: "Thank you for your attention", presenter: "汇报人姓名", institute: "学院 / 研究团队", date: "汇报日期" }] };
+    if (withSections) {
+      const toc = makePage("toc"), transitions = ["研究背景", "研究方法", "实验与分析"].map((title) => ({ ...makePage("transition"), title }));
+      p.slides = [p.slides[0], toc, transitions[0], background, transitions[1], methods, transitions[2], results, figures, p.slides[5]];
+    }
+    return syncSections(p);
+  }
+  function validateProject(p) {
+    if (!p || p.version !== 1 || !Array.isArray(p.slides) || !p.slides.length || p.slides.length > 100) throw Error("项目格式不正确，需为本编辑器保存的 HTML 文稿（1–100 页）。");
+    const ids = /* @__PURE__ */ new Set();
+    const checkId = (id) => {
+      if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id) || ids.has(id)) throw Error("页面或模块标识无效、重复。");
+      ids.add(id);
+    };
+    for (const key2 of ["primary", "secondary", "accent", "emphasis", "tint", "ink"]) if (!/^#[\da-f]{6}$/i.test(p.theme?.[key2] || "")) throw Error("主题色格式不正确。");
+    for (const key2 of ["logo", "wordmark"]) if (p.theme[key2] && !/^data:image\/(png|jpeg|webp);base64,/i.test(p.theme[key2])) throw Error("标志必须是内嵌的 PNG/JPEG/WebP 图片。");
+    for (const s of p.slides) {
+      checkId(s.id);
+      if (!["body", "cover", "closing", "toc", "transition"].includes(s.kind) || typeof s.title !== "string" || typeof s.lead !== "string") throw Error("页面类型或标题格式无效。");
+      if (!Array.isArray(s.modules) || s.modules.length > 40) throw Error("每页最多 40 个模块。");
+      for (const m of s.modules) {
+        checkId(m.id);
+        if (m.type === "text" && m.style === "group") m.innerStyle = "plain";
+        if (!["text", "table", "media", "shape"].includes(m.type) || !Array.isArray(m.parts) || !m.parts.length || m.parts.length > 12) throw Error("模块类型或子区域数量无效。");
+        for (const k of ["x", "y", "w", "h"]) if (!Number.isFinite(m[k])) throw Error("模块坐标无效。");
+        if (m.type === "table" && (!Array.isArray(m.rows) || !m.rows.length || m.rows.length > 100 || m.rows.some((r) => !Array.isArray(r) || !r.length || r.length > 30))) throw Error("表格最多 100 行、30 列，且不能为空。");
+        for (const a of m.parts) {
+          if (typeof a.text !== "string" || typeof a.title !== "string") throw Error("子区域文字格式无效。");
+          if (a.asset && !/^data:(image\/(png|jpeg|webp)|video\/(mp4|webm));base64,/i.test(a.asset.src || "")) throw Error("媒体格式不受支持。");
+        }
+      }
+    }
+    return syncSections(p);
+  }
+
+  // src/render.js
+  var esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  function themeCSS(t) {
+    return ["primary", "secondary", "accent", "emphasis", "tint", "ink"].map((k) => `--${k}:${t[k]}`).join(";");
+  }
+  var editable = (edit, attrs) => edit ? `contenteditable="plaintext-only" spellcheck="false" ${attrs}` : "";
+  function textBody(p, i, edit) {
+    let lines = p.text.split("\n");
+    return `<div class="paragraph ${p.bullet ? "bulleted" : ""}" data-marker="${esc(p.marker || "•")}" style="--marker:&quot;${esc(p.marker || "•")}&quot;" data-text data-part="${i}" data-field="text" ${editable(edit, "")}>${p.bullet ? lines.map((t) => `<div>${esc(t) || "<br>"}</div>`).join("") : lines.map((t) => esc(t)).join("<br>")}</div>`;
+  }
+  function renderModule(m, edit = false) {
+    let content = "";
+    const cols = Math.min(m.columns || m.parts.length, m.parts.length) || 1;
+    if (m.type === "text") content = textModuleHTML(m, { esc, editable, textBody, edit });
+    if (m.type === "media") content = `<div class="media-parts" style="--cols:${cols}">${m.parts.map((p, i) => `<figure class="media-part" data-shape><div class="media-window ${p.asset ? "has-asset" : ""}" data-media-part="${i}" data-ratio="${p.asset?.ratio || 16 / 9}">${p.asset ? `<div class="media-crop"><${p.asset.kind === "video" ? 'video controls preload="metadata"' : "img"} src="${esc(p.asset.src)}" ${p.asset.kind === "video" ? "muted playsinline" : ""} alt="${esc(p.caption)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}></div>` : `<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption !== false ? `<figcaption><div class="figure-title" data-text data-part="${i}" data-field="caption" ${editable(edit, "")}>${esc(p.caption)}</div>${p.captionMode !== "title" ? `<div class="figure-note" data-text data-part="${i}" data-field="note" ${editable(edit, "")}>${esc(p.note)}</div>` : ""}</figcaption>` : ""}</figure>`).join("")}</div>`;
+    if (m.type === "table") {
+      const skip = /* @__PURE__ */ new Set(), merges = m.merges || [];
+      for (const a of merges) for (let r = a.top; r <= a.bottom; r++) for (let c = a.left; c <= a.right; c++) if (r !== a.top || c !== a.left) skip.add(`${r},${c}`);
+      content = `<div class="table-wrap"><table class="data-table"><tbody>${m.rows.map((row, r) => `<tr>${row.map((value, c) => {
+        if (skip.has(`${r},${c}`)) return "";
+        const merge = merges.find((a) => a.top === r && a.left === c);
+        const tag = r < (m.headerRows || 1) ? "th" : "td";
+        return `<${tag} data-shape ${merge ? `rowspan="${merge.bottom - r + 1}" colspan="${merge.right - c + 1}"` : ""}><div data-text data-row="${r}" data-col="${c}" ${editable(edit, "")}>${esc(value)}</div></${tag}>`;
+      }).join("")}</tr>`).join("")}</tbody></table><p class="table-note" data-text>↑ 越大越好；↓ 越小越好。单元格左右各保留至少半个字符间距。</p></div>`;
+    }
+    if (m.type === "shape") content = `<div class="graphic-shape" data-shape style="background:var(--primary)"></div>`;
+    return `<div class="module ${m.type}-module" data-module="${m.id}" style="left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{ text: "文字", media: "图像 / 视频", table: "表格", shape: "图形" }[m.type]}</span></div>`;
+  }
+  function renderSlide(s, theme, index2, total, edit = false, project2 = null) {
+    if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${editable(edit, "")}>${esc(s.title)}</h1><p data-text data-slide-field="lead" ${editable(edit, "")}>${esc(s.lead)}</p></div><footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${esc(s.footer ?? theme.name + " · 科研汇报")}</span><span></span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span></footer></section>`;
+    if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${editable(edit, "")}>${esc(s.title)}</h1><p data-text data-slide-field="lead" ${editable(edit, "")}>${esc(s.lead)}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text>${n}</th><td data-text data-slide-field="${k}" ${editable(edit, "")}>${esc(s[k])}</td></tr>`).join("")}</table></section>`;
+    const outline = s.kind === "toc" && project2 ? documentSections(project2) : [];
+    const content = s.kind === "toc" ? `<div class="toc-list ${outline.length > 4 ? "two-columns" : ""}">${outline.length ? outline.map((ch) => `<article class="toc-item"><div class="toc-number" data-text>${esc(ch.number)}</div><div class="toc-info"><a class="toc-title" data-text data-jump="${ch.index}" data-target-index="${ch.index}" href="#slide-${ch.id}">${esc(ch.title)}</a><div class="toc-note" data-text data-toc-note="${ch.id}" data-placeholder="在章节名称下添加注释" ${editable(edit, "")}>${esc(s.tocNotes?.[ch.id] || "")}</div></div><span class="toc-divider" data-shape></span></article>`).join("") : '<p class="toc-empty" data-text>添加过渡页后，这里会自动生成章节目录。</p>'}</div>` : `<div class="module-layer">${s.modules.map((m) => renderModule(m, edit)).join("")}</div>`;
+    return `<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${editable(edit, "")}>${esc(s.title)}</h2>${theme.logo ? `<img class="slide-logo" data-image src="${esc(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${editable(edit, "")}>${esc(s.lead)}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${editable(edit, "")}>${esc(s.summary)}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${esc(s.footer ?? theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^https?:\/\//.test(s.sourceUrl) ? esc(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${esc(s.source)}</a>` : esc(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`;
+  }
+  function fitMedia(el) {
+    for (const window2 of el.querySelectorAll(".media-window.has-asset")) {
+      const media = window2.querySelector("img,video");
+      if (!media) continue;
+      const ratio = Number(window2.dataset.ratio) || 16 / 9;
+      const w = Math.min(window2.clientWidth, window2.clientHeight * ratio), h = w / ratio;
+      const crop = media.parentElement;
+      if (crop === window2) continue;
+      crop.style.width = w + "px";
+      crop.style.height = h + "px";
+    }
+  }
+  function fitTable(el) {
+    fitMedia(el);
+    const table = el.querySelector(".data-table");
+    if (!table) return;
+    const wrap = table.parentElement;
+    for (let pt = 14; pt >= 8; pt--) {
+      table.style.fontSize = `${pt / 0.6}px`;
+      table.style.setProperty("--cell-pad", `${Math.max(3, pt - 7)}px`);
+      if (wrap.scrollHeight <= wrap.clientHeight + 1 && table.scrollWidth <= wrap.clientWidth + 1) break;
+    }
+  }
+  function flowHeight(element) {
+    const style = getComputedStyle(element), scale2 = element.getBoundingClientRect().width / (element.offsetWidth || 1) || 1;
+    const children = [...element.children].filter((child) => {
+      const c = getComputedStyle(child);
+      return c.position !== "absolute" && c.position !== "fixed" && c.display !== "none";
+    });
+    const gap = parseFloat(style.rowGap) || 0;
+    return children.reduce((sum, child) => sum + child.getBoundingClientRect().height / scale2 + (parseFloat(getComputedStyle(child).marginTop) || 0) + (parseFloat(getComputedStyle(child).marginBottom) || 0), 0) + Math.max(0, children.length - 1) * gap + (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0) + (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
+  }
+  function measuredHeight(el, m) {
+    if (m.type === "text") {
+      const grid = el.querySelector(".text-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, parts = [...grid.querySelectorAll(".text-part")];
+      let height = 0;
+      for (let row = 0; row < Math.ceil(parts.length / cols); row++) height += Math.max(...parts.slice(row * cols, (row + 1) * cols).map(flowHeight));
+      const gap = parseFloat(getComputedStyle(grid).rowGap) || 0, shell = el.querySelector(".text-group-shell");
+      const extra = shell ? (el.querySelector(".module-content").getBoundingClientRect().height - grid.getBoundingClientRect().height) / (el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1) : 0;
+      return height + Math.max(0, Math.ceil(parts.length / cols) - 1) * gap + Math.max(0, extra);
+    }
+    if (m.type === "media") {
+      const grid = el.querySelector(".media-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, figures = [...el.querySelectorAll("figure")];
+      let height = 0;
+      const needed = (f) => {
+        const style = getComputedStyle(f), scale2 = f.getBoundingClientRect().width / (f.offsetWidth || 1) || 1, caption = f.querySelector("figcaption");
+        return (caption ? caption.getBoundingClientRect().height / scale2 + (parseFloat(style.rowGap) || 0) : 0) + 80 + (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
+      };
+      for (let row = 0; row < Math.ceil(figures.length / cols); row++) height += Math.max(...figures.slice(row * cols, (row + 1) * cols).map(needed));
+      return height + Math.max(0, Math.ceil(figures.length / cols) - 1) * (parseFloat(getComputedStyle(grid).rowGap) || 0);
+    }
+    return 80;
+  }
+  function audit(slideEl, model) {
+    const errors = [];
+    if (model.kind === "transition") {
+      const content = slideEl.querySelector(".transition-content");
+      if (content.scrollHeight > content.clientHeight + 2) errors.push("过渡页文字过长，请精简。");
+      return errors;
+    }
+    if (model.kind === "cover" || model.kind === "closing") {
+      const band = slideEl.querySelector(".cover-band");
+      if (band.scrollHeight > band.clientHeight + 2) errors.push("封面标题过长，请精简或手动分成两行。");
+      const info = slideEl.querySelector(".cover-info");
+      if (info.offsetTop + info.offsetHeight > 880) errors.push("署名内容过长，请精简。");
+      return errors;
+    }
+    const heading = slideEl.querySelector("h2");
+    if (heading.scrollHeight > heading.clientHeight + 2) errors.push("页面标题过长，请精简。");
+    const lead = slideEl.querySelector(".slide-lead");
+    if (lead.offsetTop + lead.scrollHeight > SAFE.y - 16) errors.push("页首句过长：请精简或分成其他页面。");
+    const summary = slideEl.querySelector(".slide-summary");
+    if (summary && summary.scrollHeight > summary.clientHeight + 2) errors.push("页尾总结过长，请精简为一行。");
+    if (model.kind === "toc") {
+      const list = slideEl.querySelector(".toc-list"), overflow = list.scrollHeight > list.clientHeight + 2 || [...list.querySelectorAll(".toc-info")].some((el) => el.scrollHeight > el.clientHeight + 2);
+      list.classList.toggle("overflowing", overflow);
+      if (overflow) errors.push("目录注释或条目过长，请精简或拆分章节。");
+      return errors;
+    }
+    for (const m of model.modules) {
+      if (model.summary && m.y + m.h > 726) errors.push("模块进入页尾总结区域，请缩小或上移。");
+      const el = slideEl.querySelector(`[data-module="${m.id}"]`);
+      if (!el) continue;
+      fitTable(el);
+      const target = m.type === "table" ? el.querySelector(".table-wrap") : el.querySelector(".module-content");
+      const clippedPart = m.type === "text" && [...el.querySelectorAll(".text-part")].some((part2) => flowHeight(part2) > part2.getBoundingClientRect().height / (el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1) + 2);
+      const overflow = target.scrollHeight > target.clientHeight + 2 || target.scrollWidth > target.clientWidth + 2 || measuredHeight(el, m) > m.h + 2 || clippedPart;
+      el.classList.toggle("overflowing", overflow);
+      if (overflow) errors.push(`${m.id}：内容溢出，请删改或扩大模块。`);
+    }
+    return errors;
+  }
+
+  // src/viewer.js
+  var SlideViewer = class {
+    constructor({ root, getProject, getIndex, onIndex, onRender, onPresent }) {
+      Object.assign(this, { root, getProject, getIndex, onIndex, onRender, onPresent });
+      this.mode = "scroll";
+      this.columns = 2;
+      this.present = false;
+      this.overview = false;
+      this.zoom = 1;
+      this.pan = { x: 0, y: 0 };
+      this.wheelUntil = 0;
+      this.restoreEscapeAt = 0;
+      root.addEventListener("wheel", (e) => this.wheel(e), { passive: false });
+      root.addEventListener("pointerdown", (e) => this.pointer(e));
+      document.addEventListener("fullscreenchange", () => {
+        if (document.fullscreenElement || !this.present || this.ending) return;
+        if (this.zoom > 1.001 || Date.now() - this.restoreEscapeAt < 700) {
+          this.resetZoom();
+          this.updateHUD();
+          return;
+        }
+        this.end();
+      });
+    }
+    render({ mode: mode2 = "text", showGrid: showGrid2 = false, grid = 20, selected: selected2 = null, drawing: drawing2 = false } = {}) {
+      const project2 = this.getProject(), index2 = this.getIndex(), scroll = this.root.parentElement.scrollTop;
+      const all = this.present ? this.overview : this.mode !== "single";
+      const slides = all ? project2.slides.map((s, i) => ({ s, i })) : [{ s: project2.slides[index2], i: index2 }];
+      this.root.className = `pages-surface ${this.present && this.overview ? "presentation-overview" : !this.present ? "view-" + this.mode : "presentation-stage"}`;
+      this.root.style.setProperty("--view-columns", this.present ? 4 : this.mode === "grid" ? this.columns : 1);
+      this.root.innerHTML = slides.map(({ s, i }) => `<article class="view-page ${i === index2 ? "is-current" : ""}" data-view-page="${i}"><div class="view-page-label"><b>${String(i + 1).padStart(2, "0")}</b><span>${this.escape(s.title.split("\n")[0])}</span><small>${this.present ? "双击继续放映" : this.mode === "grid" ? "双击放映" : ""}</small></div><div ${i === index2 ? 'id="canvas"' : ""} class="canvas-frame mode-${mode2}${showGrid2 && !this.present ? " show-grid" : ""}${drawing2 && i === index2 ? " draw-mode" : ""}" style="--grid:${grid}px">${renderSlide(s, project2.theme, i, project2.slides.length, i === index2 && mode2 === "text" && !this.present && this.mode !== "grid", project2)}</div></article>`).join("");
+      if (selected2) this.root.querySelector(`#canvas [data-module="${selected2}"]`)?.classList.add("selected");
+      this.fit();
+      this.root.querySelectorAll(".module").forEach(fitTable);
+      this.root.parentElement.scrollTop = scroll;
+      this.updateHUD();
+    }
+    escape(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    }
+    fit() {
+      for (const preview of document.querySelectorAll(".thumb-preview")) {
+        const slide2 = preview.querySelector(".slide");
+        if (slide2) slide2.style.transform = `scale(${preview.clientWidth / W})`;
+      }
+      const shell = document.querySelector(".shell");
+      document.documentElement.style.setProperty("--chrome-height", Math.ceil(shell?.getBoundingClientRect().top || 126) + "px");
+      for (const frame of this.root.querySelectorAll(".canvas-frame")) {
+        let available = frame.parentElement.clientWidth;
+        if (this.present && !this.overview) available = Math.min(available, innerHeight * W / H);
+        const scale2 = this.present && !this.overview ? available / W : Math.min(available / W, 1);
+        frame.dataset.baseScale = scale2;
+        frame.style.width = W * scale2 + "px";
+        frame.style.height = H * scale2 + "px";
+        frame.querySelector(".slide").style.transform = `scale(${scale2})`;
+      }
+      if (this.present && !this.overview) this.transform();
+    }
+    setView(mode2, columns = this.columns) {
+      if (!["single", "scroll", "grid"].includes(mode2)) return;
+      this.mode = mode2;
+      this.columns = Math.max(1, Math.min(6, Number(columns) || 2));
+      this.onRender();
+      this.scrollTo(this.getIndex(), false);
+    }
+    scrollTo(index2, smooth = true) {
+      if (this.present || this.mode === "single") return;
+      this.root.querySelector(`[data-view-page="${index2}"]`)?.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "instant" });
+    }
+    async start(index2 = this.getIndex()) {
+      if (this.exitPromise) await this.exitPromise;
+      this.lastDrag = 0;
+      if (!this.present) this.previous = { mode: this.mode, columns: this.columns, scroll: this.root.parentElement.scrollTop };
+      this.onIndex(index2);
+      this.present = true;
+      this.overview = false;
+      this.resetZoom(false);
+      this.onPresent(true);
+      this.onRender();
+      try {
+        if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+        await navigator.keyboard?.lock?.(["Escape"]);
+      } catch {
+      }
+      this.fit();
+    }
+    end() {
+      if (!this.present) return;
+      this.present = false;
+      this.overview = false;
+      this.resetZoom(false);
+      this.onPresent(false);
+      navigator.keyboard?.unlock?.();
+      if (document.fullscreenElement) {
+        this.ending = true;
+        this.exitPromise = document.exitFullscreen().catch(() => {
+        }).finally(() => {
+          this.ending = false;
+          this.exitPromise = null;
+        });
+      }
+      if (this.previous) {
+        this.mode = this.previous.mode;
+        this.columns = this.previous.columns;
+      }
+      this.onRender();
+      if (this.previous) this.root.parentElement.scrollTop = this.previous.scroll;
+    }
+    select(index2, { scroll = true } = {}) {
+      if (index2 < 0 || index2 >= this.getProject().slides.length) return;
+      if (this.present && this.overview) {
+        this.onIndex(index2);
+        this.root.querySelectorAll(".view-page").forEach((el) => {
+          const active = Number(el.dataset.viewPage) === index2;
+          el.classList.toggle("is-current", active);
+          const frame = el.querySelector(".canvas-frame");
+          if (active) frame.id = "canvas";
+          else frame.removeAttribute("id");
+        });
+        return;
+      }
+      this.onIndex(index2);
+      this.resetZoom(false);
+      this.onRender();
+      if (scroll) this.scrollTo(index2);
+    }
+    doubleClick(e) {
+      const thumb = e.target.closest(".slide-thumb[data-page]");
+      if (thumb) {
+        this.start(Number(thumb.dataset.page));
+        return true;
+      }
+      const page = e.target.closest("[data-view-page]");
+      if (!page || !this.root.contains(page)) return false;
+      if (this.present) {
+        if (Date.now() - (this.lastDrag || 0) < 300) return true;
+        if (this.overview) {
+          this.onIndex(Number(page.dataset.viewPage));
+          this.overview = false;
+          this.resetZoom(false);
+        } else {
+          this.overview = true;
+          this.resetZoom(false);
+        }
+        this.onRender();
+        if (this.overview) this.root.querySelector(".is-current")?.scrollIntoView({ block: "center" });
+        return true;
+      }
+      if (this.mode === "grid") {
+        this.start(Number(page.dataset.viewPage));
+        return true;
+      }
+      return false;
+    }
+    key(e) {
+      if (!this.present) return false;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (this.zoom > 1.001) {
+          this.restoreEscapeAt = Date.now();
+          this.resetZoom();
+        } else this.end();
+        return true;
+      }
+      if (this.overview) return false;
+      const keys = { ArrowRight: 1, ArrowDown: 1, PageDown: 1, " ": 1, ArrowLeft: -1, ArrowUp: -1, PageUp: -1 };
+      if (e.key in keys) {
+        e.preventDefault();
+        this.select(this.getIndex() + keys[e.key], { scroll: false });
+        return true;
+      }
+      if (e.key === "Home" || e.key === "End") {
+        e.preventDefault();
+        this.select(e.key === "Home" ? 0 : this.getProject().slides.length - 1, { scroll: false });
+        return true;
+      }
+      return false;
+    }
+    wheel(e) {
+      if (!this.present) return;
+      if (this.overview) {
+        if (e.ctrlKey) e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      if (e.ctrlKey) {
+        const frame = this.root.querySelector("#canvas"), r = frame.getBoundingClientRect(), next = Math.max(1, Math.min(4, this.zoom * Math.exp(-e.deltaY * 2e-3)));
+        const k = next / this.zoom, x = e.clientX - r.left, y = e.clientY - r.top;
+        this.pan.x = x - (x - this.pan.x) * k;
+        this.pan.y = y - (y - this.pan.y) * k;
+        this.zoom = next;
+        this.transform();
+        return;
+      }
+      if (Date.now() < this.wheelUntil || Math.abs(e.deltaY) < 2) return;
+      this.wheelUntil = Date.now() + 350;
+      this.select(this.getIndex() + (e.deltaY > 0 ? 1 : -1), { scroll: false });
+    }
+    pointer(e) {
+      if (!this.present || this.overview || this.zoom <= 1.001 || e.button !== 0 || e.target.closest("video,button,a")) return;
+      const frame = e.target.closest("#canvas");
+      if (!frame) return;
+      e.preventDefault();
+      frame.setPointerCapture(e.pointerId);
+      frame.classList.add("dragging");
+      const start2 = { x: e.clientX, y: e.clientY, pan: { ...this.pan } };
+      const move = (event) => {
+        const dx = event.clientX - start2.x, dy = event.clientY - start2.y;
+        this.pan.x = start2.pan.x + dx;
+        this.pan.y = start2.pan.y + dy;
+        if (Math.abs(dx) + Math.abs(dy) > 4) this.lastDrag = Date.now();
+        this.transform();
+      };
+      const end = () => {
+        frame.classList.remove("dragging");
+        frame.removeEventListener("pointermove", move);
+        frame.removeEventListener("pointerup", end);
+        frame.removeEventListener("pointercancel", end);
+      };
+      frame.addEventListener("pointermove", move);
+      frame.addEventListener("pointerup", end);
+      frame.addEventListener("pointercancel", end);
+    }
+    transform() {
+      const frame = this.root.querySelector("#canvas");
+      if (!frame || !this.present || this.overview) return;
+      if (this.zoom <= 1.001) {
+        this.zoom = 1;
+        this.pan = { x: 0, y: 0 };
+      }
+      this.pan.x = Math.max(-frame.clientWidth * (this.zoom - 1), Math.min(0, this.pan.x));
+      this.pan.y = Math.max(-frame.clientHeight * (this.zoom - 1), Math.min(0, this.pan.y));
+      frame.querySelector(".slide").style.transform = `translate(${this.pan.x}px,${this.pan.y}px) scale(${Number(frame.dataset.baseScale) * this.zoom})`;
+      frame.classList.toggle("zoomed", this.zoom > 1.001);
+      this.updateHUD();
+    }
+    resetZoom(apply = true) {
+      this.zoom = 1;
+      this.pan = { x: 0, y: 0 };
+      if (apply) this.transform();
+    }
+    updateHUD() {
+      document.body.classList.toggle("presentation-overview-mode", this.present && this.overview);
+      const hud = document.querySelector("#present-hud");
+      if (hud) {
+        hud.hidden = !this.present;
+        hud.querySelector("span").textContent = this.overview ? "双击页面继续放映 · Esc 退出" : `${Math.round(this.zoom * 100)}% · Ctrl＋滚轮缩放 · 左键拖动 · 双击总览 · Esc 恢复 / 退出`;
+      }
+    }
+  };
+
+  // src/style-picker.js
+  function styleControls(m) {
+    return `<button data-action="choose-style" style="width:100%;margin-top:10px">样式编号与悬停预览</button>${["ribbon", "capsule", "arrow", "group"].includes(m.style) ? `<label>标题装饰长度 <span id="header-width-value">${m.headerWidth || 70}%</span></label><input id="module-header-width" type="range" min="25" max="100" step="5" value="${m.headerWidth || 70}">` : ""}${m.style === "group" ? '<p class="hint">C2 内部固定为无底色默认分组，以标题、正文及细线区分。</p>' : ""}${m.style === "numbered" ? `<label>起始序号</label><input id="number-start" type="number" min="1" max="99" value="${m.numberStart || 1}"><label><input id="show-subheading" type="checkbox" ${m.parts.some((p) => p.showSubheading) ? "checked" : ""}> 正文加粗子标题（16pt）</label><label><input id="show-annotation" type="checkbox" ${m.parts.some((p) => p.showAnnotation) ? "checked" : ""}> 补充注释（14pt）</label>` : ""}`;
+  }
+  function stylePickerBody(m) {
+    return `<div class="style-picker"><div class="style-list" role="group" aria-label="文本块样式编号">${TEXT_STYLES.map(([id, code, name, description]) => `<button type="button" class="style-option" data-style-id="${id}" aria-pressed="${m.style === id}" title="${esc(description)}"><span class="style-code">${code}</span><span>${name}</span></button>`).join("")}</div><div class="style-live-preview"><div class="style-preview-frame" id="style-preview-frame"><div class="style-preview-canvas" id="style-preview-canvas"></div></div><div id="style-preview-copy" class="style-preview-copy"></div><p class="hint">悬停编号或用键盘聚焦可预览，单击选择，点击“应用样式”才修改模块。原文字会保留。</p></div></div><div class="style-picker-options"><label>标题装饰长度 <input id="style-header-width" type="range" min="25" max="100" step="5" value="${m.headerWidth || 70}"><span id="style-header-label">${m.headerWidth || 70}%</span></label></div>`;
+  }
+  function drawStylePreview(id, theme, width = 70) {
+    const frame = document.querySelector("#style-preview-frame"), canvas = document.querySelector("#style-preview-canvas");
+    if (!frame || !canvas) return;
+    const count = id === "numbered" ? 1 : 2;
+    const m = { id: "style-preview", type: "text", style: id, x: 0, y: 0, w: 600, h: 520, columns: 1, headerWidth: Number(width), groupTitle: "模块大标题", innerStyle: "plain", parts: Array.from({ length: count }, (_, i) => ({ ...part(), title: `${i ? "分项" : "文段"}标题${i + 1}`, text: id === "note" ? "浅底无标题备注文字。\n多项文字块竖向保持间距。" : "正文内容两端对齐。\n标题与内容保留清晰层级。", subheading: "正文加粗子标题", annotation: "14pt 注释信息，可分点说明。", showSubheading: id === "numbered", showAnnotation: id === "numbered" })) };
+    canvas.style.cssText = themeCSS(theme);
+    canvas.innerHTML = renderModule(m);
+    const s = Math.min(1, (frame.parentElement.clientWidth - 34) / 600);
+    frame.style.width = 600 * s + "px";
+    frame.style.height = 520 * s + "px";
+    canvas.style.transform = `scale(${s})`;
+    const spec = styleInfo(id);
+    document.querySelector("#style-preview-copy").textContent = `${spec[1]} · ${spec[2]}：${spec[3]}。标题 18pt，正文 16pt；示意文字仅用于预览。`;
+  }
+
+  // src/layout.js
+  var right = (r) => r.x + r.w;
+  var bottom = (r) => r.y + r.h;
+  function intersects(a, b, gap = GAP) {
+    return a.x < right(b) + gap - 0.1 && right(a) + gap > b.x + 0.1 && a.y < bottom(b) + gap - 0.1 && bottom(a) + gap > b.y + 0.1;
+  }
+  function inside(r, b = SAFE) {
+    return r.x >= b.x - 0.1 && r.y >= b.y - 0.1 && right(r) <= right(b) + 0.1 && bottom(r) <= bottom(b) + 0.1 && r.w >= 100 && r.h >= 80;
+  }
+  function snap(v, step, base = 0) {
+    return base + Math.round((v - base) / step) * step;
+  }
+  function findSpace(modules, step = 20, bounds = SAFE) {
+    let best = null;
+    const xs = [bounds.x, ...modules.map((m) => bounds.x + Math.ceil((right(m) + GAP - bounds.x) / step) * step).filter((x) => x < right(bounds))];
+    const ys = [bounds.y, ...modules.map((m) => bounds.y + Math.ceil((bottom(m) + GAP - bounds.y) / step) * step).filter((y) => y < bottom(bounds))];
+    for (const x of xs) for (const y of ys) {
+      const rights = [right(bounds), ...modules.filter((m) => m.x > x).map((m) => m.x - GAP)];
+      for (const r of rights) {
+        let end = bottom(bounds);
+        for (const m of modules) if (m.x < r + GAP && right(m) + GAP > x && bottom(m) + GAP > y) {
+          if (m.y - GAP < y) {
+            end = y;
+            break;
+          }
+          end = Math.min(end, m.y - GAP);
+        }
+        const candidate = { x, y, w: Math.floor((r - x) / step) * step, h: Math.floor((end - y) / step) * step };
+        if (inside(candidate, bounds) && !modules.some((m) => intersects(candidate, m)) && (!best || candidate.w * candidate.h > best.w * best.h)) best = candidate;
+      }
+    }
+    return best;
+  }
+  function planChange(modules, id, rect, step = 20, bounds = SAFE) {
+    const copy = clone(modules), changed = copy.find((m) => m.id === id);
+    if (!changed || !inside(rect, bounds)) return null;
+    Object.assign(changed, rect);
+    const queue = [changed], moved = /* @__PURE__ */ new Set([id]);
+    let n = 0;
+    while (queue.length && n++ < 120) {
+      const a = queue.shift();
+      for (const b of copy) {
+        if (a.id === b.id || !intersects(a, b)) continue;
+        if (b.id === id) return null;
+        const down = { ...b, y: bounds.y + Math.ceil((bottom(a) + GAP - bounds.y) / step) * step };
+        const side = { ...b, x: bounds.x + Math.ceil((right(a) + GAP - bounds.x) / step) * step };
+        const opts = [down, side].filter((r) => inside(r, bounds) && !copy.some((c) => moved.has(c.id) && c.id !== b.id && intersects(c, r))).sort((u, v) => u.x - b.x + u.y - b.y - (v.x - b.x + v.y - b.y));
+        if (!opts.length) return null;
+        Object.assign(b, opts[0]);
+        moved.add(b.id);
+        queue.push(b);
+      }
+    }
+    if (queue.length || copy.some((a, i) => !inside(a, bounds) || copy.slice(i + 1).some((b) => intersects(a, b)))) return null;
+    return copy;
+  }
+  function anchoredResize(m, dx, dy, anchor = "tl") {
+    const r = { x: m.x, y: m.y, w: m.w + dx, h: m.h + dy };
+    if (anchor.includes("r")) r.x -= dx;
+    if (anchor.startsWith("b")) r.y -= dy;
+    return r;
+  }
+
+  // src/app.js
+  var viewer;
+  var adjustMultiplier = 1;
+  var holdTimer;
+  var holdInterval;
+  var holdUsed = false;
+  var holdSuppressUntil = 0;
+  var project;
+  var index = 0;
+  var mode = "text";
+  var selected = null;
+  var showGrid = false;
+  var drawing = false;
+  var drawRect = null;
+  var scale = 1;
+  var history = [];
+  var future = [];
+  var timer;
+  var saveTimer;
+  var present = false;
+  var styleTarget = null;
+  var styleChoice = "plain";
+  var styleHovered = null;
+  var currentAsset = null;
+  var mediaTarget = null;
+  var sheets = [];
+  var runtimeCSS = "";
+  var runtimeBundle = "";
+  function pageBounds() {
+    return { ...SAFE, h: slide().summary ? 726 - SAFE.y : SAFE.h };
+  }
+  function adjustModule(kind, operation, count = 1, record = true) {
+    const m = selectedModule();
+    if (!m || present) return false;
+    const anchor = $("#resize-anchor")?.value || "tl", d = project.grid;
+    let applied = false;
+    for (let n = 0; n < count; n++) {
+      const current = selectedModule();
+      let rect;
+      if (kind === "resize") {
+        const [dx, dy] = { "w+": [d, 0], "w-": [-d, 0], "h+": [0, d], "h-": [0, -d] }[operation];
+        rect = anchoredResize(current, dx, dy, anchor);
+        if ((dx < 0 || dy < 0) && !testFit(current, rect)) break;
+      } else rect = { x: current.x + (operation === "right" ? d : operation === "left" ? -d : 0), y: current.y + (operation === "down" ? d : operation === "up" ? -d : 0), w: current.w, h: current.h };
+      const plan = planChange(slide().modules, current.id, rect, d, pageBounds());
+      if (!plan) break;
+      if (!applied && record) savePoint();
+      slide().modules = plan;
+      applied = true;
+    }
+    if (applied) {
+      render();
+      persist();
+    }
+    return applied;
+  }
+  function startAdjust(e) {
+    const b = e.target.closest("button[data-resize],button[data-move]");
+    if (!b || b.disabled || e.button !== 0) return;
+    stopAdjust();
+    holdUsed = false;
+    const kind = b.dataset.resize ? "resize" : "move", operation = b.dataset.resize || b.dataset.move, count = e.shiftKey ? 5 : adjustMultiplier;
+    holdTimer = setTimeout(() => {
+      holdUsed = true;
+      let recorded = false;
+      const tick = () => {
+        const ok = adjustModule(kind, operation, count, !recorded);
+        if (ok) recorded = true;
+        else clearInterval(holdInterval);
+      };
+      tick();
+      holdInterval = setInterval(tick, 85);
+    }, 320);
+  }
+  function stopAdjust() {
+    clearTimeout(holdTimer);
+    clearInterval(holdInterval);
+    if (holdUsed) {
+      holdSuppressUntil = Date.now() + 250;
+      holdUsed = false;
+    }
+  }
+  var $ = (s, root = document) => root.querySelector(s);
+  var $$ = (s, root = document) => [...root.querySelectorAll(s)];
+  var slide = () => project.slides[index];
+  var selectedModule = () => slide().modules.find((m) => m.id === selected);
+  var hex = /^#[\da-f]{6}$/i;
+  function toast(t, error = false) {
+    const el = $("#toast");
+    el.textContent = t;
+    el.classList.toggle("error", error);
+    clearTimeout(timer);
+    timer = setTimeout(() => el.textContent = "", 7e3);
+  }
+  function savePoint() {
+    history.push(clone(project));
+    if (history.length > 35) history.shift();
+    future = [];
+  }
+  function persist() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        const db = await database();
+        const t = db.transaction("projects", "readwrite");
+        t.objectStore("projects").put(clone(project), "draft");
+        t.onerror = () => toast("自动保存失败，请立即保存 HTML。", true);
+      } catch {
+        toast("此环境无法自动保存，请使用“保存 HTML”。", true);
+      }
+    }, 650);
+  }
+  function database() {
+    return new Promise((resolve, reject) => {
+      const r = indexedDB.open("html2ppt-web-slide", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("projects");
+      r.onsuccess = () => resolve(r.result);
+      r.onerror = () => reject(r.error);
+    });
+  }
+  async function draft() {
+    try {
+      const db = await database();
+      return await new Promise((resolve, reject) => {
+        const r = db.transaction("projects").objectStore("projects").get("draft");
+        r.onsuccess = () => resolve(r.result);
+        r.onerror = reject;
+      });
+    } catch {
+      return null;
+    }
+  }
+  function download(data, name, type) {
+    const url = URL.createObjectURL(data instanceof Blob ? data : new Blob([data], { type }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 3e4);
+  }
+  async function readData(file) {
+    return await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+  async function raster(src) {
+    const im = new Image();
+    im.src = src;
+    await im.decode();
+    const c = document.createElement("canvas");
+    c.width = Math.min(1600, im.naturalWidth || 1200);
+    c.height = Math.round(c.width * im.naturalHeight / im.naturalWidth);
+    c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
+    return c.toDataURL("image/png");
+  }
+  function dialog(id, title, body, action = "应用") {
+    return `<dialog id="${id}"><form method="dialog"><div class="dialog-head"><h2>${title}</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body">${body}</div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" data-action="${id}-apply">${action}</button></div></form></dialog>`;
+  }
+  function bootUI() {
+    $("#app").innerHTML = `<header class="topbar"><div class="brand"><div class="brand-icon">▤</div><div><strong>Web Slide</strong><small>RESEARCH PRESENTATION STUDIO</small></div></div><button data-action="rename" id="document-caption" class="document-caption" title="修改文件名称"></button><button data-action="new">新建 HTML</button><button data-action="theme">主题与标志</button><button data-action="html" class="primary">保存 HTML</button><button data-action="export-pdf">导出 PDF</button><button data-action="export-pptx">导出 PPTX</button></header><nav class="toolbar"><button data-action="insert">＋ 插入模块</button><button data-action="mode-edit" id="mode-edit">编辑模块</button><button data-action="mode-delete" id="mode-delete" class="danger">删除模块</button><span class="divider"></span><button data-action="mode-text" id="mode-text">编辑文字</button><button data-action="undo" title="撤销修改">↶</button><button data-action="redo" title="重做修改">↷</button><label class="view-controls">视图<select id="view-mode"><option value="single">单页展示</option><option value="scroll">单列滚动</option><option value="grid">多页滚动</option></select><select id="view-columns" aria-label="每行页数">${Array.from({ length: 6 }, (_, i) => `<option value="${i + 1}">每行 ${i + 1} 页</option>`).join("")}</select></label><label><input type="checkbox" id="grid-visible">网格<input type="range" id="grid-step" min="8" max="40" step="4"><span id="grid-label"></span></label><button data-action="draw">圈定范围</button><button data-action="present" class="grow">全屏放映 ▷</button></nav><div class="shell"><aside class="sidebar"><div class="sidebar-heading"><span>幻灯片</span><button data-action="add-slide" title="新增页面">＋</button></div><div id="slides"></div><div class="sidebar-actions"><button data-action="page-up" title="当前页上移">↑ 上移</button><button data-action="page-down" title="当前页下移">↓ 下移</button></div><button data-action="delete-slide" class="danger">删除当前页</button></aside><main class="workspace"><div class="workspace-head"><span id="page-label"></span><span class="mode-pill" id="mode-label"></span></div><div id="pages-surface"></div><div class="below-canvas"><div id="status" class="status" role="status"></div><span>1600 × 900 · 16:9</span></div></main><aside class="inspector" id="inspector"></aside></div><div id="present-hud" class="present-hud" hidden><span></span><button data-action="end-present">退出放映</button></div><div id="toast" class="toast" role="status"></div><div id="dialogs"></div><input id="html-file" type="file" accept=".html,.htm" hidden><input id="excel-file" type="file" accept=".xlsx,.csv" hidden>`;
+    viewer = new SlideViewer({ root: $("#pages-surface"), getProject: () => project, getIndex: () => index, onIndex: (n) => {
+      index = n;
+      selected = null;
+    }, onRender: () => render({ sidebar: false }), onPresent: (value) => {
+      present = value;
+      document.body.classList.toggle("presenting", value);
+    } });
+    document.addEventListener("click", click);
+    document.addEventListener("input", input);
+    document.addEventListener("change", change);
+    document.addEventListener("dblclick", dblclick);
+    document.addEventListener("focusin", (e) => {
+      if (e.target.isContentEditable) savePoint();
+    });
+    document.addEventListener("focusout", (e) => {
+      const el = e.target;
+      if (!el.matches(".paragraph.bulleted[contenteditable]")) return;
+      const m = slide().modules.find((m2) => m2.id === el.closest("[data-module]")?.dataset.module);
+      const p = m?.parts[Number(el.dataset.part)];
+      if (p) el.innerHTML = p.text.split("\n").map((line) => `<div>${esc(line) || "<br>"}</div>`).join("");
+    });
+    document.addEventListener("pointerdown", startAdjust);
+    document.addEventListener("pointerup", stopAdjust);
+    document.addEventListener("pointercancel", stopAdjust);
+    window.addEventListener("blur", stopAdjust);
+    document.addEventListener("keydown", key);
+    window.addEventListener("resize", resizeCanvas);
+    $("#pages-surface").addEventListener("pointerdown", (e) => {
+      if (!present && e.target.closest("#canvas")) startDraw(e);
+    });
+    $("#html-file").onchange = async (e) => {
+      if (e.target.files[0]) await loadHTML(e.target.files[0]);
+      e.target.value = "";
+    };
+    $("#excel-file").onchange = importExcel;
+    document.addEventListener("dragover", (e) => {
+      if (e.dataTransfer?.types.includes("Files")) e.preventDefault();
+    });
+    document.addEventListener("drop", async (e) => {
+      if (!e.dataTransfer?.files.length) return;
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (/\.html?$/i.test(file.name)) await loadHTML(file);
+      else toast("请拖入已保存的 HTML；图片、视频和表格请用各自的插入按钮。", true);
+    });
+  }
+  async function loadHTML(file) {
+    try {
+      const parsed = new DOMParser().parseFromString(await file.text(), "text/html"), data = parsed.querySelector('script#project-data[type="application/json"]');
+      if (!data) throw Error("此文件没有工作台的文稿数据，请选择用“保存 HTML”生成的文件。");
+      const next = validateProject(JSON.parse(data.textContent));
+      if (present) viewer.end();
+      savePoint();
+      project = next;
+      project.title = file.name.replace(/\.html?$/i, "");
+      index = 0;
+      selected = null;
+      mode = "text";
+      render();
+      persist();
+      toast("HTML 已载入，可继续编辑或导出。");
+    } catch (error) {
+      toast(error.message, true);
+    }
+  }
+  function filename(value) {
+    const name = value.trim().replace(/\.html?$/i, "");
+    if (!name || /[<>:"/\\|?*]/.test(name)) throw Error("请填写文件名称，避免使用路径符号或冒号等特殊字符。");
+    return name;
+  }
+  function newPageDialog() {
+    newDialog("add-page-dialog", "新增页面", `<label>页面类型<select id="new-page-kind"><option value="body">普通正文页</option><option value="transition">章节过渡页</option><option value="toc">自动目录页</option><option value="cover">封面页</option><option value="closing">结束页</option></select></label><label>标题（可选）<input id="new-page-title" placeholder="留空使用该类型的默认标题"></label><p class="hint">在当前页后插入。目录读取过渡页的标题与顺序，每一章下可写独立注释。</p>`, "插入页面");
+  }
+  function refreshDerivedPages() {
+    syncSections(project);
+    for (const frame of $$("#pages-surface [data-view-page]")) {
+      const i = Number(frame.dataset.viewPage);
+      if (i === index) continue;
+      const canvas = $(".canvas-frame", frame);
+      canvas.innerHTML = renderSlide(project.slides[i], project.theme, i, project.slides.length, false, project);
+      canvas.querySelectorAll(".module").forEach(fitTable);
+    }
+    viewer.fit();
+  }
+  function updateSidebar() {
+    $("#slides").innerHTML = project.slides.map((s, i) => `<button class="slide-thumb ${i === index ? "current" : ""}" data-page="${i}" aria-label="第 ${i + 1} 页 ${esc(s.title)}"><div class="thumb-preview">${renderSlide(s, project.theme, i, project.slides.length, false, project)}</div><span class="thumb-caption"><b>${String(i + 1).padStart(2, "0")}</b>${esc(s.title.split("\n")[0])}</span></button>`).join("");
+    $$(".slide-thumb .module").forEach(fitTable);
+    viewer.fit();
+  }
+  function render({ sidebar = true } = {}) {
+    syncSections(project);
+    document.title = `${project.title}.html · Web Slide`;
+    $("#document-caption").textContent = project.title + ".html　✎";
+    viewer.render({ mode, showGrid, grid: project.grid, selected, drawing });
+    $("#page-label").textContent = `${String(index + 1).padStart(2, "0")} / ${project.slides.length}　${{ body: "正文页", cover: "封面页", closing: "结束页", toc: "自动目录页", transition: "章节过渡页" }[slide().kind]}`;
+    $("#mode-label").textContent = present ? "放映" : drawing ? "拖动框选模块范围" : { text: "文字编辑 · 不选中模块", edit: "模块编辑 · 内容锁定", delete: "模块删除 · 点击后确认", insert: "插入模块", preview: "预览 · 无编辑选中" }[mode];
+    for (const k of ["text", "edit", "delete"]) $("#mode-" + k).classList.toggle("active", mode === k);
+    $("#view-mode").value = viewer.mode;
+    $("#view-columns").value = viewer.columns;
+    $("#view-columns").hidden = viewer.mode !== "grid";
+    $("#grid-step").value = project.grid;
+    $("#grid-label").textContent = project.grid + " px";
+    $("#grid-visible").checked = showGrid;
+    check();
+    if (sidebar) updateSidebar();
+    else $$(".slide-thumb").forEach((b) => b.classList.toggle("current", Number(b.dataset.page) === index));
+    inspector();
+  }
+  function resizeCanvas() {
+    viewer?.fit();
+  }
+  function check() {
+    const messages = audit($(".slide", $("#canvas")), slide());
+    if (slide().kind === "body") {
+      for (const m of slide().modules) if (!inside(m, pageBounds()) || slide().modules.some((n) => m.id !== n.id && intersects(m, n))) messages.push("模块越界或间距不足，调整后再导出。");
+    }
+    $("#status").textContent = messages.length ? `${messages.length} 项需调整：${messages[0].replace(/^[\da-f-]{20,}：/, "")}` : "已对齐安全区 · 正文固定 16 pt · 表格自适应 8–14 pt";
+    $("#status").classList.toggle("error", messages.length > 0);
+    return messages;
+  }
+  function go(n, options = {}) {
+    if (n === index && !present) {
+      viewer.scrollTo(n);
+      return;
+    }
+    viewer.select(Math.max(0, Math.min(project.slides.length - 1, n)), options);
+  }
+  function inspector() {
+    const m = selectedModule();
+    if (!m) {
+      $("#inspector").innerHTML = `<h2>页面与模块</h2><div class="stat">${slide().modules.length} 个模块<br>模块最小间隙：24 px<br>网格步进：${project.grid} px</div><div class="empty">${mode === "text" ? "直接点击正文即可修改文字。<br>图片 / 视频占位区域可双击上传。" : "点击一个模块，查看尺寸、样式和子区域。"}</div><h3>当前页设置</h3><button data-action="page-settings">标题、页首句与来源</button><h3>排版原则</h3><p class="hint">文字不会自动缩小字号或行距。内容超出时，模块会尝试增高并推开相邻模块；无法容纳时以粗红框提示。</p><p class="hint">所有插图默认为占位区域；图片与视频保持比例。几何图形可单向伸缩。</p>`;
+      return;
+    }
+    const anchor = $("#resize-anchor")?.value || "tl";
+    const options = [["w+", project.grid, 0, "加宽 →"], ["w-", -project.grid, 0, "收窄 ←"], ["h+", 0, project.grid, "增高 ↓"], ["h-", 0, -project.grid, "降低 ↑"]];
+    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div><label>固定顶点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.type === "text" ? `<label>文本块样式</label><select id="module-style">${STYLES.map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media"].includes(m.type) ? `<h3>子区域</h3><label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i) => `<option value="${i + 1}" ${(m.columns || m.parts.length) === i + 1 ? "selected" : ""}>${i + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button><button data-action="remove-part" ${m.parts.length <= 1 ? "disabled" : ""}>－ 子区域</button></div>` : ""}${m.type === "table" ? `<h3>表格数据</h3><button data-action="excel">导入 Excel / CSV</button><button data-action="paste-table" style="margin-top:8px">粘贴表格数据</button><label>表头行数</label><input id="header-rows" type="number" min="0" max="${m.rows.length}" value="${m.headerRows}"><p class="hint">表头采用深色底白字；单元格可在“编辑文字”模式下修改。</p>` : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
+  }
+  function testFit(m, rect) {
+    if (!["text", "media", "table"].includes(m.type)) return true;
+    const container = document.createElement("div");
+    container.className = "slide";
+    container.style.cssText = themeCSS(project.theme) + ";position:fixed;left:-20000px;top:0;visibility:hidden;";
+    container.innerHTML = renderModule({ ...m, ...rect });
+    document.body.append(container);
+    const el = $(".module", container);
+    fitTable(el);
+    const target = m.type === "table" ? $(".table-wrap", el) : $(".module-content", el);
+    const good = measuredHeight(el, m) <= rect.h + 2 && target.scrollHeight <= target.clientHeight + 2 && target.scrollWidth <= target.clientWidth + 2;
+    container.remove();
+    return good;
+  }
+  function canResize(m, dx, dy, anchor) {
+    const rect = anchoredResize(m, dx, dy, anchor);
+    return !!planChange(slide().modules, m.id, rect, project.grid, pageBounds()) && (dx >= 0 && dy >= 0 || testFit(m, rect));
+  }
+  function syncModulePositions() {
+    for (const m of slide().modules) {
+      const el = $(`[data-module="${m.id}"]`, $("#canvas"));
+      if (el) {
+        el.style.left = m.x + "px";
+        el.style.top = m.y + "px";
+        el.style.width = m.w + "px";
+        el.style.height = m.h + "px";
+        fitTable(el);
+      }
+    }
+  }
+  function autoGrow(m) {
+    if (!m) return;
+    const el = $(`[data-module="${m.id}"]`, $("#canvas"));
+    if (!el) return;
+    fitTable(el);
+    const needed = Math.ceil(measuredHeight(el, m) / project.grid) * project.grid;
+    if (needed > m.h + 2) {
+      const rect = { x: m.x, y: m.y, w: m.w, h: needed };
+      const plan = planChange(slide().modules, m.id, rect, project.grid, pageBounds());
+      if (plan) {
+        slide().modules = plan;
+        syncModulePositions();
+      } else {
+        for (let h = Math.floor((pageBounds().y + pageBounds().h - m.y) / project.grid) * project.grid; h > m.h; h -= project.grid) {
+          const p = planChange(slide().modules, m.id, { ...rect, h }, project.grid, pageBounds());
+          if (p) {
+            slide().modules = p;
+            syncModulePositions();
+            break;
+          }
+        }
+      }
+    }
+    check();
+  }
+  function refreshStylePreview(id = styleHovered || styleChoice) {
+    drawStylePreview(id, project.theme, Number($("#style-header-width")?.value || 70));
+    if ($("#style-header-label")) $("#style-header-label").textContent = $("#style-header-width").value + "%";
+  }
+  function openStyleDialog(m) {
+    if (!m || m.type !== "text") return;
+    styleTarget = m.id;
+    styleChoice = m.style || "plain";
+    styleHovered = null;
+    newDialog("style-dialog", "文本块样式 · 默认 / A / B / C", stylePickerBody(m), "应用样式");
+    refreshStylePreview();
+    const dialog2 = $("#style-dialog");
+    dialog2.addEventListener("mouseover", (e) => {
+      const option = e.target.closest("[data-style-id]");
+      if (option) {
+        styleHovered = option.dataset.styleId;
+        refreshStylePreview();
+      }
+    });
+    dialog2.addEventListener("focusin", (e) => {
+      const option = e.target.closest("[data-style-id]");
+      if (option) {
+        styleHovered = option.dataset.styleId;
+        refreshStylePreview();
+      }
+    });
+    $(".style-list", dialog2).addEventListener("mouseleave", () => {
+      styleHovered = null;
+      refreshStylePreview();
+    });
+    dialog2.addEventListener("click", (e) => {
+      const option = e.target.closest("[data-style-id]");
+      if (!option) return;
+      styleChoice = option.dataset.styleId;
+      styleHovered = null;
+      $$("[data-style-id]", dialog2).forEach((b) => b.setAttribute("aria-pressed", String(b === option)));
+      refreshStylePreview();
+    });
+  }
+  function newDialog(id, title, body, action) {
+    $("#dialogs").innerHTML = dialog(id, title, body, action);
+    $("#" + id).showModal();
+  }
+  function closeDialog() {
+    document.querySelector("dialog[open]")?.close();
+  }
+  function insertDialog() {
+    if (slide().kind !== "body") return toast("请先选择正文页，或点击左侧“＋”新增正文页。", true);
+    const space = drawRect || findSpace(slide().modules, project.grid, pageBounds());
+    if (!space) return toast("当前页面没有足够的留白，请缩小已有模块或新增一页。", true);
+    drawRect = space;
+    newDialog("insert-dialog", "插入模块", `<div class="file-note">插入范围：${Math.round(space.w)} × ${Math.round(space.h)} px；${drawing ? "按圈定范围" : "自动选择当前可容纳的最大矩形留白"}。</div><label>模块类型<select id="insert-type"><option value="text">纯文本</option><option value="table">表格</option><option value="media">图像 / 视频（可带长图注）</option><option value="shape">几何箭头</option></select></label><div class="row"><label>子区域数量<input id="insert-count" type="number" min="1" max="12" value="2"></label><label>文本块样式<select id="insert-style">${STYLES.map(([v, n, t]) => `<option value="${v}">${n}　${t}</option>`).join("")}</select></label></div><p class="hint">子区域先均分，可在“编辑模块”中重新分列或增删。表格、几何图形使用单一区域。</p>`, "插入");
+  }
+  async function themeDialog() {
+    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。可选色留空将由主题色派生。</p>`);
+  }
+  function pageSettings() {
+    newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc(slide().title)}</textarea></label><div class="row"><label>章节号<input id="page-section" value="${esc(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>脚注来源文字<input id="page-source" value="${esc(slide().source)}"></label><label>来源链接（http / https）<input id="page-url" value="${esc(slide().sourceUrl)}"></label>`);
+  }
+  async function mediaDialog(m, i) {
+    mediaTarget = { id: m.id, i };
+    currentAsset = clone(m.parts[i].asset);
+    const p = m.parts[i];
+    newDialog("media-dialog", "图片 / 视频与图注", `<label>上传媒体<input id="media-file" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm"></label><div class="crop-preview"><div id="crop-box" class="crop-box"></div></div><div class="row"><label>裁剪比例<select id="media-ratio"><option value="1.7777777777777777">16 : 9</option><option value="1.3333333333333333">4 : 3</option><option value="1">1 : 1</option><option value="original">原始比例（完整显示）</option></select></label><label>等比放大<input id="media-zoom" type="range" min="1" max="3" step=".05" value="${currentAsset?.zoom || 1}"></label><label>水平取景<input id="media-cx" type="range" min="0" max="100" value="${currentAsset?.cx ?? 50}"></label><label>垂直取景<input id="media-cy" type="range" min="0" max="100" value="${currentAsset?.cy ?? 50}"></label></div><label><span><input id="media-caption-show" type="checkbox" ${p.showCaption !== false ? "checked" : ""}> 保留图标题（取消勾选可删除）</span></label><label>图注形式<select id="media-caption-mode"><option value="note">14 pt 图标题 + 12 pt 注释</option><option value="title" ${p.captionMode === "title" ? "selected" : ""}>仅图标题</option></select></label><p class="hint">裁剪只改变可见范围，不拉伸图像。图注增长时先压缩媒体区域，仍无法容纳时会标红。视频支持 MP4 / WebM，单个文件不超过 25 MB。</p>`);
+    if (currentAsset) $("#media-ratio").value = String(currentAsset.ratio);
+    cropPreview();
+  }
+  function cropPreview() {
+    const box = $("#crop-box");
+    if (!box) return;
+    if (!currentAsset) {
+      box.innerHTML = '<p class="hint">选择媒体后预览取景</p>';
+      return;
+    }
+    let r = $("#media-ratio").value === "original" ? currentAsset.naturalRatio : Number($("#media-ratio").value);
+    const w = Math.min(580, 220 * r), h = w / r;
+    box.style.width = w + "px";
+    box.style.height = h + "px";
+    const tag = currentAsset.kind === "video" ? "video" : "img";
+    box.innerHTML = `<${tag} src="${currentAsset.src}" ${tag === "video" ? "muted controls" : ""} style="object-position:${$("#media-cx").value}% ${$("#media-cy").value}%;transform:scale(${$("#media-zoom").value});transform-origin:${$("#media-cx").value}% ${$("#media-cy").value}%">`;
+  }
+  async function click(e) {
+    try {
+      const jump = e.target.closest("[data-jump]");
+      if (jump && $("#pages-surface").contains(jump)) {
+        e.preventDefault();
+        go(Number(jump.dataset.jump));
+        return;
+      }
+      const frame = e.target.closest("[data-view-page]");
+      if (frame && (present && viewer.overview || Number(frame.dataset.viewPage) !== index)) {
+        go(Number(frame.dataset.viewPage), { scroll: false });
+        return;
+      }
+      const button = e.target.closest("button");
+      if (button?.disabled) return;
+      if (button?.dataset.page !== void 0) return go(Number(button.dataset.page));
+      if (button?.dataset.resize || button?.dataset.move) {
+        if (Date.now() < holdSuppressUntil) return;
+        adjustModule(button.dataset.resize ? "resize" : "move", button.dataset.resize || button.dataset.move, e.shiftKey ? 5 : adjustMultiplier);
+        return;
+      }
+      const action = button?.dataset.action;
+      if (!action) {
+        const el = e.target.closest("[data-module]");
+        if (el && $("#canvas").contains(el) && ["edit", "delete"].includes(mode)) {
+          selected = el.dataset.module;
+          $$("#canvas .module.selected").forEach((node) => node.classList.remove("selected"));
+          el.classList.add("selected");
+          inspector();
+          if (mode === "delete") newDialog("delete-dialog", "删除模块", `<p>删除所选模块及其内容？其他模块将保留。</p>`, "确认删除");
+        }
+        return;
+      }
+      if (action.startsWith("mode-")) {
+        mode = mode === action.slice(5) ? "preview" : action.slice(5);
+        selected = null;
+        drawing = false;
+        render();
+        return;
+      }
+      switch (action) {
+        case "new":
+          newDialog("new-dialog", "新建 HTML 文稿", `<label>文件名称<input id="new-document-name" value="未命名文稿"></label><label>初始内容<select id="new-document-content"><option value="blank">空白文稿 · 封面、目录、过渡、正文、尾页</option><option value="examples">完整示例文稿</option></select></label><p class="hint">新建前请先保存当前 HTML。学校主题将沿用当前设置。</p>`, "新建");
+          break;
+        case "new-dialog-apply": {
+          const name = filename($("#new-document-name").value), theme = clone(project.theme);
+          savePoint();
+          project = newDocument(name, $("#new-document-content").value === "examples");
+          project.theme = theme;
+          index = 0;
+          selected = null;
+          closeDialog();
+          render();
+          persist();
+          break;
+        }
+        case "rename":
+          newDialog("rename-dialog", "文件名称", `<label>名称<input id="document-name-input" value="${esc(project.title)}"></label><p class="hint">保存时自动添加 .html，PDF / PPTX 使用相同名称。</p>`);
+          break;
+        case "rename-dialog-apply": {
+          const name = filename($("#document-name-input").value);
+          savePoint();
+          project.title = name;
+          closeDialog();
+          render();
+          persist();
+          break;
+        }
+        case "html":
+          await saveHTML();
+          break;
+        case "export-pdf":
+        case "export-pptx":
+          await exportFile(action.split("-")[1], button);
+          break;
+        case "choose-style":
+          openStyleDialog(selectedModule());
+          break;
+        case "style-dialog-apply": {
+          const m = slide().modules.find((m2) => m2.id === styleTarget);
+          if (!m) throw Error("模块已不存在。");
+          savePoint();
+          m.style = styleChoice;
+          m.headerWidth = Number($("#style-header-width").value);
+          m.innerStyle = "plain";
+          if (styleChoice === "note") m.columns = 1;
+          closeDialog();
+          render();
+          autoGrow(m);
+          persist();
+          break;
+        }
+        case "theme":
+          await themeDialog();
+          break;
+        case "theme-dialog-apply":
+          await applyTheme();
+          break;
+        case "page-settings":
+          pageSettings();
+          break;
+        case "page-dialog-apply": {
+          const url = $("#page-url").value.trim();
+          if (url && !/^https?:\/\//.test(url)) throw Error("来源链接需以 http:// 或 https:// 开头。");
+          if ($("#page-summary").value.trim() && slide().kind === "body") {
+            const proposed = slide().modules.map((m) => ({ ...m, y: SAFE.y + (m.y - SAFE.y) * (726 - SAFE.y) / SAFE.h, h: m.h * (726 - SAFE.y) / SAFE.h }));
+            if (slide().modules.some((m) => m.y + m.h > 726)) {
+              if (proposed.some((m) => !testFit(m, m)) || proposed.some((m, i) => proposed.slice(i + 1).some((n) => intersects(m, n)))) throw Error("页尾总结需要底部留白，请先缩小或上移正文模块，再添加总结。");
+              savePoint();
+              slide().modules = proposed;
+            }
+          }
+          savePoint();
+          for (const k of ["title", "section", "group", "lead", "source", "footer", "summary"]) slide()[k] = $("#page-" + k).value;
+          slide().sourceUrl = url;
+          closeDialog();
+          render();
+          persist();
+          break;
+        }
+        case "insert":
+          drawing = false;
+          drawRect = null;
+          insertDialog();
+          break;
+        case "draw":
+          if (slide().kind !== "body") return toast("请在正文页圈定范围。", true);
+          mode = "insert";
+          drawing = !drawing;
+          selected = null;
+          render();
+          break;
+        case "insert-dialog-apply": {
+          const type = $("#insert-type").value, count = ["table", "shape"].includes(type) ? 1 : Number($("#insert-count").value);
+          if (!Number.isInteger(count) || count < 1 || count > 12) throw Error("子区域数量为 1–12。");
+          const m = moduleOf(type, drawRect, count);
+          m.style = $("#insert-style").value;
+          if (slide().modules.some((n) => intersects(n, m))) throw Error("该范围与已有模块间距不足，请重新圈定。");
+          savePoint();
+          slide().modules.push(m);
+          closeDialog();
+          drawRect = null;
+          drawing = false;
+          selected = m.id;
+          mode = "edit";
+          render();
+          persist();
+          break;
+        }
+        case "delete-dialog-apply":
+          savePoint();
+          slide().modules = slide().modules.filter((m) => m.id !== selected);
+          selected = null;
+          closeDialog();
+          render();
+          persist();
+          break;
+        case "add-slide":
+          newPageDialog();
+          break;
+        case "add-page-dialog-apply": {
+          const s = makePage($("#new-page-kind").value), title = $("#new-page-title").value.trim();
+          if (title) s.title = title;
+          savePoint();
+          project.slides.splice(index + 1, 0, s);
+          index++;
+          selected = null;
+          closeDialog();
+          render();
+          viewer.scrollTo(index);
+          persist();
+          break;
+        }
+        case "page-up":
+        case "page-down": {
+          const n = index + (action === "page-up" ? -1 : 1);
+          if (n < 0 || n >= project.slides.length) return;
+          savePoint();
+          [project.slides[index], project.slides[n]] = [project.slides[n], project.slides[index]];
+          index = n;
+          selected = null;
+          render();
+          viewer.scrollTo(index);
+          persist();
+          break;
+        }
+        case "delete-slide":
+          if (project.slides.length === 1) return toast("至少保留一页。", true);
+          newDialog("delete-slide-dialog", "删除当前页", "<p>确认删除当前幻灯片？</p>", "删除");
+          break;
+        case "delete-slide-dialog-apply":
+          savePoint();
+          project.slides.splice(index, 1);
+          index = Math.min(index, project.slides.length - 1);
+          selected = null;
+          closeDialog();
+          render();
+          persist();
+          break;
+        case "add-part": {
+          const m = selectedModule();
+          savePoint();
+          m.parts.push(part());
+          m.columns = Math.min(m.columns, m.parts.length);
+          render();
+          autoGrow(selectedModule());
+          persist();
+          break;
+        }
+        case "remove-part":
+          newDialog("remove-part-dialog", "删除末尾子区域", "<p>将删除最后一个子区域及其中内容，其余区域重新分配空间。</p>", "删除末尾区域");
+          break;
+        case "remove-part-dialog-apply": {
+          const m = selectedModule();
+          savePoint();
+          m.parts.pop();
+          m.columns = Math.min(m.columns, m.parts.length);
+          closeDialog();
+          render();
+          persist();
+          break;
+        }
+        case "excel":
+          $("#excel-file").click();
+          break;
+        case "paste-table":
+          newDialog("table-dialog", "粘贴表格", '<label>从 Excel 复制后粘贴（制表符分列）<textarea id="table-data" rows="8" placeholder="算法	指标 1	指标 2"></textarea></label>');
+          break;
+        case "table-dialog-apply": {
+          const rows = $("#table-data").value.trim().split(/\r?\n/).map((r) => r.split("	"));
+          if (rows.length > 100 || Math.max(...rows.map((r) => r.length)) > 30) throw Error("单模块最多 100 行、30 列，更多数据请拆页。");
+          savePoint();
+          const m = selectedModule();
+          m.rows = rows;
+          const width = Math.max(...rows.map((r) => r.length));
+          m.rows.forEach((r) => {
+            while (r.length < width) r.push("");
+          });
+          m.merges = [];
+          closeDialog();
+          render();
+          persist();
+          break;
+        }
+        case "excel-dialog-apply": {
+          const sheet = sheets[Number($("#excel-sheet").value)];
+          savePoint();
+          Object.assign(selectedModule(), { rows: sheet.rows, merges: sheet.merges, headerRows: 1 });
+          closeDialog();
+          render();
+          persist();
+          toast("已导入表格，按当前主题重设样式。");
+          break;
+        }
+        case "media-dialog-apply": {
+          const m = slide().modules.find((m2) => m2.id === mediaTarget.id);
+          savePoint();
+          const p = m.parts[mediaTarget.i];
+          if (currentAsset) {
+            const original = $("#media-ratio").value === "original";
+            currentAsset.ratio = original ? currentAsset.naturalRatio : Number($("#media-ratio").value);
+            currentAsset.zoom = Number($("#media-zoom").value);
+            currentAsset.cx = Number($("#media-cx").value);
+            currentAsset.cy = Number($("#media-cy").value);
+            currentAsset.fit = original ? "contain" : "cover";
+            p.asset = currentAsset;
+          }
+          p.showCaption = $("#media-caption-show").checked;
+          p.captionMode = $("#media-caption-mode").value;
+          closeDialog();
+          render();
+          autoGrow(m);
+          persist();
+          break;
+        }
+        case "undo":
+          if (history.length) {
+            future.push(clone(project));
+            project = history.pop();
+            index = Math.min(index, project.slides.length - 1);
+            selected = null;
+            render();
+            persist();
+          }
+          break;
+        case "redo":
+          if (future.length) {
+            history.push(clone(project));
+            project = future.pop();
+            index = Math.min(index, project.slides.length - 1);
+            selected = null;
+            render();
+            persist();
+          }
+          break;
+        case "present":
+          await viewer.start(index);
+          break;
+        case "end-present":
+          viewer.end();
+          break;
+      }
+    } catch (error) {
+      toast(error.message || "操作失败，请重试。", true);
+    }
+  }
+  function key(e) {
+    if (viewer?.key(e)) return;
+    if (present) return;
+    if (e.target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName) || document.querySelector("dialog[open]")) return;
+    if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+      e.preventDefault();
+      click({ target: document.querySelector(`[data-action="${e.shiftKey ? "redo" : "undo"}"]`) });
+    }
+  }
+  function input(e) {
+    const el = e.target;
+    if (el.id === "style-header-width") {
+      refreshStylePreview();
+      return;
+    }
+    if (el.id === "module-header-width") {
+      const target = $("#canvas .module.selected .text-parts") || $("#canvas .module.selected .text-group-shell");
+      target?.style.setProperty("--title-width", el.value + "%");
+      $("#header-width-value").textContent = el.value + "%";
+      return;
+    }
+    if (el.matches("[data-color-for]")) {
+      $("#" + el.dataset.colorFor).value = el.value;
+      return;
+    }
+    if (el.id.startsWith("media-")) return cropPreview();
+    if (el.id === "grid-step") {
+      project.grid = Number(el.value);
+      $("#grid-label").textContent = project.grid + " px";
+      $("#canvas").style.setProperty("--grid", project.grid + "px");
+      inspector();
+      persist();
+      return;
+    }
+    if (!el.isContentEditable || !$("#canvas").contains(el)) return;
+    if (el.dataset.tocNote) {
+      slide().tocNotes ??= {};
+      slide().tocNotes[el.dataset.tocNote] = el.innerText.replace(/\r/g, "");
+    } else if (el.dataset.slideField) {
+      slide()[el.dataset.slideField] = el.innerText.replace(/\r/g, "");
+      if (slide().kind === "transition") {
+        syncSections(project);
+        refreshDerivedPages();
+      }
+    } else {
+      const moduleEl = el.closest("[data-module]");
+      if (!moduleEl) return;
+      const m = slide().modules.find((m2) => m2.id === moduleEl.dataset.module);
+      if (el.dataset.row !== void 0) m.rows[Number(el.dataset.row)][Number(el.dataset.col)] = el.innerText;
+      else if (el.dataset.moduleField) m[el.dataset.moduleField] = el.innerText.replace(/\r/g, "");
+      else m.parts[Number(el.dataset.part)][el.dataset.field] = el.innerText.replace(/\r/g, "");
+      autoGrow(m);
+    }
+    persist();
+    check();
+    clearTimeout(window.thumbTimer);
+    window.thumbTimer = setTimeout(updateSidebar, 500);
+  }
+  async function change(e) {
+    const mediaApply = e.target.id === "media-file" ? $('[data-action="media-dialog-apply"]') : null;
+    if (mediaApply) mediaApply.disabled = true;
+    try {
+      const el = e.target, m = selectedModule();
+      if (el.id === "adjust-multiplier") {
+        adjustMultiplier = Number(el.value);
+        return;
+      }
+      if (el.id === "view-mode" || el.id === "view-columns") {
+        viewer.setView($("#view-mode").value, $("#view-columns").value);
+        return;
+      }
+      if (el.id === "grid-visible") {
+        showGrid = el.checked;
+        render();
+        return;
+      }
+      if (el.id === "resize-anchor") return inspector();
+      if (el.id === "module-style") {
+        savePoint();
+        m.style = el.value;
+        if (m.style === "note") m.columns = 1;
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "module-columns") {
+        savePoint();
+        m.columns = Number(el.value);
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "bullet-marker") {
+        savePoint();
+        m.parts.forEach((p) => {
+          p.bullet = !!el.value;
+          p.marker = el.value || "•";
+        });
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "bullet-custom") {
+        if (/[<>\"';&\\]/.test(el.value)) throw Error("请使用简短的前导符，如 ✓、○、①。");
+        savePoint();
+        m.parts.forEach((p) => {
+          p.bullet = !!el.value;
+          p.marker = el.value || "•";
+        });
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "header-rows") {
+        savePoint();
+        m.headerRows = Math.max(0, Math.min(m.rows.length, Number(el.value)));
+        render();
+        persist();
+      }
+      if (el.id === "module-header-width") {
+        savePoint();
+        m.headerWidth = Number(el.value);
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "number-start") {
+        savePoint();
+        m.numberStart = Math.max(1, Math.min(99, Number(el.value) || 1));
+        render();
+        persist();
+      }
+      if (el.id === "show-subheading" || el.id === "show-annotation") {
+        savePoint();
+        const flag = el.id === "show-subheading" ? "showSubheading" : "showAnnotation", field = el.id === "show-subheading" ? "subheading" : "annotation";
+        m.parts.forEach((p) => {
+          p[flag] = el.checked;
+          if (el.checked && !p[field]) p[field] = field === "subheading" ? "正文子标题" : "补充注释信息";
+        });
+        render();
+        autoGrow(m);
+        persist();
+      }
+      if (el.id === "media-file") {
+        const f = el.files[0];
+        if (!f) return;
+        if (f.size > 25 * 1024 * 1024) throw Error("单个媒体文件不得超过 25 MB。");
+        if (!/^(image\/(png|jpeg|webp)|video\/(mp4|webm))$/.test(f.type)) throw Error("请选择 PNG/JPEG/WebP 或 MP4/WebM 文件。");
+        const src = await readData(f);
+        let ratio;
+        if (f.type.startsWith("image/")) {
+          const im = new Image();
+          im.src = src;
+          await im.decode();
+          ratio = im.naturalWidth / im.naturalHeight;
+        } else {
+          ratio = await new Promise((resolve, reject) => {
+            const v = document.createElement("video");
+            v.preload = "metadata";
+            v.onloadedmetadata = () => resolve(v.videoWidth / v.videoHeight);
+            v.onerror = () => reject(Error("浏览器无法读取这个视频，请转成 H.264 MP4 或 WebM。"));
+            v.src = src;
+          });
+        }
+        currentAsset = { kind: f.type.startsWith("image/") ? "image" : "video", src, name: f.name, mime: f.type, naturalRatio: ratio, ratio: 16 / 9, zoom: 1, cx: 50, cy: 50, fit: "cover" };
+        cropPreview();
+      }
+      if (el.id === "media-ratio") cropPreview();
+    } catch (error) {
+      toast(error.message, true);
+    } finally {
+      if (mediaApply) mediaApply.disabled = false;
+    }
+  }
+  function dblclick(e) {
+    if (viewer?.doubleClick(e)) return;
+    if (mode === "preview") return;
+    const text = e.target.closest(".text-module");
+    if (text && $("#canvas").contains(text) && !present && mode !== "delete" && !e.target.isContentEditable) {
+      const m = slide().modules.find((m2) => m2.id === text.dataset.module);
+      openStyleDialog(m);
+      return;
+    }
+    const media = e.target.closest("[data-media-part]");
+    if (media && $("#canvas").contains(media) && !present && mode !== "delete") {
+      const m = slide().modules.find((m2) => m2.id === media.closest("[data-module]").dataset.module);
+      mediaDialog(m, Number(media.dataset.mediaPart));
+    }
+  }
+  function startDraw(e) {
+    if (!drawing || !e.isPrimary) return;
+    const canvas = $("#canvas"), b = canvas.getBoundingClientRect();
+    scale = b.width / 1600;
+    const start2 = { x: snap((e.clientX - b.left) / scale, project.grid, SAFE.x), y: snap((e.clientY - b.top) / scale, project.grid, SAFE.y) };
+    if (start2.x < SAFE.x || start2.y < SAFE.y) return;
+    const layer = $(".slide", canvas);
+    const rect = document.createElement("div");
+    rect.className = "draw-rect";
+    layer.append(rect);
+    canvas.setPointerCapture(e.pointerId);
+    const move = (ev) => {
+      const end = { x: snap((ev.clientX - b.left) / scale, project.grid, SAFE.x), y: snap((ev.clientY - b.top) / scale, project.grid, SAFE.y) };
+      drawRect = { x: Math.min(start2.x, end.x), y: Math.min(start2.y, end.y), w: Math.abs(end.x - start2.x), h: Math.abs(end.y - start2.y) };
+      Object.assign(rect.style, { left: drawRect.x + "px", top: drawRect.y + "px", width: drawRect.w + "px", height: drawRect.h + "px" });
+    };
+    const up = () => {
+      canvas.removeEventListener("pointermove", move);
+      canvas.removeEventListener("pointerup", up);
+      rect.remove();
+      if (!drawRect || !inside(drawRect, pageBounds()) || slide().modules.some((m) => intersects(m, drawRect))) {
+        drawRect = null;
+        toast("范围需在正文安全区内，且与已有模块保留 24 px 间隙。", true);
+        return;
+      }
+      insertDialog();
+    };
+    canvas.addEventListener("pointermove", move);
+    canvas.addEventListener("pointerup", up);
+  }
+  async function applyTheme() {
+    const primary = $("#theme-primary").value.trim();
+    if (!hex.test(primary)) throw Error("请填写 #RRGGBB 格式的主题色。");
+    const theme = { ...project.theme, name: $("#theme-name").value.trim() || "科研汇报" };
+    for (const k of ["primary", "secondary", "accent", "emphasis", "tint", "ink"]) {
+      let v = $("#theme-" + k).value.trim();
+      if (!v) v = k === "tint" ? mix(primary, "#FFFFFF", 0.94) : k === "ink" ? "#173747" : primary;
+      if (!hex.test(v)) throw Error("所有色值均需为 #RRGGBB。");
+      theme[k] = v;
+    }
+    for (const k of ["logo", "wordmark"]) {
+      const f = $("#theme-" + k).files[0];
+      if (f) {
+        if (f.size > 5 * 1024 * 1024) throw Error("每个标志不超过 5 MB。");
+        theme[k] = await raster(await readData(f));
+      }
+    }
+    savePoint();
+    project.theme = theme;
+    closeDialog();
+    render();
+    persist();
+  }
+  function mix(a, b, r) {
+    return "#" + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * (1 - r) + parseInt(b.slice(i, i + 2), 16) * r).toString(16).padStart(2, "0")).join("");
+  }
+  async function importExcel(e) {
+    try {
+      const f = e.target.files[0];
+      if (!f) return;
+      const m = selectedModule();
+      if (!m || m.type !== "table") return;
+      if (f.size > 10 * 1024 * 1024) throw Error("Excel 文件不超过 10 MB。");
+      if (f.name.toLowerCase().endsWith(".csv")) {
+        const text = await f.text();
+        sheets = [{ name: f.name, rows: parseCSV(text), merges: [] }];
+      } else {
+        if (location.protocol === "file:") throw Error("离线 HTML 可粘贴 Excel 或导入 CSV；读取 XLSX 请运行本地服务。");
+        const res = await fetch("/api/excel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data: await readData(f) }) });
+        const body = await res.json();
+        if (!res.ok) throw Error(body.error);
+        sheets = body.sheets;
+      }
+      newDialog("excel-dialog", "选择工作表", `<label>工作表<select id="excel-sheet">${sheets.map((s, i) => `<option value="${i}">${esc(s.name)}（${s.rows.length} 行）</option>`).join("")}</select></label><p class="hint">导入单元格值及合并区域，统一采用当前主题；公式使用 Excel 已保存的计算结果，不在浏览器重新计算。</p>`, "导入");
+    } catch (error) {
+      toast(error.message, true);
+    }
+    e.target.value = "";
+  }
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], cell = "", quoted = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (c === '"') {
+        if (quoted && text[i + 1] === '"') {
+          cell += '"';
+          i++;
+        } else quoted = !quoted;
+      } else if (c === "," && !quoted) {
+        row.push(cell);
+        cell = "";
+      } else if ((c === "\n" || c === "\r") && !quoted) {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = "";
+      } else cell += c;
+    }
+    if (cell || row.length) {
+      row.push(cell);
+      rows.push(row);
+    }
+    if (rows.length > 100 || Math.max(...rows.map((r) => r.length)) > 30) throw Error("表格最多 100 行、30 列。");
+    return rows;
+  }
+  async function saveHTML() {
+    const css = runtimeCSS || $("#app-style")?.textContent || await fetch("/styles.css").then((r) => r.text());
+    const js = runtimeBundle || $("#app-code")?.textContent || await fetch("/app.bundle.js").then((r) => r.text());
+    const safe = (s) => s.replace(/<\/script/gi, "<\\/script");
+    const html = `<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Web Slide</title><style id="app-style">${css}</style></head><body><div id="app"></div><script id="project-data" type="application/json">${JSON.stringify(syncSections(project)).replace(/</g, "\\u003c")}<\/script><script id="app-code">${safe(js)}<\/script></body></html>`;
+    download(html, project.title + ".html", "text/html");
+    toast("独立 HTML 已下载，可离线继续编辑、查看和放映。");
+  }
+  async function exportFile(kind, button) {
+    if (location.protocol === "file:") throw Error("请运行启动.cmd，将此 HTML 拖入本地工作台后导出 PDF / PPTX。");
+    if (check().length) throw Error("当前页存在溢出，请先删改或调整模块，再导出。");
+    button.disabled = true;
+    const original = button.textContent;
+    button.textContent = "正在导出…";
+    try {
+      const res = await fetch("/api/export/" + kind, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(project) });
+      if (!res.ok) {
+        const data = await res.json();
+        throw Error(data.error);
+      }
+      download(await res.blob(), project.title + "." + kind);
+      toast(kind === "pptx" ? "PPTX 已导出，文字、表格单元格可继续编辑。" : "16:9 PDF 已导出，无浏览器页眉页脚。");
+    } finally {
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
+  async function loadDefaultLogos() {
+    try {
+      const res = await fetch("/api/default-logos");
+      if (!res.ok) return;
+      const data = await res.json();
+      project.theme.logo = await raster(data.logo);
+      project.theme.wordmark = await raster(data.wordmark);
+    } catch {
+    }
+  }
+  async function start() {
+    if (location.pathname === "/export.html") {
+      document.body.classList.add("export-view");
+      const token = new URLSearchParams(location.search).get("token");
+      project = await fetch("/api/render/" + token).then((r) => r.json());
+      $("#app").innerHTML = project.slides.map((s, i) => renderSlide(s, project.theme, i, project.slides.length, false, project)).join("");
+      $$(".slide").forEach((el) => el.id = "slide-" + el.dataset.slide);
+      await document.fonts.ready;
+      await Promise.all($$("img").map((im) => im.decode().catch(() => {
+      })));
+      await Promise.all($$("video").map((v) => new Promise((resolve) => {
+        v.controls = false;
+        const done = () => resolve();
+        v.addEventListener("loadeddata", () => {
+          if (Number.isFinite(v.duration)) v.currentTime = Math.min(0.1, v.duration / 2);
+          else done();
+        }, { once: true });
+        v.addEventListener("seeked", done, { once: true });
+        v.addEventListener("error", done, { once: true });
+        setTimeout(done, 3e3);
+        if (v.readyState >= 2) {
+          v.currentTime = Math.min(0.1, v.duration / 2);
+        }
+      })));
+      window.exportErrors = [];
+      project.slides.forEach((s, i) => window.exportErrors.push(...audit($$(".slide")[i], s)));
+      window.exportReady = true;
+      return;
+    }
+    const embedded = $("#project-data");
+    project = embedded ? validateProject(JSON.parse(embedded.textContent)) : await draft();
+    if (project) project = validateProject(project);
+    if (!project) {
+      project = createProject();
+      await loadDefaultLogos();
+    }
+    if (location.protocol === "file:") {
+      try {
+        project.title = decodeURIComponent(location.pathname.split("/").pop()).replace(/\.html?$/i, "") || project.title;
+      } catch {
+      }
+    }
+    bootUI();
+    render();
+    document.fonts.ready.then(() => {
+      resizeCanvas();
+      check();
+    });
+    if (location.protocol !== "file:") {
+      Promise.all([fetch("/styles.css").then((r) => r.text()), fetch("/app.bundle.js").then((r) => r.text())]).then(([css, js]) => {
+        runtimeCSS = css;
+        runtimeBundle = js;
+      });
+    }
+    window.slideStudio = { getProject: () => clone(project), check: () => check(), getMode: () => mode, getView: () => ({ mode: viewer.mode, columns: viewer.columns, present: viewer.present, overview: viewer.overview, zoom: viewer.zoom, pan: { ...viewer.pan } }) };
+  }
+  start().catch((e) => {
+    window.exportError = e.message;
+    document.body.textContent = "启动失败：" + e.message;
+    console.error(e);
+  });
+})();
+</script></body></html>

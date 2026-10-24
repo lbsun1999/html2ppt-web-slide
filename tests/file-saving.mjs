@@ -1,0 +1,17 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {createProject} from '../src/model.js';
+const b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+try{
+ const page=await b.newPage({viewport:{width:1720,height:1080}});await page.goto('http://127.0.0.1:4317');await page.waitForFunction(()=>window.slideStudio);
+ await page.evaluate(async project=>{const dir=await navigator.storage.getDirectory();window.testOriginal=await dir.getFileHandle('original.html',{create:true});window.testCopy=await dir.getFileHandle('copy.html',{create:true});const stream=await testOriginal.createWritable();await stream.write('<script id="project-data" type="application/json">'+JSON.stringify(project)+'</script>');await stream.close();window.pickerCalls=0;window.showOpenFilePicker=async()=>[testOriginal];window.showSaveFilePicker=async()=>{pickerCalls++;return testCopy;};},createProject());
+ await page.locator('[data-action="open-html"]').click();await page.waitForFunction(()=>window.slideStudio.getProject().title==='original');
+ await page.locator('#canvas [data-slide-field="presenter"]').fill('保存测试作者');await page.locator('[data-action="html"]').click();await page.waitForFunction(()=>document.querySelector('#toast').textContent.includes('已保存到 original.html'));
+ assert.equal(await page.evaluate(()=>pickerCalls),0);assert.ok((await page.evaluate(async()=>(await testOriginal.getFile()).text())).includes('保存测试作者'));
+ await page.locator('[data-action="html-as"]').click();await page.waitForFunction(()=>document.querySelector('#toast').textContent.includes('已保存到 copy.html'));assert.equal(await page.evaluate(()=>pickerCalls),1);
+ await page.locator('#canvas [data-slide-field="presenter"]').fill('仅更新副本');await page.locator('[data-action="html"]').click();await page.waitForTimeout(200);assert.equal(await page.evaluate(()=>pickerCalls),1);assert.ok((await page.evaluate(async()=>(await testCopy.getFile()).text())).includes('仅更新副本'));assert.equal((await page.evaluate(async()=>(await testOriginal.getFile()).text())).includes('仅更新副本'),false);
+ await page.evaluate(()=>window.showSaveFilePicker=async()=>{throw new DOMException('cancel','AbortError');});await page.locator('[data-action="html-as"]').click();await page.waitForTimeout(100);assert.equal(await page.locator('#toast').evaluate(n=>n.classList.contains('error')),false);
+ await page.evaluate(()=>window.showSaveFilePicker=async()=>({name:'denied.html',createWritable:async()=>{throw new DOMException('denied','NotAllowedError');}}));await page.locator('[data-action="html-as"]').click();await page.waitForFunction(()=>document.querySelector('#toast').classList.contains('error'));
+ await page.locator('#canvas [data-slide-field="presenter"]').fill('失败后仍保存副本');await page.locator('[data-action="html"]').click();await page.waitForFunction(()=>document.querySelector('#toast').textContent.includes('已保存到 copy.html'));assert.ok((await page.evaluate(async()=>(await testCopy.getFile()).text())).includes('失败后仍保存副本'));
+ console.log('PASS real FileSystemFileHandle writes: open/save overwrites original, Save As binds copy, subsequent save reuses it; cancel and denied write preserve original association');
+}finally{await b.close();}

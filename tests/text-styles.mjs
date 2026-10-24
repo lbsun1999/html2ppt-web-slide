@@ -1,0 +1,39 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import {createProject,blankSlide,moduleOf,SAFE} from '../src/model.js';
+import {TEXT_STYLES} from '../src/text-styles.js';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),out=path.join(root,'ect');await fs.mkdir(out,{recursive:true});
+const b=await chromium.launch({executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});const page=await b.newPage({viewport:{width:1800,height:1150},acceptDownloads:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+const ui=a=>page.locator(`[data-action="${a}"]`).first();
+async function open(p){await page.locator('#html-file').setInputFiles({name:p.title+'.html',mimeType:'text/html',buffer:Buffer.from('<script id="project-data" type="application/json">'+JSON.stringify(p)+'</script>')});await page.waitForTimeout(250);}
+const state=()=>page.evaluate(()=>window.slideStudio.getProject());
+function fixture(){const p=createProject(),s=blankSlide(),m=moduleOf('text',{...SAFE},2);m.columns=1;m.parts.forEach((p,i)=>{p.title=`研究板块 ${i+1}`;p.text='正文内容保持不变。\n分行与标题信息均予以保留。';});s.modules=[m];p.slides=[s];return p;}
+try{
+ await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});await page.goto(pathToFileURL(path.join(root,'文本块样式展示.html')).href);await page.evaluate(()=>document.fonts.ready);assert.equal(await page.locator('.gallery-example').count(),10);
+ const overflow=await page.locator('.gallery-example').evaluateAll(items=>items.filter(el=>[...el.querySelectorAll('.text-part')].some(p=>p.scrollHeight>p.clientHeight+2)).map(el=>el.dataset.style));assert.deepEqual(overflow,[]);
+ const alignment=await page.locator('[data-style="ribbon"]').evaluate(el=>{const fold=el.querySelector('.ribbon-fold').getBoundingClientRect(),box=el.querySelector('.text-box-decoration rect').getBoundingClientRect();return Math.abs(fold.right-box.left);});assert.ok(alignment<1,'B1 fold and white box must share the same vertical edge');
+ await page.screenshot({path:path.join(out,'style-gallery.png'),fullPage:true});console.log('PASS 10 offline HTML components, no overflow');
+ await page.goto('http://127.0.0.1:4317');await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');const initial=fixture();await open(initial);await ui('mode-edit').click();await page.locator('#canvas .module').click();const original=initial.slides[0].modules[0].parts;
+ for(const [id] of TEXT_STYLES){await page.locator('#module-style').selectOption(id);const p=await state();assert.deepEqual(p.slides[0].modules[0].parts,original,id+' changed content');assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[],id+' overflow');}
+ console.log('PASS switching all 10 styles preserves text and checks layout');
+ await page.locator('#module-style').selectOption('plain');await page.locator('#canvas .text-module').dblclick();assert.equal(await page.locator('#style-dialog [data-style-id]').count(),10);
+ await page.locator('[data-style-id="arrow"] .style-code').hover();assert.equal((await state()).slides[0].modules[0].style,'plain');assert.equal(await page.locator('#style-preview-canvas .style-arrow').count(),1);
+ await page.locator('[data-style-id="group"]').click();assert.equal(await page.locator('#style-inner').count(),0);await ui('style-dialog-apply').click();assert.equal((await state()).slides[0].modules[0].style,'group');assert.equal(await page.locator('#group-inner-style').count(),0);
+ assert.equal(await page.locator('#canvas .group-inner').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');assert.equal(await page.locator('#canvas .group-inner .text-part').first().evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');
+ console.log('PASS double-click / hover picker; C2 has no A1 option or inner fill');
+ await page.locator('#module-header-width').fill('40');await page.locator('#module-header-width').dispatchEvent('change');const narrow=await page.locator('#canvas .module-group-title').boundingBox();await page.locator('#module-header-width').fill('85');await page.locator('#module-header-width').dispatchEvent('change');const wide=await page.locator('#canvas .module-group-title').boundingBox();assert.ok(wide.width>narrow.width*1.9);
+ if(await page.evaluate(()=>window.slideStudio.getMode())!=='text')await ui('mode-text').click();await page.locator('#canvas [data-module-field="groupTitle"]').fill('研究方法总览');assert.equal((await state()).slides[0].modules[0].groupTitle,'研究方法总览');console.log('PASS C2 title-length adjustment and independent group heading editing');
+ const legacy=fixture();legacy.slides[0].modules[0].style='group';legacy.slides[0].modules[0].innerStyle='unified';await open(legacy);assert.equal((await state()).slides[0].modules[0].innerStyle,'plain');assert.equal(await page.locator('#canvas .group-inner.style-unified').count(),0);console.log('PASS legacy C2+A1 normalizes to plain without content loss');
+ const single=fixture();single.slides[0].modules[0].parts.splice(1);await open(single);await ui('mode-edit').click();await page.locator('#canvas .module').click();await page.locator('#module-style').selectOption('numbered');await page.locator('#show-subheading').check();await page.locator('#show-annotation').check();await page.locator('#number-start').fill('7');await page.locator('#number-start').dispatchEvent('change');
+ const sizes=await page.locator('#canvas .text-module').evaluate(el=>['.paragraph','.part-subheading','.part-annotation'].map(s=>({pt:parseFloat(getComputedStyle(el.querySelector(s)).fontSize)*.6,weight:getComputedStyle(el.querySelector(s)).fontWeight})));assert.ok(Math.abs(sizes[0].pt-16)<.1&&Math.abs(sizes[1].pt-16)<.1&&Math.abs(sizes[2].pt-14)<.1);assert.equal(sizes[1].weight,'700');assert.equal(await page.locator('#canvas .number-value').innerText(),'07');console.log('PASS C3 numbering, 16pt body, 16pt bold subtitle, 14pt annotation');
+ const project=createProject();project.title='文本块样式示例';project.slides=TEXT_STYLES.map(([id,code,name])=>{const s=blankSlide();s.title=`${code} · ${name}`;s.lead='十种文本块共用标题与正文层级，切换样式时保留内容。';const m=moduleOf('text',{...SAFE},2);m.columns=2;m.style=id;m.headerWidth=70;m.groupTitle='模块大标题';m.parts.forEach((p,i)=>Object.assign(p,{title:'研究板块 '+(i+1),text:'正文内容两端对齐，保留自然换行。\n标题与正文保持明确层级。',subheading:'正文加粗子标题',annotation:'注释信息使用 14pt。',showSubheading:id==='numbered',showAnnotation:id==='numbered'}));if(id==='note')m.columns=1;s.modules=[m];return s;});
+ await open(project);const exported=await state();for(let i=0;i<10;i++){await page.locator(`[data-page="${i}"]`).click();assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[],TEXT_STYLES[i][0]);}
+ await page.locator('[data-page="8"]').click();await page.screenshot({path:path.join(out,'style-picker-c2-page.png')});
+ const wait=page.waitForEvent('download');await ui('html').click();const html=await wait;await html.saveAs(path.join(out,'text-styles-example.html'));
+ const offline=await b.newPage();await offline.goto(pathToFileURL(path.join(out,'text-styles-example.html')).href);await offline.waitForFunction(()=>window.slideStudio);await offline.locator('[data-page="8"]').click();assert.equal(await offline.locator('#canvas .group-inner.style-plain').count(),1);await offline.close();
+ for(const kind of ['pdf','pptx']){const response=await page.request.post('http://127.0.0.1:4317/api/export/'+kind,{data:exported,timeout:120000});assert.equal(response.status(),200,await response.text().catch(()=>''));await fs.writeFile(path.join(out,'text-styles-example.'+kind),await response.body());}
+ console.log('PASS 10-style offline HTML, PDF and editable PPTX export');assert.deepEqual(errors,[]);
+}finally{await b.close();}

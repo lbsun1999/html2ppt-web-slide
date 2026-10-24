@@ -1,0 +1,72 @@
+[
+  {
+    "file": "example-project.html",
+    "sha256": "ebfb02f4d2593324da6881bebed17289d31729bec81c401800961c294a443255",
+    "preview": "images/example-project.png",
+    "view": "grid",
+    "columns": 2,
+    "pages": 6,
+    "focusPage": 2,
+    "notesVisible": false,
+    "viewport": {
+      "width": 1920,
+      "height": 1664
+    }
+  },
+  {
+    "file": "media-layout.html",
+    "sha256": "544865b4e26ebdff2d7dd23f00adb3d760e58ec65476f0d6459ecb4c16ef753a",
+    "preview": "images/media-layout.png",
+    "view": "grid",
+    "columns": 1,
+    "pages": 1,
+    "focusPage": 1,
+    "notesVisible": false,
+    "viewport": {
+      "width": 1720,
+      "height": 1236
+    }
+  },
+  {
+    "file": "navigation.html",
+    "sha256": "c5bf7e1bc465329fefba611ca8d60dffddc6dffcf310636233ef42f3b089a1f3",
+    "preview": "images/navigation.png",
+    "view": "grid",
+    "columns": 3,
+    "pages": 10,
+    "focusPage": 2,
+    "notesVisible": false,
+    "viewport": {
+      "width": 1920,
+      "height": 1571
+    }
+  },
+  {
+    "file": "notes-presenter.html",
+    "sha256": "195ec67b826d499515be7f9ba19ad5382e3c9202cc79c4b5fa1aea06f43e8305",
+    "preview": "images/notes-presenter.png",
+    "view": "grid",
+    "columns": 5,
+    "pages": 30,
+    "focusPage": 22,
+    "notesVisible": true,
+    "viewport": {
+      "width": 2400,
+      "height": 2067
+    }
+  },
+  {
+    "file": "text-styles-example.html",
+    "sha256": "83dc692d50dec2373ff9e7febee7b909f2ffc1a20d3d2282d3d8adddf9e23be9",
+    "preview": "images/text-styles-example.png",
+    "view": "grid",
+    "columns": 3,
+    "pages": 10,
+    "focusPage": 5,
+    "notesVisible": false,
+    "viewport": {
+      "width": 1920,
+      "height": 1571
+    }
+  }
+]

@@ -1,0 +1,129 @@
+{
+  "source": "北京科技大学_WebSlide科研汇报示例.html",
+  "sha256": "9ff4c6f602fcd93443c11bbc165cf812b21ddb90ce2d64d10f5607dfc2d81b89",
+  "viewport": {
+    "width": 1920,
+    "height": 1200
+  },
+  "screenshots": [
+    {
+      "image": "images/workbench-overview.png",
+      "description": "多页工作台：顶部文件与编辑控件、左侧导航、中央多页视图和右侧当前页设置。",
+      "view": {
+        "mode": "grid",
+        "columns": 3,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 7
+    },
+    {
+      "image": "images/text-controls.png",
+      "description": "文字模式：选区、14/16pt、段落列表、加粗、颜色、行距和段后距控件。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "text",
+      "currentPage": 7
+    },
+    {
+      "image": "images/module-controls.png",
+      "description": "模块模式：固定顶点、网格步进、尺寸和位置，以及文本样式与子区域。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 15
+    },
+    {
+      "image": "images/formula-editor.png",
+      "description": "公式编辑框：LaTeX源码、复制按钮、数学预览、取消和确定。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 18
+    },
+    {
+      "image": "images/page-settings-notes.png",
+      "description": "当前页设置弹窗：页尾总结、脚注、本页备注和来源；备注保存后由页面备注面板自动载入。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 22
+    },
+    {
+      "image": "images/presentation-fullscreen.png",
+      "description": "全屏放映的实际画面与底部操作提示。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": true,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 15
+    },
+    {
+      "image": "images/presentation-overview.png",
+      "description": "放映中双击进入每行4页的总览，滚动查找并双击目标页继续放映。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": true,
+        "overview": true,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 15
+    }
+  ]
+}

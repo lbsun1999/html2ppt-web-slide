@@ -1,0 +1,19 @@
+* text=auto
+.gitattributes text eol=lf
+.gitignore text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+# Generated HTML snapshots have recorded hashes; preserve their exact bytes.
+*.html -text
+*.css text eol=lf
+*.py text eol=lf
+*.cmd text eol=crlf
+*.png binary
+*.jpg binary
+*.svg text eol=lf
+*.pdf binary
+*.pptx binary
+*.mp4 binary
+*.zip binary

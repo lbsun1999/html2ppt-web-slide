@@ -1,0 +1,76 @@
+/* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
+.text-parts{position:relative;gap:24px;grid-auto-rows:auto}
+.text-part{position:relative;isolation:isolate;gap:14px;overflow:hidden;padding:22px 24px;min-width:0;color:var(--ink)}
+.text-part .paragraph{color:var(--ink)}
+.text-part>.paragraph,.text-part>.part-subheading,.text-part>.part-annotation{position:relative;z-index:2;flex-shrink:0}
+.part-title-wrap{position:relative;flex:none;min-width:0}
+.text-part .part-title-text{position:relative;z-index:2;padding:0;margin:0;font:700 30px/1.3 'Microsoft YaHei','PingFang SC',sans-serif;color:var(--primary);overflow-wrap:anywhere;white-space:pre-wrap}
+.style-plain,.style-unified{gap:0}
+.style-plain .text-part{padding:22px 24px;border:0;background:white}
+.style-unified{background:var(--tint)}
+.style-unified .text-part{border:0;padding:22px 24px;background:transparent}
+.part-divider{position:absolute;z-index:2;display:block;background:#9ea8ae;pointer-events:none}
+.part-divider.horizontal{height:1px;bottom:0;left:20px;right:20px}
+.part-divider.vertical{width:1px;right:0;top:20px;bottom:20px}
+.style-cards .text-part{background:var(--tint);padding:22px 24px}
+.style-band .text-part{background:var(--tint);padding:0 0 22px;gap:16px}
+.style-band .part-title-wrap{width:100%;background:var(--primary)}
+.text-parts.style-band .text-part .part-title-text{padding:10px 20px;color:white;background:var(--primary)}
+.style-band .paragraph{padding:0 20px}
+.style-band .paragraph.bulleted{padding:0 20px}
+.text-box-decoration{position:absolute;inset:0;z-index:0;overflow:visible;pointer-events:none;display:block}
+.title-decoration{position:absolute;inset:0;width:100%;height:100%;overflow:visible;display:block;pointer-events:none;z-index:0}
+.style-ribbon .text-part,.style-arrow .text-part{padding:0 24px 26px;background:transparent;gap:20px}
+.style-ribbon .part-title-wrap,.style-arrow .part-title-wrap{width:var(--title-width,65%);min-height:60px;margin-left:-16px}
+.style-ribbon .part-title-text,.style-arrow .part-title-text{color:white;text-align:center;padding:11px 28px}
+.ribbon-face{clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.ribbon-fold{position:absolute;width:14px;height:18px;left:0;top:100%;z-index:0;pointer-events:none}
+.style-ribbon .text-part>.paragraph{margin-left:12px}
+.arrow-face{clip-path:polygon(0 0,calc(100% - 30px) 0,100% 50%,calc(100% - 30px) 100%,0 100%)}
+.style-arrow .part-title-text{padding-right:40px}
+.style-capsule .text-part{padding:20px 24px;background:white;gap:22px}
+.style-capsule .part-title-wrap{width:var(--title-width,90%);align-self:center;min-height:60px}
+.style-capsule .part-title-text{padding:10px 46px;color:white;text-align:center}
+.style-note{gap:24px}
+.style-note .text-part{padding:18px 24px;background:var(--tint);justify-content:center}
+.note-rule{position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--primary);z-index:1}
+.text-group-shell{position:relative;isolation:isolate;height:100%;min-height:0;padding:0 20px 22px;display:flex;flex-direction:column;gap:16px}
+.module-group-title{align-self:center;width:var(--title-width,70%);min-height:64px;z-index:1}
+.module-group-title .part-title-text{position:relative;z-index:2;color:white;text-align:center;margin:0;padding:12px 28px;font-size:33.3333px;line-height:1.3;white-space:pre-wrap}
+.group-face{clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%)}
+.text-group-shell>.group-inner{flex:1;height:auto;min-height:0;z-index:1}
+.group-inner .text-part{padding:14px 20px}
+.group-inner,.group-inner .text-part{background:transparent!important}
+
+.style-numbered .text-part{padding:16px 20px;background:white;gap:13px}
+.numbered-heading{display:flex;align-items:center;gap:16px;position:relative;flex:none;min-height:48px;padding-bottom:0}
+.number-tag{position:relative;width:106px;min-width:106px;align-self:stretch;display:flex;align-items:center;min-height:48px}
+.number-decoration{position:absolute;top:0;left:0;width:90px;height:100%;clip-path:polygon(0 0,calc(100% - 48px) 0,100% 100%,0 100%);pointer-events:none}
+.number-value{position:relative;z-index:1;color:white;font:700 33.3333px/1.3 'Times New Roman',serif;padding-left:12px;white-space:nowrap}
+.style-numbered .numbered-heading .part-title-text{color:var(--ink);font-size:30px;min-width:0;flex:1}
+.number-rule{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--primary)}
+.part-subheading{font-size:26.6667px;font-weight:700;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.part-annotation{font-size:23.3333px;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere}
+/* Numbered chooser is keyboard-accessible; preview is not a bitmap of the PDF. */
+#style-dialog{width:min(1100px,96vw)}
+.style-picker{display:grid;grid-template-columns:270px minmax(0,1fr);gap:24px;align-items:start}
+.style-list{display:grid;gap:7px}
+.style-option{display:flex;align-items:center;gap:12px;text-align:left;width:100%;position:relative}
+.style-option[aria-pressed=true]{border-color:#005894;background:#eaf3fa;color:#005894}
+.style-code{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:29px;background:#edf3f7;border-radius:4px;font-size:13px;font-weight:700}
+.style-option[aria-pressed=true] .style-code{background:#005894;color:white}
+.style-live-preview{border:1px solid #d6e1ea;border-radius:8px;padding:16px;background:#f6f9fc;position:sticky;top:0;min-width:0}
+.style-preview-frame{position:relative;overflow:hidden;background:white;margin:0 auto;border:1px solid #cedee8}
+.style-preview-canvas{position:absolute;left:0;top:0;transform-origin:top left;width:600px;height:520px;font-family:'Microsoft YaHei','PingFang SC',sans-serif;font-size:26.6667px;line-height:1.55;color:var(--ink)}
+.style-preview-canvas .module-badge{display:none}
+.style-preview-copy{font-size:12px;line-height:1.8;color:#536e82;margin-top:10px}
+.style-picker-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px}
+.style-picker-options label{display:flex;align-items:center;gap:8px}
+.style-picker-options input[type=range]{width:145px}
+.inspector input[type=checkbox]{width:auto;margin:0 7px 0 0}
+@media(max-width:750px){.style-picker{grid-template-columns:1fr}.style-list{grid-template-columns:1fr 1fr}.style-live-preview{position:static}.style-option{padding:8px;font-size:12px}}
+
+.number-decoration-back{left:16px;z-index:0}.number-decoration-front{z-index:1}.number-value{z-index:2}
+.style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part{container-type:inline-size;min-width:0}.style-ribbon .part-title-text,.style-arrow .part-title-text{padding-left:min(28px,8cqw);padding-right:min(40px,12cqw)}.style-capsule .part-title-text{padding-left:min(46px,15cqw);padding-right:min(46px,15cqw)}.style-ribbon .part-title-wrap,.style-capsule .part-title-wrap,.style-arrow .part-title-wrap{min-width:0;max-width:100%}
+.text-module:has(.style-ribbon),.text-module:has(.style-capsule),.text-module:has(.style-arrow){container-type:inline-size}.style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part{padding-left:min(24px,12cqw);padding-right:min(24px,12cqw)}
+.style-ribbon .part-title-wrap,.style-arrow .part-title-wrap{margin-left:max(-16px,-8cqw)}.style-capsule .title-decoration circle{cx:min(26px,8cqw);r:min(12px,3cqw)}.arrow-face{clip-path:polygon(0 0,calc(100% - min(30px,20%)) 0,100% 50%,calc(100% - min(30px,20%)) 100%,0 100%)}

@@ -1,0 +1,30 @@
+{
+  "school-origin.jpg": {
+    "width": 260,
+    "height": 175,
+    "url": "https://www.lsu.edu.cn/_upload/article/images/1a/db/af6e5aea4d6dbd9f043336399311/abd33e9a-d32f-406c-ae95-e45a16569b1c.jpg",
+    "source": "https://www.lsu.edu.cn/47/list.htm",
+    "caption": "官网标注：1906年的处州学堂；作为办学源流资料配图"
+  },
+  "school-rebuild.jpg": {
+    "width": 260,
+    "height": 183,
+    "url": "https://www.lsu.edu.cn/_upload/article/images/1a/db/af6e5aea4d6dbd9f043336399311/91885710-f408-48c8-92f3-b48322839fee.jpg",
+    "source": "https://www.lsu.edu.cn/47/list.htm",
+    "caption": "官网标注：1946年，在云和重建处州师范学校"
+  },
+  "school-campus.jpg": {
+    "width": 799,
+    "height": 533,
+    "url": "https://www.lsu.edu.cn/_upload/article/images/0c/d6/3511d69e44e794cbf176eeb9fd97/bb05e1fd-3d22-4081-99a9-3e18db1a4060.jpg",
+    "source": "https://www.lsu.edu.cn/2017/0406/c51a216866/page.htm",
+    "caption": "校园风光；现代校园资料配图，不代表2004年实景"
+  },
+  "school-library.jpg": {
+    "width": 799,
+    "height": 533,
+    "url": "https://www.lsu.edu.cn/_upload/article/images/3e/2a/73d3f3a44b8daad6d2660f157254/979df8f9-ec74-4b7b-9337-e53111a7afce.jpg",
+    "source": "https://www.lsu.edu.cn/2017/0406/c51a216858/page.htm",
+    "caption": "图书馆；官网摄影署名：童心"
+  }
+}

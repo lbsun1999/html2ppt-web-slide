@@ -1,0 +1,14 @@
+node_modules/
+output/*
+!output/*_WebSlide*.pdf
+!output/*_WebSlide*.pptx
+test-results/
+*.log
+.env
+
+ect/
+dist/
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
