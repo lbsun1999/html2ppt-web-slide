@@ -18,7 +18,7 @@ description: 使用配套 Web Slide 母版，将论文、实验记录、图表�
 | [结构化接口](docs/AI接口与排版规则.md) | 写project-data前：字段、构造器、富文本、目录和特殊页接口 |
 | [版式细则与错误复盘](docs/版式细则与错误复盘.md) | 制作正文前及交付前：表格、公式、图文、参考文献、履历的具体规格与复验 |
 | [文字组件说明](docs/文本块组件说明.md) | 选择或修改A/B/C文字样式时，结合包内原始规范PDF使用 |
-| [reference参考库](reference/README.md) | 五份已确认HTML及多页工作台截图，理解布局和交互 |
+| [reference参考库](reference/README.md) | 三份已确认HTML及多页工作台截图，理解布局和交互 |
 | [成熟页数据](src/reference-layouts.json)、[局部样式](reference-layouts.css) | 复用history、formula、summary、references、profile时 |
 | [学校素材](assets/) | 两校实际使用的标识、图片及来源记录 |
 
@@ -35,11 +35,11 @@ description: 使用配套 Web Slide 母版，将论文、实验记录、图表�
 
 两校共用 `src/example.js`／`src/example-pages.js` 的北科底稿；丽水仅通过 `src/school-variants.js` 替换学校资料和主题，不维护一套删减版内容。丽水主题色、第二主题色、装饰色及强调色统一，浅底使用同色浅调。图片必须替换为本校材料，校史配图不代表对应年份时应说明。
 
-人工已确认的五份参考示例与截图保留在 [reference/README.md](reference/README.md)。截图应先切换到多页视图，再截完整工作台，保留工具栏、侧栏、当前页与设置区，并注明实际页数和比较重点；只有一页的示例如实说明。先参考这些布局和交互，再修改正式文稿。HTML是不可随生成脚本覆盖的快照，不应因为升级运行时而重做其中内容；预览图可以重新生成。
+人工已确认的三份参考示例与截图保留在 [reference/README.md](reference/README.md)。截图应先切换到多页视图，再截完整工作台，保留工具栏、侧栏、当前页与设置区，并注明实际页数和比较重点；只有一页的示例如实说明。先参考这些布局和交互，再修改正式文稿。HTML是不可随生成脚本覆盖的快照，不应因为升级运行时而重做其中内容；预览图可以重新生成。
 
-[![并列媒体的实际等高与图注布局参考](reference/images/media-layout.png)](reference/media-layout.html)
+[![导航与时间轴的实际多页工作台](reference/images/navigation.png)](reference/navigation.html)
 
-选型时还可查看[科研正文](reference/images/example-project.png)、[文字样式](reference/images/text-styles-example.png)和[备注视图](reference/images/notes-presenter.png)。截图用于理解层级和对齐，源内容仍应从 HTML 的结构化数据读取。
+选型时还可查看[科研正文](reference/images/example-project.png)、[文字样式](reference/images/text-styles-example.png)和[时间轴占位示例](reference/images/timeline.png)。截图用于理解层级和对齐，源内容仍应从 HTML 的结构化数据读取。
 
 实际汇报的页数由内容决定；模板示例优先采用4或5的倍数只是方便总览，不能为凑页数编造结论。人可以直接打开HTML编辑；AI与人工端共同维护其中的`project-data`，不把截图当源稿。
 
@@ -171,7 +171,7 @@ B1、B2、B3 不设置样式专属的最小框宽，也不强制标题装饰至�
 
 ### 研究现状、实验表与图像证据
 
-研究现状优先使用原生`timeline`时间轴模块，参见[可操作的两页媒体与时间轴示例](reference/media-layout.html)及[带控件的实际截图](docs/images/timeline-controls.png)。第8页已使用此模块，不再依赖固定四列快照。每阶段用`year`写年份、`title`写事件短名、`text`写介绍，`asset`存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。
+研究现状优先使用原生`timeline`时间轴模块，参见[通用导航与时间轴示例第10页](reference/navigation.html)及[带控件的实际截图](docs/images/timeline-controls.png)。第8页已使用此模块，不再依赖固定四列快照。每阶段用`year`写年份、`title`写事件短名、`text`写介绍，`asset`存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。
 
 时间轴保留24pt年份、14pt说明，18pt阶段短名放在底部浅色大箭头，不上下重复。年份深色底、圆点、线段和短名统一使用当前主题色，不按阶段轮换深浅颜色；卡片与箭头保留浅底。增减和重排阶段不会改变配色规则。卡片等宽并随数量重算；同排媒体采用统一实际高度、等比裁剪，随卡片宽度与说明占用调整，不单向拉伸，不把文字缩小来强塞。照片／视频双击替换，可调缩放与取景。图文共用连续浅底，图片上下间隙一致；线段沿卡片左边从箭头圆心延伸到年份色块顶端，圆点完整落在箭头内，箭头两端比内容宽32px。真实文字仍放不下时提示扩区、凝练或拆页，不遮挡箭头、页脚。真实研究中改为代表工作、贡献及局限，不能把学校历史示例当成领域研究现状。
 

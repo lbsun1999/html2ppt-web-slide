@@ -7,9 +7,7 @@ import {chromium} from 'playwright';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const examples=[
  {name:'example-project',columns:2,width:1920,focus:1,inspect:true},
- {name:'media-layout',columns:1,width:1720,focus:1,inspect:true},
- {name:'navigation',columns:3,width:1920,focus:1},
- {name:'notes-presenter',columns:5,width:2400,focus:21,notes:true},
+ {name:'navigation',columns:3,width:1920,focus:9,inspect:true},
  {name:'text-styles-example',columns:3,width:1920,focus:4,inspect:true}
 ];
 const manifest=path.join(root,'reference/snapshots.json');
@@ -41,6 +39,7 @@ try{
    const state=await page.evaluate(()=>({view:document.querySelector('#view-mode').value,columns:Number(document.querySelector('#view-columns').value),pages:window.slideStudio.getProject().slides.length,visible:[...document.querySelectorAll('.view-page')].filter(n=>{const r=n.getBoundingClientRect(),w=document.querySelector('.workspace').getBoundingClientRect();return r.top>=w.top-1&&r.bottom<=w.bottom+1;}).length,notesVisible:!!document.querySelector('#notes-panel')&&!document.querySelector('#notes-panel').hidden}));
    assert.equal(state.view,'grid');assert.equal(state.columns,columns);assert.equal(state.visible,count,'All pages must appear: '+name);if(item.notes)assert.equal(state.notesVisible,true);
    const viewport=page.viewportSize();await page.screenshot({path:path.join(root,'reference/images',name+'.png'),fullPage:true});
+   if(name==='navigation'){await page.locator('#view-mode').selectOption('single');await page.setViewportSize({width,height:1200});await page.screenshot({path:path.join(root,'reference/images/timeline.png')});}
    records.push({...expected.find(r=>r.file===name+'.html'),view:'grid',columns,pages:count,focusPage:focus+1,notesVisible:state.notesVisible,viewport});
    console.log(`${name}: ${count} pages, ${columns} columns, full workbench ${viewport.width}x${viewport.height}`);
   }finally{await page.close();}

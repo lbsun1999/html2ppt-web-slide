@@ -135,7 +135,7 @@ npm.cmd start
 
 切到“编辑文字”可直接改年份、箭头上的事件短名和段落介绍。双击照片上传PNG／JPEG／WebP或MP4／WebM视频，也可调整取景和缩放。所有年份深色底、圆点、连接线及事件标题统一跟随主题色，图文卡片和箭头保留浅底；新增阶段先给占位媒体，再替换真实资料。
 
-新页可通过“插入模块→时间轴”创建。可直接打开[reference媒体与时间轴示例](reference/media-layout.html)：第1页对比媒体比例，第2页测试时间轴。两页工作台截图与操作说明见[reference说明](reference/README.md#媒体与时间轴统一画面高度再组织阶段)。
+新页可通过“插入模块→时间轴”创建。[navigation示例](reference/navigation.html)第10页提供不含校徽、使用媒体占位符的通用时间轴，可直接测试增减阶段及照片／视频替换；实际工作台截图见[reference说明](reference/README.md#导航与时间轴先看章节再调整阶段)。
 
 ### 图片、视频、表格和目录
 
@@ -254,7 +254,7 @@ docs中的说明、原始规范和截图记录均可从这里进入：
 | [验收记录](docs/验收记录.md) | 查回归检查、验证范围与已知限制 |
 | [工作台截图记录](docs/工作台截图记录.json) | 复查README截图的源稿哈希、界面状态及窗口尺寸 |
 
-更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [丽水30页预览](docs/images/lishui-preview.png) · [总结与计划版式](docs/images/summary-layout.png) · [五份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
+更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [丽水30页预览](docs/images/lishui-preview.png) · [总结与计划版式](docs/images/summary-layout.png) · [三份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
 
 维护示例与插图可运行：
 
