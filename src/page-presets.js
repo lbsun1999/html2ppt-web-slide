@@ -18,13 +18,15 @@ function tableModule(rect,rows,opts={}){
  m.rowHeightPt=opts.rowHeightPt??0;
  m.cellPaddingPt=opts.cellPaddingPt;
  m.profileHistory=opts.profileHistory??false;
+ m.bandTitle=opts.bandTitle??false;
+ m.borderless=opts.borderless??false;
  return m;
 }
 
 // ——— 阶段总结与后续计划 ———
-// 复刻原 reference layout "summary" 的版式：
-//   左栏：编号列表（3 项）
-//   右栏：计划表 + 讨论备注
+// 左栏：A2 / cards 文本模块（3 个子区域，单列，可增删）
+// 右栏上：表格模块（下一步计划表，bandTitle 深底标题）
+// 右栏下：C1 / note 备注模块
 export function summaryPage(){
  const s=blankSlide();
  Object.assign(s,{
@@ -40,18 +42,17 @@ export function summaryPage(){
  const gap=36;
  const leftW=(w-gap)/2;
  const rightW=w-leftW-gap;
- // 左：编号列表文本模块（C3 / numbered，3 个子区域）
- s.modules.push(textBlock('numbered',
+ // 左：A2 / cards 文本模块（3 个子区域，单列堆叠）
+ s.modules.push(textBlock('cards',
   {x,y,w:leftW,h},
   [
-   ['已完成的工作','列出已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。',{}],
-   ['证据支持的结论','关联对应图表，写明结论适用的场景与条件；初步观察需标明尚待复核。',{}],
-   ['仍待解决的问题','指出未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。',{}],
+   ['已完成的工作','列出已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。',{bullet:false}],
+   ['证据支持的结论','关联对应图表，写明结论适用的场景与条件；初步观察需标明尚待复核。',{bullet:false}],
+   ['仍待解决的问题','指出未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。',{bullet:false}],
   ],
-  1,
-  {numberStart:1}
+  1
  ));
- // 右上：表格模块（计划表，带标题）
+ // 右上：表格模块（计划表，带深底标题栏）
  const tableH=Math.round(h*0.72);
  s.modules.push(tableModule(
   {x:x+leftW+gap,y,w:rightW,h:tableH},
@@ -66,10 +67,10 @@ export function summaryPage(){
    tableTitle:'下一步计划',
    tableNote:'',
    headerRows:1,
-   rowHeightPt:0,
+   bandTitle:true,
   }
  ));
- // 右下：讨论备注（C1 / note 样式）
+ // 右下：C1 / note 备注模块
  const noteY=y+tableH+20;
  const noteH=h-tableH-20;
  s.modules.push(textBlock('note',
@@ -81,9 +82,8 @@ export function summaryPage(){
 }
 
 // ——— 作者简介 / 简历页 ———
-// 复刻原 reference layout "profile" 的版式：
-//   左栏：头像 + 个人信息
-//   右栏：3 个版块（经历表 / 学术任职与项目 / 研究方向）
+// 左侧：头像 + 个人信息卡片（保留特殊结构）
+// 右侧：3 个独立模块堆叠（每个带 A3 深底标题，内容可以是表格或文本）
 export function profilePage(){
  const s=blankSlide();
  Object.assign(s,{
@@ -101,8 +101,9 @@ export function profilePage(){
  const gap=32;
  const rightX=x+leftW+gap;
  const rightW=w-leftW-gap;
+ const sectionGap=20;
  // 左上：头像（媒体模块）
- const portraitH=280;
+ const portraitH=300;
  const portraitModule=moduleOf('media',{x,y,w:leftW,h:portraitH},1);
  portraitModule.captionMode='title';
  portraitModule.parts[0].showCaption=false;
@@ -110,7 +111,7 @@ export function profilePage(){
  portraitModule.parts[0].caption='';
  portraitModule.parts[0].note='';
  s.modules.push(portraitModule);
- // 左下：个人信息（A2 / cards 样式）
+ // 左下：个人信息（A2 / cards 浅卡样式）
  const infoY=y+portraitH+20;
  const infoH=h-portraitH-20;
  s.modules.push(textBlock('cards',
@@ -120,13 +121,8 @@ export function profilePage(){
   ],
   1
  ));
- // 右 1：教育和工作经历（表格模块，profile-history 样式）
- const sectionGap=16;
- // 三个版块：经历表 + 学术任职 + 研究方向
- // 高度分配：经历表占 38%，学术任职占 28%，研究方向占 34%（- 2 gaps）
+ // 右 1：教育和工作经历（表格模块，深底标题栏，profile-history 有框线）
  const sec1H=Math.round((h-2*sectionGap)*0.38);
- const sec2H=Math.round((h-2*sectionGap)*0.28);
- const sec3H=h-sec1H-sec2H-2*sectionGap;
  s.modules.push(tableModule(
   {x:rightX,y,w:rightW,h:sec1H},
   [
@@ -137,14 +133,13 @@ export function profilePage(){
   ],
   {
    tableTitle:'教育和工作经历',
-   tableNote:'',
    headerRows:1,
-   rowHeightPt:0,
    profileHistory:true,
    bandTitle:true,
   }
  ));
- // 右 2：主要学术任职／代表性项目（band / A3 样式，2 列）
+ // 右 2：学术任职 / 代表性项目（A3 / band 样式，2 列）
+ const sec2H=Math.round((h-2*sectionGap)*0.28);
  const sec2Y=y+sec1H+sectionGap;
  s.modules.push(textBlock('band',
   {x:rightX,y:sec2Y,w:rightW,h:sec2H},
@@ -154,16 +149,21 @@ export function profilePage(){
   ],
   2
  ));
- // 右 3：主要研究方向（band / A3 样式，3 列）
+ // 右 3：主要研究方向（表格模块，无框线样式，第一行主题色粗体）
+ const sec3H=h-sec1H-sec2H-2*sectionGap;
  const sec3Y=sec2Y+sec2H+sectionGap;
- s.modules.push(textBlock('band',
+ s.modules.push(tableModule(
   {x:rightX,y:sec3Y,w:rightW,h:sec3H},
   [
-   ['研究方向一','研究对象：\n核心问题：',{bullet:true}],
-   ['研究方向二','主要方法：\n技术特点：',{bullet:true}],
-   ['研究方向三','应用场景：\n研究目标：',{bullet:true}],
+   ['研究方向一','研究方向二','研究方向三'],
+   ['研究对象：\n核心问题：','主要方法：\n技术特点：','应用场景：\n研究目标：'],
   ],
-  3
+  {
+   tableTitle:'主要研究方向',
+   headerRows:1,
+   bandTitle:true,
+   borderless:true,
+  }
  ));
  return s;
 }
@@ -195,7 +195,5 @@ export function sourcePage(){
 export function makePreset(kind){
  if(kind==='formula-page')return formulaPage();
  if(kind==='references-page')return referencePage();
- if(kind==='profile-page')return profilePage();
- if(kind==='summary-page')return summaryPage();
  return blankSlide();
 }
