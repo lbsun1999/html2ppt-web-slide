@@ -10,8 +10,10 @@
     "notesVisible": false,
     "viewport": {
       "width": 1920,
-      "height": 1664
-    }
+      "height": 1528
+    },
+    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
+    "runtimeSha256": "80d7d9375c44b62e826520ea93a9b9065c777cbf569d9681645789eac283f54d"
   },
   {
     "file": "navigation.html",
@@ -24,8 +26,10 @@
     "notesVisible": false,
     "viewport": {
       "width": 1920,
-      "height": 1571
-    }
+      "height": 1435
+    },
+    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
+    "runtimeSha256": "80d7d9375c44b62e826520ea93a9b9065c777cbf569d9681645789eac283f54d"
   },
   {
     "file": "text-styles-example.html",
@@ -38,7 +42,9 @@
     "notesVisible": false,
     "viewport": {
       "width": 1920,
-      "height": 1571
-    }
+      "height": 1435
+    },
+    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
+    "runtimeSha256": "80d7d9375c44b62e826520ea93a9b9065c777cbf569d9681645789eac283f54d"
   }
 ]

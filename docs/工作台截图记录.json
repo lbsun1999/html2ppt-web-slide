@@ -9,6 +9,35 @@
     {
       "image": "images/workbench-overview.png",
       "description": "多页工作台：顶部文件与编辑控件、左侧导航、中央多页视图和右侧当前页设置。",
+      "capture": {
+        "kind": "workbench"
+      },
+      "view": {
+        "mode": "grid",
+        "columns": 3,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 7
+    },
+    {
+      "image": "images/document-controls.png",
+      "description": "当前文档管理入口：新建HTML、文档大纲、主题、打开、另存为、保存及导出。",
+      "capture": {
+        "kind": "detail",
+        "clip": {
+          "x": 1123.625,
+          "y": 0,
+          "width": 778.375,
+          "height": 70
+        }
+      },
       "view": {
         "mode": "grid",
         "columns": 3,
@@ -26,6 +55,16 @@
     {
       "image": "images/outline-manager.png",
       "description": "文档大纲：从当前页面载入标题及章节，支持现写／粘贴／文件、对应页映射、当前稿／另建及最后一章为附录。",
+      "capture": {
+        "kind": "detail",
+        "target": "#outline-dialog",
+        "clip": {
+          "x": 435,
+          "y": 136,
+          "width": 1050,
+          "height": 928
+        }
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -43,6 +82,36 @@
     {
       "image": "images/text-controls.png",
       "description": "文字模式：选区、14/16pt、段落列表、加粗、颜色、行距和段后距控件。",
+      "capture": {
+        "kind": "workbench"
+      },
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "text",
+      "currentPage": 7
+    },
+    {
+      "image": "images/paragraph-alignment.png",
+      "description": "右侧段落对齐：L左对齐、E居中、R右对齐、J两端对齐；选项读取当前段落。",
+      "capture": {
+        "kind": "detail",
+        "target": "#inspector [data-text-alignment]",
+        "clip": {
+          "x": 1688,
+          "y": 182,
+          "width": 215,
+          "height": 61
+        }
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -60,6 +129,9 @@
     {
       "image": "images/module-controls.png",
       "description": "模块模式：固定中心或四角、网格步进、尺寸和位置，以及文本样式与子区域。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -77,6 +149,9 @@
     {
       "image": "images/profile-modules.png",
       "description": "作者简介：固定身份卡、履历横线表和含两个可增减分组的无框线表格。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -94,6 +169,44 @@
     {
       "image": "images/table-bulk-edit.png",
       "description": "表格批量编辑：当前作者页分组的内容预填，可直接改值或从Excel粘贴；确认前不修改原表。",
+      "capture": {
+        "kind": "detail",
+        "target": "#table-dialog",
+        "clip": {
+          "x": 610,
+          "y": 290.15625,
+          "width": 700,
+          "height": 619.6875
+        }
+      },
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 29
+    },
+    {
+      "image": "images/table-tab-markers.png",
+      "description": "临时演示输入：每行三个Tab以#ACA808显示，细白缝分隔，相邻内容之间保留两个空单元格。未应用到原表。",
+      "capture": {
+        "kind": "detail",
+        "target": ".table-text-editor",
+        "clip": {
+          "x": 637,
+          "y": 526.15625,
+          "width": 646,
+          "height": 106
+        }
+      },
+      "temporaryDemoInput": true,
       "view": {
         "mode": "single",
         "columns": 2,
@@ -111,6 +224,9 @@
     {
       "image": "images/summary-modules.png",
       "description": "阶段计划：三个A2子区域，右侧独立计划表及C1讨论区；按名称用箭头排序及删除。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -128,6 +244,9 @@
     {
       "image": "images/timeline-controls.png",
       "description": "第8页原生时间轴：年份、共底图文、箭头和连线；右侧可添加、删除或重排阶段。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -145,6 +264,9 @@
     {
       "image": "images/page-controls.png",
       "description": "左侧多选页面，底部固定复制、粘贴、上移、下移和删除；缩略图列表独立滚动。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -162,6 +284,9 @@
     {
       "image": "images/free-text-controls.png",
       "description": "文字光标定位正文块：右侧坐标、1px／5px／网格步进、平移箭头及恢复原位。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -179,6 +304,16 @@
     {
       "image": "images/formula-editor.png",
       "description": "公式编辑框：LaTeX源码、复制按钮、数学预览、取消和确定。",
+      "capture": {
+        "kind": "detail",
+        "target": "#formula-dialog",
+        "clip": {
+          "x": 610,
+          "y": 241.953125,
+          "width": 700,
+          "height": 716.078125
+        }
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -196,6 +331,16 @@
     {
       "image": "images/page-settings-notes.png",
       "description": "当前页设置弹窗：页尾总结、脚注、本页备注和来源；备注保存后由页面备注面板自动载入。",
+      "capture": {
+        "kind": "detail",
+        "target": "#page-dialog",
+        "clip": {
+          "x": 610,
+          "y": 136,
+          "width": 700,
+          "height": 928
+        }
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -213,6 +358,9 @@
     {
       "image": "images/presentation-fullscreen.png",
       "description": "全屏放映的实际画面与底部操作提示。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
@@ -230,6 +378,9 @@
     {
       "image": "images/presentation-overview.png",
       "description": "放映中双击进入每行4页的总览，滚动查找并双击目标页继续放映。",
+      "capture": {
+        "kind": "workbench"
+      },
       "view": {
         "mode": "single",
         "columns": 2,
