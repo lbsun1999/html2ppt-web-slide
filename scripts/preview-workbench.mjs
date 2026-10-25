@@ -28,6 +28,7 @@ try{
  await shot('workbench-overview','多页工作台：顶部文件与编辑控件、左侧导航、中央多页视图和右侧当前页设置。');
 
  await open('AI 生成结构，人工完成精修');await mode('text');
+ await ui('outline').click();assert.equal(await page.locator('#outline-appendix').isChecked(),true);await shot('outline-manager','文档大纲：从当前页面载入标题及章节，支持现写／粘贴／文件、对应页映射、当前稿／另建及最后一章为附录。');await page.locator('#outline-dialog button[value="cancel"]').last().click();
  await page.locator('#canvas .paragraph').first().evaluate(el=>{el.focus();const text=document.createTreeWalker(el,NodeFilter.SHOW_TEXT).nextNode(),range=document.createRange();range.setStart(text,0);range.setEnd(text,Math.min(text.length,8));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);});
  assert.equal(await page.locator('#text-formatbar').isVisible(),true);await shot('text-controls','文字模式：选区、14/16pt、段落列表、加粗、颜色、行距和段后距控件。');
 
@@ -37,6 +38,7 @@ try{
 
  await open('作者简介');await mode('edit');await page.locator('#canvas .profile-details').click();
  await shot('profile-modules','作者简介：固定身份卡、履历横线表和含两个可增减分组的无框线表格。');
+ await page.locator('[data-action="paste-table"]').click();assert.ok((await page.locator('#table-data').inputValue()).length>10);await shot('table-bulk-edit','表格批量编辑：当前作者页分组的内容预填，可直接改值或从Excel粘贴；确认前不修改原表。');await page.locator('#table-dialog button[value="cancel"]').last().click();
  await open('阶段总结与后续计划');await mode('edit');await page.locator('#canvas .summary-cards').click();
  await shot('summary-modules','阶段计划：三个A2子区域，右侧独立计划表及C1讨论区；按名称用箭头排序及删除。');
 

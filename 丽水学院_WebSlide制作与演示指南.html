@@ -216,6 +216,7 @@ html,body{height:100%;overflow:hidden}
 .sidebar-actions button{padding:7px 9px;flex:1}
 .toolbar .view-controls select{max-width:115px;background:white;color:#334d60;border:1px solid #cbd8e2}
 #insert-menu{width:48px;min-width:48px;max-width:48px;flex:0 0 48px;padding:9px 6px}
+.outline-dialog{width:min(1050px,94vw)}.outline-dialog .dialog-body{gap:12px}.outline-dialog p{margin:0;line-height:1.6}.outline-help{padding:12px;background:#eef5f9;font-size:13px;line-height:1.8}.outline-file,.outline-options{display:flex;align-items:center;gap:18px;flex-wrap:wrap}.outline-file label{display:flex;align-items:center;gap:10px}.outline-options label{display:flex;align-items:center;gap:6px}.outline-dialog textarea{width:100%;font:14px/1.6 Consolas,'Microsoft YaHei',monospace;min-height:170px}.outline-status{font-size:13px;line-height:1.6;white-space:pre-wrap;color:#245c73}.outline-status.error{color:#a31418}.outline-preview{max-height:290px;overflow:auto;border:1px solid #d6e2ea}.outline-preview:empty{display:none}.outline-preview h3{margin:0;padding:9px 12px;background:#eef5f9;font-size:14px;color:#245c73}.outline-page-row{display:grid;grid-template-columns:1fr 1.2fr;align-items:center;gap:14px;padding:8px 12px;border-top:1px solid #e5edf2;font-size:13px}.outline-page-row>span{white-space:pre-wrap}.outline-page-row select{width:100%;max-width:100%;font-size:12px}
 .free-text-active{outline:2px dashed #3795bd!important;outline-offset:3px}.free-text-coordinates{display:grid;grid-template-columns:1fr 1fr;gap:8px}.free-text-coordinates input{width:100%}
 .presenting .free-text-active,.export-view .free-text-active{outline:none!important}
 @media print{.free-text-active{outline:none!important}}
@@ -267,6 +268,8 @@ body.export-view .toc-note:empty{display:none}
 .delivery-checks .part-title-text{font-size:26.667px}
 .delivery-checks .paragraph{font-size:23.333px;line-height:1.4}
 .table-note{white-space:pre-wrap}
+.alignment-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.alignment-options label{position:relative;margin:0!important;cursor:pointer}.alignment-options input{position:absolute;opacity:0;width:1px;height:1px}.alignment-options span{display:block;text-align:center;padding:7px 0;border:1px solid #c6d6e2;border-radius:5px;font-weight:700;color:#35536a;background:#fff}.alignment-options input:checked+span{background:#e6f1f8;border-color:#005b94;color:#005b94}.alignment-options input:focus-visible+span{outline:2px solid #2692ac;outline-offset:2px}[data-text-alignment]{margin-bottom:14px}#table-data{white-space:pre;overflow:auto;tab-size:8;font-family:Consolas,"Microsoft YaHei",monospace}
+.table-text-editor{position:relative;background:#fff}.table-text-editor #table-data,.table-text-mirror{box-sizing:border-box;margin:0;padding:10px 12px;border:1px solid transparent;border-radius:6px;font:14px/1.6 Consolas,"Microsoft YaHei",monospace;letter-spacing:normal;tab-size:8;white-space:pre;overflow-wrap:normal;word-break:normal}.table-text-editor #table-data{position:relative;display:block;width:100%;background:transparent;border-color:#c6d6e2;color:#18394e;caret-color:#18394e;overflow:auto}.table-text-mirror{position:absolute;inset:0;overflow:hidden;color:transparent;pointer-events:none}.table-tab{background:linear-gradient(to right,transparent 2px,#ACA808 2px,#ACA808 calc(100% - 2px),transparent calc(100% - 2px));color:transparent;border-radius:2px;box-shadow:none}
 
 .legacy-page *{box-sizing: border-box;}
 .legacy-page{--ustb-blue: #005b94; --ustb-blue-mid: #1766a9; --ustb-cyan: #2ba3c0; --ustb-red: #a31418; --ustb-gray: #bcbec0; --ink: #12374e; --muted: #526b7d; --line: #cfdde6; --line-light: #e4ebf0; --tint: #eef5f9; --bg: #e7edf2; --ppt-width-pt: 960; --ppt-pt-px: calc(1600px / var(--ppt-width-pt)); --fs-cover-title: calc(var(--ppt-pt-px) * 40); --cover-tracking: 4px; --fs-h2: calc(var(--ppt-pt-px) * 28); --fs-group: calc(var(--ppt-pt-px) * 20); --fs-h3: calc(var(--ppt-pt-px) * 18); --fs-item-title: calc(var(--ppt-pt-px) * 18); --fs-equation: calc(var(--ppt-pt-px) * 16); --fs-body: calc(var(--ppt-pt-px) * 16); --fs-lead: calc(var(--ppt-pt-px) * 16); --fs-label: calc(var(--ppt-pt-px) * 14); --fs-small: calc(var(--ppt-pt-px) * 12); --fs-caption: calc(var(--ppt-pt-px) * 12); --fs-figure-title: calc(var(--ppt-pt-px) * 14); --fs-footer: 17px; --fs-footnote: 17px; --bullet-size: 6px; --bullet-gap: 24px; --page-margin: 58px; --header-height: 168px; --header-rule: 2px; --top-trim: 7px; --logo-size: 120px; --scale: 1;}
@@ -550,6 +553,7 @@ body.export-view .toc-note:empty{display:none}
   // src/rich-text.js
   var esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   var validColor = (c) => /^#[\da-f]{6}$/i.test(c || "") || ["theme", "emphasis"].includes(c);
+  var ALIGNMENTS = [["left", "L", "左对齐"], ["center", "E", "居中"], ["right", "R", "右对齐"], ["justify", "J", "两端对齐"]];
   function richHTML(text3, runs, bullet = false, paragraphs = false, marker = "•", paragraphFormats = []) {
     text3 = String(text3 ?? "");
     if (!Array.isArray(runs) || runs.map((r) => r.text).join("") !== text3) runs = [{ text: text3 }];
@@ -563,8 +567,8 @@ body.export-view .toc-note:empty{display:none}
       });
     }
     return bullet || paragraphs ? lines.map((line, i2) => {
-      const p = paragraphFormats?.[i2] || {}, list = p.bullet ?? bullet, after = Number(p.after);
-      return `<div data-paragraph data-bullet="${!!list}" data-marker="${esc(p.marker || marker)}"${Number.isFinite(after) ? ` style="margin-bottom:${Math.max(0, after) / 0.6}px"` : ""}>${line || "<br>"}</div>`;
+      const p = paragraphFormats?.[i2] || {}, list = p.bullet ?? bullet, after = Number(p.after), css = [Number.isFinite(after) ? `margin-bottom:${Math.max(0, after) / 0.6}px` : "", ALIGNMENTS.some(([a]) => a === p.align) ? `text-align:${p.align};text-align-last:auto` : ""].filter(Boolean).join(";");
+      return `<div data-paragraph data-bullet="${!!list}" data-marker="${esc(p.marker || marker)}"${css ? ` style="${css}"` : ""}>${line || "<br>"}</div>`;
     }).join("") : lines.join("<br>");
   }
   function textStyle(owner, key2) {
@@ -612,7 +616,7 @@ body.export-view .toc-note:empty{display:none}
       if (block && node.nextSibling && !runs.at(-1)?.text.endsWith("\n")) add("\n", format);
     }
     for (const node of el.childNodes) visit(node);
-    const paragraphs = [...el.children].filter((n) => ["DIV", "P", "LI"].includes(n.tagName)).map((n) => ({ bullet: n.dataset.bullet !== void 0 ? n.dataset.bullet === "true" : el.classList.contains("bulleted"), marker: n.dataset.marker || el.dataset.marker || "•", ...n.style.marginBottom ? { after: parseFloat(n.style.marginBottom) * 0.6 } : {} }));
+    const paragraphs = [...el.children].filter((n) => ["DIV", "P", "LI"].includes(n.tagName)).map((n) => ({ bullet: n.dataset.bullet !== void 0 ? n.dataset.bullet === "true" : el.classList.contains("bulleted"), marker: n.dataset.marker || el.dataset.marker || "•", ...n.style.marginBottom ? { after: parseFloat(n.style.marginBottom) * 0.6 } : {}, ...ALIGNMENTS.some(([a]) => a === n.style.textAlign) ? { align: n.style.textAlign } : {} }));
     return { text: runs.map((r) => r.text).join(""), runs, paragraphs };
   }
   var TextFormatting = class {
@@ -620,10 +624,10 @@ body.export-view .toc-note:empty{display:none}
       Object.assign(this, { getTheme, commit, savePoint: savePoint2, toast: toast2, getBatchFields });
       document.addEventListener("selectionchange", () => this.remember());
       document.addEventListener("pointerdown", (e) => {
-        if (e.target.closest("#text-formatbar")) {
+        if (e.target.closest("#text-formatbar,[data-text-alignment]")) {
           this.remember();
           this.toolbarActive = true;
-          if (e.target.closest("#format-bold")) e.preventDefault();
+          if (e.target.closest("#format-bold,[data-text-alignment]")) e.preventDefault();
         } else this.toolbarActive = false;
       }, true);
       document.addEventListener("click", (e) => {
@@ -643,6 +647,15 @@ body.export-view .toc-note:empty{display:none}
         if (e.target.id === "format-paragraph-after") this.apply("after", e.target.value);
         if (e.target.id === "format-font-size") this.apply("size", e.target.value);
         if (e.target.id === "format-list") this.apply("list", e.target.value);
+        if (e.target.name === "paragraph-align") this.apply("align", e.target.value);
+      });
+      document.addEventListener("keydown", (e) => {
+        const key2 = e.key.toUpperCase(), alignment = ALIGNMENTS.find(([, shortcut]) => shortcut === key2), editing = e.target.closest?.('#canvas [data-text][contenteditable="true"]') || e.target.closest?.("[data-text-alignment]");
+        if (alignment && (e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && editing && !document.querySelector("dialog[open]")) {
+          e.preventDefault();
+          this.remember();
+          this.apply("align", alignment[0]);
+        }
       });
       document.addEventListener("paste", (e) => {
         if (e.target.closest("[contenteditable=true]")) {
@@ -652,7 +665,7 @@ body.export-view .toc-note:empty{display:none}
       });
     }
     remember() {
-      if (this.toolbarActive && document.activeElement?.closest("#text-formatbar")) return;
+      if (this.toolbarActive && document.activeElement?.closest("#text-formatbar,[data-text-alignment]")) return;
       const selection = getSelection();
       if (!selection.rangeCount) return;
       const node = selection.anchorNode, el = (node?.nodeType === 1 ? node : node?.parentElement)?.closest("[data-text][contenteditable]");
@@ -662,6 +675,17 @@ body.export-view .toc-note:empty{display:none}
       this.field = el;
       this.range = range.cloneRange();
       this.refresh();
+    }
+    mountAlignment(container) {
+      if (!container || !this.field?.isConnected || !this.field.closest("#canvas") || this.field.contentEditable !== "true") return;
+      if (!container.querySelector("[data-text-alignment]")) {
+        const group = document.createElement("section");
+        group.dataset.textAlignment = "";
+        group.innerHTML = '<h3>段落对齐</h3><div class="alignment-options" role="radiogroup" aria-label="段落对齐">' + ALIGNMENTS.map(([value, key2, name]) => `<label title="${name} · Ctrl + ${key2}"><input type="radio" name="paragraph-align" value="${value}" aria-label="${name}"><span>${key2}</span></label>`).join("") + "</div>";
+        container.prepend(group);
+      }
+      const align = [...new Set(this.selectedNodes().map((n) => getComputedStyle(n.closest("[data-paragraph]") || n.closest("[data-text]") || this.field).textAlign.replace("start", "left").replace("end", "right")))];
+      for (const input2 of container.querySelectorAll('[name="paragraph-align"]')) input2.checked = align.length === 1 && input2.value === align[0];
     }
     selectedNodes() {
       const fields = this.getBatchFields();
@@ -723,6 +747,7 @@ body.export-view .toc-note:empty{display:none}
       })));
       setNumber("format-paragraph-after", unique(paragraphs.map((n) => round((parseFloat(getComputedStyle(n).marginBottom) || 0) * 0.6))));
       setSelect("format-list", unique(paragraphs.map((n) => n.dataset.bullet === "true" ? n.dataset.marker || "•" : "")));
+      this.mountAlignment(document.getElementById("inspector"));
       const weights = unique(nodes.map((n) => Number(getComputedStyle(n).fontWeight) >= 600));
       document.querySelector("#format-bold")?.setAttribute("aria-pressed", weights.length === 1 ? String(weights[0]) : "mixed");
       const colors = unique(nodes.map((n) => getComputedStyle(n).color)), theme = this.getTheme();
@@ -765,7 +790,8 @@ body.export-view .toc-note:empty{display:none}
         this.refresh();
         return;
       }
-      if (kind === "list" || kind === "after") {
+      if (kind === "list" || kind === "after" || kind === "align") {
+        if (kind === "align" && !ALIGNMENTS.some(([a]) => a === value)) return;
         if (kind === "after") {
           const n = Number(value);
           if (!Number.isFinite(n) || n < 0 || n > 48) {
@@ -796,6 +822,9 @@ body.export-view .toc-note:empty{display:none}
           if (kind === "list") {
             node.dataset.bullet = String(!!value);
             node.dataset.marker = value || "•";
+          } else if (kind === "align") {
+            node.style.textAlign = value;
+            node.style.textAlignLast = "auto";
           } else node.style.marginBottom = Number(value) / 0.6 + "px";
         }
         this.commit(this.field);
@@ -884,8 +913,8 @@ body.export-view .toc-note:empty{display:none}
           if (value === "original") delete r.color;
           else r.color = value;
         }
-        if (kind === "after" || kind === "list") {
-          formats = Array.from({ length: data.text.split("\n").length }, (_, i2) => ({ ...formats[i2], bullet: formats[i2]?.bullet ?? field2.classList.contains("bulleted"), marker: formats[i2]?.marker || field2.dataset.marker || "•", ...kind === "after" ? { after: Number(value) } : { bullet: !!value, marker: value || "•" } }));
+        if (kind === "after" || kind === "list" || kind === "align") {
+          formats = Array.from({ length: data.text.split("\n").length }, (_, i2) => ({ ...formats[i2], bullet: formats[i2]?.bullet ?? field2.classList.contains("bulleted"), marker: formats[i2]?.marker || field2.dataset.marker || "•", ...kind === "after" ? { after: Number(value) } : kind === "align" ? { align: value } : { bullet: !!value, marker: value || "•" } }));
         }
         field2.innerHTML = richHTML(data.text, runs, false, formats.length > 0, field2.dataset.marker || "•", formats);
         this.commit(field2, null, kind === "color" ? value : null);
@@ -909,7 +938,7 @@ body.export-view .toc-note:empty{display:none}
   ];
   var styleInfo = (id) => TEXT_STYLES.find((s) => s[0] === id) || TEXT_STYLES[0];
   var decorationInstance = 0;
-  function textModuleHTML(m, { esc: esc3, editable: editable2, textBody: textBody2, edit }) {
+  function textModuleHTML(m, { esc: esc5, editable: editable2, textBody: textBody2, edit }) {
     const style = styleInfo(m.style)[0], cols = Math.max(1, Math.min(m.columns || m.parts.length, m.parts.length));
     const percent = Math.max(1, Math.min(100, Number(m.headerWidth) || (["capsule", "group"].includes(style) ? 90 : 65)));
     const groupId = "decor-" + String(m.id).replace(/[^\w-]/g, "") + "-" + ++decorationInstance;
@@ -933,7 +962,7 @@ body.export-view .toc-note:empty{display:none}
         const backdrop = ["ribbon", "arrow"].includes(innerStyle) ? box(groupId + "-" + i2, 22, innerStyle === "ribbon" ? 22 : 8) : "";
         let heading = innerStyle === "note" || m.showTitle === false && !m.groupTitle ? "" : innerStyle === "numbered" ? `<div class="numbered-heading"><div class="number-tag"><svg class="number-decoration number-decoration-back" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)" opacity=".16"/></svg><svg class="number-decoration number-decoration-front" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><span data-text class="number-value">${String(m.isToc ? p.chapterNumber || i2 + 1 : (Number(m.numberStart) || 1) + i2).padStart(2, "0")}</span></div>${titleText(p, i2)}<span class="number-rule" data-shape></span></div>` : title(p, i2, innerStyle);
         const extras = innerStyle === "numbered" || m.preserveExtras ? `${p.showSubheading && p.subheading ? `<div class="part-subheading" data-text data-part="${i2}" data-field="subheading" ${textStyle(p, "subheading")} ${editable2(edit, "")}>${richHTML(p.subheading, p.rich?.subheading)}</div>` : ""}${p.showAnnotation && p.annotation ? `<div class="part-annotation" data-text data-part="${i2}" data-field="annotation" ${textStyle(p, "annotation")} ${editable2(edit, "")}>${richHTML(p.annotation, p.rich?.annotation)}</div>` : ""}` : "";
-        return `<section class="text-part" data-shape>${backdrop}${innerStyle === "note" ? '<span class="note-rule" data-shape></span>' : ""}${heading}${textBody2(p, i2, edit)}${extras}${p.takeaway ? `<div class="part-takeaway" data-text data-part="${i2}" data-field="takeaway" ${editable2(edit, "")}>${richHTML(p.takeaway, p.rich?.takeaway)}</div>` : ""}${separators}${m.isToc && p.showPageRange ? `<span class="toc-page-range" data-text>p. ${esc3(p.pageRange)}</span>` : ""}</section>`;
+        return `<section class="text-part" data-shape>${backdrop}${innerStyle === "note" ? '<span class="note-rule" data-shape></span>' : ""}${heading}${textBody2(p, i2, edit)}${extras}${p.takeaway ? `<div class="part-takeaway" data-text data-part="${i2}" data-field="takeaway" ${editable2(edit, "")}>${richHTML(p.takeaway, p.rich?.takeaway)}</div>` : ""}${separators}${m.isToc && p.showPageRange ? `<span class="toc-page-range" data-text>p. ${esc5(p.pageRange)}</span>` : ""}</section>`;
       }).join("");
     }
     const styleAttrs = `--cols:${cols};--title-width:${percent}%`;
@@ -1000,6 +1029,7 @@ body.export-view .toc-note:empty{display:none}
         active = s;
       } else if (s.kind === "body" && s.chapterMode === "manual") {
         delete s.chapterId;
+        if (/^\d+$/.test(s.section)) n = Math.max(n, Number(s.section));
       } else if (s.kind === "body" && active) {
         s.section = active.section;
         s.group = active.title;
@@ -1118,6 +1148,534 @@ body.export-view .toc-note:empty{display:none}
       }
     }
     return syncSections(p);
+  }
+
+  // src/page-operations.js
+  function duplicatePages(pages) {
+    const result = clone(pages), ids = /* @__PURE__ */ new Map();
+    for (const s of result) {
+      ids.set(s.id, uid());
+      for (const m of s.modules) ids.set(m.id, uid());
+    }
+    const remap = (value) => {
+      if (typeof value === "string") {
+        if (ids.has(value)) return ids.get(value);
+        return value.replace(/#slide-([a-zA-Z0-9_-]+)/g, (match, id) => ids.has(id) ? "#slide-" + ids.get(id) : match);
+      }
+      if (Array.isArray(value)) return value.map(remap);
+      if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key2, v]) => [ids.get(key2) || key2, remap(v)]));
+      return value;
+    };
+    return remap(result);
+  }
+  function movePages(slides, ids, before) {
+    const picked = slides.filter((s) => ids.has(s.id)), rest = slides.filter((s) => !ids.has(s.id));
+    const target = slides.slice(0, before).filter((s) => !ids.has(s.id)).length;
+    return [...rest.slice(0, target), ...picked, ...rest.slice(target)];
+  }
+  function validateClipboard(text3, project2) {
+    const data = JSON.parse(text3);
+    if (data?.format !== "web-slide-pages-v1" || !Array.isArray(data.slides) || !data.slides.length) throw Error("剪贴板中没有复制的 Web Slide 页面。");
+    return validateProject({ ...clone(project2), slides: clone(data.slides) }).slides;
+  }
+
+  // src/outline.js
+  var OUTLINE_EXAMPLE = "# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n这里可以补充本页需要使用的材料，生成后保存在备注中。\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n";
+  var headingText = (s) => s.replace(/\s+#+\s*$/, "").trim().replace(/<br\s*\/?>|\\n/gi, "\n");
+  function parseOutline(input2) {
+    const text3 = String(input2 ?? "").replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n"), result = { title: "", intro: "", sections: [], errors: [], warnings: [] };
+    let section = null, page = null, fence = null;
+    for (const [index2, line] of text3.split("\n").entries()) {
+      const start2 = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+      if (start2) {
+        if (!fence) fence = { char: start2[1][0], length: start2[1].length };
+        else if (start2[1][0] === fence.char && start2[1].length >= fence.length) fence = null;
+        if (page) page.body += line + "\n";
+        continue;
+      }
+      if (fence) {
+        if (page) page.body += line + "\n";
+        continue;
+      }
+      const match = line.match(/^\s{0,3}(#{1,6})(?!#)\s*(.*?)\s*$/);
+      if (!match || match[1].length > 3) {
+        const owner = page || section;
+        if (owner) owner.body += line + "\n";
+        else result.intro += line + "\n";
+        continue;
+      }
+      const level = match[1].length, value = headingText(match[2]), at = index2 + 1;
+      if (!value) {
+        result.errors.push(`第${at}行的标题为空。`);
+        continue;
+      }
+      if (level === 1) {
+        if (result.title) result.errors.push(`第${at}行：总标题只能有一个，请用##或###表示章节与页面。`);
+        else result.title = value;
+        section = null;
+        page = null;
+      }
+      if (level === 2) {
+        if (!result.title) result.errors.push(`第${at}行：请先写#总标题。`);
+        section = { title: value, body: "", pages: [], line: at, key: "chapter-" + result.sections.length };
+        result.sections.push(section);
+        page = null;
+      }
+      if (level === 3) {
+        if (!section) {
+          result.errors.push(`第${at}行：页面标题前需要有##章节标题。`);
+          continue;
+        }
+        page = { title: value, body: "", line: at, key: section.key + "-page-" + section.pages.length };
+        section.pages.push(page);
+      }
+    }
+    if (!result.title) result.errors.push("缺少#总标题。");
+    if (!result.sections.length) result.errors.push("至少需要一个##章节。");
+    if (!result.sections.some((s) => s.pages.length)) result.errors.push("至少需要一个###页面标题。");
+    if (fence) result.errors.push("代码围栏未结束，请补上对应的```或~~~。");
+    for (const s of result.sections) {
+      s.body = s.body.trim();
+      if (!s.pages.length) result.errors.push("章节“" + s.title + "”尚未列出###页面。");
+      for (const p of s.pages) p.body = p.body.trim();
+    }
+    result.intro = result.intro.trim();
+    return result;
+  }
+  function decodeOutline(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let encoding = "utf-8";
+    if (bytes[0] === 255 && bytes[1] === 254) encoding = "utf-16le";
+    else if (bytes[0] === 254 && bytes[1] === 255) encoding = "utf-16be";
+    try {
+      return new TextDecoder(encoding, { fatal: true }).decode(bytes);
+    } catch {
+      throw Error("文件编码无法识别，请另存为UTF-8，或直接复制文字到输入框。");
+    }
+  }
+  function outlineIsAppendix(outline, section, { lastAppendix, chapters = {} } = {}) {
+    if (outline.sections.at(-1) === section && typeof lastAppendix === "boolean") return lastAppendix;
+    return /^(附录|appendix)/i.test(section.title) || chapters[section.key]?.section === "附录";
+  }
+  function outlinePageCount(outline, { toc = true, closing = true, transitions = true, lastAppendix, chapters = {}, preserveTransitions = false } = {}) {
+    return 1 + Number(toc) + Number(closing) + outline.sections.reduce((n, s) => n + s.pages.length + Number(!outlineIsAppendix(outline, s, { lastAppendix, chapters }) && !chapters[s.key]?.prelude && (preserveTransitions && chapters[s.key] ? !!chapters[s.key].transitionId : transitions)), 0);
+  }
+  function outlineMatches(project2, title) {
+    return project2.slides.filter((s) => s.kind === "body" && s.title === title);
+  }
+  function describeCurrentOutline(project2) {
+    const groups = [];
+    let active;
+    for (const s of project2.slides) {
+      if (s.kind === "transition") {
+        active = { title: s.title, pages: [], source: s };
+        groups.push(active);
+      }
+      if (s.kind !== "body") continue;
+      if (!active || s.chapterMode === "manual" && active.title !== s.group || s.chapterId && active.source?.id !== s.chapterId || !s.chapterId && s.group && active.title !== s.group) {
+        active = { title: s.group || "未分章内容", pages: [], source: null, first: s };
+        groups.push(active);
+      }
+      active.pages.push(s);
+    }
+    const text3 = ["# " + (project2.slides.find((s) => s.kind === "cover")?.title || project2.title).replace(/\n/g, "<br>"), ...groups.flatMap((g) => ["", "## " + g.title.replace(/\n/g, "<br>"), ...g.pages.map((s) => "### " + s.title.replace(/\n/g, "<br>"))])].join("\n"), parsed = parseOutline(text3), bindings = {}, chapters = {};
+    parsed.sections.forEach((s, i2) => {
+      const group = groups[i2];
+      chapters[s.key] = { id: group.source?.id || group.first?.id, transitionId: group.source?.id || null, section: group.source?.section || group.first?.section, prelude: !group.source && group.first?.section === "00" };
+      s.pages.forEach((p, j) => bindings[p.key] = group.pages[j].id);
+    });
+    return { text: text3, parsed, bindings, chapters };
+  }
+  function reconcileOutlineBindings(previous, next, values, chapters = false) {
+    const items = (o) => chapters ? o.sections : o.sections.flatMap((s) => s.pages), old = items(previous), fresh = items(next), out = {}, used = /* @__PURE__ */ new Set();
+    for (const item of fresh) {
+      const matches = old.filter((p) => p.title === item.title);
+      if (matches.length === 1 && matches[0].key in values) {
+        out[item.key] = values[matches[0].key];
+        used.add(matches[0].key);
+      }
+    }
+    for (const item of fresh) if (!(item.key in out)) {
+      const prior = old.find((p) => p.key === item.key && !used.has(p.key));
+      if (prior && prior.key in values) {
+        out[item.key] = values[prior.key];
+        used.add(prior.key);
+      }
+    }
+    return out;
+  }
+  function newContent(title) {
+    const s = blankSlide();
+    s.title = title;
+    s.lead = "";
+    s.source = "大纲草稿 · 请补充真实材料";
+    const m = moduleOf("text", { ...SAFE }, 2);
+    m.style = "cards";
+    m.columns = 2;
+    Object.assign(m.parts[0], { title: "本页要回答的问题", text: "明确本页的核心问题与判断依据。\n补充背景、条件和必要的术语说明。", bullet: true });
+    Object.assign(m.parts[1], { title: "证据与来源", text: "添加实际图表、公式、数据或文献。\n区分已有结论、待验证假设和后续计划。", bullet: true });
+    s.modules = [m];
+    return s;
+  }
+  function buildOutlineProject(current, outline, { toc = true, closing = true, transitions = true, lastAppendix, reuse = {}, sourceText = "" } = {}) {
+    if (outline.errors.length) throw Error(outline.errors.join("\n"));
+    if (outlinePageCount(outline, { toc, closing, transitions, lastAppendix }) > 100) throw Error("生成后超过100页，请精简大纲或分成多份文稿。");
+    const next = createProject({ withSections: false });
+    next.title = outline.title.replace(/\n/g, " ").replace(/[<>:"/\\|?*]/g, " ").trim() || "大纲文稿";
+    next.theme = clone(current.theme);
+    next.grid = current.grid;
+    next.slides = [];
+    const ids = /* @__PURE__ */ new Map(), take = (original, fallback) => {
+      const s = original ? duplicatePages([original])[0] : fallback();
+      if (original && !ids.has(original.id)) ids.set(original.id, s.id);
+      return s;
+    };
+    const cover = take(current.slides.find((s) => s.kind === "cover"), () => makePage("cover")), intro = outline.intro.split("\n").find((s) => s.trim()) || "";
+    cover.title = outline.title;
+    cover.lead = intro.length <= 80 ? intro : "";
+    cover.notes = [outline.intro, cover.notes].filter(Boolean).join("\n\n");
+    next.slides.push(cover);
+    let contents;
+    if (toc) {
+      contents = take(current.slides.find((s) => s.kind === "toc"), () => makePage("toc"));
+      Object.assign(contents, { title: "汇报目录", lead: "", tocNotes: {}, tocRich: {}, tocExtras: [], tocExcluded: [], tocIncludeAppendix: false });
+      next.slides.push(contents);
+    }
+    const chapterNotes = /* @__PURE__ */ new Map();
+    let number = 0, reused = 0;
+    for (const section of outline.sections) {
+      const appendix = outlineIsAppendix(outline, section, { lastAppendix }), sectionNumber = appendix ? "附录" : String(++number).padStart(2, "0");
+      let chapter;
+      if (transitions && !appendix) {
+        const matches = current.slides.filter((s) => s.kind === "transition" && s.title === section.title);
+        chapter = take(matches.length === 1 ? matches[0] : null, () => makePage("transition"));
+        chapter.title = section.title;
+        chapter.lead = "";
+        chapter.notes = [section.body, chapter.notes].filter(Boolean).join("\n\n");
+        next.slides.push(chapter);
+      }
+      for (const page of section.pages) {
+        const original = current.slides.find((s2) => s2.id === reuse[page.key] && s2.kind === "body");
+        const s = take(original, () => newContent(page.title));
+        if (original) reused++;
+        s.title = page.title;
+        s.lead = original ? s.lead : "";
+        delete s.chapterId;
+        delete s.chapterMode;
+        if (!chapter) {
+          s.chapterMode = "manual";
+          s.section = sectionNumber;
+          s.group = section.title;
+        }
+        s.outlineDraft = true;
+        s.notes = ["【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。", original ? "本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。" : "本页为结构占位，尚未填写实际研究结论。", !chapter && page === section.pages[0] ? section.body : "", page.body, s.notes].filter(Boolean).join("\n\n");
+        next.slides.push(s);
+        if (!chapter) chapterNotes.set(s.id, section.body);
+      }
+      if (chapter) chapterNotes.set(chapter.id, section.body);
+    }
+    if (closing) {
+      const end = take(current.slides.find((s) => s.kind === "closing"), () => makePage("closing"));
+      next.slides.push(end);
+    }
+    const remap = (value) => {
+      if (typeof value === "string") return value.replace(/#slide-([\w-]+)/g, (all, id) => ids.has(id) ? "#slide-" + ids.get(id) : all);
+      if (Array.isArray(value)) return value.map(remap);
+      if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key2, v]) => [key2, remap(v)]));
+      return value;
+    };
+    next.slides = remap(next.slides);
+    next.outline = { format: "hash-outline-v1", status: "structure-confirmed", text: sourceText };
+    validateProject(next);
+    if (contents) {
+      const actual = next.slides.find((s) => s.id === contents.id);
+      for (const chapter of documentSections(next)) {
+        const body = chapterNotes.get(chapter.id) || "", first = body.split("\n").find((s) => s.trim());
+        if (first && first.length <= 70) actual.tocNotes[chapter.id] = first;
+      }
+      validateProject(next);
+    }
+    return { project: next, reused, created: outline.sections.reduce((n, s) => n + s.pages.length, 0) - reused };
+  }
+  function updateProjectOutline(current, outline, { toc = true, closing = true, transitions = true, lastAppendix, reuse = {}, chapters = {}, preserveTransitions = true, sourceText = "" } = {}) {
+    if (outline.errors.length) throw Error(outline.errors.join("\n"));
+    const next = clone(current), result = [], used = /* @__PURE__ */ new Set(), take = (source, factory) => {
+      if (!source) return factory();
+      if (used.has(source.id)) return duplicatePages([source])[0];
+      used.add(source.id);
+      return clone(source);
+    };
+    const cover = current.slides.find((s) => s.kind === "cover");
+    if (cover) {
+      const copy = take(cover);
+      copy.title = outline.title;
+      result.push(copy);
+    } else next.title = outline.title.replace(/\n/g, " ");
+    let sequence = 0, reused = 0, created = 0;
+    const sectionNotes = /* @__PURE__ */ new Map();
+    for (const section of outline.sections) {
+      const binding = chapters[section.key], appendix = outlineIsAppendix(outline, section, { lastAppendix, chapters }), prelude = binding?.prelude && !appendix, original = current.slides.find((s) => s.id === binding?.transitionId && s.kind === "transition");
+      const showTransition = !appendix && !prelude && (binding && preserveTransitions ? !!original : transitions), number = appendix ? "附录" : prelude ? "00" : String(++sequence).padStart(2, "0");
+      let chapter;
+      if (showTransition) {
+        chapter = take(original, () => makePage("transition"));
+        chapter.title = section.title;
+        if (section.body) chapter.notes = [chapter.notes, "【大纲补充】\n" + section.body].filter(Boolean).join("\n\n");
+        result.push(chapter);
+      }
+      let first;
+      for (const page of section.pages) {
+        const source = current.slides.find((s2) => s2.id === reuse[page.key] && s2.kind === "body"), s = take(source, () => newContent(page.title));
+        if (source) reused++;
+        else {
+          created++;
+          s.outlineDraft = true;
+        }
+        s.title = page.title;
+        delete s.chapterId;
+        if (s.chapterMode === "manual" || !chapter) delete s.chapterMode;
+        if (!chapter) {
+          if (!prelude) s.chapterMode = "manual";
+          s.section = number;
+          s.group = section.title;
+        }
+        if (page.body) s.notes = [s.notes, "【大纲补充】\n" + page.body].filter(Boolean).join("\n\n");
+        if (!first) {
+          first = s;
+          if (!chapter && section.body) s.notes = [s.notes, "【章节补充】\n" + section.body].filter(Boolean).join("\n\n");
+        }
+        result.push(s);
+      }
+      if (chapter || first) sectionNotes.set(chapter?.id || first.id, section.body);
+    }
+    if (toc) {
+      const original = current.slides.find((s) => s.kind === "toc"), contents2 = take(original, () => makePage("toc"));
+      const before = current.slides.slice(0, current.slides.indexOf(original)).reverse(), previous = before.find((s) => result.some((n) => n.id === s.id));
+      const at = previous ? result.findIndex((s) => s.id === previous.id) + 1 : cover ? 1 : 0;
+      result.splice(at, 0, contents2);
+    }
+    if (closing) result.push(take(current.slides.find((s) => s.kind === "closing"), () => makePage("closing")));
+    if (result.length > 100) throw Error("应用后超过100页，请精简大纲或拆分文稿。");
+    next.slides = result;
+    next.outline = { format: "hash-outline-v1", status: "structure-confirmed", text: sourceText };
+    validateProject(next);
+    const contents = next.slides.find((s) => s.kind === "toc");
+    if (contents) {
+      for (const [id, body] of sectionNotes) {
+        const line = body.split("\n").find((s) => s.trim());
+        if (line && line.length <= 70) (contents.tocNotes ??= {})[id] = line;
+      }
+      validateProject(next);
+    }
+    return { project: next, reused, created, removed: current.slides.filter((s) => !result.some((n) => n.id === s.id)).length };
+  }
+
+  // src/outline-import.js
+  var esc2 = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  function openOutlineImport({ getProject, applyProject, toast: toast2 }) {
+    const original = getProject(), initial = describeCurrentOutline(original), dialog2 = document.createElement("dialog");
+    dialog2.id = "outline-dialog";
+    dialog2.className = "outline-dialog";
+    dialog2.innerHTML = `<form method="dialog"><div class="dialog-head"><h2>文档大纲</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body"><p>制作过程中可随时打开。修改题目、章节或页序后应用到对应页面，已有正文、图表和格式保留；新增页面可选当前版式。</p><div class="outline-help"><code># 汇报总标题</code> → 封面标题；<code>## 章节标题</code> → 章节；<code>### 页面标题</code> → 正文页。直接写、粘贴或读文件均可；普通文字保存为备注，长标题可用<code>&lt;br&gt;</code>手动分行。</div><div class="outline-file"><label>选择大纲文件<input id="outline-file" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown"></label><button type="button" id="outline-example">填入格式示例</button></div><label for="outline-text">编写、粘贴或修改当前大纲</label><textarea id="outline-text" rows="10" spellcheck="false"></textarea><div class="outline-options"><label>应用方式<select id="outline-mode"><option value="current">更新当前文稿</option><option value="new">另建文稿，沿用当前主题</option></select></label><label><input id="outline-toc" type="checkbox"> 保留／生成目录</label><label><input id="outline-transitions" type="checkbox"> 章节过渡页</label><label><input id="outline-appendix" type="checkbox"> 最后一章为附录</label><label><input id="outline-closing" type="checkbox"> 保留／生成结束页</label></div><p class="hint">当前模式会将改题、章节归属和页序应用到原页面；原有过渡页默认保留，手动更改开关后统一调整。新增页可选“新建占位页”或复制现有内容。勾选“最后一章为附录”可将末章按附录处理，章名无需写成“附录”；默认无过渡页、不进目录。被移出的页会在下面计数，可撤销；应用后需保存HTML才写入文件。标题改动后的正文含义仍需核对。</p><div id="outline-status" role="status"></div><div id="outline-preview" class="outline-preview"></div></div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" id="outline-apply">应用大纲</button></div></form>`;
+    document.body.append(dialog2);
+    let parsed = initial.parsed, choices = initial.bindings, chapters = initial.chapters, transitionTouched = false, appendixTouched = false, stable = initial.parsed;
+    const $2 = (s) => dialog2.querySelector(s), options = () => ({ toc: $2("#outline-toc").checked, transitions: $2("#outline-transitions").checked, closing: $2("#outline-closing").checked, lastAppendix: $2("#outline-appendix").checked });
+    $2("#outline-text").value = initial.text;
+    $2("#outline-toc").checked = original.slides.some((s) => s.kind === "toc");
+    $2("#outline-transitions").checked = original.slides.some((s) => s.kind === "transition");
+    $2("#outline-closing").checked = original.slides.some((s) => s.kind === "closing");
+    const render4 = (changed = false) => {
+      const next = parseOutline($2("#outline-text").value);
+      if (changed && !next.errors.length) {
+        choices = reconcileOutlineBindings(stable, next, choices);
+        chapters = reconcileOutlineBindings(stable, next, chapters, true);
+        if ($2("#outline-mode").value === "new") {
+          for (const page of next.sections.flatMap((s) => s.pages)) if (!stable.sections.flatMap((s) => s.pages).some((p) => p.title === page.title)) {
+            const matches = outlineMatches(original, page.title);
+            choices[page.key] = matches.length === 1 ? matches[0].id : "";
+          }
+        }
+        stable = next;
+      }
+      if (!appendixTouched) $2("#outline-appendix").checked = !!next.sections.length && outlineIsAppendix(next, next.sections.at(-1), { chapters });
+      parsed = next;
+      const current = $2("#outline-mode").value === "current", errors = [...parsed.errors];
+      const count = outlinePageCount(parsed, { ...options(), ...current ? { chapters, preserveTransitions: !transitionTouched } : {} }) - (current && !original.slides.some((s) => s.kind === "cover") ? 1 : 0);
+      if (count > 100) errors.push("生成后超过100页，请精简大纲或分成多份文稿。");
+      const bodies = original.slides.filter((s) => s.kind === "body");
+      $2("#outline-preview").innerHTML = parsed.sections.map((section) => `<section><h3>${esc2(section.title)}</h3>${section.pages.map((page) => {
+        if (!(page.key in choices)) {
+          const matches = outlineMatches(original, page.title);
+          choices[page.key] = matches.length === 1 ? matches[0].id : "";
+        }
+        return `<div class="outline-page-row"><span>${esc2(page.title)}</span><select data-outline-page="${page.key}" aria-label="${esc2(page.title)}的对应页面"><option value="">新建内容占位页</option>${bodies.map((s) => `<option value="${s.id}" ${choices[page.key] === s.id ? "selected" : ""}>${current ? "对应" : "复制"}第${original.slides.indexOf(s) + 1}页：${esc2(s.title.replace(/\n/g, " "))}</option>`).join("")}</select></div>`;
+      }).join("")}</section>`).join("");
+      const retained = new Set(Object.values(choices)), removed = current ? bodies.filter((s) => !retained.has(s.id)).length : 0, status = $2("#outline-status");
+      status.className = errors.length ? "outline-status error" : "outline-status";
+      status.textContent = errors.length ? errors.join("\n") : `${parsed.sections.length}个章节，${parsed.sections.reduce((n, s) => n + s.pages.length, 0)}个内容页，预计${count}页。${removed ? "将从当前文稿移出" + removed + "个内容页，可撤销。" : ""}${parsed.warnings.join(" ")}`;
+      $2("#outline-apply").disabled = errors.length > 0;
+      $2("#outline-apply").textContent = current ? "应用到当前文稿" : "按大纲另建文稿";
+    };
+    $2("#outline-text").addEventListener("input", () => render4(true));
+    for (const checkbox of dialog2.querySelectorAll(".outline-options input")) checkbox.addEventListener("change", () => {
+      if (checkbox.id === "outline-transitions") transitionTouched = true;
+      if (checkbox.id === "outline-appendix") appendixTouched = true;
+      render4();
+    });
+    $2("#outline-mode").onchange = () => render4();
+    $2("#outline-preview").addEventListener("change", (e) => {
+      if (e.target.dataset.outlinePage) {
+        choices[e.target.dataset.outlinePage] = e.target.value;
+        render4();
+      }
+    });
+    $2("#outline-example").onclick = () => {
+      $2("#outline-text").value = OUTLINE_EXAMPLE;
+      choices = {};
+      chapters = {};
+      parsed = stable = parseOutline("");
+      appendixTouched = false;
+      $2("#outline-mode").value = "new";
+      $2("#outline-toc").checked = $2("#outline-transitions").checked = $2("#outline-closing").checked = true;
+      render4(true);
+    };
+    $2("#outline-file").onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      try {
+        if (file.size > 1024 * 1024) throw Error("大纲文件请控制在1MB以内。");
+        const value = decodeOutline(await file.arrayBuffer());
+        if (!dialog2.isConnected) return;
+        $2("#outline-text").value = value;
+        render4(true);
+      } catch (error) {
+        $2("#outline-status").textContent = error.message;
+        $2("#outline-status").className = "outline-status error";
+        $2("#outline-apply").disabled = true;
+      }
+    };
+    $2("#outline-apply").onclick = () => {
+      try {
+        const current = $2("#outline-mode").value === "current", config = { ...options(), reuse: choices, chapters, preserveTransitions: !transitionTouched, sourceText: $2("#outline-text").value }, result = current ? updateProjectOutline(original, parsed, config) : buildOutlineProject(original, parsed, config);
+        applyProject(result.project, { newDocument: !current });
+        dialog2.close();
+        toast2(`已${current ? "更新" : "建立"}${result.project.slides.length}页。已有内容保留，新页仍需补充真实材料；可撤销。`);
+      } catch (error) {
+        $2("#outline-status").textContent = error.message;
+        $2("#outline-status").className = "outline-status error";
+      }
+    };
+    dialog2.addEventListener("close", () => dialog2.remove(), { once: true });
+    render4();
+    dialog2.showModal();
+    const editor = $2("#outline-text");
+    editor.focus();
+    editor.setSelectionRange(0, 0);
+    editor.scrollTop = 0;
+  }
+
+  // src/table-text.js
+  function tableToText(rows) {
+    return rows.map((row) => row.map((value) => {
+      const text3 = String(value ?? "");
+      return /[\t\r\n"]/.test(text3) ? '"' + text3.replace(/"/g, '""') + '"' : text3;
+    }).join("	")).join("\n");
+  }
+  function parseTableText(value) {
+    const text3 = String(value ?? "").replace(/^\uFEFF/, "");
+    if (!text3.length) throw Error("表格不能为空，请至少填写一个单元格。");
+    const rows = [], row = [];
+    let cell = "", quoted = false, start2 = true;
+    for (let i2 = 0; i2 < text3.length; i2++) {
+      const ch2 = text3[i2];
+      if (quoted) {
+        if (ch2 === '"') {
+          if (text3[i2 + 1] === '"') {
+            cell += '"';
+            i2++;
+          } else quoted = false;
+        } else cell += ch2;
+        continue;
+      }
+      if (ch2 === '"' && start2) {
+        quoted = true;
+        start2 = false;
+        continue;
+      }
+      if (ch2 === "	") {
+        row.push(cell);
+        cell = "";
+        start2 = true;
+        continue;
+      }
+      if (ch2 === "\r" || ch2 === "\n") {
+        if (ch2 === "\r" && text3[i2 + 1] === "\n") i2++;
+        row.push(cell);
+        rows.push(row.splice(0));
+        cell = "";
+        start2 = true;
+        continue;
+      }
+      cell += ch2;
+      start2 = false;
+    }
+    if (quoted) throw Error("单元格的双引号尚未闭合，请补齐后重试。");
+    if (cell !== "" || row.length || !/[\r\n]$/.test(text3)) {
+      row.push(cell);
+      rows.push(row);
+    }
+    const width = Math.max(...rows.map((r) => r.length));
+    if (rows.length > 100 || width > 30) throw Error("单模块最多100行、30列，更多数据请拆页。");
+    return rows.map((r) => [...r, ...Array(width - r.length).fill("")]);
+  }
+  function replaceTableText(owner, text3, { maxColumns = 30 } = {}) {
+    const rows = parseTableText(text3), width = rows[0].length;
+    if (width > maxColumns) throw Error(`当前表格最多${maxColumns}列，请拆分为多个分组。`);
+    const old = owner.rows;
+    owner.rows = rows;
+    if (Math.max(...old.map((r) => r.length)) !== width) delete owner.columnWidths;
+    owner.merges = (owner.merges || []).filter((a) => a.top < rows.length && a.left < width).map((a) => ({ ...a, bottom: Math.min(a.bottom, rows.length - 1), right: Math.min(a.right, width - 1) }));
+    owner.headerRows = Math.min(owner.headerRows ?? 1, rows.length);
+    for (const key2 of ["cellRich", "cellParagraphs", "cellLineSpacing", "cellFontSizes"]) if (owner[key2]) for (const cell of Object.keys(owner[key2])) {
+      const [r, c] = cell.split(",").map(Number);
+      if (r >= rows.length || c >= width || (key2 === "cellRich" || key2 === "cellParagraphs") && old[r]?.[c] !== rows[r][c]) delete owner[key2][cell];
+    }
+    return rows;
+  }
+
+  // src/table-text-editor.js
+  var esc3 = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  function initTableTextEditor(textarea, rows) {
+    const shell = document.createElement("div");
+    shell.className = "table-text-editor";
+    textarea.before(shell);
+    const mirror = document.createElement("pre");
+    mirror.className = "table-text-mirror";
+    mirror.setAttribute("aria-hidden", "true");
+    shell.append(mirror, textarea);
+    const sync = () => {
+      mirror.innerHTML = esc3(textarea.value).replace(/\t/g, '<mark class="table-tab">	</mark>') + "\n";
+      mirror.scrollTop = textarea.scrollTop;
+      mirror.scrollLeft = textarea.scrollLeft;
+    };
+    textarea.value = tableToText(rows);
+    textarea.wrap = "off";
+    textarea.addEventListener("input", sync);
+    textarea.addEventListener("scroll", () => {
+      mirror.scrollTop = textarea.scrollTop;
+      mirror.scrollLeft = textarea.scrollLeft;
+    });
+    textarea.addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        if (!document.execCommand("insertText", false, "	")) {
+          textarea.setRangeText("	", textarea.selectionStart, textarea.selectionEnd, "end");
+          textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      }
+    });
+    sync();
+    return { sync };
   }
 
   // src/layout.js
@@ -1368,8 +1926,8 @@ body.export-view .toc-note:empty{display:none}
       const target = this.current();
       if (!target) return false;
       this.highlight();
-      const r = canvasRect(target.el, this.getCanvas()), label = target.el.innerText.trim().split("\n")[0].slice(0, 32), esc3 = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-      container.innerHTML = `<h2>当前文字块</h2><p class="hint">${esc3(label)}</p><div class="row free-text-coordinates"><label>横向 X（px）<input id="free-text-x" type="number" step="1" value="${Math.round(r.x * 100) / 100}"></label><label>纵向 Y（px）<input id="free-text-y" type="number" step="1" value="${Math.round(r.y * 100) / 100}"></label></div><label>平移步进<select id="free-text-step">${[.../* @__PURE__ */ new Set([1, 5, this.getProject().grid])].map((n) => `<option value="${n}" ${n === this.step ? "selected" : ""}>${n} px</option>`).join("")}</select></label><div class="size-grid">${[["left", "←"], ["right", "→"], ["up", "↑"], ["down", "↓"]].map(([v, t]) => `<button data-free-text-move="${v}" aria-label="文字块${{ left: "左移", right: "右移", up: "上移", down: "下移" }[v]}">${t}</button>`).join("")}</div>${target.key && this.getSlide().textPositions?.[target.key] ? '<button id="free-text-reset">恢复原位</button>' : ""}<p class="hint">光标所在块即为当前目标。输入坐标或点击箭头平移，Shift加点击为5倍步进。位置须留在正文区，避开模块、图片及其他文字；可撤销，保存HTML和导出保留。</p>`;
+      const r = canvasRect(target.el, this.getCanvas()), label = target.el.innerText.trim().split("\n")[0].slice(0, 32), esc5 = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      container.innerHTML = `<h2>当前文字块</h2><p class="hint">${esc5(label)}</p><div class="row free-text-coordinates"><label>横向 X（px）<input id="free-text-x" type="number" step="1" value="${Math.round(r.x * 100) / 100}"></label><label>纵向 Y（px）<input id="free-text-y" type="number" step="1" value="${Math.round(r.y * 100) / 100}"></label></div><label>平移步进<select id="free-text-step">${[.../* @__PURE__ */ new Set([1, 5, this.getProject().grid])].map((n) => `<option value="${n}" ${n === this.step ? "selected" : ""}>${n} px</option>`).join("")}</select></label><div class="size-grid">${[["left", "←"], ["right", "→"], ["up", "↑"], ["down", "↓"]].map(([v, t]) => `<button data-free-text-move="${v}" aria-label="文字块${{ left: "左移", right: "右移", up: "上移", down: "下移" }[v]}">${t}</button>`).join("")}</div>${target.key && this.getSlide().textPositions?.[target.key] ? '<button id="free-text-reset">恢复原位</button>' : ""}<p class="hint">光标所在块即为当前目标。输入坐标或点击箭头平移，Shift加点击为5倍步进。位置须留在正文区，避开模块、图片及其他文字；可撤销，保存HTML和导出保留。</p>`;
       return true;
     }
     move(rect, reset = false) {
@@ -1409,7 +1967,7 @@ body.export-view .toc-note:empty{display:none}
   function tablePart(title = "新分组", rows = [["主题一", "主题二"], ["说明内容", "说明内容"]]) {
     return { ...part(), title, text: "", rows, headerRows: 1, cellPaddingPt: 3, fontPt: 12, borderless: true };
   }
-  function renderTables(m, { esc: esc3, editable: editable2, edit }) {
+  function renderTables(m, { esc: esc5, editable: editable2, edit }) {
     const field2 = (owner, key2) => richHTML(owner[key2] || "", owner.rich?.[key2], false, !!owner.paragraphs?.[key2], void 0, owner.paragraphs?.[key2]);
     const render4 = (p, index2) => {
       const rows = p.rows || [], skip = /* @__PURE__ */ new Set(), merges = p.merges || [], history2 = m.profileHistory && !m.sectionedTable;
@@ -1452,12 +2010,12 @@ body.export-view .toc-note:empty{display:none}
     }
     return true;
   }
-  function tableControls(m, index2, esc3, spacing2) {
+  function tableControls(m, index2, esc5, spacing2) {
     const p = tableOwner(m, index2), count = p.rows[0]?.length || 1;
-    return `${m.sectionedTable ? sectionControls(m, index2, esc3) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label>表格字号<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc3(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
+    return `${m.sectionedTable ? sectionControls(m, index2, esc5) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label>表格字号<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc5(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
   }
-  function sectionControls(m, index2, esc3) {
-    return '<h3>无框线表格子区域</h3><p class="hint">点击分组名查看对应行列设置。箭头排序时，该组标题、内容和格式一起移动。</p><div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><button class="stage-label table-part-name" data-table-select="' + i2 + '" aria-pressed="' + (i2 === index2) + '" title="' + esc3(p.title) + '">' + esc3(p.title) + '</button><button data-table-part-move="-1" data-table-from="' + i2 + '" ' + (i2 === 0 ? "disabled" : "") + ' title="分组上移" aria-label="分组上移">↑</button><button data-table-part-move="1" data-table-from="' + i2 + '" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="分组下移" aria-label="分组下移">↓</button><button data-table-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + '</div><button data-action="table-part-add" ' + (m.parts.length >= 8 ? "disabled" : "") + ">＋ 分组</button>";
+  function sectionControls(m, index2, esc5) {
+    return '<h3>无框线表格子区域</h3><p class="hint">点击分组名查看对应行列设置。箭头排序时，该组标题、内容和格式一起移动。</p><div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><button class="stage-label table-part-name" data-table-select="' + i2 + '" aria-pressed="' + (i2 === index2) + '" title="' + esc5(p.title) + '">' + esc5(p.title) + '</button><button data-table-part-move="-1" data-table-from="' + i2 + '" ' + (i2 === 0 ? "disabled" : "") + ' title="分组上移" aria-label="分组上移">↑</button><button data-table-part-move="1" data-table-from="' + i2 + '" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="分组下移" aria-label="分组下移">↓</button><button data-table-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + '</div><button data-action="table-part-add" ' + (m.parts.length >= 8 ? "disabled" : "") + ">＋ 分组</button>";
   }
 
   // src/school-variants.js
@@ -1561,35 +2119,6 @@ body.export-view .toc-note:empty{display:none}
       for (const [alias, name] of Object.entries({ "1952Beike.jpg": "school-origin.jpg", "1960Beike.png": "school-rebuild.jpg", "1988Beike.png": "school-campus.jpg", "2008Beike.png": "school-library.jpg", "example-campus.png": "school-campus.jpg", "example-motto.png": "school-library.jpg" })) if (assets[name]) assets[alias] = assets[name];
     }
     return assets;
-  }
-
-  // src/page-operations.js
-  function duplicatePages(pages) {
-    const result = clone(pages), ids = /* @__PURE__ */ new Map();
-    for (const s of result) {
-      ids.set(s.id, uid());
-      for (const m of s.modules) ids.set(m.id, uid());
-    }
-    const remap = (value) => {
-      if (typeof value === "string") {
-        if (ids.has(value)) return ids.get(value);
-        return value.replace(/#slide-([a-zA-Z0-9_-]+)/g, (match, id) => ids.has(id) ? "#slide-" + ids.get(id) : match);
-      }
-      if (Array.isArray(value)) return value.map(remap);
-      if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key2, v]) => [ids.get(key2) || key2, remap(v)]));
-      return value;
-    };
-    return remap(result);
-  }
-  function movePages(slides, ids, before) {
-    const picked = slides.filter((s) => ids.has(s.id)), rest = slides.filter((s) => !ids.has(s.id));
-    const target = slides.slice(0, before).filter((s) => !ids.has(s.id)).length;
-    return [...rest.slice(0, target), ...picked, ...rest.slice(target)];
-  }
-  function validateClipboard(text3, project2) {
-    const data = JSON.parse(text3);
-    if (data?.format !== "web-slide-pages-v1" || !Array.isArray(data.slides) || !data.slides.length) throw Error("剪贴板中没有复制的 Web Slide 页面。");
-    return validateProject({ ...clone(project2), slides: clone(data.slides) }).slides;
   }
 
   // src/sidebar-pages.js
@@ -16762,7 +17291,7 @@ body.export-view .toc-note:empty{display:none}
     }
     return s;
   }
-  function timelineHTML(m, { esc: esc3, edit }) {
+  function timelineHTML(m, { esc: esc5, edit }) {
     const n = m.parts.length;
     const field2 = (p, i2, key2) => `data-text data-part="${i2}" data-field="${key2}" ${textStyle(p, key2)} ${edit ? 'contenteditable="true" spellcheck="false"' : ""}`;
     const value = (p, key2) => richHTML(p[key2], p.rich?.[key2], false, !!p.paragraphs?.[key2]?.length, void 0, p.paragraphs?.[key2]);
@@ -16773,7 +17302,7 @@ body.export-view .toc-note:empty{display:none}
       const lineSVG = hide ? "" : `<svg class="timeline-line" data-decoration viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true"><path d="M2 0V100" stroke="var(--stage-color)" stroke-width="2"/></svg>`;
       const dotSVG = hide ? "" : `<svg class="timeline-dot" data-decoration viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="white" stroke="var(--stage-color)" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="var(--stage-color)"/></svg>`;
       const eventHTML = hide ? "" : `<div class="timeline-event"><div class="timeline-event-title" ${field2(p, i2, "title")}>${value(p, "title")}</div></div>`;
-      return `<section class="timeline-stage" style="--stage-color:var(--primary)"><div class="timeline-card" data-shape><div class="timeline-year" data-shape><div ${field2(p, i2, hide ? "title" : "year")}>${value(p, hide ? "title" : "year")}</div></div><div class="media-window timeline-media ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" title="双击替换照片或视频"><div class="media-crop">${p.asset ? `<${p.asset.kind === "video" ? 'video controls preload="metadata" muted playsinline' : "img"} src="${esc3(p.asset.src)}" alt="${esc3(p.title)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}>` : '<div class="timeline-placeholder" data-text>＋ 照片 / 视频<br>双击替换媒体</div>'}</div></div><div class="timeline-copy" ${field2(p, i2, "text")}>${value(p, "text")}</div></div>${eventHTML}${lineSVG}${dotSVG}</section>`;
+      return `<section class="timeline-stage" style="--stage-color:var(--primary)"><div class="timeline-card" data-shape><div class="timeline-year" data-shape><div ${field2(p, i2, hide ? "title" : "year")}>${value(p, hide ? "title" : "year")}</div></div><div class="media-window timeline-media ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" title="双击替换照片或视频"><div class="media-crop">${p.asset ? `<${p.asset.kind === "video" ? 'video controls preload="metadata" muted playsinline' : "img"} src="${esc5(p.asset.src)}" alt="${esc5(p.title)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}>` : '<div class="timeline-placeholder" data-text>＋ 照片 / 视频<br>双击替换媒体</div>'}</div></div><div class="timeline-copy" ${field2(p, i2, "text")}>${value(p, "text")}</div></div>${eventHTML}${lineSVG}${dotSVG}</section>`;
     }).join("")}</div>`;
   }
   function fitTimeline(el) {
@@ -16989,7 +17518,7 @@ body.export-view .toc-note:empty{display:none}
   }
 
   // src/render.js
-  var esc2 = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  var esc4 = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   function themeCSS(t) {
     return ["primary", "secondary", "accent", "emphasis", "tint", "ink"].map((k) => `--${k}:${t[k]}`).join(";");
   }
@@ -16998,33 +17527,33 @@ body.export-view .toc-note:empty{display:none}
     return richHTML(owner[key2] ?? fallback, owner.rich?.[key2], false, !!owner.paragraphs?.[key2]?.length, void 0, owner.paragraphs?.[key2]);
   }
   function textBody(p, i2, edit) {
-    return `<div class="paragraph ${p.chapterId ? "toc-note " : ""}${p.bullet ? "bulleted" : ""}" data-marker="${esc2(p.marker || "•")}" data-text data-part="${i2}" data-field="text" ${textStyle(p, "text")} ${editable(edit, "")}>${richHTML(p.text, p.rich?.text, p.bullet, true, p.marker, p.paragraphs?.text)}</div>`;
+    return `<div class="paragraph ${p.chapterId ? "toc-note " : ""}${p.bullet ? "bulleted" : ""}" data-marker="${esc4(p.marker || "•")}" data-text data-part="${i2}" data-field="text" ${textStyle(p, "text")} ${editable(edit, "")}>${richHTML(p.text, p.rich?.text, p.bullet, true, p.marker, p.paragraphs?.text)}</div>`;
   }
   function renderModule(m, edit = false) {
     let content = "";
     const cols = Math.min(m.columns || m.parts.length, m.parts.length) || 1;
-    if (m.type === "timeline") content = timelineHTML(m, { esc: esc2, edit });
-    if (m.type === "text") content = m.textBox ? `<div class="text-parts standalone-text ${m.boxTone === "light" ? "standalone-light" : "standalone-dark"}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0], 0, edit)}</div></div>` : textModuleHTML(m, { esc: esc2, editable, textBody, edit });
-    if (m.type === "media") content = `<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length / cols)},minmax(0,1fr))">${m.parts.map((p, i2) => `<figure class="media-part" data-shape><div class="media-window ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" data-ratio="${p.asset?.ratio || 16 / 9}">${p.asset ? `<div class="media-crop"><${p.asset.kind === "video" ? 'video controls preload="metadata"' : "img"} src="${esc2(p.asset.src)}" ${p.asset.kind === "video" ? "muted playsinline" : ""} alt="${esc2(p.caption)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}></div>` : `<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption !== false && (Boolean(p.caption?.trim()) || p.captionMode !== "title" && Boolean(p.note?.trim())) ? `<figcaption><div class="figure-title" data-text data-part="${i2}" data-field="caption" ${textStyle(p, "caption")} ${editable(edit, "")}>${field(p, "caption")}</div>${p.captionMode !== "title" && p.note?.trim() ? `<div class="figure-note" data-text data-part="${i2}" data-field="note" ${textStyle(p, "note")} ${editable(edit, "")}>${field(p, "note")}</div>` : ""}</figcaption>` : ""}</figure>`).join("")}</div>`;
-    if (m.type === "table") content = renderTables(m, { esc: esc2, editable, edit });
+    if (m.type === "timeline") content = timelineHTML(m, { esc: esc4, edit });
+    if (m.type === "text") content = m.textBox ? `<div class="text-parts standalone-text ${m.boxTone === "light" ? "standalone-light" : "standalone-dark"}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0], 0, edit)}</div></div>` : textModuleHTML(m, { esc: esc4, editable, textBody, edit });
+    if (m.type === "media") content = `<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length / cols)},minmax(0,1fr))">${m.parts.map((p, i2) => `<figure class="media-part" data-shape><div class="media-window ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" data-ratio="${p.asset?.ratio || 16 / 9}">${p.asset ? `<div class="media-crop"><${p.asset.kind === "video" ? 'video controls preload="metadata"' : "img"} src="${esc4(p.asset.src)}" ${p.asset.kind === "video" ? "muted playsinline" : ""} alt="${esc4(p.caption)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}></div>` : `<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption !== false && (Boolean(p.caption?.trim()) || p.captionMode !== "title" && Boolean(p.note?.trim())) ? `<figcaption><div class="figure-title" data-text data-part="${i2}" data-field="caption" ${textStyle(p, "caption")} ${editable(edit, "")}>${field(p, "caption")}</div>${p.captionMode !== "title" && p.note?.trim() ? `<div class="figure-note" data-text data-part="${i2}" data-field="note" ${textStyle(p, "note")} ${editable(edit, "")}>${field(p, "note")}</div>` : ""}</figcaption>` : ""}</figure>`).join("")}</div>`;
+    if (m.type === "table") content = renderTables(m, { esc: esc4, editable, edit });
     if (m.type === "formula") content = `<div class="formula-parts" style="--cols:${cols}">${m.parts.map((p, i2) => {
       let math2;
       try {
         math2 = formulaHTML(p.latex);
       } catch (error) {
-        math2 = '<span class="formula-error">' + esc2(error.message) + "</span>";
+        math2 = '<span class="formula-error">' + esc4(error.message) + "</span>";
       }
       return `<section class="formula-card" data-shape><h3 data-text data-part="${i2}" data-field="title" ${textStyle(p, "title")} ${editable(edit, "")}>${field(p, "title")}</h3><div class="formula-expression" data-formula-part="${i2}" data-raster aria-label="双击修改 LaTeX">${math2}</div><div class="paragraph" data-text data-part="${i2}" data-field="text" ${textStyle(p, "text")} ${editable(edit, "")}>${field(p, "text")}</div></section>`;
     }).join("")}</div>`;
     if (m.type === "shape") content = `<div class="graphic-shape" data-shape style="background:var(--primary)"></div>`;
-    return `<div class="module ${m.type}-module ${m.isToc ? "toc-module" : ""} ${esc2(m.role || "")}" data-module="${m.id}" ${Number.isFinite(m.cardPaddingPt) ? "data-card-padding" : ""} style="${Number.isFinite(m.cardPaddingPt) ? "--card-pad:" + m.cardPaddingPt / 0.6 + "px;" : ""}left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{ text: "文字", media: "图像 / 视频", table: "表格", shape: "图形", formula: "公式", timeline: "时间轴" }[m.type]}</span></div>`;
+    return `<div class="module ${m.type}-module ${m.isToc ? "toc-module" : ""} ${esc4(m.role || "")}" data-module="${m.id}" ${Number.isFinite(m.cardPaddingPt) ? "data-card-padding" : ""} style="${Number.isFinite(m.cardPaddingPt) ? "--card-pad:" + m.cardPaddingPt / 0.6 + "px;" : ""}left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{ text: "文字", media: "图像 / 视频", table: "表格", shape: "图形", formula: "公式", timeline: "时间轴" }[m.type]}</span></div>`;
   }
   function renderSlide(s, theme, index2, total, edit = false, project2 = null) {
     if (s.referenceLayout) return renderReferenceLayout(s, theme, index2, total, edit, themeCSS(theme), project2);
-    if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc2(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div></section>`;
-    if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc2(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text data-slide-field="${k}Label" ${editable(edit, "")}>${field(s, k + "Label", n)}</th><td data-text data-slide-field="${k}" ${textStyle(s, k)} ${editable(edit, "")}>${field(s, k)}</td></tr>`).join("")}</table></section>`;
+    if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc4(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div></section>`;
+    if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc4(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text data-slide-field="${k}Label" ${editable(edit, "")}>${field(s, k + "Label", n)}</th><td data-text data-slide-field="${k}" ${textStyle(s, k)} ${editable(edit, "")}>${field(s, k)}</td></tr>`).join("")}</table></section>`;
     const content = profileCardHTML(s, edit, themeCSS(theme)) + `<div class="module-layer">${s.modules.map((m) => renderModule(m, edit)).join("")}</div>`;
-    return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc2(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc2(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc2(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc2(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc2(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
+    return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc4(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc4(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc4(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc4(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc4(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
   }
   function fitMedia(el) {
     const scope = el.closest(".slide") || el, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
@@ -17578,7 +18107,7 @@ body.export-view .toc-note:empty{display:none}
     return `<button data-action="choose-style" style="width:100%;margin-top:10px">样式编号与悬停预览</button>${["ribbon", "capsule", "arrow", "group"].includes(m.style) ? `<label>标题装饰长度 <span id="header-width-value">${m.headerWidth || 70}%</span></label><input id="module-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}">` : ""}${m.style === "group" ? '<p class="hint">C2 内部固定为无底色默认分组，以标题、正文及细线区分。</p>' : ""}${m.style === "numbered" ? `<label>起始序号</label><input id="number-start" type="number" min="1" max="99" value="${m.numberStart || 1}"><label><input id="show-subheading" type="checkbox" ${m.parts.some((p) => p.showSubheading) ? "checked" : ""}> 正文加粗子标题（16pt）</label><label><input id="show-annotation" type="checkbox" ${m.parts.some((p) => p.showAnnotation) ? "checked" : ""}> 补充注释（14pt）</label>` : ""}`;
   }
   function stylePickerBody(m) {
-    return `<div class="style-picker"><div class="style-list" role="group" aria-label="文本块样式编号">${TEXT_STYLES.filter(([id]) => !m.isToc || id !== "note").map(([id, code, name, description]) => `<button type="button" class="style-option" data-style-id="${id}" aria-pressed="${m.style === id}" title="${esc2(description)}"><span class="style-code">${code}</span><span>${name}</span></button>`).join("")}</div><div class="style-live-preview"><div class="style-preview-frame" id="style-preview-frame"><div class="style-preview-canvas" id="style-preview-canvas"></div></div><div id="style-preview-copy" class="style-preview-copy"></div><p class="hint">悬停编号或用键盘聚焦可预览，单击选择，点击“应用样式”才修改模块。原文字会保留。</p></div></div><div class="style-picker-options"><label>标题装饰长度 <input id="style-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}"><span id="style-header-label">${m.headerWidth || 70}%</span></label></div>`;
+    return `<div class="style-picker"><div class="style-list" role="group" aria-label="文本块样式编号">${TEXT_STYLES.filter(([id]) => !m.isToc || id !== "note").map(([id, code, name, description]) => `<button type="button" class="style-option" data-style-id="${id}" aria-pressed="${m.style === id}" title="${esc4(description)}"><span class="style-code">${code}</span><span>${name}</span></button>`).join("")}</div><div class="style-live-preview"><div class="style-preview-frame" id="style-preview-frame"><div class="style-preview-canvas" id="style-preview-canvas"></div></div><div id="style-preview-copy" class="style-preview-copy"></div><p class="hint">悬停编号或用键盘聚焦可预览，单击选择，点击“应用样式”才修改模块。原文字会保留。</p></div></div><div class="style-picker-options"><label>标题装饰长度 <input id="style-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}"><span id="style-header-label">${m.headerWidth || 70}%</span></label></div>`;
   }
   function drawStylePreview(id, theme, width = 70) {
     const frame = document.querySelector("#style-preview-frame"), canvas = document.querySelector("#style-preview-canvas");
@@ -17656,7 +18185,7 @@ body.export-view .toc-note:empty{display:none}
     el.querySelector('option[value="part"]').disabled = !m || editingTarget?.part === null || m.parts.length <= 1;
   }
   function childControls(m) {
-    return '<div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><span class="stage-label" title="' + esc2(p.title || p.caption || "子区域") + '">' + (i2 + 1) + " · " + esc2(p.title || p.caption || "子区域") + '</span><button data-child-move="' + i2 + '" data-direction="-1" ' + (i2 === 0 ? "disabled" : "") + ' title="子区域上移" aria-label="子区域上移">↑</button><button data-child-move="' + i2 + '" data-direction="1" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="子区域下移" aria-label="子区域下移">↓</button><button data-child-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + "</div>";
+    return '<div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><span class="stage-label" title="' + esc4(p.title || p.caption || "子区域") + '">' + (i2 + 1) + " · " + esc4(p.title || p.caption || "子区域") + '</span><button data-child-move="' + i2 + '" data-direction="-1" ' + (i2 === 0 ? "disabled" : "") + ' title="子区域上移" aria-label="子区域上移">↑</button><button data-child-move="' + i2 + '" data-direction="1" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="子区域下移" aria-label="子区域下移">↓</button><button data-child-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + "</div>";
   }
   function childIndex(m) {
     return Math.min(childFocus.get(m.id) ?? m.parts.length - 1, m.parts.length - 1);
@@ -17677,7 +18206,7 @@ body.export-view .toc-note:empty{display:none}
     return plan.filter((m) => !m.fixed);
   }
   function moduleList() {
-    return '<h3>本页模块</h3><div class="module-card-list">' + slide().modules.map((m) => '<button data-select-module="' + m.id + '">' + esc2(m.groupTitle || m.tableTitle || m.parts[0]?.title || ({ text: "文字", table: "表格", media: "图像／视频" }[m.type] || m.type)) + "<small>" + esc2(m.sectionedTable ? m.parts.length + " 个表格子区域" : m.type === "table" ? m.profileHistory ? "履历横线表" : "数据表" : m.parts.length + " 个子区域") + "</small></button>").join("") + "</div>";
+    return '<h3>本页模块</h3><div class="module-card-list">' + slide().modules.map((m) => '<button data-select-module="' + m.id + '">' + esc4(m.groupTitle || m.tableTitle || m.parts[0]?.title || ({ text: "文字", table: "表格", media: "图像／视频" }[m.type] || m.type)) + "<small>" + esc4(m.sectionedTable ? m.parts.length + " 个表格子区域" : m.type === "table" ? m.profileHistory ? "履历横线表" : "数据表" : m.parts.length + " 个子区域") + "</small></button>").join("") + "</div>";
   }
   function chooseSpace(type, callback) {
     if (slide().kind !== "body" || slide().referenceLayout) {
@@ -17697,6 +18226,19 @@ body.export-view .toc-note:empty{display:none}
     spaceCallback = callback;
     newDialog("space-dialog", "选择插入区域", '<p class="hint">检测到多个互不相连的空白区域，请选择一处。灰色是已有内容，蓝色是本次插入位置；插入后可继续按网格移动和调整。</p><div class="space-choice-grid">' + spaceChoices.map((r, i2) => '<button type="button" class="space-choice" data-free-area="' + i2 + '"><svg viewBox="0 0 1600 900"><rect width="1600" height="900" fill="white"/>' + layoutItems().map((m) => '<rect x="' + m.x + '" y="' + m.y + '" width="' + m.w + '" height="' + m.h + '" fill="#dbe3e9"/>').join("") + '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '" fill="#005b94" fill-opacity=".25" stroke="#005b94" stroke-width="6"/></svg><strong>区域 ' + (i2 + 1) + "</strong><small>" + Math.round(r.w) + " × " + Math.round(r.h) + " px · 点击插入</small></button>").join("") + "</div>", "选择区域");
     document.querySelector('[data-action="space-dialog-apply"]').hidden = true;
+  }
+  function outlineDialog() {
+    openOutlineImport({ getProject: () => project, toast, applyProject: (next, { newDocument: newDocument2 = false } = {}) => {
+      savePoint();
+      project = next;
+      if (newDocument2) htmlFileHandle = null;
+      index = 0;
+      selected = null;
+      mode = "text";
+      render3();
+      pageList.reset();
+      persist();
+    } });
   }
   function quickInsert(type) {
     chooseSpace(type, (rect) => {
@@ -17869,7 +18411,7 @@ body.export-view .toc-note:empty{display:none}
   }
   function tocAddDialog() {
     const hidden = documentSections(project, { includeAppendix: !!slide().tocIncludeAppendix }).filter((ch2) => slide().tocExcluded?.includes(ch2.id));
-    newDialog("toc-add-dialog", "添加目录子区域", `<label>选择目录条目<select id="toc-add-choice">${hidden.map((ch2) => `<option value="${ch2.id}">恢复：${esc2(ch2.number + " " + ch2.title)}</option>`).join("")}<option value="custom">自定义目录条目</option></select></label><p class="hint">删除自动目录条目不会删除实际章节；恢复后标题与页码继续自动更新。自定义条目可直接编辑标题与说明。</p>`);
+    newDialog("toc-add-dialog", "添加目录子区域", `<label>选择目录条目<select id="toc-add-choice">${hidden.map((ch2) => `<option value="${ch2.id}">恢复：${esc4(ch2.number + " " + ch2.title)}</option>`).join("")}<option value="custom">自定义目录条目</option></select></label><p class="hint">删除自动目录条目不会删除实际章节；恢复后标题与页码继续自动更新。自定义条目可直接编辑标题与说明。</p>`);
   }
   function toast(t, error = false) {
     const el = $("#toast");
@@ -17946,7 +18488,7 @@ body.export-view .toc-note:empty{display:none}
     return `<dialog id="${id}"><form method="dialog"><div class="dialog-head"><h2>${title}</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body">${body}</div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" data-action="${id}-apply">${action}</button></div></form></dialog>`;
   }
   function bootUI() {
-    $("#app").innerHTML = `<header class="topbar"><div class="brand"><div class="brand-icon">▤</div><div><strong>Web Slide</strong><small>RESEARCH PRESENTATION STUDIO</small></div></div><button data-action="rename" id="document-caption" class="document-caption" title="修改文件名称"></button><button data-action="new">新建 HTML</button><button data-action="theme">主题与标志</button><button data-action="open-html">打开 HTML</button><button data-action="html-as">另存为</button><button data-action="html" class="primary">保存 HTML</button><button data-action="export-pdf">导出 PDF</button><button data-action="export-pptx">导出 PPTX</button></header><nav class="toolbar"><select id="insert-menu" aria-label="插入内容" title="插入内容"><option value="">＋</option><option value="text">文字模块</option><option value="textbox-dark">独立文字块 · 深底白字</option><option value="textbox-light">独立文字块 · 白底深字</option><option value="table">表格</option><option value="media">图片／视频</option><option value="more">更多模块：公式、时间轴等</option></select><button data-action="mode-edit" id="mode-edit">编辑模块</button><button data-action="mode-delete" id="mode-delete" class="danger">删除模块</button><span class="divider"></span><button data-action="mode-text" id="mode-text">编辑文字</button><span id="text-formatbar" class="text-formatbar"><select id="format-font-size" aria-label="文字字号"><option value="10">10 pt</option><option value="12">12 pt</option><option value="14">14 pt</option><option value="16" selected>16 pt</option></select><select id="format-list" aria-label="当前正文列表"><option value="">普通段落</option><option value="•">• 列表</option><option value="–">– 列表</option><option value="▪">▪ 列表</option><option value="▸">▸ 列表</option></select><button id="format-bold" title="选中文字后加粗或取消加粗"><b>B</b></button><select id="format-color" aria-label="文字颜色"><option value="theme">主题色</option><option value="emphasis">强调色</option><option value="original">原来的颜色</option><option value="custom">自选颜色</option></select><input id="format-custom-color" type="color" value="#005894" aria-label="自选文字颜色"><label>行距<input id="format-line-spacing" type="number" min="0.5" max="5" step="0.05" value="1.55" title="行距倍数；输入后点到框外应用"></label><label>段后<input id="format-paragraph-after" type="number" min="0" max="48" step="1" value="6" title="段后距（pt）；选中段落后修改"></label><span id="format-selection-count" class="format-selection-count" hidden></span><select id="delete-edit-scope" aria-label="删除正在编辑的文字块" disabled><option value="">删除文字块…</option><option value="part">删除当前子区域</option><option value="module">删除整个模块</option></select></span><button data-action="undo" title="撤销修改">↶</button><button data-action="redo" title="重做修改">↷</button><label class="view-controls">视图<select id="view-mode"><option value="single">单页展示</option><option value="scroll">单列滚动</option><option value="grid">多页滚动</option></select><select id="view-columns" aria-label="每行页数">${Array.from({ length: 6 }, (_, i2) => `<option value="${i2 + 1}">每行 ${i2 + 1} 页</option>`).join("")}</select></label><label><input type="checkbox" id="grid-visible">网格<input type="range" id="grid-step" min="8" max="40" step="4"><span id="grid-label"></span></label><button data-action="draw">圈定范围</button><button data-action="notes" id="notes-toggle" aria-pressed="false">页面备注</button><button data-action="presenter">演讲者视图</button><button data-action="end-session" class="end-session">结束双窗口</button><button data-action="present" class="grow">全屏放映 ▷</button></nav><div class="shell"><aside class="sidebar"><div class="sidebar-heading"><span>幻灯片</span><span id="sidebar-page-count" class="sidebar-page-count"></span><button data-action="add-slide" title="新增页面">＋</button></div><div id="slides"></div><button data-action="delete-slide" class="danger">删除当前页</button></aside><main class="workspace"><div id="pages-surface"></div><section id="notes-panel" class="notes-panel" hidden><div class="notes-heading"><strong>本页备注</strong><span>仅供演讲者查看 · 不印在幻灯片上</span></div><textarea id="speaker-notes" rows="4" placeholder="写下本页讲解要点、过渡提示或补充数据…"></textarea></section></main><div class="inspector-resizer" id="inspector-resizer" title="拖动调整右侧栏宽度"></div><aside class="inspector" id="inspector"></aside></div><div id="present-hud" class="present-hud" hidden><span></span><button data-action="end-present">退出放映</button></div><div id="toast" class="toast" role="status"></div><div id="dialogs"></div><input id="html-file" type="file" accept=".html,.htm" hidden><input id="excel-file" type="file" accept=".xlsx,.csv" hidden>`;
+    $("#app").innerHTML = `<header class="topbar"><div class="brand"><div class="brand-icon">▤</div><div><strong>Web Slide</strong><small>RESEARCH PRESENTATION STUDIO</small></div></div><button data-action="rename" id="document-caption" class="document-caption" title="修改文件名称"></button><button data-action="new">新建 HTML</button><button data-action="outline">文档大纲</button><button data-action="theme">主题与标志</button><button data-action="open-html">打开 HTML</button><button data-action="html-as">另存为</button><button data-action="html" class="primary">保存 HTML</button><button data-action="export-pdf">导出 PDF</button><button data-action="export-pptx">导出 PPTX</button></header><nav class="toolbar"><select id="insert-menu" aria-label="插入内容" title="插入内容"><option value="">＋</option><option value="text">文字模块</option><option value="textbox-dark">独立文字块 · 深底白字</option><option value="textbox-light">独立文字块 · 白底深字</option><option value="table">表格</option><option value="media">图片／视频</option><option value="more">更多模块：公式、时间轴等</option></select><button data-action="mode-edit" id="mode-edit">编辑模块</button><button data-action="mode-delete" id="mode-delete" class="danger">删除模块</button><span class="divider"></span><button data-action="mode-text" id="mode-text">编辑文字</button><span id="text-formatbar" class="text-formatbar"><select id="format-font-size" aria-label="文字字号"><option value="10">10 pt</option><option value="12">12 pt</option><option value="14">14 pt</option><option value="16" selected>16 pt</option></select><select id="format-list" aria-label="当前正文列表"><option value="">普通段落</option><option value="•">• 列表</option><option value="–">– 列表</option><option value="▪">▪ 列表</option><option value="▸">▸ 列表</option></select><button id="format-bold" title="选中文字后加粗或取消加粗"><b>B</b></button><select id="format-color" aria-label="文字颜色"><option value="theme">主题色</option><option value="emphasis">强调色</option><option value="original">原来的颜色</option><option value="custom">自选颜色</option></select><input id="format-custom-color" type="color" value="#005894" aria-label="自选文字颜色"><label>行距<input id="format-line-spacing" type="number" min="0.5" max="5" step="0.05" value="1.55" title="行距倍数；输入后点到框外应用"></label><label>段后<input id="format-paragraph-after" type="number" min="0" max="48" step="1" value="6" title="段后距（pt）；选中段落后修改"></label><span id="format-selection-count" class="format-selection-count" hidden></span><select id="delete-edit-scope" aria-label="删除正在编辑的文字块" disabled><option value="">删除文字块…</option><option value="part">删除当前子区域</option><option value="module">删除整个模块</option></select></span><button data-action="undo" title="撤销修改">↶</button><button data-action="redo" title="重做修改">↷</button><label class="view-controls">视图<select id="view-mode"><option value="single">单页展示</option><option value="scroll">单列滚动</option><option value="grid">多页滚动</option></select><select id="view-columns" aria-label="每行页数">${Array.from({ length: 6 }, (_, i2) => `<option value="${i2 + 1}">每行 ${i2 + 1} 页</option>`).join("")}</select></label><label><input type="checkbox" id="grid-visible">网格<input type="range" id="grid-step" min="8" max="40" step="4"><span id="grid-label"></span></label><button data-action="draw">圈定范围</button><button data-action="notes" id="notes-toggle" aria-pressed="false">页面备注</button><button data-action="presenter">演讲者视图</button><button data-action="end-session" class="end-session">结束双窗口</button><button data-action="present" class="grow">全屏放映 ▷</button></nav><div class="shell"><aside class="sidebar"><div class="sidebar-heading"><span>幻灯片</span><span id="sidebar-page-count" class="sidebar-page-count"></span><button data-action="add-slide" title="新增页面">＋</button></div><div id="slides"></div><button data-action="delete-slide" class="danger">删除当前页</button></aside><main class="workspace"><div id="pages-surface"></div><section id="notes-panel" class="notes-panel" hidden><div class="notes-heading"><strong>本页备注</strong><span>仅供演讲者查看 · 不印在幻灯片上</span></div><textarea id="speaker-notes" rows="4" placeholder="写下本页讲解要点、过渡提示或补充数据…"></textarea></section></main><div class="inspector-resizer" id="inspector-resizer" title="拖动调整右侧栏宽度"></div><aside class="inspector" id="inspector"></aside></div><div id="present-hud" class="present-hud" hidden><span></span><button data-action="end-present">退出放映</button></div><div id="toast" class="toast" role="status"></div><div id="dialogs"></div><input id="html-file" type="file" accept=".html,.htm" hidden><input id="excel-file" type="file" accept=".xlsx,.csv" hidden>`;
     viewer = new SlideViewer({ root: $("#pages-surface"), getProject: () => project, getIndex: () => index, onIndex: (n) => {
       index = n;
       selected = null;
@@ -18067,7 +18609,7 @@ body.export-view .toc-note:empty{display:none}
     viewer.fit();
   }
   function updateSidebar() {
-    $("#slides").innerHTML = project.slides.map((s, i2) => `<button class="slide-thumb ${i2 === index ? "current" : ""}" data-page="${i2}" aria-label="第 ${i2 + 1} 页 ${esc2(s.title)}"><div class="thumb-preview">${renderSlide(s, project.theme, i2, project.slides.length, false, project)}</div><span class="thumb-caption"><b>${String(i2 + 1).padStart(2, "0")}</b>${esc2(s.title.split("\n")[0])}</span></button>`).join("");
+    $("#slides").innerHTML = project.slides.map((s, i2) => `<button class="slide-thumb ${i2 === index ? "current" : ""}" data-page="${i2}" aria-label="第 ${i2 + 1} 页 ${esc4(s.title)}"><div class="thumb-preview">${renderSlide(s, project.theme, i2, project.slides.length, false, project)}</div><span class="thumb-caption"><b>${String(i2 + 1).padStart(2, "0")}</b>${esc4(s.title.split("\n")[0])}</span></button>`).join("");
     $$(".slide-thumb .module").forEach(fitTable);
     pageList?.sync();
     viewer.fit();
@@ -18162,6 +18704,10 @@ body.export-view .toc-note:empty{display:none}
     return `<h3>单元格高度与留白</h3><label>统一最小行高（pt；0为自动）<input id="${prefix}row-height" type="number" min="0" max="120" step="1" value="${height}"></label><label>上下内边距（pt；留空自动）<input id="${prefix}cell-padding" type="number" min="0" max="18" step="0.5" placeholder="自动" value="${padding ?? ""}"></label><p class="hint">整表统一调整。内容较多的行会自然增高，不会被行高设置裁切；左右半字符间距保持不变。</p>`;
   }
   function inspector() {
+    inspectorBody();
+    if (mode === "text") formatter?.mountAlignment($("#inspector"));
+  }
+  function inspectorBody() {
     if (freeText?.inspector($("#inspector"))) return;
     const m = selectedModule();
     if (!m) {
@@ -18170,7 +18716,7 @@ body.export-view .toc-note:empty{display:none}
     }
     const anchor = $("#resize-anchor")?.value || "tl";
     const options = [["w+", project.grid, 0, "加宽 →"], ["w-", -project.grid, 0, "收窄 ←"], ["h+", 0, project.grid, "增高 ↓"], ["h-", 0, -project.grid, "降低 ↑"]];
-    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc2(moduleName(m))}"></label>` : ""}<label>固定锚点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"], ["center", "中心"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc2(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc2(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc2(p.year)} ${esc2(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc2, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
+    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc4(moduleName(m))}"></label>` : ""}<label>固定锚点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"], ["center", "中心"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc4(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc4(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc4(p.year)} ${esc4(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc4, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
   }
   function testFit(m, rect) {
     if (!["text", "media", "table", "timeline"].includes(m.type)) return true;
@@ -18294,10 +18840,10 @@ body.export-view .toc-note:empty{display:none}
     }
   }
   async function themeDialog() {
-    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc2(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。可选色留空将由主题色派生。</p>`);
+    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc4(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。可选色留空将由主题色派生。</p>`);
   }
   function pageSettings() {
-    newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc2(slide().title)}</textarea></label><label>章节归属<select id="page-chapter-mode"><option value="auto" ${slide().chapterMode !== "manual" ? "selected" : ""}>自动继承最近过渡页</option><option value="manual" ${slide().chapterMode === "manual" ? "selected" : ""}>自定义章节／无过渡页附录</option></select></label><div class="row"><label>章节号／附录标签<input id="page-section" value="${esc2(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc2(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc2(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc2(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc2(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>本页备注（仅演讲者可见）<textarea id="page-notes" rows="5" placeholder="写下讲解要点、过渡提示或补充数据…">${esc2(slide().notes || "")}</textarea></label><p class="hint">保存后，点击顶部“页面备注”即自动载入；与备注面板共用同一份内容。</p><label>脚注来源文字<input id="page-source" value="${esc2(slide().source)}"></label><label>来源链接（http / https 或 #slide-页面ID）<input id="page-url" value="${esc2(slide().sourceUrl)}"></label>`);
+    newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc4(slide().title)}</textarea></label><label>章节归属<select id="page-chapter-mode"><option value="auto" ${slide().chapterMode !== "manual" ? "selected" : ""}>自动继承最近过渡页</option><option value="manual" ${slide().chapterMode === "manual" ? "selected" : ""}>自定义章节／无过渡页附录</option></select></label><div class="row"><label>章节号／附录标签<input id="page-section" value="${esc4(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc4(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc4(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc4(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc4(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>本页备注（仅演讲者可见）<textarea id="page-notes" rows="5" placeholder="写下讲解要点、过渡提示或补充数据…">${esc4(slide().notes || "")}</textarea></label><p class="hint">保存后，点击顶部“页面备注”即自动载入；与备注面板共用同一份内容。</p><label>脚注来源文字<input id="page-source" value="${esc4(slide().source)}"></label><label>来源链接（http / https 或 #slide-页面ID）<input id="page-url" value="${esc4(slide().sourceUrl)}"></label>`);
   }
   async function mediaDialog(m, i2) {
     mediaTarget = { id: m.id, i: i2 };
@@ -18332,7 +18878,7 @@ body.export-view .toc-note:empty{display:none}
     try {
       r = mediaRatio();
     } catch (error) {
-      box.innerHTML = '<p class="hint">' + esc2(error.message) + "</p>";
+      box.innerHTML = '<p class="hint">' + esc4(error.message) + "</p>";
       return;
     }
     if (!currentAsset) {
@@ -18361,7 +18907,7 @@ body.export-view .toc-note:empty{display:none}
       if (childRemove && !childRemove.disabled) {
         const m = selectedModule(), i2 = Number(childRemove.dataset.childRemove);
         childFocus.set(m.id, i2);
-        newDialog("remove-part-dialog", "删除当前子区域", "<p>删除“" + esc2(m.parts[i2].title || m.parts[i2].caption || "当前子区域") + "”及其中内容？可以撤销恢复。</p>", "确认删除");
+        newDialog("remove-part-dialog", "删除当前子区域", "<p>删除“" + esc4(m.parts[i2].title || m.parts[i2].caption || "当前子区域") + "”及其中内容？可以撤销恢复。</p>", "确认删除");
         return;
       }
       const region = e.target.closest("[data-free-area]");
@@ -18523,6 +19069,9 @@ body.export-view .toc-note:empty{display:none}
         case "end-session":
           presenter.end();
           break;
+        case "outline":
+          outlineDialog();
+          break;
         case "new":
           newDialog("new-dialog", "新建 HTML 文稿", `<label>文件名称<input id="new-document-name" value="未命名文稿"></label><label>初始内容<select id="new-document-content"><option value="blank">空白文稿 · 封面、目录、过渡、正文、尾页</option><option value="examples">完整示例文稿</option></select></label><p class="hint">新建前请先保存当前 HTML。学校主题将沿用当前设置。</p>`, "新建");
           break;
@@ -18542,7 +19091,7 @@ body.export-view .toc-note:empty{display:none}
           break;
         }
         case "rename":
-          newDialog("rename-dialog", "文件名称", `<label>名称<input id="document-name-input" value="${esc2(project.title)}"></label><p class="hint">保存时自动添加 .html，PDF / PPTX 使用相同名称。</p>`);
+          newDialog("rename-dialog", "文件名称", `<label>名称<input id="document-name-input" value="${esc4(project.title)}"></label><p class="hint">保存时自动添加 .html，PDF / PPTX 使用相同名称。</p>`);
           break;
         case "rename-dialog-apply": {
           const name = filename($("#document-name-input").value);
@@ -18730,21 +19279,17 @@ body.export-view .toc-note:empty{display:none}
           $("#excel-file").click();
           break;
         case "paste-table":
-          newDialog("table-dialog", "粘贴表格", '<label>从 Excel 复制后粘贴（制表符分列）<textarea id="table-data" rows="8" placeholder="算法	指标 1	指标 2"></textarea></label>');
+          newDialog("table-dialog", "批量编辑当前表格", '<p>已载入当前表格。每行对应一行，土黄色间隔是制表符，按Tab键即可插入分列符；可直接改数字、增减行列，也可从 Excel 整块粘贴。单元格内的换行用双引号包住；空单元格保留。确认前不会修改原表。</p><label>当前表格内容<textarea id="table-data" rows="12" spellcheck="false"></textarea></label>');
+          initTableTextEditor($("#table-data"), currentTable().rows);
           break;
         case "table-dialog-apply": {
-          const rows = $("#table-data").value.trim().split(/\r?\n/).map((r) => r.split("	"));
-          if (rows.length > 100 || Math.max(...rows.map((r) => r.length)) > 30) throw Error("单模块最多 100 行、30 列，更多数据请拆页。");
+          const m = currentTable(), next = clone(m);
+          replaceTableText(next, $("#table-data").value, { maxColumns: selectedModule().sectionedTable ? 12 : 30 });
           savePoint();
-          const m = currentTable();
-          m.rows = rows;
-          const width = Math.max(...rows.map((r) => r.length));
-          m.rows.forEach((r) => {
-            while (r.length < width) r.push("");
-          });
-          m.merges = [];
+          Object.assign(m, next);
           closeDialog();
           render3();
+          autoGrow(selectedModule());
           persist();
           break;
         }
@@ -18967,7 +19512,7 @@ body.export-view .toc-note:empty{display:none}
         }
         pendingTextDelete = { ...target, scope };
         const isPart = scope === "part" && target.part !== null && owner.parts.length > 1, label = isPart ? owner.parts[target.part].title || "当前子区域" : moduleName(owner) || "整个模块";
-        newDialog("delete-edit-text-dialog", isPart ? "删除当前子区域" : "删除整个模块", "<p>确认删除“" + esc2(label) + "”及其中内容？可使用撤销恢复。</p>", "确认删除");
+        newDialog("delete-edit-text-dialog", isPart ? "删除当前子区域" : "删除整个模块", "<p>确认删除“" + esc4(label) + "”及其中内容？可使用撤销恢复。</p>", "确认删除");
         return;
       }
       if (el.id === "module-title-show") {
@@ -19293,7 +19838,7 @@ body.export-view .toc-note:empty{display:none}
         if (!res.ok) throw Error(body.error);
         sheets = body.sheets;
       }
-      newDialog("excel-dialog", "选择工作表", `<label>工作表<select id="excel-sheet">${sheets.map((s, i2) => `<option value="${i2}">${esc2(s.name)}（${s.rows.length} 行）</option>`).join("")}</select></label><p class="hint">导入单元格值及合并区域，统一采用当前主题；公式使用 Excel 已保存的计算结果，不在浏览器重新计算。</p>`, "导入");
+      newDialog("excel-dialog", "选择工作表", `<label>工作表<select id="excel-sheet">${sheets.map((s, i2) => `<option value="${i2}">${esc4(s.name)}（${s.rows.length} 行）</option>`).join("")}</select></label><p class="hint">导入单元格值及合并区域，统一采用当前主题；公式使用 Excel 已保存的计算结果，不在浏览器重新计算。</p>`, "导入");
     } catch (error) {
       toast(error.message, true);
     }
@@ -19475,7 +20020,7 @@ body.export-view .toc-note:empty{display:none}
   });
   function openFormulaEditor(target, latex) {
     formulaTarget = target;
-    newDialog("formula-dialog", "编辑公式", `<label for="formula-latex">LaTeX 源码</label><textarea id="formula-latex" rows="6" spellcheck="false" aria-describedby="formula-help formula-validation">${esc2(latex)}</textarea><div class="formula-editor-actions"><button type="button" data-action="copy-formula">复制 LaTeX</button><span id="formula-help" class="hint">可直接复制或修改源码，无需外层 $。</span></div><p id="formula-validation" class="formula-validation" role="alert" hidden></p><div id="formula-preview" class="formula-editor-preview" aria-label="公式预览"></div><p class="hint">修改后点击“确定”。语法错误时保留输入，请修正后重新确认；取消则保留原公式。</p>`, "确定");
+    newDialog("formula-dialog", "编辑公式", `<label for="formula-latex">LaTeX 源码</label><textarea id="formula-latex" rows="6" spellcheck="false" aria-describedby="formula-help formula-validation">${esc4(latex)}</textarea><div class="formula-editor-actions"><button type="button" data-action="copy-formula">复制 LaTeX</button><span id="formula-help" class="hint">可直接复制或修改源码，无需外层 $。</span></div><p id="formula-validation" class="formula-validation" role="alert" hidden></p><div id="formula-preview" class="formula-editor-preview" aria-label="公式预览"></div><p class="hint">修改后点击“确定”。语法错误时保留输入，请修正后重新确认；取消则保留原公式。</p>`, "确定");
     previewFormula();
   }
   function previewFormula(focus = false) {

@@ -8,6 +8,12 @@
 
 项目为 `{version:1,title,theme,grid,slides}`。主题包括 `name,primary,secondary,accent,emphasis,tint,ink,logo,wordmark`。页面用 `blankSlide()`／`makePage(kind)` 创建，kind 为 cover、closing、transition、toc、body。ID 必须唯一。
 
+## 文档大纲
+
+`src/outline.js`提供`parseOutline(text)`与`describeCurrentOutline(project)`，后者从实际页面生成当前三级大纲及页面／章节绑定。新建使用`buildOutlineProject`，继续制作使用`updateProjectOutline`，均在副本上操作；不能用新建函数覆盖当前文稿。配置含`reuse`（页key到旧页ID）、`chapters`、`toc/closing/transitions`及`lastAppendix`。末章明确勾选为附录时按附录处理，即使章名为“补充资料”；取消后按普通章处理。已有过渡结构默认逐章保留，显式修改开关后统一调整。
+
+可选`project.outline={format:'hash-outline-v1',status:'structure-confirmed',text}`记录最近应用的结构，非研究事实审批状态；之后编辑以slides为准，不从旧outline强行重放。新增／复制草稿页可有`outlineDraft:true`，AI完成真实内容加工与检查后再清除。解析大纲时，普通说明放备注，标题内`<br>`或字面量`\n`转换为手动换行。UI入口与流程见[AI制作与迭代流程](AI制作与迭代流程.md)。
+
 ## 普通模块
 
 正文默认区域`{x:58,y:256,w:1484,h:554}`。建议模块间隙12px，可按空间缩小，不把建议留白作为错误。用`moduleOf(type,rect,count)`创建模块，type为text、media、table、shape、formula、timeline。实际可用边界用`contentBounds(!!slide.summary)`取得：普通正文底边834px、启用summary时750px，均不得遮挡真实页脚或总结。`lead`可空，`footer,source,sourceUrl`可编辑；通用正文示例可用`hideLogo:true`去掉页眉标识及其占位文字。
@@ -16,7 +22,7 @@
 
 文字子区域含 `title,text,bullet,marker`，可选 `subheading,annotation,takeaway`。`rich[field]` 为 `{text,bold,italic,color,fontSize}` 运行段数组，拼接必须与字段纯文本一致。颜色为 theme、emphasis 或六位十六进制颜色，字号选10／12／14／16pt；`fontSizes[field]`、`lineSpacing[field]` 控制当前字段字号和行距倍数。保留人工格式改动。
 
-`paragraphs[field]` 为逐段数组，顺序对应纯文本的换行，单项 `{bullet,marker,after}`。`after` 为 PPT pt，缺省 6；例如首行 `{bullet:false}`，后三行 `{bullet:true,marker:'•',after:12}`。字符级加粗／颜色／字号仍写入 rich，不用整字段格式覆盖选区。表格单元格的逐段格式为 `cellParagraphs['行,列']`。模块级统一列表是初始设置，人工可继续逐段修改。
+`paragraphs[field]` 为逐段数组，顺序对应纯文本的换行，单项 `{bullet,marker,after,align}`。`after` 为 PPT pt，缺省 6；`align`为`left/center/right/justify`，未设置时继承原版式，两端对齐末行不分散。例如首行 `{bullet:false,align:'left'}`，后三行 `{bullet:true,marker:'•',after:12}`。字符级加粗／颜色／字号仍写入 rich，不用整字段格式覆盖选区。表格单元格的逐段格式为 `cellParagraphs['行,列']`。模块级统一列表是初始设置，人工可继续逐段修改。右栏单选与Ctrl+L/E/R/J共用同一提交路径，HTML和原生PPTX同时保留逐段对齐。
 
 每块通常不超过四点，分段间距至少 6pt；末行只余一两个字必须修整，三四字也检查。先改文案和组织，再调模块，不自动缩字号硬塞。伪代码保留缩进与清楚的步骤间隔。
 

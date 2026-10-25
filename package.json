@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.mjs",
     "build:styles": "node scripts/build-style-gallery.mjs",
-    "test": "node --test tests/layout.test.mjs",
+    "test": "node --test tests/layout.test.mjs tests/outline.test.mjs tests/table-text.test.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test:styles": "node tests/text-styles.mjs",
     "build:examples": "node scripts/prepare-example.mjs",

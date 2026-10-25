@@ -1,12 +1,13 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const validColor=c=>/^#[\da-f]{6}$/i.test(c||'')||['theme','emphasis'].includes(c);
+const ALIGNMENTS=[['left','L','左对齐'],['center','E','居中'],['right','R','右对齐'],['justify','J','两端对齐']];
 export function richHTML(text,runs,bullet=false,paragraphs=false,marker="•",paragraphFormats=[]){
  text=String(text??'');if(!Array.isArray(runs)||runs.map(r=>r.text).join('')!==text)runs=[{text}];
  const lines=[''];
  for(const r of runs){const css=[typeof r.bold==='boolean'?`font-weight:${r.bold?700:400}`:'',r.italic?'font-style:italic':'',[10,12,14,16].includes(r.fontSize)?`font-size:${r.fontSize/.6}px`:'',validColor(r.color)?`color:${r.color==='theme'?'var(--primary)':r.color==='emphasis'?'var(--emphasis)':r.color}`:''].filter(Boolean).join(';');
   const chunks=String(r.text).split('\n');chunks.forEach((chunk,i)=>{if(i)lines.push('');lines[lines.length-1]+=css?`<span class="rich-run" data-rich-run style="${css}">${esc(chunk)}</span>`:esc(chunk);});
  }
- return bullet||paragraphs?lines.map((line,i)=>{const p=paragraphFormats?.[i]||{},list=p.bullet??bullet,after=Number(p.after);return `<div data-paragraph data-bullet="${!!list}" data-marker="${esc(p.marker||marker)}"${Number.isFinite(after)?` style="margin-bottom:${Math.max(0,after)/.6}px"`:''}>${line||'<br>'}</div>`;}).join(''):lines.join('<br>');
+ return bullet||paragraphs?lines.map((line,i)=>{const p=paragraphFormats?.[i]||{},list=p.bullet??bullet,after=Number(p.after),css=[Number.isFinite(after)?`margin-bottom:${Math.max(0,after)/.6}px`:'',ALIGNMENTS.some(([a])=>a===p.align)?`text-align:${p.align};text-align-last:auto`:''].filter(Boolean).join(';');return `<div data-paragraph data-bullet="${!!list}" data-marker="${esc(p.marker||marker)}"${css?` style="${css}"`:''}>${line||'<br>'}</div>`;}).join(''):lines.join('<br>');
 }
 export function textStyle(owner,key){const v=Number(owner.lineSpacing?.[key]),size=owner.fontSizes?.[key],css=[Number.isFinite(v)&&v>=.5&&v<=5?`line-height:${v}`:'',[10,12,14,16].includes(size)?`font-size:${size/.6}px`:''].filter(Boolean).join(';');return css?`style="${css}"`:'';}
 export function readRich(el){
@@ -23,7 +24,7 @@ export function readRich(el){
   if(block&&node.nextSibling&&!runs.at(-1)?.text.endsWith('\n'))add('\n',format);
  }
  for(const node of el.childNodes)visit(node);
- const paragraphs=[...el.children].filter(n=>['DIV','P','LI'].includes(n.tagName)).map(n=>({bullet:n.dataset.bullet!==undefined?n.dataset.bullet==='true':el.classList.contains('bulleted'),marker:n.dataset.marker||el.dataset.marker||'•',...(n.style.marginBottom?{after:parseFloat(n.style.marginBottom)*.6}:{})}));
+ const paragraphs=[...el.children].filter(n=>['DIV','P','LI'].includes(n.tagName)).map(n=>({bullet:n.dataset.bullet!==undefined?n.dataset.bullet==='true':el.classList.contains('bulleted'),marker:n.dataset.marker||el.dataset.marker||'•',...(n.style.marginBottom?{after:parseFloat(n.style.marginBottom)*.6}:{}),...(ALIGNMENTS.some(([a])=>a===n.style.textAlign)?{align:n.style.textAlign}:{})}));
  return {text:runs.map(r=>r.text).join(''),runs,paragraphs};
 }
 
@@ -31,7 +32,7 @@ export class TextFormatting{
  constructor({getTheme,commit,savePoint,toast,getBatchFields=()=>[]}){
   Object.assign(this,{getTheme,commit,savePoint,toast,getBatchFields});
   document.addEventListener('selectionchange',()=>this.remember());
-  document.addEventListener('pointerdown',e=>{if(e.target.closest('#text-formatbar')){this.remember();this.toolbarActive=true;if(e.target.closest('#format-bold'))e.preventDefault();}else this.toolbarActive=false;},true);
+  document.addEventListener('pointerdown',e=>{if(e.target.closest('#text-formatbar,[data-text-alignment]')){this.remember();this.toolbarActive=true;if(e.target.closest('#format-bold,[data-text-alignment]'))e.preventDefault();}else this.toolbarActive=false;},true);
   document.addEventListener('click',e=>{if(e.target.closest('#format-bold'))this.apply('bold');});
   document.addEventListener('change',e=>{
    if(e.target.id==='format-color'){const c=e.target.value;if(c==='custom')this.apply('color',document.querySelector('#format-custom-color').value);else this.apply('color',c);}
@@ -40,10 +41,18 @@ export class TextFormatting{
    if(e.target.id==='format-paragraph-after')this.apply('after',e.target.value);
    if(e.target.id==='format-font-size')this.apply('size',e.target.value);
    if(e.target.id==='format-list')this.apply('list',e.target.value);
+   if(e.target.name==='paragraph-align')this.apply('align',e.target.value);
   });
+  document.addEventListener('keydown',e=>{const key=e.key.toUpperCase(),alignment=ALIGNMENTS.find(([,shortcut])=>shortcut===key),editing=(e.target.closest?.('#canvas [data-text][contenteditable="true"]')||e.target.closest?.('[data-text-alignment]'));if(alignment&&(e.ctrlKey||e.metaKey)&&!e.altKey&&!e.shiftKey&&editing&&!document.querySelector('dialog[open]')){e.preventDefault();this.remember();this.apply('align',alignment[0]);}});
   document.addEventListener('paste',e=>{if(e.target.closest('[contenteditable=true]')){e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'));}});
  }
- remember(){if(this.toolbarActive&&document.activeElement?.closest('#text-formatbar'))return;const selection=getSelection();if(!selection.rangeCount)return;const node=selection.anchorNode,el=(node?.nodeType===1?node:node?.parentElement)?.closest('[data-text][contenteditable]');if(!el||!el.closest('#canvas'))return;const range=selection.getRangeAt(0);if(!el.contains(range.endContainer))return;this.field=el;this.range=range.cloneRange();this.refresh();}
+ remember(){if(this.toolbarActive&&document.activeElement?.closest('#text-formatbar,[data-text-alignment]'))return;const selection=getSelection();if(!selection.rangeCount)return;const node=selection.anchorNode,el=(node?.nodeType===1?node:node?.parentElement)?.closest('[data-text][contenteditable]');if(!el||!el.closest('#canvas'))return;const range=selection.getRangeAt(0);if(!el.contains(range.endContainer))return;this.field=el;this.range=range.cloneRange();this.refresh();}
+ mountAlignment(container){
+  if(!container||!this.field?.isConnected||!this.field.closest('#canvas')||this.field.contentEditable!=='true')return;
+  if(!container.querySelector('[data-text-alignment]')){const group=document.createElement('section');group.dataset.textAlignment='';group.innerHTML='<h3>段落对齐</h3><div class="alignment-options" role="radiogroup" aria-label="段落对齐">'+ALIGNMENTS.map(([value,key,name])=>`<label title="${name} · Ctrl + ${key}"><input type="radio" name="paragraph-align" value="${value}" aria-label="${name}"><span>${key}</span></label>`).join('')+'</div>';container.prepend(group);}
+  const align=[...new Set(this.selectedNodes().map(n=>getComputedStyle(n.closest('[data-paragraph]')||n.closest('[data-text]')||this.field).textAlign.replace('start','left').replace('end','right')))];
+  for(const input of container.querySelectorAll('[name="paragraph-align"]'))input.checked=align.length===1&&input.value===align[0];
+ }
  selectedNodes(){
   const fields=this.getBatchFields();if(fields.length)return fields.flatMap(field=>{const nodes=[],walker=document.createTreeWalker(field,NodeFilter.SHOW_TEXT);while(walker.nextNode())if(walker.currentNode.length)nodes.push(walker.currentNode.parentElement);return nodes.length?nodes:[field];});
   const field=this.field,range=this.range;if(!field?.isConnected||!range)return [];
@@ -63,6 +72,7 @@ export class TextFormatting{
   setNumber('format-line-spacing',unique(paragraphs.map(n=>{const cs=getComputedStyle(n);return round(parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)||1.55);})));
   setNumber('format-paragraph-after',unique(paragraphs.map(n=>round((parseFloat(getComputedStyle(n).marginBottom)||0)*.6))));
   setSelect('format-list',unique(paragraphs.map(n=>n.dataset.bullet==='true'?(n.dataset.marker||'•'):'')));
+  this.mountAlignment(document.getElementById('inspector'));
   const weights=unique(nodes.map(n=>Number(getComputedStyle(n).fontWeight)>=600));document.querySelector('#format-bold')?.setAttribute('aria-pressed',weights.length===1?String(weights[0]):'mixed');
   const colors=unique(nodes.map(n=>getComputedStyle(n).color)),theme=this.getTheme();
   const toHex=color=>{const rgb=color.match(/\d+/g);return rgb?'#'+rgb.slice(0,3).map(n=>Number(n).toString(16).padStart(2,'0')).join(''):color;};
@@ -77,13 +87,14 @@ export class TextFormatting{
    const n=Number(value);if(!Number.isFinite(n)||n<.5||n>5){this.toast('行距请输入 0.5–5 之间的倍数，如 1.3 或 1.55。',true);return;}
    this.savePoint();this.field.style.lineHeight=String(n);this.commit(this.field,n);this.refresh();return;
   }
-  if(kind==='list'||kind==='after'){
+  if(kind==='list'||kind==='after'||kind==='align'){
+   if(kind==='align'&&!ALIGNMENTS.some(([a])=>a===value))return;
    if(kind==='after'){const n=Number(value);if(!Number.isFinite(n)||n<0||n>48){this.toast('段后距请输入 0–48 pt。',true);return;}}
    if(kind==='list'&&(this.field.dataset.field!=='text'||!this.field.closest('.text-module'))){this.toast('列表设置用于当前文字块的正文，请先点击正文。',true);return;}
    const blocks=[...this.field.children].filter(n=>['DIV','P','LI'].includes(n.tagName));
    if(!blocks.length){const content=readRich(this.field);this.field.innerHTML=richHTML(content.text,content.runs,false,true);this.range.selectNodeContents(this.field);}
    const targets=[...this.field.children].filter(n=>{if(!['DIV','P','LI'].includes(n.tagName))return false;if(this.range.collapsed)return n.contains(this.range.startContainer);if(!this.range.intersectsNode(n))return false;const r=this.range.cloneRange();r.selectNodeContents(n);return this.range.compareBoundaryPoints(Range.END_TO_START,r)<0&&this.range.compareBoundaryPoints(Range.START_TO_END,r)>0;});
-   this.savePoint();for(const node of targets){if(kind==='list'){node.dataset.bullet=String(!!value);node.dataset.marker=value||'•';}else node.style.marginBottom=Number(value)/.6+'px';}
+   this.savePoint();for(const node of targets){if(kind==='list'){node.dataset.bullet=String(!!value);node.dataset.marker=value||'•';}else if(kind==='align'){node.style.textAlign=value;node.style.textAlignLast='auto';}else node.style.marginBottom=Number(value)/.6+'px';}
    this.commit(this.field);this.refresh();return;
   }
   if(kind==='size'){
@@ -113,8 +124,8 @@ export class TextFormatting{
    const data=readRich(field),runs=data.runs.map(r=>({...r}));let formats=data.paragraphs;
    if(kind==='bold')for(const r of runs)r.bold=makeBold;
    if(kind==='color')for(const r of runs){if(value==='original')delete r.color;else r.color=value;}
-   if(kind==='after'||kind==='list'){
-    formats=Array.from({length:data.text.split('\n').length},(_,i)=>({...formats[i],bullet:formats[i]?.bullet??field.classList.contains('bulleted'),marker:formats[i]?.marker||field.dataset.marker||'•',...(kind==='after'?{after:Number(value)}:{bullet:!!value,marker:value||'•'})}));
+   if(kind==='after'||kind==='list'||kind==='align'){
+    formats=Array.from({length:data.text.split('\n').length},(_,i)=>({...formats[i],bullet:formats[i]?.bullet??field.classList.contains('bulleted'),marker:formats[i]?.marker||field.dataset.marker||'•',...(kind==='after'?{after:Number(value)}:kind==='align'?{align:value}:{bullet:!!value,marker:value||'•'})}));
    }
    field.innerHTML=richHTML(data.text,runs,false,formats.length>0,field.dataset.marker||'•',formats);
    this.commit(field,null,kind==='color'?value:null);

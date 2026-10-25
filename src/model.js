@@ -23,7 +23,7 @@ export function documentSections(p,{includeAppendix=false}={}){
  return chapters.map((ch,i)=>{let end=(chapters[i+1]?.index??p.slides.length)-1;while(end>ch.index&&['cover','closing'].includes(p.slides[end].kind))end--;return {...ch,appendix:/^(附录|appendix)/i.test(ch.number)||/^(附录|appendix)/i.test(ch.title),startPage:ch.index+1,endPage:end+1,pageRange:ch.index===end?String(end+1).padStart(2,'0'):`${String(ch.index+1).padStart(2,'0')}–${String(end+1).padStart(2,'0')}`};}).filter(ch=>includeAppendix||!ch.appendix);
 }
 export function syncSections(p){
- let active=null,n=0;for(const s of p.slides){if(s.kind==='transition'){s.section=String(++n).padStart(2,'0');s.group=s.title;active=s;}else if(s.kind==='body'&&s.chapterMode==='manual'){delete s.chapterId;}else if(s.kind==='body'&&active){s.section=active.section;s.group=active.title;s.chapterId=active.id;}else if(s.kind==='body'&&s.chapterId){delete s.chapterId;s.section='00';s.group='未分章';}}
+ let active=null,n=0;for(const s of p.slides){if(s.kind==='transition'){s.section=String(++n).padStart(2,'0');s.group=s.title;active=s;}else if(s.kind==='body'&&s.chapterMode==='manual'){delete s.chapterId;if(/^\d+$/.test(s.section))n=Math.max(n,Number(s.section));}else if(s.kind==='body'&&active){s.section=active.section;s.group=active.title;s.chapterId=active.id;}else if(s.kind==='body'&&s.chapterId){delete s.chapterId;s.section='00';s.group='未分章';}}
  for(const s of p.slides.filter(s=>s.kind==='toc')){
   const sections=documentSections(p,{includeAppendix:!!s.tocIncludeAppendix}).filter(ch=>!s.tocExcluded?.includes(ch.id));
   const m=s.modules.find(m=>m.isToc)||moduleOf('text',{...SAFE},1);m.isToc=true;m.type='text';m.style=m.style==='note'?'cards':m.style;
