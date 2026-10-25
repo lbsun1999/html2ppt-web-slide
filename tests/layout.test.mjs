@@ -16,6 +16,15 @@ test('blocked resize rejects the whole plan and preserves anchor geometry',()=>{
 test('project checks reject external media and accept default model',()=>{
  const p=createProject({withSections:false});assert.equal(validateProject(p),p);p.slides[1].modules[0].parts[0].asset={src:'https://example.com/tracker.png'};assert.throws(()=>validateProject(p),/媒体/);
 });
+
+test('center anchor preserves both center coordinates when growing or shrinking',()=>{
+ const m={x:300,y:350,w:400,h:240};
+ for(const [dx,dy]of [[40,0],[0,20],[40,60],[-20,-40]]){
+  const r=anchoredResize(m,dx,dy,'center');
+  assert.equal(r.x+r.w/2,m.x+m.w/2);assert.equal(r.y+r.h/2,m.y+m.h/2);
+  assert.equal(r.w,m.w+dx);assert.equal(r.h,m.h+dy);
+ }
+});
 test('compact whitespace is allowed while true overlap stays blocked',()=>{
  const a={id:'a',type:'text',textBox:true,x:58,y:256,w:500,h:60};
  const b={id:'b',type:'text',textBox:true,x:566,y:256,w:500,h:60};

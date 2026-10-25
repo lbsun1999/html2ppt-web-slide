@@ -216,6 +216,9 @@ html,body{height:100%;overflow:hidden}
 .sidebar-actions button{padding:7px 9px;flex:1}
 .toolbar .view-controls select{max-width:115px;background:white;color:#334d60;border:1px solid #cbd8e2}
 #insert-menu{width:48px;min-width:48px;max-width:48px;flex:0 0 48px;padding:9px 6px}
+.free-text-active{outline:2px dashed #3795bd!important;outline-offset:3px}.free-text-coordinates{display:grid;grid-template-columns:1fr 1fr;gap:8px}.free-text-coordinates input{width:100%}
+.presenting .free-text-active,.export-view .free-text-active{outline:none!important}
+@media print{.free-text-active{outline:none!important}}
 .presenting .shell{height:100vh;display:block}
 .presenting .workspace{display:block;height:100vh;overflow:hidden;padding:0;scrollbar-gutter:auto}
 .presenting .pages-surface.presentation-stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
@@ -953,7 +956,7 @@ body.export-view .toc-note:empty{display:none}
     return { ...SAFE, y: top, h: (s.summary ? 750 : 834) - top };
   }
   function occupiedItems(s) {
-    return s.profileIdentity ? [...s.modules, { id: s.id + "-identity", type: "shape", ...s.profileIdentity, fixed: true }] : s.modules;
+    return [...s.modules, ...s.profileIdentity ? [{ id: s.id + "-identity", type: "shape", ...s.profileIdentity, fixed: true }] : [], ...Object.entries(s.textPositions || {}).map(([key2, r]) => ({ id: s.id + "-free-" + key2, type: "shape", ...r, fixed: true, freeText: true }))];
   }
   var STYLES = TEXT_STYLES;
   var clone = (x) => structuredClone(x);
@@ -1087,6 +1090,10 @@ body.export-view .toc-note:empty{display:none}
       if (!/^[a-zA-Z0-9_-]{1,80}$/.test(id) || ids.has(id)) throw Error("页面或模块标识无效、重复。");
       ids.add(id);
     };
+    for (const s of p.slides) if (s.textPositions) {
+      if (typeof s.textPositions !== "object" || Array.isArray(s.textPositions) || Object.keys(s.textPositions).length > 100) throw Error("文字位置数据无效。");
+      for (const [key2, r] of Object.entries(s.textPositions)) if (!/^[a-zA-Z][\w-]{0,79}$/.test(key2) || typeof s[key2] !== "string" || !r || ["x", "y", "w", "h", "dx", "dy"].some((k) => !Number.isFinite(r[k])) || r.w <= 0 || r.h <= 0 || Math.abs(r.dx) > 1600 || Math.abs(r.dy) > 900) throw Error("文字位置数据无效。");
+    }
     for (const key2 of ["primary", "secondary", "accent", "emphasis", "tint", "ink"]) if (!/^#[\da-f]{6}$/i.test(p.theme?.[key2] || "")) throw Error("主题色格式不正确。");
     for (const key2 of ["logo", "wordmark"]) if (p.theme[key2] && !/^data:image\/(png|jpeg|webp);base64,/i.test(p.theme[key2])) throw Error("标志必须是内嵌的 PNG/JPEG/WebP 图片。");
     for (const s of p.slides) {
@@ -1112,6 +1119,289 @@ body.export-view .toc-note:empty{display:none}
     }
     return syncSections(p);
   }
+
+  // src/layout.js
+  var right = (r) => r.x + r.w;
+  var bottom = (r) => r.y + r.h;
+  function intersects(a, b, gap = 0) {
+    return a.x < right(b) + gap - 0.1 && right(a) + gap > b.x + 0.1 && a.y < bottom(b) + gap - 0.1 && bottom(a) + gap > b.y + 0.1;
+  }
+  function inside(r, b = contentBounds()) {
+    const free = r.fixed && r.freeText, flexible = free || r.type === "text" && (r.textBox || ["ribbon", "capsule", "arrow"].includes(r.style));
+    return r.x >= b.x - 0.1 && r.y >= (free ? Math.min(192, b.y) : b.y) - 0.1 && right(r) <= right(b) + 0.1 && bottom(r) <= bottom(b) + 0.1 && (flexible ? r.w > 0 : r.w >= 100) && r.h >= (free ? 1 : r.textBox ? 40 : 80);
+  }
+  function snap(v, step, base = 0) {
+    return base + Math.round((v - base) / step) * step;
+  }
+  function findSpace(modules, step = 20, bounds = SAFE, options = {}) {
+    for (const gap of [GAP, 0]) {
+      const result = spaceWithGap(modules, step, bounds, gap, options);
+      if (result) return result;
+    }
+    return null;
+  }
+  function findSpaces(modules, step = 20, bounds = SAFE, options = {}) {
+    let free = [{ ...bounds }];
+    for (const m of modules) {
+      const next = [];
+      for (const r of free) {
+        if (!intersects(r, m)) {
+          next.push(r);
+          continue;
+        }
+        const l = Math.max(r.x, m.x), t = Math.max(r.y, m.y), rr = Math.min(right(r), right(m)), b = Math.min(bottom(r), bottom(m));
+        if (t > r.y) next.push({ x: r.x, y: r.y, w: r.w, h: t - r.y });
+        if (b < bottom(r)) next.push({ x: r.x, y: b, w: r.w, h: bottom(r) - b });
+        if (l > r.x) next.push({ x: r.x, y: t, w: l - r.x, h: b - t });
+        if (rr < right(r)) next.push({ x: rr, y: t, w: right(r) - rr, h: b - t });
+      }
+      free = next;
+    }
+    for (let changed = true; changed; ) {
+      changed = false;
+      outer: for (let i2 = 0; i2 < free.length; i2++) for (let j = i2 + 1; j < free.length; j++) {
+        const a = free[i2], b = free[j];
+        let merged = null;
+        if (a.x === b.x && a.w === b.w && (bottom(a) === b.y || bottom(b) === a.y)) merged = { x: a.x, y: Math.min(a.y, b.y), w: a.w, h: a.h + b.h };
+        if (a.y === b.y && a.h === b.h && (right(a) === b.x || right(b) === a.x)) merged = { x: Math.min(a.x, b.x), y: a.y, w: a.w + b.w, h: a.h };
+        if (merged) {
+          free.splice(j, 1);
+          free[i2] = merged;
+          changed = true;
+          break outer;
+        }
+      }
+    }
+    return free.map((r) => {
+      const x = bounds.x + Math.ceil((r.x - bounds.x) / step) * step, y = bounds.y + Math.ceil((r.y - bounds.y) / step) * step;
+      return { x, y, w: Math.floor((right(r) - x) / step) * step, h: Math.floor((bottom(r) - y) / step) * step };
+    }).filter((r) => r.w >= 160 && r.h >= 80 && inside({ ...r, ...options }, bounds)).sort((a, b) => b.w * b.h - a.w * a.h).slice(0, 8);
+  }
+  function spaceWithGap(modules, step, bounds, gap, options) {
+    let best = null;
+    const xs = [bounds.x, ...modules.map((m) => bounds.x + Math.ceil((right(m) + gap - bounds.x) / step) * step).filter((x) => x < right(bounds))];
+    const ys = [bounds.y, ...modules.map((m) => bounds.y + Math.ceil((bottom(m) + gap - bounds.y) / step) * step).filter((y) => y < bottom(bounds))];
+    for (const x of xs) for (const y of ys) {
+      const rights = [right(bounds), ...modules.filter((m) => m.x > x).map((m) => m.x - gap)];
+      for (const r of rights) {
+        let end = bottom(bounds);
+        for (const m of modules) if (m.x < r + gap && right(m) + gap > x && bottom(m) + gap > y) {
+          if (m.y - gap < y) {
+            end = y;
+            break;
+          }
+          end = Math.min(end, m.y - gap);
+        }
+        const candidate = { x, y, w: Math.floor((r - x) / step) * step, h: Math.floor((end - y) / step) * step };
+        if (inside({ ...candidate, ...options }, bounds) && !modules.some((m) => intersects(candidate, m, gap)) && (!best || candidate.w * candidate.h > best.w * best.h)) best = candidate;
+      }
+    }
+    return best;
+  }
+  function planChange(modules, id, rect, step = 20, bounds = SAFE) {
+    return planWithGap(modules, id, rect, step, bounds, GAP) || planWithGap(modules, id, rect, step, bounds, 0);
+  }
+  function planWithGap(modules, id, rect, step, bounds, gap) {
+    const copy = clone(modules), changed = copy.find((m) => m.id === id);
+    if (!changed || !inside({ ...changed, ...rect }, bounds)) return null;
+    Object.assign(changed, rect);
+    const queue = [changed], moved = /* @__PURE__ */ new Set([id]);
+    let n = 0;
+    while (queue.length && n++ < 120) {
+      const a = queue.shift();
+      for (const b of copy) {
+        if (a.id === b.id || !intersects(a, b)) continue;
+        if (b.id === id) return null;
+        const down = { ...b, y: bounds.y + Math.ceil((bottom(a) + gap - bounds.y) / step) * step };
+        const side = { ...b, x: bounds.x + Math.ceil((right(a) + gap - bounds.x) / step) * step };
+        const opts = [down, side].filter((r) => inside(r, bounds) && !copy.some((c) => moved.has(c.id) && c.id !== b.id && intersects(c, r))).sort((u, v) => u.x - b.x + u.y - b.y - (v.x - b.x + v.y - b.y));
+        if (!opts.length) return null;
+        Object.assign(b, opts[0]);
+        moved.add(b.id);
+        queue.push(b);
+      }
+    }
+    if (queue.length || copy.some((a, i2) => !inside(a, bounds) || copy.slice(i2 + 1).some((b) => intersects(a, b)))) return null;
+    return copy;
+  }
+  function anchoredResize(m, dx, dy, anchor = "tl") {
+    const r = { x: m.x, y: m.y, w: m.w + dx, h: m.h + dy };
+    if (anchor === "center") {
+      r.x -= dx / 2;
+      r.y -= dy / 2;
+      return r;
+    }
+    if (anchor.includes("r")) r.x -= dx;
+    if (anchor.startsWith("b")) r.y -= dy;
+    return r;
+  }
+
+  // src/free-text-position.js
+  var locked = ".slide-header,.slide-footer,.section-line,.slide-summary,.profile-identity,table,.cover-band,.cover-info,.transition-content";
+  function freeField(el, s) {
+    const field2 = el?.closest("[data-text][data-slide-field]");
+    return s.kind === "body" && field2 && !field2.closest("[data-module]," + locked) ? field2 : null;
+  }
+  function applyTextPositions(root, s) {
+    for (const el of root.querySelectorAll("[data-slide-field]")) {
+      if (!freeField(el, s)) continue;
+      const p = s.textPositions?.[el.dataset.slideField];
+      if (p) el.style.translate = `${p.dx}px ${p.dy}px`;
+    }
+  }
+  function positionedMarkup(markup, s) {
+    if (!s.textPositions) return markup;
+    const t = document.createElement("template");
+    t.innerHTML = markup;
+    applyTextPositions(t.content, s);
+    return t.innerHTML;
+  }
+  function canvasRect(el, canvas) {
+    const base = canvas.getBoundingClientRect(), r = el.getBoundingClientRect(), scale2 = base.width / 1600 || 1;
+    return Object.fromEntries(Object.entries({ x: (r.left - base.left) / scale2, y: (r.top - base.top) / scale2, w: r.width / scale2, h: r.height / scale2 }).map(([k, v]) => [k, Math.round(v * 100) / 100]));
+  }
+  function freeBounds(canvas, s) {
+    if (s.referenceLayout) {
+      const area = canvas.querySelector(".slide-content");
+      if (area) return canvasRect(area, canvas);
+    }
+    const b = slideBounds(s);
+    return { ...b, y: 192, h: b.y + b.h - 192 };
+  }
+  function obstacles(canvas, s, el, moduleId) {
+    const boxes = occupiedItems(s).filter((m) => m.id !== moduleId && !m.freeText).map((m) => ({ ...m }));
+    for (const node of canvas.querySelectorAll("[data-text],table,[data-image],[data-raster],.math-expression,.math-symbol,.equation-number,.formula-card,.symbol-note")) {
+      if (node === el || node.contains(el) || el.contains(node) || node.closest("[data-module]")?.dataset.module === moduleId) continue;
+      const r = canvasRect(node, canvas);
+      if (r.w > 0 && r.h > 0) boxes.push(r);
+    }
+    return boxes;
+  }
+  function positionError(canvas, s, el, rect, moduleId = null) {
+    if (["x", "y", "w", "h"].some((k) => !Number.isFinite(rect[k])) || rect.w <= 0 || rect.h <= 0) return "请先填写文字，再调整位置。";
+    const b = moduleId ? slideBounds(s) : freeBounds(canvas, s);
+    if (rect.x < b.x - 0.1 || rect.y < b.y - 0.1 || rect.x + rect.w > b.x + b.w + 0.1 || rect.y + rect.h > b.y + b.h + 0.1) return "文字块只能放在正文安全区内。";
+    if (obstacles(canvas, s, el, moduleId).some((r) => intersects(rect, r))) return "此位置会进入模块或遮挡其他内容，请换一个位置。";
+    return "";
+  }
+  function auditTextPositions(canvas, s) {
+    const errors = [], cards = /* @__PURE__ */ new Set();
+    for (const key2 of Object.keys(s.textPositions || {})) {
+      const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
+      if (!el) {
+        errors.push("此字段不支持正文文字平移：" + key2);
+        continue;
+      }
+      const error = positionError(canvas, s, el, canvasRect(el, canvas));
+      if (error) errors.push(error);
+      const card = el.closest(".formula-card");
+      if (card) cards.add(card);
+    }
+    for (const card of cards) for (const math2 of card.querySelectorAll(".math-expression")) {
+      const error = positionError(canvas, s, math2, canvasRect(math2, canvas));
+      if (error) errors.push(error);
+    }
+    return errors;
+  }
+  var FreeTextPosition = class {
+    constructor(options) {
+      Object.assign(this, options);
+      this.target = null;
+      this.step = 1;
+      document.addEventListener("change", (e) => {
+        if (!e.target.id.startsWith("free-text-")) return;
+        e.stopImmediatePropagation();
+        if (e.target.id === "free-text-step") {
+          this.step = Number(e.target.value);
+          return;
+        }
+        const current = this.current();
+        if (!current) return;
+        const r = canvasRect(current.el, this.getCanvas()), axis = e.target.id === "free-text-x" ? "x" : "y", value = Number(e.target.value);
+        if (Number.isFinite(value)) this.move({ ...r, [axis]: value });
+      }, true);
+      document.addEventListener("click", (e) => {
+        const button = e.target.closest("[data-free-text-move],#free-text-reset");
+        if (!button) return;
+        const current = this.current();
+        if (!current) return;
+        const r = canvasRect(current.el, this.getCanvas());
+        if (button.id === "free-text-reset") {
+          const p = this.getSlide().textPositions?.[current.key];
+          if (p) this.move({ ...r, x: r.x - p.dx, y: r.y - p.dy }, true);
+          return;
+        }
+        const d = this.step * (e.shiftKey ? 5 : 1), direction = button.dataset.freeTextMove;
+        this.move({ ...r, x: r.x + (direction === "right" ? d : direction === "left" ? -d : 0), y: r.y + (direction === "down" ? d : direction === "up" ? -d : 0) });
+      });
+    }
+    focus(el) {
+      const s = this.getSlide(), owner = el.closest("[data-module]"), m = s.modules.find((m2) => m2.id === owner?.dataset.module), field2 = freeField(el, s);
+      this.target = m?.textBox ? { slideId: s.id, moduleId: m.id } : field2 ? { slideId: s.id, key: field2.dataset.slideField } : null;
+      this.highlight();
+    }
+    current() {
+      const s = this.getSlide(), canvas = this.getCanvas(), t = this.target;
+      if (!t || t.slideId !== s.id || this.getMode() !== "text" || !canvas || this.isMulti()) return null;
+      if (t.moduleId) {
+        const m = s.modules.find((m2) => m2.id === t.moduleId), el2 = [...canvas.querySelectorAll("[data-module]")].find((n) => n.dataset.module === t.moduleId);
+        return m?.textBox && el2 ? { el: el2, m, moduleId: m.id } : null;
+      }
+      const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === t.key && freeField(n, s));
+      return el ? { el, key: t.key } : null;
+    }
+    sync() {
+      const s = this.getSlide(), canvas = this.getCanvas();
+      if (!canvas) return;
+      if (this.target && (this.getMode() !== "text" || this.target.slideId !== s.id)) this.target = null;
+      for (const [key2, p] of Object.entries(s.textPositions || {})) {
+        const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
+        if (el) Object.assign(p, canvasRect(el, canvas));
+      }
+      this.highlight();
+    }
+    highlight() {
+      document.querySelectorAll(".free-text-active").forEach((n) => n.classList.remove("free-text-active"));
+      this.current()?.el.classList.add("free-text-active");
+    }
+    inspector(container) {
+      const target = this.current();
+      if (!target) return false;
+      this.highlight();
+      const r = canvasRect(target.el, this.getCanvas()), label = target.el.innerText.trim().split("\n")[0].slice(0, 32), esc3 = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      container.innerHTML = `<h2>当前文字块</h2><p class="hint">${esc3(label)}</p><div class="row free-text-coordinates"><label>横向 X（px）<input id="free-text-x" type="number" step="1" value="${Math.round(r.x * 100) / 100}"></label><label>纵向 Y（px）<input id="free-text-y" type="number" step="1" value="${Math.round(r.y * 100) / 100}"></label></div><label>平移步进<select id="free-text-step">${[.../* @__PURE__ */ new Set([1, 5, this.getProject().grid])].map((n) => `<option value="${n}" ${n === this.step ? "selected" : ""}>${n} px</option>`).join("")}</select></label><div class="size-grid">${[["left", "←"], ["right", "→"], ["up", "↑"], ["down", "↓"]].map(([v, t]) => `<button data-free-text-move="${v}" aria-label="文字块${{ left: "左移", right: "右移", up: "上移", down: "下移" }[v]}">${t}</button>`).join("")}</div>${target.key && this.getSlide().textPositions?.[target.key] ? '<button id="free-text-reset">恢复原位</button>' : ""}<p class="hint">光标所在块即为当前目标。输入坐标或点击箭头平移，Shift加点击为5倍步进。位置须留在正文区，避开模块、图片及其他文字；可撤销，保存HTML和导出保留。</p>`;
+      return true;
+    }
+    move(rect, reset = false) {
+      const target = this.current();
+      if (!target) return;
+      const canvas = this.getCanvas(), s = this.getSlide(), current = canvasRect(target.el, canvas), error = positionError(canvas, s, target.el, rect, target.moduleId);
+      if (error) {
+        this.toast(error, true);
+        this.renderInspector();
+        return;
+      }
+      this.savePoint();
+      if (target.m) {
+        target.m.x = rect.x;
+        target.m.y = rect.y;
+        target.el.style.left = rect.x + "px";
+        target.el.style.top = rect.y + "px";
+      } else {
+        const p = s.textPositions?.[target.key], dx = (p?.dx || 0) + rect.x - current.x, dy = (p?.dy || 0) + rect.y - current.y;
+        if (reset) {
+          delete s.textPositions[target.key];
+          if (!Object.keys(s.textPositions).length) delete s.textPositions;
+          target.el.style.removeProperty("translate");
+        } else {
+          (s.textPositions ??= {})[target.key] = { ...rect, dx, dy };
+          target.el.style.translate = `${dx}px ${dy}px`;
+        }
+      }
+      this.changed();
+      this.renderInspector();
+    }
+  };
 
   // src/table-blocks.js
   var tableParts = (m) => m.sectionedTable ? m.parts : [m];
@@ -1164,7 +1454,7 @@ body.export-view .toc-note:empty{display:none}
   }
   function tableControls(m, index2, esc3, spacing2) {
     const p = tableOwner(m, index2), count = p.rows[0]?.length || 1;
-    return `${m.sectionedTable ? sectionControls(m, index2, esc3) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label>????<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc3(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
+    return `${m.sectionedTable ? sectionControls(m, index2, esc3) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label>表格字号<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc3(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
   }
   function sectionControls(m, index2, esc3) {
     return '<h3>无框线表格子区域</h3><p class="hint">点击分组名查看对应行列设置。箭头排序时，该组标题、内容和格式一起移动。</p><div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><button class="stage-label table-part-name" data-table-select="' + i2 + '" aria-pressed="' + (i2 === index2) + '" title="' + esc3(p.title) + '">' + esc3(p.title) + '</button><button data-table-part-move="-1" data-table-from="' + i2 + '" ' + (i2 === 0 ? "disabled" : "") + ' title="分组上移" aria-label="分组上移">↑</button><button data-table-part-move="1" data-table-from="' + i2 + '" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="分组下移" aria-label="分组下移">↓</button><button data-table-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + '</div><button data-action="table-part-add" ' + (m.parts.length >= 8 ? "disabled" : "") + ">＋ 分组</button>";
@@ -16189,6 +16479,7 @@ body.export-view .toc-note:empty{display:none}
       const target = project2?.slides.find((slide2) => slide2.referenceLayout === "references");
       if (target) anchor.href = "#slide-" + target.id;
     }
+    applyTextPositions(el, s);
     return el.outerHTML;
   }
 
@@ -16733,7 +17024,7 @@ body.export-view .toc-note:empty{display:none}
     if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc2(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div></section>`;
     if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc2(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text data-slide-field="${k}Label" ${editable(edit, "")}>${field(s, k + "Label", n)}</th><td data-text data-slide-field="${k}" ${textStyle(s, k)} ${editable(edit, "")}>${field(s, k)}</td></tr>`).join("")}</table></section>`;
     const content = profileCardHTML(s, edit, themeCSS(theme)) + `<div class="module-layer">${s.modules.map((m) => renderModule(m, edit)).join("")}</div>`;
-    return `<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc2(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc2(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc2(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc2(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc2(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`;
+    return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc2(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc2(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc2(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc2(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc2(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
   }
   function fitMedia(el) {
     const scope = el.closest(".slide") || el, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
@@ -16848,12 +17139,13 @@ body.export-view .toc-note:empty{display:none}
     return 80;
   }
   function audit(slideEl, model) {
-    const errors = titleErrors(slideEl);
+    const errors = [...titleErrors(slideEl), ...auditTextPositions(slideEl, model)];
     if (model.referenceLayout) {
       const footer = slideEl.querySelector(".slide-footer")?.getBoundingClientRect();
       for (const table2 of slideEl.querySelectorAll("table")) if (footer && table2.getBoundingClientRect().bottom > footer.top + 2) errors.push("表格进入页脚区域，请减小行高或拆页。");
       for (const node of slideEl.querySelectorAll("[data-slide-field],.formula-card,.math-expression")) {
-        if (node.scrollHeight > node.clientHeight + 3 || node.scrollWidth > node.clientWidth + 3) errors.push("文字超出原版式区域，请删改或调整行距。");
+        const shiftedCard = node.matches(".formula-card") && [...node.querySelectorAll("[data-slide-field]")].some((n) => model.textPositions?.[n.dataset.slideField]);
+        if (!shiftedCard && (node.scrollHeight > node.clientHeight + 3 || node.scrollWidth > node.clientWidth + 3)) errors.push("文字超出原版式区域，请删改或调整行距。");
       }
       return errors;
     }
@@ -16875,7 +17167,7 @@ body.export-view .toc-note:empty{display:none}
     const heading = slideEl.querySelector("h2");
     if (heading.scrollHeight > heading.clientHeight + 2) errors.push("页面标题过长，请精简。");
     const lead = slideEl.querySelector(".slide-lead"), contentTop = Math.max(SAFE.y, model.modules.length ? Math.min(...model.modules.map((m) => m.y)) : SAFE.y);
-    if (lead.offsetTop + lead.scrollHeight > contentTop - 16) errors.push("页首句过长：请精简或分成其他页面。");
+    if (!model.textPositions?.lead && lead.offsetTop + lead.scrollHeight > contentTop - 16) errors.push("页首句过长：请精简或分成其他页面。");
     const summary = slideEl.querySelector(".slide-summary");
     if (summary && summary.scrollHeight > summary.clientHeight + 2) errors.push("页尾总结过长，请精简为一行。");
     for (const m of model.modules) {
@@ -17304,122 +17596,12 @@ body.export-view .toc-note:empty{display:none}
     document.querySelector("#style-preview-copy").textContent = `${spec[1]} · ${spec[2]}：${spec[3]}。标题 18pt，正文 16pt；示意文字仅用于预览。`;
   }
 
-  // src/layout.js
-  var right = (r) => r.x + r.w;
-  var bottom = (r) => r.y + r.h;
-  function intersects(a, b, gap = 0) {
-    return a.x < right(b) + gap - 0.1 && right(a) + gap > b.x + 0.1 && a.y < bottom(b) + gap - 0.1 && bottom(a) + gap > b.y + 0.1;
-  }
-  function inside(r, b = contentBounds()) {
-    const flexible = r.type === "text" && (r.textBox || ["ribbon", "capsule", "arrow"].includes(r.style));
-    return r.x >= b.x - 0.1 && r.y >= b.y - 0.1 && right(r) <= right(b) + 0.1 && bottom(r) <= bottom(b) + 0.1 && (flexible ? r.w > 0 : r.w >= 100) && r.h >= (r.textBox ? 40 : 80);
-  }
-  function snap(v, step, base = 0) {
-    return base + Math.round((v - base) / step) * step;
-  }
-  function findSpace(modules, step = 20, bounds = SAFE, options = {}) {
-    for (const gap of [GAP, 0]) {
-      const result = spaceWithGap(modules, step, bounds, gap, options);
-      if (result) return result;
-    }
-    return null;
-  }
-  function findSpaces(modules, step = 20, bounds = SAFE, options = {}) {
-    let free = [{ ...bounds }];
-    for (const m of modules) {
-      const next = [];
-      for (const r of free) {
-        if (!intersects(r, m)) {
-          next.push(r);
-          continue;
-        }
-        const l = Math.max(r.x, m.x), t = Math.max(r.y, m.y), rr = Math.min(right(r), right(m)), b = Math.min(bottom(r), bottom(m));
-        if (t > r.y) next.push({ x: r.x, y: r.y, w: r.w, h: t - r.y });
-        if (b < bottom(r)) next.push({ x: r.x, y: b, w: r.w, h: bottom(r) - b });
-        if (l > r.x) next.push({ x: r.x, y: t, w: l - r.x, h: b - t });
-        if (rr < right(r)) next.push({ x: rr, y: t, w: right(r) - rr, h: b - t });
-      }
-      free = next;
-    }
-    for (let changed = true; changed; ) {
-      changed = false;
-      outer: for (let i2 = 0; i2 < free.length; i2++) for (let j = i2 + 1; j < free.length; j++) {
-        const a = free[i2], b = free[j];
-        let merged = null;
-        if (a.x === b.x && a.w === b.w && (bottom(a) === b.y || bottom(b) === a.y)) merged = { x: a.x, y: Math.min(a.y, b.y), w: a.w, h: a.h + b.h };
-        if (a.y === b.y && a.h === b.h && (right(a) === b.x || right(b) === a.x)) merged = { x: Math.min(a.x, b.x), y: a.y, w: a.w + b.w, h: a.h };
-        if (merged) {
-          free.splice(j, 1);
-          free[i2] = merged;
-          changed = true;
-          break outer;
-        }
-      }
-    }
-    return free.map((r) => {
-      const x = bounds.x + Math.ceil((r.x - bounds.x) / step) * step, y = bounds.y + Math.ceil((r.y - bounds.y) / step) * step;
-      return { x, y, w: Math.floor((right(r) - x) / step) * step, h: Math.floor((bottom(r) - y) / step) * step };
-    }).filter((r) => r.w >= 160 && r.h >= 80 && inside({ ...r, ...options }, bounds)).sort((a, b) => b.w * b.h - a.w * a.h).slice(0, 8);
-  }
-  function spaceWithGap(modules, step, bounds, gap, options) {
-    let best = null;
-    const xs = [bounds.x, ...modules.map((m) => bounds.x + Math.ceil((right(m) + gap - bounds.x) / step) * step).filter((x) => x < right(bounds))];
-    const ys = [bounds.y, ...modules.map((m) => bounds.y + Math.ceil((bottom(m) + gap - bounds.y) / step) * step).filter((y) => y < bottom(bounds))];
-    for (const x of xs) for (const y of ys) {
-      const rights = [right(bounds), ...modules.filter((m) => m.x > x).map((m) => m.x - gap)];
-      for (const r of rights) {
-        let end = bottom(bounds);
-        for (const m of modules) if (m.x < r + gap && right(m) + gap > x && bottom(m) + gap > y) {
-          if (m.y - gap < y) {
-            end = y;
-            break;
-          }
-          end = Math.min(end, m.y - gap);
-        }
-        const candidate = { x, y, w: Math.floor((r - x) / step) * step, h: Math.floor((end - y) / step) * step };
-        if (inside({ ...candidate, ...options }, bounds) && !modules.some((m) => intersects(candidate, m, gap)) && (!best || candidate.w * candidate.h > best.w * best.h)) best = candidate;
-      }
-    }
-    return best;
-  }
-  function planChange(modules, id, rect, step = 20, bounds = SAFE) {
-    return planWithGap(modules, id, rect, step, bounds, GAP) || planWithGap(modules, id, rect, step, bounds, 0);
-  }
-  function planWithGap(modules, id, rect, step, bounds, gap) {
-    const copy = clone(modules), changed = copy.find((m) => m.id === id);
-    if (!changed || !inside({ ...changed, ...rect }, bounds)) return null;
-    Object.assign(changed, rect);
-    const queue = [changed], moved = /* @__PURE__ */ new Set([id]);
-    let n = 0;
-    while (queue.length && n++ < 120) {
-      const a = queue.shift();
-      for (const b of copy) {
-        if (a.id === b.id || !intersects(a, b)) continue;
-        if (b.id === id) return null;
-        const down = { ...b, y: bounds.y + Math.ceil((bottom(a) + gap - bounds.y) / step) * step };
-        const side = { ...b, x: bounds.x + Math.ceil((right(a) + gap - bounds.x) / step) * step };
-        const opts = [down, side].filter((r) => inside(r, bounds) && !copy.some((c) => moved.has(c.id) && c.id !== b.id && intersects(c, r))).sort((u, v) => u.x - b.x + u.y - b.y - (v.x - b.x + v.y - b.y));
-        if (!opts.length) return null;
-        Object.assign(b, opts[0]);
-        moved.add(b.id);
-        queue.push(b);
-      }
-    }
-    if (queue.length || copy.some((a, i2) => !inside(a, bounds) || copy.slice(i2 + 1).some((b) => intersects(a, b)))) return null;
-    return copy;
-  }
-  function anchoredResize(m, dx, dy, anchor = "tl") {
-    const r = { x: m.x, y: m.y, w: m.w + dx, h: m.h + dy };
-    if (anchor.includes("r")) r.x -= dx;
-    if (anchor.startsWith("b")) r.y -= dy;
-    return r;
-  }
-
   // src/app.js
   var viewer;
   var presenter;
   var formatter;
   var textBlocks;
+  var freeText;
   var pageList;
   var notesVisible = false;
   var adjustMultiplier = 1;
@@ -17486,10 +17668,9 @@ body.export-view .toc-note:empty{display:none}
     return tableOwner(m, tablePartIndex(m));
   }
   function planPageChange(id, rect, step = project.grid) {
-    const plan = planChange(layoutItems(), id, rect, step, pageBounds());
+    const items = layoutItems(), plan = planChange(items, id, rect, step, pageBounds());
     if (!plan) return null;
-    const fixed = layoutItems().find((m) => m.fixed);
-    if (fixed) {
+    for (const fixed of items.filter((m) => m.fixed)) {
       const r = plan.find((m) => m.id === fixed.id);
       if (["x", "y", "w", "h"].some((k) => r[k] !== fixed[k])) return null;
     }
@@ -17673,6 +17854,7 @@ body.export-view .toc-note:empty{display:none}
       refreshDerivedPages();
     }
     if (m) autoGrow(m);
+    freeText?.sync();
     persist();
     check();
     clearTimeout(window.thumbTimer);
@@ -17785,6 +17967,15 @@ body.export-view .toc-note:empty{display:none}
     textBlocks = new TextBlockSelection({ getMode: () => mode, getSlideId: () => slide().id, onChange: () => {
       formatter.refresh();
       syncTextDelete();
+      freeText?.highlight();
+      if (freeText) inspector();
+    } });
+    freeText = new FreeTextPosition({ getProject: () => project, getSlide: slide, getMode: () => mode, getCanvas: () => $("#canvas .slide"), isMulti: () => textBlocks.batch().length > 1, savePoint, toast, renderInspector: inspector, changed: () => {
+      freeText.sync();
+      check();
+      persist();
+      updateSidebar();
+      formatter.refresh();
     } });
     const bottom2 = document.createElement("div");
     bottom2.className = "sidebar-bottom";
@@ -17799,11 +17990,15 @@ body.export-view .toc-note:empty{display:none}
     document.addEventListener("dblclick", dblclick);
     document.addEventListener("focusin", (e) => {
       if (e.target.isContentEditable || e.target.id === "speaker-notes") savePoint();
-      const owner = e.target.closest("[data-module]");
-      if (e.target.isContentEditable && owner && $("#canvas").contains(owner)) {
-        editingTarget = { slideId: slide().id, moduleId: owner.dataset.module, part: e.target.dataset.tablePart !== void 0 ? Number(e.target.dataset.tablePart) : e.target.dataset.part !== void 0 ? Number(e.target.dataset.part) : null };
-        if (editingTarget.part !== null) childFocus.set(owner.dataset.module, editingTarget.part);
+      const el = e.target.closest('[data-text][contenteditable="true"]');
+      if (el && $("#canvas").contains(el)) {
+        const owner = el.closest("[data-module]");
+        selected = owner?.dataset.module || null;
+        editingTarget = owner ? { slideId: slide().id, moduleId: owner.dataset.module, part: el.dataset.tablePart !== void 0 ? Number(el.dataset.tablePart) : el.dataset.part !== void 0 ? Number(el.dataset.part) : null } : null;
+        if (editingTarget?.part !== null && editingTarget?.part !== void 0) childFocus.set(owner.dataset.module, editingTarget.part);
+        freeText.focus(el);
         syncTextDelete();
+        inspector();
       }
     });
     document.addEventListener("pointerdown", startAdjust);
@@ -17882,6 +18077,7 @@ body.export-view .toc-note:empty{display:none}
     document.title = `${project.title}.html · Web Slide`;
     $("#document-caption").textContent = project.title + ".html　✎";
     viewer.render({ mode, showGrid, grid: project.grid, selected, drawing });
+    freeText?.sync();
     $("#sidebar-page-count").textContent = `${String(index + 1).padStart(2, "0")} / ${project.slides.length}`;
     for (const k of ["text", "edit", "delete"]) $("#mode-" + k).classList.toggle("active", mode === k);
     $("#text-formatbar").hidden = mode !== "text";
@@ -17966,6 +18162,7 @@ body.export-view .toc-note:empty{display:none}
     return `<h3>单元格高度与留白</h3><label>统一最小行高（pt；0为自动）<input id="${prefix}row-height" type="number" min="0" max="120" step="1" value="${height}"></label><label>上下内边距（pt；留空自动）<input id="${prefix}cell-padding" type="number" min="0" max="18" step="0.5" placeholder="自动" value="${padding ?? ""}"></label><p class="hint">整表统一调整。内容较多的行会自然增高，不会被行高设置裁切；左右半字符间距保持不变。</p>`;
   }
   function inspector() {
+    if (freeText?.inspector($("#inspector"))) return;
     const m = selectedModule();
     if (!m) {
       $("#inspector").innerHTML = `<h2>页面与模块</h2><div class="stat">${slide().modules.length} 个模块<br>建议间隙：12 px，可按空间紧凑排版<br>网格步进：${project.grid} px</div><div class="empty">${mode === "text" ? "直接点击正文即可修改文字。<br>图片 / 视频占位区域可双击上传。" : "点击一个模块，查看尺寸、样式和子区域。"}</div>${slide().referenceLayout && $("#canvas table") ? tableSpacingControls(slide(), true) : ""}${moduleList()}<h3>当前页设置</h3><button data-action="page-settings">标题、页首句与来源</button><h3>排版原则</h3><p class="hint">文字不会自动缩小字号或行距。内容超出时，模块会尝试增高并推开相邻模块；无法容纳时以粗红框提示。</p><p class="hint">所有插图默认为占位区域；图片与视频保持比例。几何图形可单向伸缩。</p>`;
@@ -17973,7 +18170,7 @@ body.export-view .toc-note:empty{display:none}
     }
     const anchor = $("#resize-anchor")?.value || "tl";
     const options = [["w+", project.grid, 0, "加宽 →"], ["w-", -project.grid, 0, "收窄 ←"], ["h+", 0, project.grid, "增高 ↓"], ["h-", 0, -project.grid, "降低 ↑"]];
-    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc2(moduleName(m))}"></label>` : ""}<label>固定顶点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc2(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc2(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc2(p.year)} ${esc2(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc2, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
+    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc2(moduleName(m))}"></label>` : ""}<label>固定锚点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"], ["center", "中心"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc2(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc2(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc2(p.year)} ${esc2(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc2, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
   }
   function testFit(m, rect) {
     if (!["text", "media", "table", "timeline"].includes(m.type)) return true;

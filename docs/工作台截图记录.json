@@ -1,6 +1,6 @@
 {
   "source": "北京科技大学_WebSlide科研汇报示例.html",
-  "sha256": "10b7d42a0c2ec57599d95f2abca198ed9dd0637a89976a75ba07bf95d4c391eb",
+  "sha256": "4519b8be669a808e4a5924d7cff65c57dfc808cdbb8def0b2b56777ed385e0a7",
   "viewport": {
     "width": 1920,
     "height": 1200
@@ -42,7 +42,7 @@
     },
     {
       "image": "images/module-controls.png",
-      "description": "模块模式：固定顶点、网格步进、尺寸和位置，以及文本样式与子区域。",
+      "description": "模块模式：固定中心或四角、网格步进、尺寸和位置，以及文本样式与子区域。",
       "view": {
         "mode": "single",
         "columns": 2,
@@ -124,6 +124,23 @@
       },
       "mode": "edit",
       "currentPage": 8
+    },
+    {
+      "image": "images/free-text-controls.png",
+      "description": "文字光标定位正文块：右侧坐标、1px／5px／网格步进、平移箭头及恢复原位。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "text",
+      "currentPage": 18
     },
     {
       "image": "images/formula-editor.png",

@@ -2,7 +2,7 @@ import {TEXT_STYLES} from './text-styles.js';
 export const W=1600,H=900,GAP=12,SAFE={x:58,y:256,w:1484,h:554};
 export const contentBounds=(summary=false)=>({...SAFE,h:(summary?750:834)-SAFE.y});
 export function slideBounds(s){const top=s.contentTop??SAFE.y;return {...SAFE,y:top,h:(s.summary?750:834)-top};}
-export function occupiedItems(s){return s.profileIdentity?[...s.modules,{id:s.id+'-identity',type:'shape',...s.profileIdentity,fixed:true}]:s.modules;}
+export function occupiedItems(s){return [...s.modules,...(s.profileIdentity?[{id:s.id+'-identity',type:'shape',...s.profileIdentity,fixed:true}]:[]),...Object.entries(s.textPositions||{}).map(([key,r])=>({id:s.id+'-free-'+key,type:'shape',...r,fixed:true,freeText:true}))];}
 export const STYLES=TEXT_STYLES;
 export const clone=x=>structuredClone(x);
 export const uid=()=>globalThis.crypto?.randomUUID?.()||`m${Date.now()}${Math.random().toString(16).slice(2)}`;
@@ -53,6 +53,10 @@ export function createProject({withSections=true}={}){
 export function validateProject(p){
  if(!p||p.version!==1||!Array.isArray(p.slides)||!p.slides.length||p.slides.length>100)throw Error('项目格式不正确，需为本编辑器保存的 HTML 文稿（1–100 页）。');
  const ids=new Set();const checkId=id=>{if(!/^[a-zA-Z0-9_-]{1,80}$/.test(id)||ids.has(id))throw Error('页面或模块标识无效、重复。');ids.add(id);};
+ for(const s of p.slides)if(s.textPositions){
+  if(typeof s.textPositions!=='object'||Array.isArray(s.textPositions)||Object.keys(s.textPositions).length>100)throw Error('文字位置数据无效。');
+  for(const [key,r]of Object.entries(s.textPositions))if(!/^[a-zA-Z][\w-]{0,79}$/.test(key)||typeof s[key]!=='string'||!r||['x','y','w','h','dx','dy'].some(k=>!Number.isFinite(r[k]))||r.w<=0||r.h<=0||Math.abs(r.dx)>1600||Math.abs(r.dy)>900)throw Error('文字位置数据无效。');
+ }
  for(const key of ['primary','secondary','accent','emphasis','tint','ink'])if(!/^#[\da-f]{6}$/i.test(p.theme?.[key]||''))throw Error('主题色格式不正确。');
  for(const key of ['logo','wordmark'])if(p.theme[key]&&!/^data:image\/(png|jpeg|webp);base64,/i.test(p.theme[key]))throw Error('标志必须是内嵌的 PNG/JPEG/WebP 图片。');
  for(const s of p.slides){checkId(s.id);if(!['body','cover','closing','toc','transition'].includes(s.kind)||typeof s.title!=='string'||typeof s.lead!=='string')throw Error('页面类型或标题格式无效。');if(!Array.isArray(s.modules)||s.modules.length>40)throw Error('每页最多 40 个模块。');for(const m of s.modules){checkId(m.id);if(m.type==='text'&&m.style==='group')m.innerStyle='plain';if(!['text','table','media','shape','formula','timeline'].includes(m.type)||!Array.isArray(m.parts)||!m.parts.length||m.parts.length>12)throw Error('模块类型或子区域数量无效。');for(const k of ['x','y','w','h'])if(!Number.isFinite(m[k]))throw Error('模块坐标无效。');if(m.type==='table'&&(!Array.isArray(m.rows)||!m.rows.length||m.rows.length>100||m.rows.some(r=>!Array.isArray(r)||!r.length||r.length>30)))throw Error('表格最多 100 行、30 列，且不能为空。');if(m.type==='timeline'){if(m.hideTimeline===undefined)m.hideTimeline=false;if(m.parts.length>6||m.parts.some(p=>typeof p.year!=='string')||(m.stageColors&&(!Array.isArray(m.stageColors)||!m.stageColors.length||m.stageColors.length>6||m.stageColors.some(c=>!/^#[\da-f]{6}$/i.test(c)))))throw Error('Invalid timeline stages, year labels or colors.');}for(const a of m.parts){if(m.sectionedTable&&(!Array.isArray(a.rows)||!a.rows.length||a.rows.length>100||a.rows.some(r=>!Array.isArray(r)||!r.length||r.length>12)))throw Error('Invalid table section rows or columns.');if(typeof a.text!=='string'||typeof a.title!=='string')throw Error('子区域文字格式无效。');if(a.asset&&!/^data:(image\/(png|jpeg|webp)|video\/(mp4|webm));base64,/i.test(a.asset.src||''))throw Error('媒体格式不受支持。');}}}

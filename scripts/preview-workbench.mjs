@@ -32,7 +32,8 @@ try{
  assert.equal(await page.locator('#text-formatbar').isVisible(),true);await shot('text-controls','文字模式：选区、14/16pt、段落列表、加粗、颜色、行距和段后距控件。');
 
  await open('主图与关键信息');await mode('edit');await page.locator('#canvas .text-module').click();assert.equal(await page.locator('#adjust-multiplier').count(),1);
- await shot('module-controls','模块模式：固定顶点、网格步进、尺寸和位置，以及文本样式与子区域。');
+ await page.locator('#resize-anchor').selectOption('center');
+ await shot('module-controls','模块模式：固定中心或四角、网格步进、尺寸和位置，以及文本样式与子区域。');
 
  await open('作者简介');await mode('edit');await page.locator('#canvas .profile-details').click();
  await shot('profile-modules','作者简介：固定身份卡、履历横线表和含两个可增减分组的无框线表格。');
@@ -47,6 +48,9 @@ try{
  assert.equal(await page.locator('.slide-thumb.is-selected').count(),2);
  assert.ok(await ui('copy-pages').isVisible());await shot('page-controls','左侧多选页面，底部固定复制、粘贴、上移、下移和删除；缩略图列表独立滚动。');
 
+ await open('目标函数与参数更新');await mode('text');await page.locator('#canvas .equation-explanation').first().focus();assert.equal(await page.locator('#free-text-x').isVisible(),true);
+ await page.locator('[data-free-text-move="down"]').click();assert.equal(await page.locator('#free-text-reset').isVisible(),true);
+ await shot('free-text-controls','文字光标定位正文块：右侧坐标、1px／5px／网格步进、平移箭头及恢复原位。');
  await open('目标函数与参数更新');await mode('preview');await page.locator('#canvas [data-reference-formula]').first().dblclick();assert.equal(await page.locator('#formula-dialog').isVisible(),true);
  await shot('formula-editor','公式编辑框：LaTeX源码、复制按钮、数学预览、取消和确定。');await page.locator('#formula-dialog button[value="cancel"]').last().click();
 

@@ -2,6 +2,8 @@
 
 先读根目录[SKILL.md](../SKILL.md)。本文的所有源码、样式、快照和素材都在本项目内，不依赖其他已安装的学校skill或作者聊天记录。固定画布1600×900，预览只做整体缩放。
 
+模块外正文文字可保存`slide.textPositions[field] = {x,y,w,h,dx,dy}`：`field`对应实际可移动的`data-slide-field`，如`lead`、公式页`legacy_5`；`dx,dy`为相对原版式的平移，`x,y,w,h`为实测占用范围。UI以光标所在块更新，不修改原字段的文字与富文本。页眉、页脚、身份卡和表格单元格不接受此映射；独立文本框仍使用模块坐标。迭代保留已有映射，服务器还会用真实DOM校验边界与遮挡。
+
 从 `src/example.js` 的 `createExample(options)` 创建学校示例，或从 `src/model.js` 的 `newDocument(title)` 创建空白文稿。`src/server/schools.mjs` 提供学校标志与图片数据；交付媒体使用 data URL，确保 HTML 自包含。
 
 项目为 `{version:1,title,theme,grid,slides}`。主题包括 `name,primary,secondary,accent,emphasis,tint,ink,logo,wordmark`。页面用 `blankSlide()`／`makePage(kind)` 创建，kind 为 cover、closing、transition、toc、body。ID 必须唯一。

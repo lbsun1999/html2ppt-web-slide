@@ -1,6 +1,7 @@
 ﻿import layouts from './reference-layouts.json' with {type:'json'};
 import {richHTML,textStyle} from './rich-text.js';
 import {formulaHTML} from './formula.js';
+import {applyTextPositions} from './free-text-position.js';
 const cache=new Map();
 export function applyReferenceLayout(slide,name){
  const source=layouts[name];Object.assign(slide,source.fields,{referenceLayout:name,modules:[]});
@@ -32,5 +33,5 @@ export function renderReferenceLayout(s,theme,index,total,edit,themeStyle,projec
  const pagination=el.querySelector('.footer-pagination');if(pagination)pagination.dataset.text='';
  const sourceField=el.querySelector('[data-slide-field="source"]');if(sourceField&&s.sourceUrl&&/^(https?:\/\/|#slide-)/.test(s.sourceUrl)){const a=document.createElement('a');a.href=s.sourceUrl;a.append(...sourceField.childNodes);sourceField.append(a);}
  for(const anchor of el.querySelectorAll('a[href^="#p"]')){const target=project?.slides.find(slide=>slide.referenceLayout==='references');if(target)anchor.href='#slide-'+target.id;}
- return el.outerHTML;
+ applyTextPositions(el,s);return el.outerHTML;
 }

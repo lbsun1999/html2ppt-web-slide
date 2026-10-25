@@ -2,7 +2,7 @@ import {SAFE,GAP,clone,contentBounds} from './model.js';
 export const right=r=>r.x+r.w,bottom=r=>r.y+r.h;
 // Whitespace is a preference; only actual overlap is a layout error.
 export function intersects(a,b,gap=0){return a.x<right(b)+gap-.1&&right(a)+gap>b.x+.1&&a.y<bottom(b)+gap-.1&&bottom(a)+gap>b.y+.1;}
-export function inside(r,b=contentBounds()){const flexible=r.type==='text'&&(r.textBox||['ribbon','capsule','arrow'].includes(r.style));return r.x>=b.x-.1&&r.y>=b.y-.1&&right(r)<=right(b)+.1&&bottom(r)<=bottom(b)+.1&&(flexible?r.w>0:r.w>=100)&&r.h>=(r.textBox?40:80);}
+export function inside(r,b=contentBounds()){const free=r.fixed&&r.freeText,flexible=free||r.type==='text'&&(r.textBox||['ribbon','capsule','arrow'].includes(r.style));return r.x>=b.x-.1&&r.y>=(free?Math.min(192,b.y):b.y)-.1&&right(r)<=right(b)+.1&&bottom(r)<=bottom(b)+.1&&(flexible?r.w>0:r.w>=100)&&r.h>=(free?1:r.textBox?40:80);}
 export function snap(v,step,base=0){return base+Math.round((v-base)/step)*step;}
 export function findSpace(modules,step=20,bounds=SAFE,options={}){
  for(const gap of [GAP,0]){const result=spaceWithGap(modules,step,bounds,gap,options);if(result)return result;}return null;
@@ -44,5 +44,5 @@ function planWithGap(modules,id,rect,step,bounds,gap){
  return copy;
 }
 export function anchoredResize(m,dx,dy,anchor='tl'){
- const r={x:m.x,y:m.y,w:m.w+dx,h:m.h+dy};if(anchor.includes('r'))r.x-=dx;if(anchor.startsWith('b'))r.y-=dy;return r;
+ const r={x:m.x,y:m.y,w:m.w+dx,h:m.h+dy};if(anchor==='center'){r.x-=dx/2;r.y-=dy/2;return r;}if(anchor.includes('r'))r.x-=dx;if(anchor.startsWith('b'))r.y-=dy;return r;
 }

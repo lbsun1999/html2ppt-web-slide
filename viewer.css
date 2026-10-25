@@ -97,6 +97,9 @@ html,body{height:100%;overflow:hidden}
 .sidebar-actions button{padding:7px 9px;flex:1}
 .toolbar .view-controls select{max-width:115px;background:white;color:#334d60;border:1px solid #cbd8e2}
 #insert-menu{width:48px;min-width:48px;max-width:48px;flex:0 0 48px;padding:9px 6px}
+.free-text-active{outline:2px dashed #3795bd!important;outline-offset:3px}.free-text-coordinates{display:grid;grid-template-columns:1fr 1fr;gap:8px}.free-text-coordinates input{width:100%}
+.presenting .free-text-active,.export-view .free-text-active{outline:none!important}
+@media print{.free-text-active{outline:none!important}}
 .presenting .shell{height:100vh;display:block}
 .presenting .workspace{display:block;height:100vh;overflow:hidden;padding:0;scrollbar-gutter:auto}
 .presenting .pages-surface.presentation-stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
