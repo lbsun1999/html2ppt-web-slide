@@ -147,7 +147,7 @@ function check(){const messages=audit($('.slide',$('#canvas')),slide());
  if(['body','toc'].includes(slide().kind)){
   for(const m of slide().modules)if(!inside(m,pageBounds())||slide().modules.some(n=>m.id!==n.id&&intersects(m,n)))messages.push('模块越界或相互遮挡，调整后再导出。');
  }
- $('#status').textContent=messages.length?`${messages.length} 项需调整：${messages[0].replace(/^[\da-f-]{20,}：/,'')}`:'已对齐安全区 · 正文固定 16 pt · 表格自适应 8–14 pt';$('#status').classList.toggle('error',messages.length>0);return messages;
+ return messages;
 }
 function go(n,options={}){if(n===index&&!present){viewer.scrollTo(n);return;}viewer.select(Math.max(0,Math.min(project.slides.length-1,n)),options);}
 function tableSpacingControls(owner,reference=false){
