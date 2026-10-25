@@ -15325,10 +15325,11 @@ body.export-view .toc-note:empty{display:none}
     ["numbered", "C3", "序号标题", "45° 梯形序号、正文加粗子标题及 14pt 注释"]
   ];
   var styleInfo = (id) => TEXT_STYLES.find((s) => s[0] === id) || TEXT_STYLES[0];
+  var decorationInstance = 0;
   function textModuleHTML(m, { esc: esc3, editable: editable2, textBody: textBody2, edit }) {
     const style = styleInfo(m.style)[0], cols = Math.max(1, Math.min(m.columns || m.parts.length, m.parts.length));
     const percent = Math.max(25, Math.min(100, Number(m.headerWidth) || (["capsule", "group"].includes(style) ? 90 : 65)));
-    const groupId = "decor-" + String(m.id).replace(/[^\w-]/g, "");
+    const groupId = "decor-" + String(m.id).replace(/[^\w-]/g, "") + "-" + ++decorationInstance;
     const box = (id, top = 22, left = 8) => `<svg class="text-box-decoration" data-decoration aria-hidden="true" width="100%" height="100%"><defs><linearGradient id="${id}-line" x1="0" y1="0" x2="100%" y2="100%"><stop stop-color="var(--primary)" stop-opacity=".24"/><stop offset="1" stop-color="var(--primary)"/></linearGradient><filter id="${id}-shadow" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="var(--primary)" flood-opacity=".28"/></filter></defs><rect x="${left}" y="${top}" width="calc(100% - ${left + 10}px)" height="calc(100% - ${top + 10}px)" fill="white" stroke="url(#${id}-line)" stroke-width="2" filter="url(#${id}-shadow)"/></svg>`;
     const decoration = (kind) => {
       if (kind === "ribbon") return `<svg class="title-decoration ribbon-face" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><svg class="ribbon-fold" viewBox="0 0 14 18" data-decoration aria-hidden="true"><path d="M0 0H14V18Z" fill="var(--primary)"/><path d="M0 0H14V18Z" fill="black" opacity=".45"/></svg>`;

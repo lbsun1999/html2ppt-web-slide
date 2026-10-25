@@ -1,7 +1,7 @@
 [
   {
     "file": "example-project.html",
-    "sha256": "ebfb02f4d2593324da6881bebed17289d31729bec81c401800961c294a443255",
+    "sha256": "c158ba4f85f664649950ea6954a8dd056d05b7ba2b49ab8993f0f89da7c55421",
     "preview": "images/example-project.png",
     "view": "grid",
     "columns": 2,
@@ -15,7 +15,7 @@
   },
   {
     "file": "navigation.html",
-    "sha256": "47be5c9c90a23a7db29faf9de543bdd565924aebf31ad32169fb76bb9d8c2e69",
+    "sha256": "5065f7979e84d81ef715894514b83b0abc233ff642315d7190e0148c578841fc",
     "preview": "images/navigation.png",
     "view": "grid",
     "columns": 3,
@@ -29,7 +29,7 @@
   },
   {
     "file": "text-styles-example.html",
-    "sha256": "83dc692d50dec2373ff9e7febee7b909f2ffc1a20d3d2282d3d8adddf9e23be9",
+    "sha256": "7194cad78a1ebc281474766eedf8c579fb806303192682a08faeb401485bf3f6",
     "preview": "images/text-styles-example.png",
     "view": "grid",
     "columns": 3,
