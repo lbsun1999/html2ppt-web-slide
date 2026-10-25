@@ -18,7 +18,7 @@ export class SidebarPages{
   for(const b of document.querySelectorAll('.slide-thumb')){
    const selected=this.ids.has(p.slides[Number(b.dataset.page)]?.id);b.classList.toggle('is-selected',selected);b.setAttribute('aria-pressed',String(selected));b.draggable=true;
   }
-  document.querySelector('#page-selection-info').textContent=`已选 ${this.ids.size} 页 · Ctrl 多选，Shift 连选；拖动缩略图排序`;
+  document.querySelector('#page-selection-info').textContent=`已选 ${this.ids.size} 页`;
   document.querySelector('[data-action="delete-slide"]').textContent=this.ids.size>1?`删除所选 ${this.ids.size} 页`:'删除当前页';
  }
  reset(){this.ids=new Set([this.getProject().slides[this.getIndex()].id]);this.anchor=this.getIndex();this.sync();}
