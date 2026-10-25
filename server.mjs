@@ -14,7 +14,7 @@ import pptxgen from 'pptxgenjs';
 import {validateProject,slideBounds,occupiedItems} from './src/model.js';
 import {inside,intersects} from './src/layout.js';
 import {finishPptxTypography,nativeText,nativeBullet} from './src/server/pptx-typography.mjs';
-import {TITLE_SELECTOR} from './src/title-policy.js';
+import {MANUAL_BREAK_SELECTOR} from './src/title-policy.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const PORT=Number(process.env.PORT||4317),HOST='127.0.0.1';
@@ -74,6 +74,7 @@ async function capture(page){return await page.evaluate(async titleSelector=>{
    if(transitionText){const area=geometry(el.closest('.transition-content'));g.x=area.x;g.w=area.w;}
    if(bandText){const frame=el.closest('.cover-band'),area=geometry(frame),style=getComputedStyle(frame),left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;g.x=area.x+left;g.w=area.w-left-right;}
    if(pageSummary){const frame=el.closest('.slide-summary'),area=geometry(frame),style=getComputedStyle(frame),left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;g.x=area.x+left;g.w=area.w-left-right;}
+   if(el.closest('.profile-identity > [data-text]')){const frame=el.closest('.profile-identity'),area=geometry(frame),style=getComputedStyle(frame),left=(parseFloat(style.paddingLeft)||0)+(parseFloat(style.borderLeftWidth)||0),right=(parseFloat(style.paddingRight)||0)+(parseFloat(style.borderRightWidth)||0);g.x=area.x+left;g.w=area.w-left-right;}
    const singleLine=chapter||cs.whiteSpace==='nowrap'||pageSummary||footer||profileName;let text=el.innerText;
    // A browser paragraph that already fits one line should remain one line in
    // Office. Multiline prose keeps native wrapping and Chinese punctuation rules.
@@ -107,7 +108,7 @@ async function capture(page){return await page.evaluate(async titleSelector=>{
   const media=[...slide.querySelectorAll('[data-image],.media-window.has-asset,[data-raster]')].map((el,i)=>{el.dataset.captureId=String(i);const video=el.querySelector('video');return {...geometry(el),order:paintOrder.get(el),id:i,video:video?{src:video.src,mime:video.src.slice(5,video.src.indexOf(';'))}:null};});
   return {shapes,texts,media,decorations};
  }));
-},TITLE_SELECTOR);}
+},MANUAL_BREAK_SELECTOR);}
 async function pptxExport(page,project){
  const deck=new pptxgen();deck.defineLayout({name:'RESEARCH',width:13.333333,height:7.5});deck.layout='RESEARCH';deck.author='Web Slide';deck.subject='本地模块化科研汇报';deck.title=project.title;deck.company=project.theme.name;deck.lang='zh-CN';deck.theme={headFontFace:'Microsoft YaHei',bodyFontFace:'Microsoft YaHei',lang:'zh-CN'};
  const pages=await capture(page),px=v=>v/120;
@@ -118,7 +119,7 @@ async function pptxExport(page,project){
   const layers=[...source.shapes.map(s=>({...s,kind:'shape'})),...source.texts.map(t=>({...t,kind:'text'})),...source.decorations.map(d=>({...d,kind:'decoration'})),...source.media.map(m=>({...m,kind:'media'}))].sort((a,b)=>a.order-b.order);
   for(const item of layers){
    if(item.kind==='shape'){const s=item,opts={x:px(s.x),y:px(s.y),w:px(s.w),h:px(s.h),line:{color:s.line||s.fill||'FFFFFF',transparency:s.line?0:100,width:s.lineWidth*.6},fill:{color:s.fill||'FFFFFF',transparency:s.fill?0:100}};slide.addShape(s.arrow?deck.ShapeType.chevron:deck.ShapeType.rect,opts);}
-   if(item.kind==='text'){const t=item;slide.addText(nativeText(t),{x:px(t.x),y:px(t.y),w:px(t.w),h:px(t.h),fontFace:t.fontFace||'Microsoft YaHei',fontSize:t.fontSize*.6,bold:t.fontWeight>=600,color:t.color||'000000',lang:'zh-CN',margin:0,breakLine:false,bullet:nativeBullet(t),wrap:!t.noWrap,fit:'none',vertAnchor:'top',align:['center','right','justify'].includes(t.align)?t.align:'left',paraSpaceAfter:t.paragraphGap,lineSpacing:t.fontSize*t.lineHeight*.6,hyperlink:t.targetIndex!==null?{slide:t.targetIndex+1}:t.link?{url:t.link}:undefined});}
+   if(item.kind==='text'){const t=item;slide.addText(nativeText(t),{x:px(t.x),y:px(t.y),w:px(t.w),h:px(t.h),fontFace:t.fontFace||'Microsoft YaHei',fontSize:t.fontSize*.6,bold:t.fontWeight>=600,color:t.color||'000000',lang:'zh-CN',margin:0,breakLine:false,bullet:nativeBullet(t),wrap:!t.noWrap,fit:'none',valign:'top',align:['center','right','justify'].includes(t.align)?t.align:'left',paraSpaceAfter:t.paragraphGap,lineSpacing:t.fontSize*t.lineHeight*.6,hyperlink:t.targetIndex!==null?{slide:t.targetIndex+1}:t.link?{url:t.link}:undefined});}
    if(item.kind==='decoration')slide.addImage({data:item.data,x:px(item.x),y:px(item.y),w:px(item.w),h:px(item.h)});
    if(item.kind==='media'){const m=item,element=page.locator('.slide').nth(n).locator(`[data-capture-id="${m.id}"]`);const png=await element.screenshot({type:'png'});const data='image/png;base64,'+png.toString('base64');if(m.video){slide.addMedia({type:'video',data:m.video.src,extn:m.video.mime.includes('webm')?'webm':'mp4',cover:data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}else slide.addImage({data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}
   }
