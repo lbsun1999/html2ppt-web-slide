@@ -13,6 +13,8 @@ import {chromium} from 'playwright';
 import pptxgen from 'pptxgenjs';
 import {validateProject,slideBounds,occupiedItems} from './src/model.js';
 import {inside,intersects} from './src/layout.js';
+import {finishPptxTypography,nativeText,nativeBullet} from './src/server/pptx-typography.mjs';
+import {TITLE_SELECTOR} from './src/title-policy.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const PORT=Number(process.env.PORT||4317),HOST='127.0.0.1';
@@ -38,9 +40,21 @@ async function excel(data){
   return {name:sheet.name,rows,merges};
  });if(!sheets.length)throw Error('文件中没有可导入的非空工作表。');return {sheets};
 }
-async function capture(page){return await page.evaluate(async()=>{
+async function capture(page){return await page.evaluate(async titleSelector=>{
  const color=s=>{if(/^#[\da-f]{6}$/i.test(s.trim()))return s.trim().slice(1).toUpperCase();const a=s.match(/[\d.]+/g);return a&&(!a[3]||Number(a[3])>0)?a.slice(0,3).map(v=>Math.round(Number(v)).toString(16).padStart(2,'0')).join('').toUpperCase():null;};
- const richRuns=el=>{if(!el.querySelector('[data-rich-run],span[style],var,i,em,strong,b'))return null;const runs=[];const add=(text,node)=>{if(!text)return;const cs=getComputedStyle(node.nodeType===1?node:node.parentElement);runs.push({text,bold:Number(cs.fontWeight)>=600,italic:cs.fontStyle==='italic',fontSize:parseFloat(cs.fontSize)*.6,color:color(cs.color)});};const walk=node=>{if(node.nodeType===3){add(node.nodeValue.replace(/\u00a0/g,' '),node);return;}if(node.nodeType!==1)return;if(node.tagName==='BR'){add('\n',node);return;}const block=node!==el&&['DIV','P','LI'].includes(node.tagName);if(block&&runs.length&&!runs.at(-1).text.endsWith('\n'))add('\n',node);for(const c of node.childNodes)walk(c);if(block&&node.nextSibling&&!runs.at(-1)?.text.endsWith('\n'))add('\n',node);};for(const node of el.childNodes)walk(node);return runs;};
+ const richRuns=el=>{if(!el.querySelector('[data-rich-run],span[style],var,i,em,strong,b'))return null;const runs=[];const add=(text,node)=>{if(!text)return;const cs=getComputedStyle(node.nodeType===1?node:node.parentElement);runs.push({text,bold:Number(cs.fontWeight)>=600,italic:cs.fontStyle==='italic',fontFace:cs.fontFamily.split(',')[0].replace(/["']/g,''),fontSize:parseFloat(cs.fontSize)*.6,color:color(cs.color)});};const walk=node=>{if(node.nodeType===3){add(node.nodeValue.replace(/\u00a0/g,' '),node);return;}if(node.nodeType!==1)return;if(node.tagName==='BR'){add('\n',node);return;}const block=node!==el&&['DIV','P','LI'].includes(node.tagName);if(block&&runs.length&&!runs.at(-1).text.endsWith('\n'))add('\n',node);for(const c of node.childNodes)walk(c);if(block&&node.nextSibling&&!runs.at(-1)?.text.endsWith('\n'))add('\n',node);};for(const node of el.childNodes)walk(node);return runs;};
+ const visualLineCount=el=>{
+  const lines=[],walk=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);
+  while(walk.nextNode()){
+   if(!walk.currentNode.textContent.trim())continue;
+   const range=document.createRange();range.selectNodeContents(walk.currentNode);
+   for(const r of range.getClientRects())if(r.width>.1&&r.height>.1){
+    const center=(r.top+r.bottom)/2;
+    if(!lines.some(y=>Math.abs(y-center)<r.height*.55))lines.push(center);
+   }
+  }
+  return lines.length;
+ };
  return await Promise.all([...document.querySelectorAll('.slide')].map(async slide=>{
   const box=slide.getBoundingClientRect(),geometry=el=>{const r=el.getBoundingClientRect();return {x:r.x-box.x,y:r.y-box.y,w:r.width,h:r.height};};
   const paintOrder=new Map([...slide.querySelectorAll('*')].map((el,i)=>[el,i*2]));
@@ -52,14 +66,25 @@ async function capture(page){return await page.evaluate(async()=>{
    if(trim&&parseFloat(cs.borderRightWidth)>0){const w=parseFloat(cs.borderRightWidth);return [{...s,w:g.w-w},{x:g.x+g.w-w,y:g.y,w,h:g.h,order:paintOrder.get(el),fill:color(cs.borderRightColor),line:null,lineWidth:0}];}
    return [s];
   }).filter(s=>s.fill||s.line);
-  const texts=[...slide.querySelectorAll('[data-text]')].flatMap(root=>{const lines=[...root.children].filter(n=>n.hasAttribute('data-paragraph'));return (lines.length?lines:[root]).map(el=>{
+  const texts=[...slide.querySelectorAll('[data-text]')].flatMap(root=>{const forcedSingleRoot=!!root.closest('.slide-footer,.slide-summary,.section-line')||root.matches('.profile-name'),lines=forcedSingleRoot?[]:[...root.children].filter(n=>n.hasAttribute('data-paragraph')||n.matches('li'));return (lines.length?lines:[root]).map(el=>{
    const cs=getComputedStyle(el),g=geometry(el),chapter=!!el.closest('.section-line'),pageTitle=el.matches('.slide-header h2');
    const pL=parseFloat(cs.paddingLeft),pR=parseFloat(cs.paddingRight),pT=parseFloat(cs.paddingTop),pB=parseFloat(cs.paddingBottom);
-   const transitionHeading=el.matches('.transition-content h1,.transition-number'),pageSummary=!!el.closest('.slide-summary');
+   const transitionHeading=el.matches('.transition-content h1,.transition-number'),transitionText=!!el.closest('.transition-content'),bandText=el.matches('.cover-band h1,.cover-band p'),pageSummary=!!el.closest('.slide-summary'),footer=!!el.closest('.slide-footer'),profileName=el.matches('.profile-name');
    // A tight browser glyph box is not a reliable text width in PowerPoint.
-   if(transitionHeading){const area=geometry(el.closest('.transition-content'));g.x=area.x;g.w=area.w;}
+   if(transitionText){const area=geometry(el.closest('.transition-content'));g.x=area.x;g.w=area.w;}
+   if(bandText){const frame=el.closest('.cover-band'),area=geometry(frame),style=getComputedStyle(frame),left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;g.x=area.x+left;g.w=area.w-left-right;}
    if(pageSummary){const frame=el.closest('.slide-summary'),area=geometry(frame),style=getComputedStyle(frame),left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;g.x=area.x+left;g.w=area.w-left-right;}
-   const singleLine=chapter||cs.whiteSpace==='nowrap'||pageSummary,noWrap=singleLine||transitionHeading||el.matches('.cover-band h1,.slide-header h2');let text=el.innerText;
+   const singleLine=chapter||cs.whiteSpace==='nowrap'||pageSummary||footer||profileName;let text=el.innerText;
+   // A browser paragraph that already fits one line should remain one line in
+   // Office. Multiline prose keeps native wrapping and Chinese punctuation rules.
+   const noWrap=singleLine||transitionHeading||!!el.closest(titleSelector)||visualLineCount(el)<=1;
+   const bullet=el.dataset.bullet!==undefined?(el.dataset.bullet==='true'?(el.dataset.marker||root.dataset.marker||'•'):null):el.matches('li')?'•':el.classList.contains('bulleted')?(el.dataset.marker||'•'):null;
+   const textLeft=bullet?0:pL;
+   let width=g.w-textLeft-pR;
+   if(!noWrap&&['left','start','justify'].includes(cs.textAlign)){
+    const frame=el.closest('td,th,.text-part,.formula-card,.timeline-card');
+    if(frame){const area=geometry(frame),style=getComputedStyle(frame),right=area.x+area.w-(parseFloat(style.borderRightWidth)||0);width+=Math.max(0,Math.min(parseFloat(cs.fontSize)*.25,right-(g.x+textLeft+width)-2));}
+   }
    // CSS nowrap/ellipsis does not survive conversion to a native PowerPoint textbox.
    // Preserve a single line explicitly, with room for different font metrics in Office.
    if(singleLine){
@@ -70,7 +95,7 @@ async function capture(page){return await page.evaluate(async()=>{
     }
    }
    const anchor=el.matches('a')?el:el.querySelector('a'),target=anchor?.hash?document.getElementById(anchor.hash.slice(1))?.closest('.slide'):null;
-   return {...g,role:el.matches('.transition-number')?'transition-number':el.dataset.slideField||'',order:paintOrder.get(el)+1,x:g.x+(el.dataset.bullet==='true'?0:pL),y:g.y+pT,w:g.w-(el.dataset.bullet==='true'?0:pL)-pR,h:g.h-pT-pB,text,runs:singleLine&&!pageSummary?null:richRuns(el),singleLine,noWrap,fontFace:cs.fontFamily.split(',')[0].replace(/["']/g,''),paragraphGap:el.classList.contains('paragraph')&&el.children.length?6:0,bullet:el.matches('li')?'•':el.classList.contains('bulleted')?el.dataset.marker:null,color:pageTitle?color(cs.getPropertyValue('--primary')):color(cs.color),fontSize:parseFloat(cs.fontSize),fontWeight:Number(cs.fontWeight),lineHeight:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize),align:cs.textAlign,link:anchor?.href||null,targetIndex:el.dataset.targetIndex!==undefined?Number(el.dataset.targetIndex):target?[...document.querySelectorAll('.slide')].indexOf(target):null};
+   return {...g,role:el.matches('.transition-number')?'transition-number':el.dataset.slideField||'',order:paintOrder.get(el)+1,x:g.x+textLeft,y:g.y+pT,w:width,h:g.h-pT-pB,text,runs:text===el.innerText?richRuns(el):null,singleLine,noWrap,fontFace:cs.fontFamily.split(',')[0].replace(/["']/g,''),paragraphGap:el.classList.contains('paragraph')&&el.children.length?6:0,bullet,bulletIndent:pL||32,color:pageTitle?color(cs.getPropertyValue('--primary')):color(cs.color),fontSize:parseFloat(cs.fontSize),fontWeight:Number(cs.fontWeight),lineHeight:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize),align:cs.textAlign,link:anchor?.href||null,targetIndex:el.dataset.targetIndex!==undefined?Number(el.dataset.targetIndex):target?[...document.querySelectorAll('.slide')].indexOf(target):null};
   });}).filter(t=>t.text.trim()&&t.w>0&&t.h>0);
   // Isolate SVG artwork; element screenshots would also bake overlapping text into it.
   const decorations=await Promise.all([...slide.querySelectorAll('svg[data-decoration]')].map(async el=>{
@@ -82,11 +107,10 @@ async function capture(page){return await page.evaluate(async()=>{
   const media=[...slide.querySelectorAll('[data-image],.media-window.has-asset,[data-raster]')].map((el,i)=>{el.dataset.captureId=String(i);const video=el.querySelector('video');return {...geometry(el),order:paintOrder.get(el),id:i,video:video?{src:video.src,mime:video.src.slice(5,video.src.indexOf(';'))}:null};});
   return {shapes,texts,media,decorations};
  }));
-});}
+},TITLE_SELECTOR);}
 async function pptxExport(page,project){
  const deck=new pptxgen();deck.defineLayout({name:'RESEARCH',width:13.333333,height:7.5});deck.layout='RESEARCH';deck.author='Web Slide';deck.subject='本地模块化科研汇报';deck.title=project.title;deck.company=project.theme.name;deck.lang='zh-CN';deck.theme={headFontFace:'Microsoft YaHei',bodyFontFace:'Microsoft YaHei',lang:'zh-CN'};
  const pages=await capture(page),px=v=>v/120;
- const nativeText=t=>{if(!t.runs?.length)return t.bullet?t.text.split('\n').map(line=>t.bullet+'　'+line).join('\n'):t.text;let start=true;return t.runs.map(run=>{let text=run.text;if(t.bullet){text=text.split('\n').map((line,i)=>{if(i)start=true;const value=(start&&line?t.bullet+'　':'')+line;if(line)start=false;return value;}).join('\n');}return {text,options:{bold:run.bold,italic:run.italic,fontSize:run.fontSize,color:run.color||t.color||'000000'}};});};
  for(let n=0;n<pages.length;n++){
   const source=pages[n],slide=deck.addSlide();slide.background={color:'FFFFFF'};if(project.slides[n].notes)slide.addNotes(project.slides[n].notes);
   if(project.slides[n].kind==='transition')for(const t of source.texts)if(['title','transition-number'].includes(t.role)){t.noWrap=true;if(t.role==='title'){t.text=project.slides[n].title;if(t.runs?.map(r=>r.text).join('')!==t.text)t.runs=null;}}
@@ -94,12 +118,12 @@ async function pptxExport(page,project){
   const layers=[...source.shapes.map(s=>({...s,kind:'shape'})),...source.texts.map(t=>({...t,kind:'text'})),...source.decorations.map(d=>({...d,kind:'decoration'})),...source.media.map(m=>({...m,kind:'media'}))].sort((a,b)=>a.order-b.order);
   for(const item of layers){
    if(item.kind==='shape'){const s=item,opts={x:px(s.x),y:px(s.y),w:px(s.w),h:px(s.h),line:{color:s.line||s.fill||'FFFFFF',transparency:s.line?0:100,width:s.lineWidth*.6},fill:{color:s.fill||'FFFFFF',transparency:s.fill?0:100}};slide.addShape(s.arrow?deck.ShapeType.chevron:deck.ShapeType.rect,opts);}
-   if(item.kind==='text'){const t=item;slide.addText(nativeText(t),{x:px(t.x),y:px(t.y),w:px(t.w),h:px(t.h),fontFace:t.fontFace||'Microsoft YaHei',fontSize:t.fontSize*.6,bold:t.fontWeight>=600,color:t.color||'000000',margin:0,breakLine:false,wrap:!t.noWrap,fit:'none',vertAnchor:'top',align:['center','right','justify'].includes(t.align)?t.align:'left',paraSpaceAfter:t.paragraphGap,lineSpacing:t.fontSize*t.lineHeight*.6,hyperlink:t.targetIndex!==null?{slide:t.targetIndex+1}:t.link?{url:t.link}:undefined});}
+   if(item.kind==='text'){const t=item;slide.addText(nativeText(t),{x:px(t.x),y:px(t.y),w:px(t.w),h:px(t.h),fontFace:t.fontFace||'Microsoft YaHei',fontSize:t.fontSize*.6,bold:t.fontWeight>=600,color:t.color||'000000',lang:'zh-CN',margin:0,breakLine:false,bullet:nativeBullet(t),wrap:!t.noWrap,fit:'none',vertAnchor:'top',align:['center','right','justify'].includes(t.align)?t.align:'left',paraSpaceAfter:t.paragraphGap,lineSpacing:t.fontSize*t.lineHeight*.6,hyperlink:t.targetIndex!==null?{slide:t.targetIndex+1}:t.link?{url:t.link}:undefined});}
    if(item.kind==='decoration')slide.addImage({data:item.data,x:px(item.x),y:px(item.y),w:px(item.w),h:px(item.h)});
    if(item.kind==='media'){const m=item,element=page.locator('.slide').nth(n).locator(`[data-capture-id="${m.id}"]`);const png=await element.screenshot({type:'png'});const data='image/png;base64,'+png.toString('base64');if(m.video){slide.addMedia({type:'video',data:m.video.src,extn:m.video.mime.includes('webm')?'webm':'mp4',cover:data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}else slide.addImage({data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}
   }
  }
- return Buffer.from(await deck.write({outputType:'nodebuffer'}));
+ return finishPptxTypography(await deck.write({outputType:'nodebuffer'}));
 }
 async function exportProject(project,kind){
  validateProject(project);

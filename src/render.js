@@ -6,6 +6,7 @@ import {formulaHTML} from './formula.js';
 import {richHTML,textStyle} from './rich-text.js';
 import {W,SAFE} from './model.js';
 import {textModuleHTML} from './text-styles.js';
+import {titleErrors} from './title-policy.js';
 export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function themeCSS(t){return ['primary','secondary','accent','emphasis','tint','ink'].map(k=>`--${k}:${t[k]}`).join(';');}
 const editable=(edit,attrs)=>edit?`contenteditable="true" spellcheck="false" ${attrs}`:'';
@@ -98,7 +99,7 @@ export function measuredHeight(el,m){
  return 80;
 }
 export function audit(slideEl,model){
- const errors=[];if(model.referenceLayout){const footer=slideEl.querySelector('.slide-footer')?.getBoundingClientRect();for(const table of slideEl.querySelectorAll('table'))if(footer&&table.getBoundingClientRect().bottom>footer.top+2)errors.push('表格进入页脚区域，请减小行高或拆页。');for(const node of slideEl.querySelectorAll('[data-slide-field],.formula-card,.math-expression')){if(node.scrollHeight>node.clientHeight+3||node.scrollWidth>node.clientWidth+3)errors.push('文字超出原版式区域，请删改或调整行距。');}return errors;}if(model.kind==='transition'){const content=slideEl.querySelector('.transition-content'),title=content.querySelector('h1');if(title.scrollWidth>title.clientWidth+2)errors.push('\u8fc7\u6e21\u9875\u6807\u9898\u4e0d\u5141\u8bb8\u81ea\u52a8\u6362\u884c\uff0c\u8bf7\u7cbe\u7b80\u6216\u6309\u8bed\u4e49\u624b\u52a8\u5206\u884c\u3002');if(content.scrollHeight>content.clientHeight+2)errors.push('过渡页文字过长，请精简。');return errors;}
+ const errors=titleErrors(slideEl);if(model.referenceLayout){const footer=slideEl.querySelector('.slide-footer')?.getBoundingClientRect();for(const table of slideEl.querySelectorAll('table'))if(footer&&table.getBoundingClientRect().bottom>footer.top+2)errors.push('表格进入页脚区域，请减小行高或拆页。');for(const node of slideEl.querySelectorAll('[data-slide-field],.formula-card,.math-expression')){if(node.scrollHeight>node.clientHeight+3||node.scrollWidth>node.clientWidth+3)errors.push('文字超出原版式区域，请删改或调整行距。');}return errors;}if(model.kind==='transition'){const content=slideEl.querySelector('.transition-content'),title=content.querySelector('h1');if(title.scrollWidth>title.clientWidth+2)errors.push('\u8fc7\u6e21\u9875\u6807\u9898\u4e0d\u5141\u8bb8\u81ea\u52a8\u6362\u884c\uff0c\u8bf7\u7cbe\u7b80\u6216\u6309\u8bed\u4e49\u624b\u52a8\u5206\u884c\u3002');if(content.scrollHeight>content.clientHeight+2)errors.push('过渡页文字过长，请精简。');return errors;}
  if(model.kind==='cover'||model.kind==='closing'){const band=slideEl.querySelector('.cover-band');if(band.scrollHeight>band.clientHeight+2)errors.push('封面标题过长，请精简或手动分成两行。');const info=slideEl.querySelector('.cover-info');if(info.offsetTop+info.offsetHeight>880)errors.push('署名内容过长，请精简。');return errors;}
  const identity=slideEl.querySelector('.profile-fixed .profile-identity');if(identity&&(identity.scrollHeight>identity.clientHeight+2||identity.scrollWidth>identity.clientWidth+2))errors.push('Author card overflow.');
  const heading=slideEl.querySelector('h2');if(heading.scrollHeight>heading.clientHeight+2)errors.push('页面标题过长，请精简。');

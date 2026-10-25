@@ -1,0 +1,46 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+import {createProject,blankSlide,makePage,moduleOf} from '../src/model.js';
+import {profilePage} from '../src/editable-layouts.js';
+import {writeDocument} from '../scripts/build-document.mjs';
+import {chromium} from 'playwright';
+import {pathToFileURL} from 'node:url';
+import path from 'node:path';
+
+const p=createProject({withSections:false}),body=blankSlide();
+body.title='导出文字与标点检查';body.lead='页首句末尾的句号留在本行。';
+body.footer='脚注与来源必须单行，\n保留完整文字。';body.paragraphs={footer:[{bullet:false},{bullet:false}]};body.source='来源说明：可点击的网页链接。';body.sourceUrl='https://example.com/';
+body.summary='页尾总结保持单行，末尾句号不另起一行。';
+const text=moduleOf('text',{x:58,y:256,w:1484,h:430},2);text.columns=2;text.style='band';
+text.parts[0].title='普通段落\n与原生列表';text.parts[0].text='这是一段普通说明。\n选中文字可独立加粗。\n这一项采用箭头符号。';
+text.parts[0].paragraphs={text:[{bullet:false},{bullet:true,marker:'•'},{bullet:true,marker:'➢'}]};
+text.parts[0].rich={text:[{text:'这是一段普通说明。\n选中文字可',bold:false},{text:'独立加粗',bold:true,color:'#A31418'},{text:'。\n这一项采用箭头符号。',bold:false}]};
+text.parts[1].title='多行正文继续自然换行';text.parts[1].text='正文保留自然换行，不能为了避免句号换行而把长段落强制压成一行。对跨行的中文段落，明确写入中文语言和行首行尾标点规则，同时在原有卡片范围内保留适量的字体测量余量。';
+body.modules=[text];
+const cover={...makePage('cover'),title:'封面标题，保留标点。',lead:'封面说明保持完整，句号不挤到下一行。'};
+const transition={...makePage('transition'),title:'研究方法与实现。\n实验验证与分析。',lead:'过渡页说明保持完整，句号不挤到下一行。'};
+const closing={...makePage('closing'),title:'感谢聆听，恳请批评指正。',lead:'欢迎提出建议，后续持续完善。'};
+p.slides=[cover,transition,body,profilePage(),closing];
+await fs.mkdir('ect',{recursive:true});await fs.writeFile('ect/text-flow-project.json',JSON.stringify(p));
+const response=await fetch('http://127.0.0.1:4317/api/export/pptx',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+assert.equal(response.status,200,response.status===200?'':await response.text());
+await fs.writeFile('ect/text-flow.pptx',Buffer.from(await response.arrayBuffer()));
+execFileSync('python',['-X','utf8','tests/inspect-text-flow.py','ect/text-flow.pptx'],{stdio:'inherit'});
+await writeDocument(p,'ect/text-flow.html');
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+try{
+ const page=await browser.newPage({viewport:{width:1920,height:1200}});
+ await page.goto(pathToFileURL(path.resolve('ect/text-flow.html')).href);await page.waitForFunction(()=>window.slideStudio);
+ await page.locator('[data-page="2"]').click();
+ const heading=page.locator('#canvas .part-title-text').first();
+ assert.equal(await heading.innerText(),'普通段落\n与原生列表');
+ assert.equal(await heading.evaluate(el=>getComputedStyle(el).whiteSpace),'pre');
+ assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
+ await heading.evaluate(el=>el.textContent='长标题'.repeat(30));
+ assert.ok((await page.evaluate(()=>window.slideStudio.check())).some(e=>e.includes('标题不允许自动换行')));
+}finally{await browser.close();}
+text.parts[0].title='长标题'.repeat(30);
+const bad=await fetch('http://127.0.0.1:4317/api/export/pptx',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});
+assert.equal(bad.status,400);assert.match(await bad.text(),/标题不允许自动换行/);
+console.log('PASS HTML and PPTX share manual-only title wrapping; overwide module titles are reported in both');
