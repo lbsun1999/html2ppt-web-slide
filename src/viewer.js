@@ -62,7 +62,7 @@ export class SlideViewer{
   const hud=this.document.querySelector('#present-hud');if(!hud)return;
   hud.classList.remove('is-idle');
   if(this.hudTimer)clearTimeout(this.hudTimer);
-  this.hudTimer=setTimeout(()=>hud.classList.add('is-idle'),5000);
+  this.hudTimer=setTimeout(()=>hud.classList.add('is-idle'),3000);
  }
  select(index,{scroll=true}={}){
   if(index<0||index>=this.getProject().slides.length)return;

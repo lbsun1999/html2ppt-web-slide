@@ -16687,7 +16687,7 @@ body.export-view .toc-note:empty{display:none}
       if (!hud) return;
       hud.classList.remove("is-idle");
       if (this.hudTimer) clearTimeout(this.hudTimer);
-      this.hudTimer = setTimeout(() => hud.classList.add("is-idle"), 5e3);
+      this.hudTimer = setTimeout(() => hud.classList.add("is-idle"), 3e3);
     }
     select(index2, { scroll = true } = {}) {
       if (index2 < 0 || index2 >= this.getProject().slides.length) return;
