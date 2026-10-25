@@ -101,8 +101,9 @@ html,body{height:100%;overflow:hidden}
 .presenting .presentation-overview .view-page-label b{color:#75ccf1}
 .presenting .presentation-overview .view-page.is-current>.canvas-frame{outline:3px solid #52c6f7;outline-offset:4px}
 .presenting .presentation-overview .canvas-frame{cursor:pointer}
-.present-hud{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:7px 9px 7px 15px;background:#102b3fdf;color:#d5e8f3;display:flex;align-items:center;gap:15px;border-radius:8px;font-size:12px;z-index:200;white-space:nowrap;max-width:95vw}
+.present-hud{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:7px 9px 7px 15px;background:#102b3fdf;color:#d5e8f3;display:flex;align-items:center;gap:15px;border-radius:8px;font-size:12px;z-index:200;white-space:nowrap;max-width:95vw;transition:opacity .6s ease,transform .6s ease}
 .present-hud[hidden]{display:none!important}
+.present-hud.is-idle{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(8px)}
 .present-hud button{font-size:11px;padding:5px 8px;border-color:#608199;background:transparent;color:white}
 .transition-slide{background:var(--tint)}
 .transition-content{position:absolute;left:160px;right:160px;top:190px;bottom:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}

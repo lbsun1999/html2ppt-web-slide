@@ -49,12 +49,20 @@ export class SlideViewer{
   this.onIndex(index);this.present=true;this.overview=false;this.resetZoom(false);this.onPresent(true);this.onRender();
   try{if(!this.document.fullscreenElement)await this.document.documentElement.requestFullscreen();await this.window.navigator.keyboard?.lock?.(['Escape']);}catch{}
   this.fit();
+  this.showHud();
  }
  end(){
   if(!this.present)return;this.present=false;this.overview=false;this.resetZoom(false);this.onPresent(false);this.window.navigator.keyboard?.unlock?.();
+  if(this.hudTimer){clearTimeout(this.hudTimer);this.hudTimer=null;}
   if(this.document.fullscreenElement){this.ending=true;this.exitPromise=this.document.exitFullscreen().catch(()=>{}).finally(()=>{this.ending=false;this.exitPromise=null;});}
   if(this.previous){this.mode=this.previous.mode;this.columns=this.previous.columns;}
   this.onRender();if(this.previous)this.root.parentElement.scrollTop=this.previous.scroll;
+ }
+ showHud(){
+  const hud=this.document.querySelector('#present-hud');if(!hud)return;
+  hud.classList.remove('is-idle');
+  if(this.hudTimer)clearTimeout(this.hudTimer);
+  this.hudTimer=setTimeout(()=>hud.classList.add('is-idle'),5000);
  }
  select(index,{scroll=true}={}){
   if(index<0||index>=this.getProject().slides.length)return;
@@ -69,12 +77,13 @@ export class SlideViewer{
    if(Date.now()-(this.lastDrag||0)<300)return true;
    if(this.overview){this.onIndex(Number(page.dataset.viewPage));this.overview=false;this.resetZoom(false);}
    else{this.overview=true;this.resetZoom(false);}
-   this.onRender();if(this.overview)this.root.querySelector('.is-current')?.scrollIntoView({block:'center'});return true;
+   this.onRender();if(this.overview)this.root.querySelector('.is-current')?.scrollIntoView({block:'center'});this.showHud();return true;
   }
   if(this.mode==='grid'){this.start(Number(page.dataset.viewPage));return true;}return false;
  }
  key(e){
   if(!this.present)return false;
+  this.showHud();
   if(e.key==='Escape'){
    e.preventDefault();if(this.zoom>1.001){this.restoreEscapeAt=Date.now();this.resetZoom();}else this.end();return true;
   }
