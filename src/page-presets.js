@@ -8,84 +8,82 @@ export function textBlock(style,rect,items,columns=null,extra={}){
  return m;
 }
 
-function tableModule(rect,rows,headerRows=1,note=''){
+function tableModule(rect,rows,opts={}){
  const m=moduleOf('table',rect,1);
  m.rows=rows.map(r=>[...r]);
- m.headerRows=headerRows;
+ m.headerRows=opts.headerRows??1;
  m.columns=rows[0]?.length||2;
- m.tableNote=note;
- m.rowHeightPt=0;
- m.cellPaddingPt=undefined;
+ m.tableTitle=opts.tableTitle||'';
+ m.tableNote=opts.tableNote||'';
+ m.rowHeightPt=opts.rowHeightPt??0;
+ m.cellPaddingPt=opts.cellPaddingPt;
+ m.profileHistory=opts.profileHistory??false;
  return m;
 }
 
 // ——— 阶段总结与后续计划 ———
+// 复刻原 reference layout "summary" 的版式：
+//   左栏：编号列表（3 项）
+//   右栏：计划表 + 讨论备注
 export function summaryPage(){
  const s=blankSlide();
  Object.assign(s,{
   title:'阶段总结与后续计划',
   group:'总结与计划',
   section:'04',
-  lead:'汇总当前阶段关键结论与遗留问题，并说明下一阶段的目标、路径与里程碑。',
-  source:'',
+  lead:'总结已经获得证据支持的进展，并将尚未解决的问题落实到可检查的后续工作。',
+  source:'阶段总结与任务安排示例，以实际工作记录为准',
   sourceUrl:'',
   summary:'',
  });
- const safe={...SAFE};
- // 顶部：两个标题式文本块（group / C2），左右并排
- const topH=108;
- const topGap=24;
- const topW=(safe.w-topGap)/2;
- s.modules.push(textBlock('group',
-  {x:safe.x,y:safe.y,w:topW,h:topH},
-  [['阶段总结','列出本阶段取得的三项主要进展，每条用一句话说明问题、方法与结果。',{}]],
-  1,
-  {groupTitle:'阶段总结'}
- ));
- s.modules.push(textBlock('group',
-  {x:safe.x+topW+topGap,y:safe.y,w:topW,h:topH},
-  [['后续计划','说明下一阶段的研究路线、关键节点与预期产出。',{}]],
-  1,
-  {groupTitle:'后续计划'}
- ));
- // 中部：左边卡片文本，右边表格
- const midY=safe.y+topH+24;
- const midH=264;
- const leftW=820;
- const rightW=safe.w-leftW-24;
- s.modules.push(textBlock('cards',
-  {x:safe.x,y:midY,w:leftW,h:midH},
+ const x=SAFE.x,y=SAFE.y,w=SAFE.w,h=SAFE.h;
+ const gap=36;
+ const leftW=(w-gap)/2;
+ const rightW=w-leftW-gap;
+ // 左：编号列表文本模块（C3 / numbered，3 个子区域）
+ s.modules.push(textBlock('numbered',
+  {x,y,w:leftW,h},
   [
-   ['主要进展一','说明本阶段的核心问题、采用方法与得到的结论。结合数据或证据指出贡献所在与仍存在的局限。',{bullet:false}],
-   ['主要进展二','说明第二项工作的研究问题、技术路线与实验结论。段落结构保持匀称，避免一侧过重。',{bullet:false}],
-   ['主要进展三','说明第三项工作的目标、思路与结果。三列内容尽量均衡，可配合数据或证据增强说服力。',{bullet:false}],
+   ['已完成的工作','列出已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。',{}],
+   ['证据支持的结论','关联对应图表，写明结论适用的场景与条件；初步观察需标明尚待复核。',{}],
+   ['仍待解决的问题','指出未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。',{}],
   ],
-  1
+  1,
+  {numberStart:1}
  ));
+ // 右上：表格模块（计划表，带标题）
+ const tableH=Math.round(h*0.72);
  s.modules.push(tableModule(
-  {x:safe.x+leftW+24,y:midY,w:rightW,h:midH},
+  {x:x+leftW+gap,y,w:rightW,h:tableH},
   [
-   ['里程碑','时间节点','交付物','状态'],
-   ['M1：方案验证','第1–2月','原型系统 + 基线实验','进行中'],
-   ['M2：方法迭代','第3–5月','改进算法 + 消融实验','待开始'],
-   ['M3：系统集成','第6–7月','完整系统 + 用户研究','待开始'],
-   ['M4：总结发表','第8–9月','论文撰写 + 答辩准备','待开始'],
+   ['工作阶段','关键任务','验收产出'],
+   ['近期','统一实验设置\n固定数据划分','参数清单、数据版本\n及可复现的实验脚本'],
+   ['随后','补充对照实验\n开展关键消融','均值 ± 标准差\n重复次数及原始日志'],
+   ['并行','分析异常结果\n归纳失败案例','差异解释与边界条件\n可定位的典型样例'],
+   ['下次汇报','汇总新增证据\n逐项回应问题','更新图表与问题清单\n逐项修订研究结论'],
   ],
-  1,
-  '表格行高与内边距可在模块编辑中调整。'
+  {
+   tableTitle:'下一步计划',
+   tableNote:'',
+   headerRows:1,
+   rowHeightPt:0,
+  }
  ));
- // 底部：C1 / note 样式的总结备注（单子区域）
- const botY=midY+midH+24;
- const botH=safe.h-(topH+24+midH+24+24);
+ // 右下：讨论备注（C1 / note 样式）
+ const noteY=y+tableH+20;
+ const noteH=h-tableH-20;
  s.modules.push(textBlock('note',
-  {x:safe.x,y:botY,w:safe.w,h:Math.max(60,botH)},
-  [['','用一句话总结本阶段的核心结论和下一阶段的重点方向。备注样式适合作为页内总结、补充说明或注意事项。',{}]],
+  {x:x+leftW+gap,y:noteY,w:rightW,h:Math.max(60,noteH)},
+  [['','<b>本次讨论：</b>确认实验优先级和验收标准。\n各阶段时间按实际进展填写。',{}]],
   1
  ));
  return s;
 }
 
 // ——— 作者简介 / 简历页 ———
+// 复刻原 reference layout "profile" 的版式：
+//   左栏：头像 + 个人信息
+//   右栏：3 个版块（经历表 / 学术任职与项目 / 研究方向）
 export function profilePage(){
  const s=blankSlide();
  Object.assign(s,{
@@ -94,58 +92,78 @@ export function profilePage(){
   section:'附录',
   chapterMode:'manual',
   lead:'个人基本信息、研究方向与主要经历一览。',
-  source:'',
+  source:'个人简介示例，请根据实际情况替换内容',
   sourceUrl:'',
   summary:'',
  });
- const safe={...SAFE};
- // 左侧：头像 + 基本信息（用 media + text 两个模块）
- const leftW=360;
- // 头像
- const portraitH=300;
- const portraitModule=moduleOf('media',{x:safe.x,y:safe.y,w:leftW,h:portraitH},1);
+ const x=SAFE.x,y=SAFE.y,w=SAFE.w,h=SAFE.h;
+ const leftW=340;
+ const gap=32;
+ const rightX=x+leftW+gap;
+ const rightW=w-leftW-gap;
+ // 左上：头像（媒体模块）
+ const portraitH=280;
+ const portraitModule=moduleOf('media',{x,y,w:leftW,h:portraitH},1);
  portraitModule.captionMode='title';
  portraitModule.parts[0].showCaption=false;
  portraitModule.parts[0].asset=null;
  portraitModule.parts[0].caption='';
  portraitModule.parts[0].note='';
  s.modules.push(portraitModule);
- // 基本信息文本
- const infoY=safe.y+portraitH+24;
- const infoH=safe.h-portraitH-24-24;
+ // 左下：个人信息（A2 / cards 样式）
+ const infoY=y+portraitH+20;
+ const infoH=h-portraitH-20;
  s.modules.push(textBlock('cards',
-  {x:safe.x,y:infoY,w:leftW,h:infoH},
+  {x,y:infoY,w:leftW,h:infoH},
   [
-   ['个人信息','姓名：\n学号 / 工号：\n所属学院：\n研究方向：\n电子邮箱：',{bullet:false}],
+   ['作者姓名','职称／学位\n学院／研究机构\n团队／实验室\n邮箱：name@example.com',{bullet:false}],
   ],
   1
  ));
- // 右侧上方：3 个子区域的卡片式文本
- const rightX=safe.x+leftW+24;
- const rightW=safe.w-leftW-24;
- const topH=200;
- s.modules.push(textBlock('cards',
-  {x:rightX,y:safe.y,w:rightW,h:topH},
+ // 右 1：教育和工作经历（表格模块，profile-history 样式）
+ const sectionGap=16;
+ // 三个版块：经历表 + 学术任职 + 研究方向
+ // 高度分配：经历表占 38%，学术任职占 28%，研究方向占 34%（- 2 gaps）
+ const sec1H=Math.round((h-2*sectionGap)*0.38);
+ const sec2H=Math.round((h-2*sectionGap)*0.28);
+ const sec3H=h-sec1H-sec2H-2*sectionGap;
+ s.modules.push(tableModule(
+  {x:rightX,y,w:rightW,h:sec1H},
   [
-   ['教育经历','按时间倒序列举学历背景，包括学校、专业、学位与时间。',{bullet:false}],
-   ['研究方向','概括主要研究兴趣、技术领域与关注的学术问题。',{bullet:false}],
-   ['荣誉奖项','列举代表性奖项、奖学金或学术竞赛成果。',{bullet:false}],
+   ['起止时间','','学校／工作单位','','学位／专业／职务'],
+   ['20XX—20XX','','学校及院系','','学位与专业'],
+   ['20XX—20XX','','研究机构／工作单位','','科研岗位'],
+   ['20XX—至今','','现工作单位','','现任职务'],
+  ],
+  {
+   tableTitle:'教育和工作经历',
+   tableNote:'',
+   headerRows:1,
+   rowHeightPt:0,
+   profileHistory:true,
+   bandTitle:true,
+  }
+ ));
+ // 右 2：主要学术任职／代表性项目（band / A3 样式，2 列）
+ const sec2Y=y+sec1H+sectionGap;
+ s.modules.push(textBlock('band',
+  {x:rightX,y:sec2Y,w:rightW,h:sec2H},
+  [
+   ['学术任职','学术组织／期刊：职务\n任期／服务事项：时间',{bullet:true}],
+   ['代表性项目与奖项','项目：名称、本人角色\n奖项：名称、年份／排名',{bullet:true}],
+  ],
+  2
+ ));
+ // 右 3：主要研究方向（band / A3 样式，3 列）
+ const sec3Y=sec2Y+sec2H+sectionGap;
+ s.modules.push(textBlock('band',
+  {x:rightX,y:sec3Y,w:rightW,h:sec3H},
+  [
+   ['研究方向一','研究对象：\n核心问题：',{bullet:true}],
+   ['研究方向二','主要方法：\n技术特点：',{bullet:true}],
+   ['研究方向三','应用场景：\n研究目标：',{bullet:true}],
   ],
   3
- ));
- // 右侧下方：表格（经历 / 技能等）
- const tableY=safe.y+topH+24;
- const tableH=safe.h-topH-24;
- s.modules.push(tableModule(
-  {x:rightX,y:tableY,w:rightW,h:tableH},
-  [
-   ['项目 / 经历','时间','角色','主要贡献'],
-   ['项目名称一','2024 – 至今','核心成员','负责算法设计与实验验证，提出 XXX 方法，在 YYY 数据集上取得 ZZZ 结果。'],
-   ['项目名称二','2023 – 2024','参与','参与系统开发与数据分析，完成 XXX 模块的设计与实现。'],
-   ['实习 / 工作经历','2022 – 2023','实习生','参与产品研发，负责 XXX 功能的设计与落地。'],
-  ],
-  1,
-  '可根据需要增删行、改列数，或替换为技能矩阵、发表论文等内容。'
  ));
  return s;
 }

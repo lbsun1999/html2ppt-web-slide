@@ -180,6 +180,10 @@ html,body{height:100%;overflow:hidden}
 .profile-history th{font-size:26.6667px;line-height:1.3}
 .profile-history th:nth-child(2),.profile-history th:nth-child(4),.profile-history td:nth-child(2),.profile-history td:nth-child(4){border:0!important;padding:0!important}
 .table-title{font-size:30px;line-height:1.3;color:var(--primary);margin:0 0 12px}
+.table-wrap.band-title{display:flex;flex-direction:column;height:100%;border:1px solid var(--primary);border-radius:6px;overflow:hidden}
+.table-wrap.band-title .table-title{margin:0;padding:10px 20px;font-size:26px;color:white;background:var(--primary);flex:0 0 auto}
+.table-wrap.band-title .data-table{flex:1 1 auto}
+.table-wrap.band-title .table-note{margin:0;padding:10px 16px;border-top:1px solid var(--line-light);flex:0 0 auto}
 .data-table.reference-table td{border:0!important;background:transparent!important;padding:13px 0;vertical-align:top;text-align:justify;line-height:1.5}
 .data-table.reference-table td:first-child{padding-right:8px;text-align:left}
 .data-table.reference-table td div{white-space:normal;overflow-wrap:anywhere;text-align:justify;text-align-last:left}
@@ -15888,14 +15892,16 @@ body.export-view .toc-note:empty{display:none}
     m.parts = items.map(([title, text2, opts = {}]) => ({ ...part(), title, text: text2, bullet: false, ...opts }));
     return m;
   }
-  function tableModule(rect, rows, headerRows = 1, note = "") {
+  function tableModule(rect, rows, opts = {}) {
     const m = moduleOf("table", rect, 1);
     m.rows = rows.map((r) => [...r]);
-    m.headerRows = headerRows;
+    m.headerRows = opts.headerRows ?? 1;
     m.columns = rows[0]?.length || 2;
-    m.tableNote = note;
-    m.rowHeightPt = 0;
-    m.cellPaddingPt = void 0;
+    m.tableTitle = opts.tableTitle || "";
+    m.tableNote = opts.tableNote || "";
+    m.rowHeightPt = opts.rowHeightPt ?? 0;
+    m.cellPaddingPt = opts.cellPaddingPt;
+    m.profileHistory = opts.profileHistory ?? false;
     return m;
   }
   function summaryPage() {
@@ -15904,61 +15910,49 @@ body.export-view .toc-note:empty{display:none}
       title: "阶段总结与后续计划",
       group: "总结与计划",
       section: "04",
-      lead: "汇总当前阶段关键结论与遗留问题，并说明下一阶段的目标、路径与里程碑。",
-      source: "",
+      lead: "总结已经获得证据支持的进展，并将尚未解决的问题落实到可检查的后续工作。",
+      source: "阶段总结与任务安排示例，以实际工作记录为准",
       sourceUrl: "",
       summary: ""
     });
-    const safe = { ...SAFE };
-    const topH = 108;
-    const topGap = 24;
-    const topW = (safe.w - topGap) / 2;
+    const x = SAFE.x, y = SAFE.y, w = SAFE.w, h = SAFE.h;
+    const gap = 36;
+    const leftW = (w - gap) / 2;
+    const rightW = w - leftW - gap;
     s.modules.push(textBlock(
-      "group",
-      { x: safe.x, y: safe.y, w: topW, h: topH },
-      [["阶段总结", "列出本阶段取得的三项主要进展，每条用一句话说明问题、方法与结果。", {}]],
-      1,
-      { groupTitle: "阶段总结" }
-    ));
-    s.modules.push(textBlock(
-      "group",
-      { x: safe.x + topW + topGap, y: safe.y, w: topW, h: topH },
-      [["后续计划", "说明下一阶段的研究路线、关键节点与预期产出。", {}]],
-      1,
-      { groupTitle: "后续计划" }
-    ));
-    const midY = safe.y + topH + 24;
-    const midH = 264;
-    const leftW = 820;
-    const rightW = safe.w - leftW - 24;
-    s.modules.push(textBlock(
-      "cards",
-      { x: safe.x, y: midY, w: leftW, h: midH },
+      "numbered",
+      { x, y, w: leftW, h },
       [
-        ["主要进展一", "说明本阶段的核心问题、采用方法与得到的结论。结合数据或证据指出贡献所在与仍存在的局限。", { bullet: false }],
-        ["主要进展二", "说明第二项工作的研究问题、技术路线与实验结论。段落结构保持匀称，避免一侧过重。", { bullet: false }],
-        ["主要进展三", "说明第三项工作的目标、思路与结果。三列内容尽量均衡，可配合数据或证据增强说服力。", { bullet: false }]
+        ["已完成的工作", "列出已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。", {}],
+        ["证据支持的结论", "关联对应图表，写明结论适用的场景与条件；初步观察需标明尚待复核。", {}],
+        ["仍待解决的问题", "指出未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。", {}]
       ],
-      1
+      1,
+      { numberStart: 1 }
     ));
+    const tableH = Math.round(h * 0.72);
     s.modules.push(tableModule(
-      { x: safe.x + leftW + 24, y: midY, w: rightW, h: midH },
+      { x: x + leftW + gap, y, w: rightW, h: tableH },
       [
-        ["里程碑", "时间节点", "交付物", "状态"],
-        ["M1：方案验证", "第1–2月", "原型系统 + 基线实验", "进行中"],
-        ["M2：方法迭代", "第3–5月", "改进算法 + 消融实验", "待开始"],
-        ["M3：系统集成", "第6–7月", "完整系统 + 用户研究", "待开始"],
-        ["M4：总结发表", "第8–9月", "论文撰写 + 答辩准备", "待开始"]
+        ["工作阶段", "关键任务", "验收产出"],
+        ["近期", "统一实验设置\n固定数据划分", "参数清单、数据版本\n及可复现的实验脚本"],
+        ["随后", "补充对照实验\n开展关键消融", "均值 ± 标准差\n重复次数及原始日志"],
+        ["并行", "分析异常结果\n归纳失败案例", "差异解释与边界条件\n可定位的典型样例"],
+        ["下次汇报", "汇总新增证据\n逐项回应问题", "更新图表与问题清单\n逐项修订研究结论"]
       ],
-      1,
-      "表格行高与内边距可在模块编辑中调整。"
+      {
+        tableTitle: "下一步计划",
+        tableNote: "",
+        headerRows: 1,
+        rowHeightPt: 0
+      }
     ));
-    const botY = midY + midH + 24;
-    const botH = safe.h - (topH + 24 + midH + 24 + 24);
+    const noteY = y + tableH + 20;
+    const noteH = h - tableH - 20;
     s.modules.push(textBlock(
       "note",
-      { x: safe.x, y: botY, w: safe.w, h: Math.max(60, botH) },
-      [["", "用一句话总结本阶段的核心结论和下一阶段的重点方向。备注样式适合作为页内总结、补充说明或注意事项。", {}]],
+      { x: x + leftW + gap, y: noteY, w: rightW, h: Math.max(60, noteH) },
+      [["", "<b>本次讨论：</b>确认实验优先级和验收标准。\n各阶段时间按实际进展填写。", {}]],
       1
     ));
     return s;
@@ -15971,55 +15965,74 @@ body.export-view .toc-note:empty{display:none}
       section: "附录",
       chapterMode: "manual",
       lead: "个人基本信息、研究方向与主要经历一览。",
-      source: "",
+      source: "个人简介示例，请根据实际情况替换内容",
       sourceUrl: "",
       summary: ""
     });
-    const safe = { ...SAFE };
-    const leftW = 360;
-    const portraitH = 300;
-    const portraitModule = moduleOf("media", { x: safe.x, y: safe.y, w: leftW, h: portraitH }, 1);
+    const x = SAFE.x, y = SAFE.y, w = SAFE.w, h = SAFE.h;
+    const leftW = 340;
+    const gap = 32;
+    const rightX = x + leftW + gap;
+    const rightW = w - leftW - gap;
+    const portraitH = 280;
+    const portraitModule = moduleOf("media", { x, y, w: leftW, h: portraitH }, 1);
     portraitModule.captionMode = "title";
     portraitModule.parts[0].showCaption = false;
     portraitModule.parts[0].asset = null;
     portraitModule.parts[0].caption = "";
     portraitModule.parts[0].note = "";
     s.modules.push(portraitModule);
-    const infoY = safe.y + portraitH + 24;
-    const infoH = safe.h - portraitH - 24 - 24;
+    const infoY = y + portraitH + 20;
+    const infoH = h - portraitH - 20;
     s.modules.push(textBlock(
       "cards",
-      { x: safe.x, y: infoY, w: leftW, h: infoH },
+      { x, y: infoY, w: leftW, h: infoH },
       [
-        ["个人信息", "姓名：\n学号 / 工号：\n所属学院：\n研究方向：\n电子邮箱：", { bullet: false }]
+        ["作者姓名", "职称／学位\n学院／研究机构\n团队／实验室\n邮箱：name@example.com", { bullet: false }]
       ],
       1
     ));
-    const rightX = safe.x + leftW + 24;
-    const rightW = safe.w - leftW - 24;
-    const topH = 200;
-    s.modules.push(textBlock(
-      "cards",
-      { x: rightX, y: safe.y, w: rightW, h: topH },
+    const sectionGap = 16;
+    const sec1H = Math.round((h - 2 * sectionGap) * 0.38);
+    const sec2H = Math.round((h - 2 * sectionGap) * 0.28);
+    const sec3H = h - sec1H - sec2H - 2 * sectionGap;
+    s.modules.push(tableModule(
+      { x: rightX, y, w: rightW, h: sec1H },
       [
-        ["教育经历", "按时间倒序列举学历背景，包括学校、专业、学位与时间。", { bullet: false }],
-        ["研究方向", "概括主要研究兴趣、技术领域与关注的学术问题。", { bullet: false }],
-        ["荣誉奖项", "列举代表性奖项、奖学金或学术竞赛成果。", { bullet: false }]
+        ["起止时间", "", "学校／工作单位", "", "学位／专业／职务"],
+        ["20XX—20XX", "", "学校及院系", "", "学位与专业"],
+        ["20XX—20XX", "", "研究机构／工作单位", "", "科研岗位"],
+        ["20XX—至今", "", "现工作单位", "", "现任职务"]
+      ],
+      {
+        tableTitle: "教育和工作经历",
+        tableNote: "",
+        headerRows: 1,
+        rowHeightPt: 0,
+        profileHistory: true,
+        bandTitle: true
+      }
+    ));
+    const sec2Y = y + sec1H + sectionGap;
+    s.modules.push(textBlock(
+      "band",
+      { x: rightX, y: sec2Y, w: rightW, h: sec2H },
+      [
+        ["学术任职", "学术组织／期刊：职务\n任期／服务事项：时间", { bullet: true }],
+        ["代表性项目与奖项", "项目：名称、本人角色\n奖项：名称、年份／排名", { bullet: true }]
+      ],
+      2
+    ));
+    const sec3Y = sec2Y + sec2H + sectionGap;
+    s.modules.push(textBlock(
+      "band",
+      { x: rightX, y: sec3Y, w: rightW, h: sec3H },
+      [
+        ["研究方向一", "研究对象：\n核心问题：", { bullet: true }],
+        ["研究方向二", "主要方法：\n技术特点：", { bullet: true }],
+        ["研究方向三", "应用场景：\n研究目标：", { bullet: true }]
       ],
       3
-    ));
-    const tableY = safe.y + topH + 24;
-    const tableH = safe.h - topH - 24;
-    s.modules.push(tableModule(
-      { x: rightX, y: tableY, w: rightW, h: tableH },
-      [
-        ["项目 / 经历", "时间", "角色", "主要贡献"],
-        ["项目名称一", "2024 – 至今", "核心成员", "负责算法设计与实验验证，提出 XXX 方法，在 YYY 数据集上取得 ZZZ 结果。"],
-        ["项目名称二", "2023 – 2024", "参与", "参与系统开发与数据分析，完成 XXX 模块的设计与实现。"],
-        ["实习 / 工作经历", "2022 – 2023", "实习生", "参与产品研发，负责 XXX 功能的设计与落地。"]
-      ],
-      1,
-      "可根据需要增删行、改列数，或替换为技能矩阵、发表论文等内容。"
     ));
     return s;
   }
@@ -16079,7 +16092,7 @@ body.export-view .toc-note:empty{display:none}
       s2.modules = s2.modules.filter((m) => !(m.type === "text" && m.style === "note" && m.y >= 680 && m.w > 1400));
       for (const m of s2.modules) {
         m.h = Math.min(m.h, 726 - m.y);
-        for (const p of m.parts) delete p.takeaway;
+        for (const p2 of m.parts) delete p2.takeaway;
       }
     }
     const ratios = byTitle("比例可以不同，画面高度必须一致");
@@ -16097,7 +16110,7 @@ body.export-view .toc-note:empty{display:none}
       results.modules[0].tableNote = "↑ 表示指标越高越优；↓ 表示指标越低越优。00.00 ± 00.00 为均值与标准差的占位符。\n实验设置：补充场景参数、测试集规模与重复次数；各算法使用一致的数据划分和运行环境。\n统计记录：明确预热、推理和计时范围；保留原始日志、随机种子及失败样本，便于复查。";
     }
     const collab = byTitle("AI 生成结构，人工完成精修");
-    if (collab) collab.modules[0].parts.forEach((p, i2) => Object.assign(p, { showSubheading: true, subheading: "本环节交付", showAnnotation: true, annotation: [
+    if (collab) collab.modules[0].parts.forEach((p2, i2) => Object.assign(p2, { showSubheading: true, subheading: "本环节交付", showAnnotation: true, annotation: [
       "交付材料清单，写明来源、版本及缺失信息；区分必须展示与只供查阅的资料。",
       "交付初版 HTML，核对章节顺序与页码；标明证据位置和需人工确认的问题。",
       "交付确认后的源稿与导出文件；逐页试讲，核对字体、媒体播放及引用链接。"
@@ -16122,8 +16135,17 @@ body.export-view .toc-note:empty{display:none}
     }
     const s = byTitle("阶段总结与后续计划");
     if (s) {
-      applyReferenceLayout(s, "summary");
+      const tpl = summaryPage();
+      s.modules = tpl.modules;
+      delete s.referenceLayout;
       s.summary = "";
+    }
+    const p = byTitle("作者简介");
+    if (p) {
+      const tpl = profilePage();
+      p.modules = tpl.modules;
+      delete p.referenceLayout;
+      p.summary = "";
     }
     return project2;
   }
@@ -16510,7 +16532,7 @@ body.export-view .toc-note:empty{display:none}
     if (m.type === "table") {
       const skip = /* @__PURE__ */ new Set(), merges = m.merges || [];
       for (const a of merges) for (let r = a.top; r <= a.bottom; r++) for (let c = a.left; c <= a.right; c++) if (r !== a.top || c !== a.left) skip.add(`${r},${c}`);
-      content = `<div class="table-wrap">${m.tableTitle ? `<h3 class="table-title" data-text data-module-field="tableTitle" ${editable(edit, "")}>${richHTML(m.tableTitle, m.rich?.tableTitle)}</h3>` : ""}<table data-cell-padding="${Number.isFinite(m.cellPaddingPt) ? Math.max(0, Math.min(18, m.cellPaddingPt)) / 0.6 : ""}" class="data-table ${m.scenarioGroups ? "scenario-table" : ""} ${m.referenceStyle ? "reference-table" : ""} ${m.profileHistory ? "profile-history" : ""}">${m.referenceStyle ? '<colgroup><col style="width:45px"><col></colgroup>' : m.profileHistory ? '<colgroup><col style="width:23%"><col style="width:12px"><col style="width:42%"><col style="width:12px"><col></colgroup>' : ""}<tbody>${m.rows.map((row, r) => `<tr${Number(m.rowHeightPt) > 0 ? ` style="height:${Math.min(120, Number(m.rowHeightPt)) / 0.6}px"` : ""}>${row.map((value, c) => {
+      content = `<div class="table-wrap ${m.bandTitle ? "band-title" : ""}">${m.tableTitle ? `<h3 class="table-title" data-text data-module-field="tableTitle" ${editable(edit, "")}>${richHTML(m.tableTitle, m.rich?.tableTitle)}</h3>` : ""}<table data-cell-padding="${Number.isFinite(m.cellPaddingPt) ? Math.max(0, Math.min(18, m.cellPaddingPt)) / 0.6 : ""}" class="data-table ${m.scenarioGroups ? "scenario-table" : ""} ${m.referenceStyle ? "reference-table" : ""} ${m.profileHistory ? "profile-history" : ""}">${m.referenceStyle ? '<colgroup><col style="width:45px"><col></colgroup>' : m.profileHistory ? '<colgroup><col style="width:23%"><col style="width:12px"><col style="width:42%"><col style="width:12px"><col></colgroup>' : ""}<tbody>${m.rows.map((row, r) => `<tr${Number(m.rowHeightPt) > 0 ? ` style="height:${Math.min(120, Number(m.rowHeightPt)) / 0.6}px"` : ""}>${row.map((value, c) => {
         if (skip.has(`${r},${c}`)) return "";
         const merge = merges.find((a) => a.top === r && a.left === c);
         const tag = !m.referenceStyle && (r < (m.headerRows ?? 1) || m.rowHeaders && c === 0) ? "th" : "td";
@@ -17626,7 +17648,7 @@ body.export-view .toc-note:empty{display:none}
     }
     const anchor = $("#resize-anchor")?.value || "tl";
     const options = [["w+", project.grid, 0, "加宽 →"], ["w-", -project.grid, 0, "收窄 ←"], ["h+", 0, project.grid, "增高 ↓"], ["h-", 0, -project.grid, "降低 ↑"]];
-    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div><label>固定顶点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc2(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc2(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button><button data-action="remove-part" ${m.parts.length <= 1 ? "disabled" : ""}>－ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc2(p.year)} ${esc2(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? `${tableSpacingControls(m)}<h3>表格数据</h3><label>表格注释（可选，留空不显示）</label><textarea id="table-note" rows="3">${esc2(m.tableNote || "")}</textarea><button data-action="excel">导入 Excel / CSV</button><button data-action="paste-table" style="margin-top:8px">粘贴表格数据</button><label>表头行数</label><input id="header-rows" type="number" min="0" max="${m.rows.length}" value="${m.headerRows}"><p class="hint">表头采用深色底白字；单元格可在“编辑文字”模式下修改。</p>` : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
+    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div><label>固定顶点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc2(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc2(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button><button data-action="remove-part" ${m.parts.length <= 1 ? "disabled" : ""}>－ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc2(p.year)} ${esc2(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? `${tableSpacingControls(m)}<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底标题栏（A3 风格）</label><h3>表格数据</h3><label>表格注释（可选，留空不显示）</label><textarea id="table-note" rows="3">${esc2(m.tableNote || "")}</textarea><button data-action="excel">导入 Excel / CSV</button><button data-action="paste-table" style="margin-top:8px">粘贴表格数据</button><label>表头行数</label><input id="header-rows" type="number" min="0" max="${m.rows.length}" value="${m.headerRows}"><p class="hint">表头采用深色底白字；单元格可在“编辑文字”模式下修改。</p>` : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
   }
   function testFit(m, rect) {
     if (!["text", "media", "table", "timeline"].includes(m.type)) return true;
@@ -18388,6 +18410,13 @@ body.export-view .toc-note:empty{display:none}
       if (el.id === "table-note") {
         savePoint();
         m.tableNote = el.value;
+        render3();
+        persist();
+        return;
+      }
+      if (el.id === "band-title") {
+        savePoint();
+        m.bandTitle = el.checked;
         render3();
         persist();
         return;

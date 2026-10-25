@@ -61,6 +61,10 @@ html,body{height:100%;overflow:hidden}
 .profile-history th{font-size:26.6667px;line-height:1.3}
 .profile-history th:nth-child(2),.profile-history th:nth-child(4),.profile-history td:nth-child(2),.profile-history td:nth-child(4){border:0!important;padding:0!important}
 .table-title{font-size:30px;line-height:1.3;color:var(--primary);margin:0 0 12px}
+.table-wrap.band-title{display:flex;flex-direction:column;height:100%;border:1px solid var(--primary);border-radius:6px;overflow:hidden}
+.table-wrap.band-title .table-title{margin:0;padding:10px 20px;font-size:26px;color:white;background:var(--primary);flex:0 0 auto}
+.table-wrap.band-title .data-table{flex:1 1 auto}
+.table-wrap.band-title .table-note{margin:0;padding:10px 16px;border-top:1px solid var(--line-light);flex:0 0 auto}
 .data-table.reference-table td{border:0!important;background:transparent!important;padding:13px 0;vertical-align:top;text-align:justify;line-height:1.5}
 .data-table.reference-table td:first-child{padding-right:8px;text-align:left}
 .data-table.reference-table td div{white-space:normal;overflow-wrap:anywhere;text-align:justify;text-align-last:left}
