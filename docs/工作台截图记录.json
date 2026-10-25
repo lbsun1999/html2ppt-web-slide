@@ -1,6 +1,6 @@
 {
   "source": "北京科技大学_WebSlide科研汇报示例.html",
-  "sha256": "04022561200dca46051a08fbd24dbe73103410e4fd31c5ac88b7c16ec90fc356",
+  "sha256": "577bc337d56d954db5a99a28daac5d360c70733cafa14e1468085a2cae5c6a42",
   "viewport": {
     "width": 1920,
     "height": 1200
@@ -56,6 +56,40 @@
       },
       "mode": "edit",
       "currentPage": 15
+    },
+    {
+      "image": "images/profile-modules.png",
+      "description": "作者简介：固定身份卡、履历横线表和含两个可增减分组的无框线表格。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 29
+    },
+    {
+      "image": "images/summary-modules.png",
+      "description": "阶段计划：三个A2子区域，右侧独立计划表及C1讨论区；按名称用箭头排序及删除。",
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "edit",
+      "currentPage": 24
     },
     {
       "image": "images/timeline-controls.png",

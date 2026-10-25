@@ -3,12 +3,12 @@ export const validColor=c=>/^#[\da-f]{6}$/i.test(c||'')||['theme','emphasis'].in
 export function richHTML(text,runs,bullet=false,paragraphs=false,marker="•",paragraphFormats=[]){
  text=String(text??'');if(!Array.isArray(runs)||runs.map(r=>r.text).join('')!==text)runs=[{text}];
  const lines=[''];
- for(const r of runs){const css=[typeof r.bold==='boolean'?`font-weight:${r.bold?700:400}`:'',r.italic?'font-style:italic':'',[14,16].includes(r.fontSize)?`font-size:${r.fontSize/.6}px`:'',validColor(r.color)?`color:${r.color==='theme'?'var(--primary)':r.color==='emphasis'?'var(--emphasis)':r.color}`:''].filter(Boolean).join(';');
+ for(const r of runs){const css=[typeof r.bold==='boolean'?`font-weight:${r.bold?700:400}`:'',r.italic?'font-style:italic':'',[10,12,14,16].includes(r.fontSize)?`font-size:${r.fontSize/.6}px`:'',validColor(r.color)?`color:${r.color==='theme'?'var(--primary)':r.color==='emphasis'?'var(--emphasis)':r.color}`:''].filter(Boolean).join(';');
   const chunks=String(r.text).split('\n');chunks.forEach((chunk,i)=>{if(i)lines.push('');lines[lines.length-1]+=css?`<span class="rich-run" data-rich-run style="${css}">${esc(chunk)}</span>`:esc(chunk);});
  }
  return bullet||paragraphs?lines.map((line,i)=>{const p=paragraphFormats?.[i]||{},list=p.bullet??bullet,after=Number(p.after);return `<div data-paragraph data-bullet="${!!list}" data-marker="${esc(p.marker||marker)}"${Number.isFinite(after)?` style="margin-bottom:${Math.max(0,after)/.6}px"`:''}>${line||'<br>'}</div>`;}).join(''):lines.join('<br>');
 }
-export function textStyle(owner,key){const v=Number(owner.lineSpacing?.[key]),size=owner.fontSizes?.[key],css=[Number.isFinite(v)&&v>=.5&&v<=5?`line-height:${v}`:'',[14,16].includes(size)?`font-size:${size/.6}px`:''].filter(Boolean).join(';');return css?`style="${css}"`:'';}
+export function textStyle(owner,key){const v=Number(owner.lineSpacing?.[key]),size=owner.fontSizes?.[key],css=[Number.isFinite(v)&&v>=.5&&v<=5?`line-height:${v}`:'',[10,12,14,16].includes(size)?`font-size:${size/.6}px`:''].filter(Boolean).join(';');return css?`style="${css}"`:'';}
 export function readRich(el){
  const runs=[];function add(text,format){if(!text)return;const prev=runs.at(-1);if(prev&&prev.bold===format.bold&&prev.italic===format.italic&&prev.color===format.color&&prev.fontSize===format.fontSize)prev.text+=text;else runs.push({text,...format});}
  function visit(node,format={}){
@@ -16,7 +16,7 @@ export function readRich(el){
   if(node.tagName==='BR'){add('\n',format);return;}
   const next={...format};if(['VAR','I','EM'].includes(node.tagName)||node.style.fontStyle==='italic')next.italic=true;const weight=node.style.fontWeight,color=node.style.color||node.getAttribute('color');
   if(weight)next.bold=weight==='bold'||Number(weight)>=600;else if(['B','STRONG'].includes(node.tagName))next.bold=true;
-  if(node.style.fontSize){const pt=parseFloat(node.style.fontSize)*.6;if([14,16].some(v=>Math.abs(v-pt)<.05))next.fontSize=Math.round(pt);}
+  if(node.style.fontSize){const pt=parseFloat(node.style.fontSize)*.6;if([10,12,14,16].some(v=>Math.abs(v-pt)<.05))next.fontSize=Math.round(pt);}
   if(color){if(color.includes('--primary'))next.color='theme';else if(color.includes('--emphasis'))next.color='emphasis';else{const rgb=color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);next.color=rgb?'#'+rgb.slice(1).map(n=>Number(n).toString(16).padStart(2,'0')).join(''):color;}}
   const block=['DIV','P','LI'].includes(node.tagName)&&node!==el;if(block&&runs.length&&!runs.at(-1).text.endsWith('\n'))add('\n',format);
   for(const child of node.childNodes)visit(child,next);
@@ -28,8 +28,8 @@ export function readRich(el){
 }
 
 export class TextFormatting{
- constructor({getTheme,commit,savePoint,toast}){
-  Object.assign(this,{getTheme,commit,savePoint,toast});
+ constructor({getTheme,commit,savePoint,toast,getBatchFields=()=>[]}){
+  Object.assign(this,{getTheme,commit,savePoint,toast,getBatchFields});
   document.addEventListener('selectionchange',()=>this.remember());
   document.addEventListener('pointerdown',e=>{if(e.target.closest('#text-formatbar')){this.remember();this.toolbarActive=true;if(e.target.closest('#format-bold'))e.preventDefault();}else this.toolbarActive=false;},true);
   document.addEventListener('click',e=>{if(e.target.closest('#format-bold'))this.apply('bold');});
@@ -45,6 +45,7 @@ export class TextFormatting{
  }
  remember(){if(this.toolbarActive&&document.activeElement?.closest('#text-formatbar'))return;const selection=getSelection();if(!selection.rangeCount)return;const node=selection.anchorNode,el=(node?.nodeType===1?node:node?.parentElement)?.closest('[data-text][contenteditable]');if(!el||!el.closest('#canvas'))return;const range=selection.getRangeAt(0);if(!el.contains(range.endContainer))return;this.field=el;this.range=range.cloneRange();this.refresh();}
  selectedNodes(){
+  const fields=this.getBatchFields();if(fields.length)return fields.flatMap(field=>{const nodes=[],walker=document.createTreeWalker(field,NodeFilter.SHOW_TEXT);while(walker.nextNode())if(walker.currentNode.length)nodes.push(walker.currentNode.parentElement);return nodes.length?nodes:[field];});
   const field=this.field,range=this.range;if(!field?.isConnected||!range)return [];
   if(range.collapsed){let node=range.startContainer;if(node.nodeType===1)node=node.childNodes[Math.min(range.startOffset,node.childNodes.length-1)]||node;return [node.nodeType===1?node:node.parentElement];}
   const walker=document.createTreeWalker(field,NodeFilter.SHOW_TEXT),nodes=[];
@@ -52,12 +53,13 @@ export class TextFormatting{
   return nodes.length?nodes:[field];
  }
  refresh(){
+  const fields=this.getBatchFields();if(fields.length)this.field=fields.at(-1);
   if(!this.field?.isConnected)return;
   const nodes=this.selectedNodes(),unique=values=>[...new Set(values)],round=n=>Math.round(n*100)/100;
   const setSelect=(id,values,suffix='')=>{const select=document.getElementById(id);if(!select||document.activeElement===select)return;select.querySelectorAll('[data-current-format]').forEach(o=>o.remove());const value=values.length===1?String(values[0]):'__mixed__';if(![...select.options].some(o=>o.value===value)){const o=document.createElement('option');o.value=value;o.textContent=values.length===1?value+suffix:'混合';o.disabled=true;o.dataset.currentFormat='';select.append(o);}select.value=value;};
   const setNumber=(id,values)=>{const input=document.getElementById(id);if(!input||document.activeElement===input)return;input.value=values.length===1?String(values[0]):'';input.placeholder=values.length===1?'':'混合';};
   setSelect('format-font-size',unique(nodes.map(n=>round(parseFloat(getComputedStyle(n).fontSize)*.6))),' pt');
-  const paragraphs=unique(nodes.map(n=>n.closest('[data-paragraph]')||this.field));
+  const paragraphs=unique(nodes.map(n=>n.closest('[data-paragraph]')||n.closest('[data-text][contenteditable]')||this.field));
   setNumber('format-line-spacing',unique(paragraphs.map(n=>{const cs=getComputedStyle(n);return round(parseFloat(cs.lineHeight)/parseFloat(cs.fontSize)||1.55);})));
   setNumber('format-paragraph-after',unique(paragraphs.map(n=>round((parseFloat(getComputedStyle(n).marginBottom)||0)*.6))));
   setSelect('format-list',unique(paragraphs.map(n=>n.dataset.bullet==='true'?(n.dataset.marker||'•'):'')));
@@ -68,6 +70,7 @@ export class TextFormatting{
   else setSelect('format-color',[]);
  }
  apply(kind,value){
+  const fields=this.getBatchFields();if(fields.length){this.applyBatch(fields,kind,value);return;}
   if(!this.field?.isConnected||!this.range){this.toast('请先在画布中选中文字或点击需要调整的段落。',true);return;}
   const range=this.range.cloneRange();this.field.focus();const selected=getSelection();selected.removeAllRanges();selected.addRange(range);this.range=range;
   if(kind==='line'){
@@ -84,7 +87,7 @@ export class TextFormatting{
    this.commit(this.field);this.refresh();return;
   }
   if(kind==='size'){
-   const pt=Number(value);if(![14,16].includes(pt))return;this.savePoint();
+   const pt=Number(value);if(![10,12,14,16].includes(pt))return;this.savePoint();
    if(this.range.collapsed){this.field.style.fontSize=pt/.6+'px';this.commit(this.field,null,null,{fontSize:pt});this.refresh();return;}
    document.execCommand('styleWithCSS',false,false);document.execCommand('fontSize',false,'7');const spans=[];for(const font of this.field.querySelectorAll('font[size="7"]')){const span=document.createElement('span');span.style.fontSize=pt/.6+'px';span.append(...font.childNodes);font.replaceWith(span);spans.push(span);}if(spans.length){const next=document.createRange();next.setStart(spans[0],0);next.setEnd(spans.at(-1),spans.at(-1).childNodes.length);selected.removeAllRanges();selected.addRange(next);}this.range=selected.rangeCount?selected.getRangeAt(0).cloneRange():this.range;this.commit(this.field);this.refresh();return;
   }
@@ -93,5 +96,29 @@ export class TextFormatting{
   else{const theme=this.getTheme(),color=value==='theme'?theme.primary:value==='emphasis'?theme.emphasis:value==='original'?getComputedStyle(this.field).color:value;document.execCommand('foreColor',false,color);}
   this.range=selection.rangeCount?selection.getRangeAt(0).cloneRange():this.range;
   this.commit(this.field,null,kind==='color'?value:null);this.refresh();
+ }
+ applyBatch(fields,kind,value){
+  if(kind==='size'&&![10,12,14,16].includes(Number(value)))return;
+  if(kind==='line'&&(!Number.isFinite(Number(value))||Number(value)<.5||Number(value)>5)){this.toast('行距请输入0.5–5之间的倍数。',true);return;}
+  if(kind==='after'&&(!Number.isFinite(Number(value))||Number(value)<0||Number(value)>48)){this.toast('段后距请输入0–48pt。',true);return;}
+  if(kind==='list'&&fields.some(f=>f.dataset.field!=='text'||!f.closest('.text-module'))){this.toast('列表设置用于文字模块正文，请仅多选正文文字块。',true);return;}
+  const makeBold=kind==='bold'?!this.selectedNodes().every(n=>Number(getComputedStyle(n).fontWeight)>=600):false;
+  this.savePoint();
+  for(const field of fields){
+   if(kind==='size'){
+    field.style.fontSize=Number(value)/.6+'px';for(const n of field.querySelectorAll('[style]'))n.style.fontSize='';
+    this.commit(field,null,null,{fontSize:Number(value)});continue;
+   }
+   if(kind==='line'){field.style.lineHeight=String(Number(value));this.commit(field,Number(value));continue;}
+   const data=readRich(field),runs=data.runs.map(r=>({...r}));let formats=data.paragraphs;
+   if(kind==='bold')for(const r of runs)r.bold=makeBold;
+   if(kind==='color')for(const r of runs){if(value==='original')delete r.color;else r.color=value;}
+   if(kind==='after'||kind==='list'){
+    formats=Array.from({length:data.text.split('\n').length},(_,i)=>({...formats[i],bullet:formats[i]?.bullet??field.classList.contains('bulleted'),marker:formats[i]?.marker||field.dataset.marker||'•',...(kind==='after'?{after:Number(value)}:{bullet:!!value,marker:value||'•'})}));
+   }
+   field.innerHTML=richHTML(data.text,runs,false,formats.length>0,field.dataset.marker||'•',formats);
+   this.commit(field,null,kind==='color'?value:null);
+  }
+  this.refresh();
  }
 }

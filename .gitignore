@@ -12,3 +12,5 @@ dist/
 *.bak
 .DS_Store
 Thumbs.db
+~$*.pptx
+~$*.xlsx

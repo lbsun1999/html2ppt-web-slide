@@ -26,22 +26,23 @@ export function textModuleHTML(m,{esc,editable,textBody,edit}){
   return '';
  };
  const titleText=(p,i)=>{const tag=m.isToc&&p.chapterId?'a':'h3',label=m.isToc&&p.chapterNumber&&style!=='numbered'?p.chapterNumber+' '+p.title:p.title;return `<${tag} class="part-title-text ${m.isToc?'toc-title':''}" data-text data-part="${i}" data-field="title" ${textStyle(p,'title')} ${tag==='a'?`data-jump="${p.targetIndex}" data-target-index="${p.targetIndex}" href="#slide-${p.chapterId}"`:editable(edit,'')}>${richHTML(label,p.rich?.title)}</${tag}>`;};
- const title=(p,i,kind=style)=>`<div class="part-title-wrap">${decoration(kind)}${titleText(p,i)}</div>`;
+ const title=(p,i,kind=style)=>`<div class="part-title-wrap" data-shape>${decoration(kind)}${titleText(p,i)}</div>`;
  function parts(innerStyle=style){
   return m.parts.map((p,i)=>{
    const row=Math.floor(i/cols),col=i%cols,lastRow=Math.floor((m.parts.length-1)/cols);
    const separators=['plain','unified'].includes(innerStyle)?`${row<lastRow?'<span class="part-divider horizontal" data-shape></span>':''}${col<cols-1&&i<m.parts.length-1?'<span class="part-divider vertical" data-shape></span>':''}`:'';
    // Ribbon starts at x=8; its 14px fold ends at x=22, which is also the box edge.
    const backdrop=['ribbon','arrow'].includes(innerStyle)?box(groupId+'-'+i,22,innerStyle==='ribbon'?22:8):'';
-   let heading=innerStyle==='note'?'':innerStyle==='numbered'?`<div class="numbered-heading"><div class="number-tag"><svg class="number-decoration number-decoration-back" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)" opacity=".16"/></svg><svg class="number-decoration number-decoration-front" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><span data-text class="number-value">${String(m.isToc?p.chapterNumber||i+1:(Number(m.numberStart)||1)+i).padStart(2,'0')}</span></div>${titleText(p,i)}<span class="number-rule" data-shape></span></div>`:title(p,i,innerStyle);
+   let heading=innerStyle==='note'||(m.showTitle===false&&!m.groupTitle)?'':innerStyle==='numbered'?`<div class="numbered-heading"><div class="number-tag"><svg class="number-decoration number-decoration-back" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)" opacity=".16"/></svg><svg class="number-decoration number-decoration-front" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><span data-text class="number-value">${String(m.isToc?p.chapterNumber||i+1:(Number(m.numberStart)||1)+i).padStart(2,'0')}</span></div>${titleText(p,i)}<span class="number-rule" data-shape></span></div>`:title(p,i,innerStyle);
    const extras=innerStyle==='numbered'||m.preserveExtras?`${p.showSubheading&&p.subheading?`<div class="part-subheading" data-text data-part="${i}" data-field="subheading" ${textStyle(p,'subheading')} ${editable(edit,'')}>${richHTML(p.subheading,p.rich?.subheading)}</div>`:''}${p.showAnnotation&&p.annotation?`<div class="part-annotation" data-text data-part="${i}" data-field="annotation" ${textStyle(p,'annotation')} ${editable(edit,'')}>${richHTML(p.annotation,p.rich?.annotation)}</div>`:''}`:'';
    return `<section class="text-part" data-shape>${backdrop}${innerStyle==='note'?'<span class="note-rule" data-shape></span>':''}${heading}${textBody(p,i,edit)}${extras}${p.takeaway?`<div class="part-takeaway" data-text data-part="${i}" data-field="takeaway" ${editable(edit,'')}>${richHTML(p.takeaway,p.rich?.takeaway)}</div>`:''}${separators}${m.isToc&&p.showPageRange?`<span class="toc-page-range" data-text>p. ${esc(p.pageRange)}</span>`:''}</section>`;
   }).join('');
  }
  const styleAttrs=`--cols:${cols};--title-width:${percent}%`;
- if(style==='group'){
+ if(style==='group'&&m.showTitle!==false){
   const inner='plain';
   return `<div class="text-group-shell" style="${styleAttrs}">${box(groupId+'-group',30)}<div class="module-group-title part-title-wrap">${decoration('group')}<h3 class="part-title-text" data-text data-module-field="groupTitle" ${textStyle(m,'groupTitle')} ${editable(edit,'')}>${richHTML(m.groupTitle||'模块大标题',m.rich?.groupTitle)}</h3></div><div data-shape class="text-parts style-${inner} group-inner" style="--cols:${cols}">${parts(inner)}</div></div>`;
  }
- return `<div data-shape class="text-parts style-${style}" style="${styleAttrs}">${parts()}</div>`;
+ const grid=`<div data-shape class="text-parts style-${style}" style="${styleAttrs}">${parts()}</div>`;
+ return m.groupTitle&&!m.isToc&&m.showTitle!==false?`<div class="text-group-shell plain-group-shell"><h3 class="plain-group-title" data-text data-module-field="groupTitle" ${editable(edit,'')}>${richHTML(m.groupTitle,m.rich?.groupTitle)}</h3>${grid}</div>`:grid;
 }

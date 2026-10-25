@@ -7,6 +7,12 @@ export function snap(v,step,base=0){return base+Math.round((v-base)/step)*step;}
 export function findSpace(modules,step=20,bounds=SAFE,options={}){
  for(const gap of [GAP,0]){const result=spaceWithGap(modules,step,bounds,gap,options);if(result)return result;}return null;
 }
+export function findSpaces(modules,step=20,bounds=SAFE,options={}){
+ let free=[{...bounds}];
+ for(const m of modules){const next=[];for(const r of free){if(!intersects(r,m)){next.push(r);continue;}const l=Math.max(r.x,m.x),t=Math.max(r.y,m.y),rr=Math.min(right(r),right(m)),b=Math.min(bottom(r),bottom(m));if(t>r.y)next.push({x:r.x,y:r.y,w:r.w,h:t-r.y});if(b<bottom(r))next.push({x:r.x,y:b,w:r.w,h:bottom(r)-b});if(l>r.x)next.push({x:r.x,y:t,w:l-r.x,h:b-t});if(rr<right(r))next.push({x:rr,y:t,w:right(r)-rr,h:b-t});}free=next;}
+ for(let changed=true;changed;){changed=false;outer:for(let i=0;i<free.length;i++)for(let j=i+1;j<free.length;j++){const a=free[i],b=free[j];let merged=null;if(a.x===b.x&&a.w===b.w&&(bottom(a)===b.y||bottom(b)===a.y))merged={x:a.x,y:Math.min(a.y,b.y),w:a.w,h:a.h+b.h};if(a.y===b.y&&a.h===b.h&&(right(a)===b.x||right(b)===a.x))merged={x:Math.min(a.x,b.x),y:a.y,w:a.w+b.w,h:a.h};if(merged){free.splice(j,1);free[i]=merged;changed=true;break outer;}}}
+ return free.map(r=>{const x=bounds.x+Math.ceil((r.x-bounds.x)/step)*step,y=bounds.y+Math.ceil((r.y-bounds.y)/step)*step;return {x,y,w:Math.floor((right(r)-x)/step)*step,h:Math.floor((bottom(r)-y)/step)*step};}).filter(r=>r.w>=160&&r.h>=80&&inside({...r,...options},bounds)).sort((a,b)=>b.w*b.h-a.w*a.h).slice(0,8);
+}
 function spaceWithGap(modules,step,bounds,gap,options){
  let best=null;
  const xs=[bounds.x,...modules.map(m=>bounds.x+Math.ceil((right(m)+gap-bounds.x)/step)*step).filter(x=>x<right(bounds))];

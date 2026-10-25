@@ -11,7 +11,7 @@ import {build} from 'esbuild';
 import ExcelJS from 'exceljs';
 import {chromium} from 'playwright';
 import pptxgen from 'pptxgenjs';
-import {validateProject} from './src/model.js';
+import {validateProject,slideBounds,occupiedItems} from './src/model.js';
 import {inside,intersects} from './src/layout.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
@@ -55,10 +55,11 @@ async function capture(page){return await page.evaluate(async()=>{
   const texts=[...slide.querySelectorAll('[data-text]')].flatMap(root=>{const lines=[...root.children].filter(n=>n.hasAttribute('data-paragraph'));return (lines.length?lines:[root]).map(el=>{
    const cs=getComputedStyle(el),g=geometry(el),chapter=!!el.closest('.section-line'),pageTitle=el.matches('.slide-header h2');
    const pL=parseFloat(cs.paddingLeft),pR=parseFloat(cs.paddingRight),pT=parseFloat(cs.paddingTop),pB=parseFloat(cs.paddingBottom);
-   const transitionHeading=el.matches('.transition-content h1,.transition-number');
+   const transitionHeading=el.matches('.transition-content h1,.transition-number'),pageSummary=!!el.closest('.slide-summary');
    // A tight browser glyph box is not a reliable text width in PowerPoint.
    if(transitionHeading){const area=geometry(el.closest('.transition-content'));g.x=area.x;g.w=area.w;}
-   const singleLine=chapter||cs.whiteSpace==='nowrap',noWrap=singleLine||transitionHeading||el.matches('.cover-band h1,.slide-header h2');let text=el.innerText;
+   if(pageSummary){const frame=el.closest('.slide-summary'),area=geometry(frame),style=getComputedStyle(frame),left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;g.x=area.x+left;g.w=area.w-left-right;}
+   const singleLine=chapter||cs.whiteSpace==='nowrap'||pageSummary,noWrap=singleLine||transitionHeading||el.matches('.cover-band h1,.slide-header h2');let text=el.innerText;
    // CSS nowrap/ellipsis does not survive conversion to a native PowerPoint textbox.
    // Preserve a single line explicitly, with room for different font metrics in Office.
    if(singleLine){
@@ -69,7 +70,7 @@ async function capture(page){return await page.evaluate(async()=>{
     }
    }
    const anchor=el.matches('a')?el:el.querySelector('a'),target=anchor?.hash?document.getElementById(anchor.hash.slice(1))?.closest('.slide'):null;
-   return {...g,role:el.matches('.transition-number')?'transition-number':el.dataset.slideField||'',order:paintOrder.get(el)+1,x:g.x+(el.dataset.bullet==='true'?0:pL),y:g.y+pT,w:g.w-(el.dataset.bullet==='true'?0:pL)-pR,h:g.h-pT-pB,text,runs:singleLine?null:richRuns(el),singleLine,noWrap,fontFace:cs.fontFamily.split(',')[0].replace(/["']/g,''),paragraphGap:el.classList.contains('paragraph')&&el.children.length?6:0,bullet:el.matches('li')?'•':el.classList.contains('bulleted')?el.dataset.marker:null,color:pageTitle?color(cs.getPropertyValue('--primary')):color(cs.color),fontSize:parseFloat(cs.fontSize),fontWeight:Number(cs.fontWeight),lineHeight:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize),align:cs.textAlign,link:anchor?.href||null,targetIndex:el.dataset.targetIndex!==undefined?Number(el.dataset.targetIndex):target?[...document.querySelectorAll('.slide')].indexOf(target):null};
+   return {...g,role:el.matches('.transition-number')?'transition-number':el.dataset.slideField||'',order:paintOrder.get(el)+1,x:g.x+(el.dataset.bullet==='true'?0:pL),y:g.y+pT,w:g.w-(el.dataset.bullet==='true'?0:pL)-pR,h:g.h-pT-pB,text,runs:singleLine&&!pageSummary?null:richRuns(el),singleLine,noWrap,fontFace:cs.fontFamily.split(',')[0].replace(/["']/g,''),paragraphGap:el.classList.contains('paragraph')&&el.children.length?6:0,bullet:el.matches('li')?'•':el.classList.contains('bulleted')?el.dataset.marker:null,color:pageTitle?color(cs.getPropertyValue('--primary')):color(cs.color),fontSize:parseFloat(cs.fontSize),fontWeight:Number(cs.fontWeight),lineHeight:parseFloat(cs.lineHeight)/parseFloat(cs.fontSize),align:cs.textAlign,link:anchor?.href||null,targetIndex:el.dataset.targetIndex!==undefined?Number(el.dataset.targetIndex):target?[...document.querySelectorAll('.slide')].indexOf(target):null};
   });}).filter(t=>t.text.trim()&&t.w>0&&t.h>0);
   // Isolate SVG artwork; element screenshots would also bake overlapping text into it.
   const decorations=await Promise.all([...slide.querySelectorAll('svg[data-decoration]')].map(async el=>{
@@ -102,7 +103,7 @@ async function pptxExport(page,project){
 }
 async function exportProject(project,kind){
  validateProject(project);
- for(const slide of project.slides)for(const m of slide.modules){if(!inside(m)||slide.modules.some(n=>n.id!==m.id&&intersects(m,n)))throw Error(`“${slide.title}”中有模块越界或相互遮挡，请先调整。`);}
+ for(const slide of project.slides)for(const m of slide.modules){if(!inside(m,slideBounds(slide))||occupiedItems(slide).some(n=>n.id!==m.id&&intersects(m,n)))throw Error(`“${slide.title}”中有模块越界或相互遮挡，请先调整。`);}
  const token=randomUUID();sessions.set(token,project);const b=await browser();const context=await b.newContext({viewport:{width:1600,height:900},deviceScaleFactor:1});const page=await context.newPage();
  try{
   await page.goto(`http://${HOST}:${PORT}/export.html?token=${token}`);await page.waitForFunction(()=>window.exportReady===true||window.exportError,{},{timeout:45000});

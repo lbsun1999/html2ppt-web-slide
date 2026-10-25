@@ -22,7 +22,7 @@ try{
   return index;
  }
  async function mode(value){if(await page.evaluate(()=>window.slideStudio.getMode())===value)return;if(value==='preview'){const active=await page.evaluate(()=>window.slideStudio.getMode());await ui(active==='edit'?'mode-edit':'mode-text').click();}else await ui(value==='edit'?'mode-edit':'mode-text').click();assert.equal(await page.evaluate(()=>window.slideStudio.getMode()),value);}
- async function shot(name,description){await page.waitForTimeout(120);await page.screenshot({path:path.join(out,name+'.png')});records.push({image:'images/'+name+'.png',description,...await page.evaluate(()=>({view:window.slideStudio.getView(),mode:window.slideStudio.getMode(),currentPage:Number(document.querySelector('#page-label')?.textContent.match(/^\d+/)?.[0])||null}))});console.log('Captured '+name);}
+ async function shot(name,description){await page.waitForTimeout(120);await page.screenshot({path:path.join(out,name+'.png')});records.push({image:'images/'+name+'.png',description,...await page.evaluate(()=>({view:window.slideStudio.getView(),mode:window.slideStudio.getMode(),currentPage:Number(document.querySelector('#sidebar-page-count')?.textContent.match(/^\d+/)?.[0])||null}))});console.log('Captured '+name);}
 
  await open('AI 生成结构，人工完成精修');await mode('preview');await page.locator('#view-mode').selectOption('grid');await page.locator('#view-columns').selectOption('3');await page.evaluate(()=>document.querySelector('.workspace').scrollTo({top:0,behavior:'instant'}));
  await shot('workbench-overview','多页工作台：顶部文件与编辑控件、左侧导航、中央多页视图和右侧当前页设置。');
@@ -33,6 +33,11 @@ try{
 
  await open('主图与关键信息');await mode('edit');await page.locator('#canvas .text-module').click();assert.equal(await page.locator('#adjust-multiplier').count(),1);
  await shot('module-controls','模块模式：固定顶点、网格步进、尺寸和位置，以及文本样式与子区域。');
+
+ await open('作者简介');await mode('edit');await page.locator('#canvas .profile-details').click();
+ await shot('profile-modules','作者简介：固定身份卡、履历横线表和含两个可增减分组的无框线表格。');
+ await open('阶段总结与后续计划');await mode('edit');await page.locator('#canvas .summary-cards').click();
+ await shot('summary-modules','阶段计划：三个A2子区域，右侧独立计划表及C1讨论区；按名称用箭头排序及删除。');
 
  await open('研究现状分析');await mode('edit');await page.locator('#canvas .timeline-module').click();
  await shot('timeline-controls','第8页原生时间轴：年份、共底图文、箭头和连线；右侧可添加、删除或重排阶段。');

@@ -12,7 +12,7 @@
 
 独立文本块仍为text模块，设置`textBox:true,boxTone:'dark'|'light'`，仅使用parts[0].text，不附带标题。深底白字或白底深字，圈定范围与移动／缩放吸附网格；最小高40px，真实文本溢出仍报错。默认上下内边距在紧凑时可适当收减，不能自动缩字号或行距。
 
-文字子区域含 `title,text,bullet,marker`，可选 `subheading,annotation,takeaway`。`rich[field]` 为 `{text,bold,italic,color,fontSize}` 运行段数组，拼接必须与字段纯文本一致。颜色为 theme、emphasis 或六位十六进制颜色，字号选 14／16pt；`fontSizes[field]`、`lineSpacing[field]` 控制当前字段字号和行距倍数。保留人工格式改动。
+文字子区域含 `title,text,bullet,marker`，可选 `subheading,annotation,takeaway`。`rich[field]` 为 `{text,bold,italic,color,fontSize}` 运行段数组，拼接必须与字段纯文本一致。颜色为 theme、emphasis 或六位十六进制颜色，字号选10／12／14／16pt；`fontSizes[field]`、`lineSpacing[field]` 控制当前字段字号和行距倍数。保留人工格式改动。
 
 `paragraphs[field]` 为逐段数组，顺序对应纯文本的换行，单项 `{bullet,marker,after}`。`after` 为 PPT pt，缺省 6；例如首行 `{bullet:false}`，后三行 `{bullet:true,marker:'•',after:12}`。字符级加粗／颜色／字号仍写入 rich，不用整字段格式覆盖选区。表格单元格的逐段格式为 `cellParagraphs['行,列']`。模块级统一列表是初始设置，人工可继续逐段修改。
 
@@ -48,6 +48,18 @@ slide.modules = [m];
 编辑工具栏根据当前字符／段落的计算样式回显字号、行距、段后距、颜色、粗细和列表，混合值显示“混合”。回显不修改数据，也不覆盖正在输入的控件。选区格式保持字符级，段落间距保持段落级；不能用历史操作值代替当前值。
 
 ## 成熟特殊页面
+
+作者与阶段计划现以`src/editable-layouts.js`的`profilePage()`、`summaryPage()`为默认，`src/page-presets.js`继续导出构造器。旧快照作外观参照。作者页`contentTop:192`且无页首句；`profileIdentity:{x,y,w,h}`是左侧固定身份卡，保留`legacy_3`至`legacy_10`及`referencePortrait`，右侧使用普通模块。编辑、插入和导出统一用`slideBounds(slide)`、`occupiedItems(slide)`，不能因默认SAFE.y=256误判作者页越界，也不能让自动避让移动身份卡。
+
+履历表为`type:'table',profileHistory:true,bandTitle:true`，`rows`只写真实内容列，半字符间隔列自动生成；正文默认14pt居中，表头16pt且下方为分段横线。无框线分组表为`type:'table',sectionedTable:true`，每个`parts[i]`含`title,text:'',rows,headerRows,cellRich,cellParagraphs,cellLineSpacing`，用`tablePart(title,rows)`生成。默认两组为任职／项目、研究方向，每组可独立增删、重排、调整行列或替换Excel。第一行默认16pt主题色加粗，正文14pt全部左对齐。
+
+分组单元格额外标记`data-table-part`，富文本、行距及段后距写入对应`parts[i]`，不能写错到模块级rows或另一个分组。普通表格仍用模块级rows。行列增减保留范围内的单元格及格式，删除后清除越界格式，合并区域随之缩减。
+
+`fontPt`为整表／子表默认字号，`fixedFont:true`表示手动指定10／12／14／16pt后保持该档位。`cellFontSizes['行,列']`存单元格整块字号；字符级字号仍存`cellRich`。作者页默认正文14pt，专用字段标题高一档16pt。批量文字选择由`src/text-block-selection.js`管理临时键，不进入project-data；格式应用通过同一`commit`路径分别写回各字段，一次保存撤销点，不能只改DOM或覆盖未选块。
+
+阶段计划默认三个模块：`role:'summary-cards'`为20pt总标题、18pt分项题目、16pt正文的A2模块；`role:'plan-module'`是14pt纯表格；`role:'plan-discussion'`是C1文字模块。第四张总结卡片自动两列。计划表与讨论各占实际高度，不把分组标题变成整块深底大条带。
+
+标题显隐用`showTitle:false`，文字总标题用`groupTitle`、普通表格用`tableTitle`；标题数据继续保存。`cardPaddingPt`是PPT pt，1–24、缺省自动，仅压缩不影响阅读的留白。统一插入菜单使用`findSpaces`寻找不相交空白，多个区域先展示位置供选择。
 
 通过 `applyReferenceLayout(slide,name)` 复用 history、formula、summary、references、profile。快照在`src/reference-layouts.json`，局部CSS在`reference-layouts.css`，运行不依赖外部模板目录。文字映射为页面`legacy_*`字段；页标题、首句和来源使用标准字段。字段未变时保留原数学字形与链接。此函数会写入快照默认字段并清空modules，仅用于新页或明确重建的页面；迭代已有页直接修改相应字段，不能重复应用默认值覆盖人工内容。
 

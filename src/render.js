@@ -1,3 +1,5 @@
+import {renderTables} from './table-blocks.js';
+import {profileCardHTML} from './profile-card.js';
 import {renderReferenceLayout} from './reference-layouts.js';
 import {timelineHTML,fitTimeline,timelineHeight} from './timeline.js';
 import {formulaHTML} from './formula.js';
@@ -14,20 +16,16 @@ export function renderModule(m,edit=false){
  if(m.type==='timeline')content=timelineHTML(m,{esc,edit});
  if(m.type==='text')content=m.textBox?`<div class="text-parts standalone-text ${m.boxTone==='light'?'standalone-light':'standalone-dark'}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0],0,edit)}</div></div>`:textModuleHTML(m,{esc,editable,textBody,edit});
  if(m.type==='media')content=`<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length/cols)},minmax(0,1fr))">${m.parts.map((p,i)=>`<figure class="media-part" data-shape><div class="media-window ${p.asset?'has-asset':''}" data-media-part="${i}" data-ratio="${p.asset?.ratio||16/9}">${p.asset?`<div class="media-crop"><${p.asset.kind==='video'?'video controls preload="metadata"':'img'} src="${esc(p.asset.src)}" ${p.asset.kind==='video'?'muted playsinline':''} alt="${esc(p.caption)}" style="object-fit:${p.asset.fit||'cover'};object-position:${p.asset.cx??50}% ${p.asset.cy??50}%;transform:scale(${p.asset.zoom||1});transform-origin:${p.asset.cx??50}% ${p.asset.cy??50}%"></${p.asset.kind==='video'?'video':'img'}></div>`:`<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption!==false&&(Boolean(p.caption?.trim())||(p.captionMode!=="title"&&Boolean(p.note?.trim())))?`<figcaption><div class="figure-title" data-text data-part="${i}" data-field="caption" ${textStyle(p,'caption')} ${editable(edit,'')}>${field(p,'caption')}</div>${p.captionMode!=='title'&&p.note?.trim()?`<div class="figure-note" data-text data-part="${i}" data-field="note" ${textStyle(p,'note')} ${editable(edit,'')}>${field(p,'note')}</div>`:''}</figcaption>`:''}</figure>`).join('')}</div>`;
- if(m.type==='table'){
-  const skip=new Set(),merges=m.merges||[];
-  for(const a of merges)for(let r=a.top;r<=a.bottom;r++)for(let c=a.left;c<=a.right;c++)if(r!==a.top||c!==a.left)skip.add(`${r},${c}`);
-  content=`<div class="table-wrap ${m.bandTitle?'band-title':''}">${m.tableTitle?`<h3 class="table-title" data-text data-module-field="tableTitle" ${editable(edit,'')}>${richHTML(m.tableTitle,m.rich?.tableTitle)}</h3>`:''}<table data-cell-padding="${Number.isFinite(m.cellPaddingPt)?Math.max(0,Math.min(18,m.cellPaddingPt))/.6:''}" class="data-table ${m.scenarioGroups?'scenario-table':''} ${m.referenceStyle?'reference-table':''} ${m.profileHistory?'profile-history':''} ${m.borderless?'borderless':''}">${m.referenceStyle?'<colgroup><col style="width:45px"><col></colgroup>':m.profileHistory?'<colgroup><col style="width:23%"><col style="width:12px"><col style="width:42%"><col style="width:12px"><col></colgroup>':''}<tbody>${m.rows.map((row,r)=>`<tr${Number(m.rowHeightPt)>0?` style="height:${Math.min(120,Number(m.rowHeightPt))/.6}px"`:''}>${row.map((value,c)=>{if(skip.has(`${r},${c}`))return '';const merge=merges.find(a=>a.top===r&&a.left===c);const tag=!m.referenceStyle&&(r<(m.headerRows??1)||(m.rowHeaders&&c===0))?'th':'td';return `<${tag} ${tag==='th'?`scope="${r<(m.headerRows??1)?'col':'row'}"`:''} data-shape ${merge?`rowspan="${merge.bottom-r+1}" colspan="${merge.right-c+1}"`:''}><div data-text data-row="${r}" data-col="${c}" ${textStyle({lineSpacing:{cell:m.cellLineSpacing?.[r+','+c]}},'cell')} ${editable(edit,'')}>${richHTML(value,m.cellRich?.[r+','+c],false,!!m.cellParagraphs?.[r+','+c],undefined,m.cellParagraphs?.[r+','+c])}</div></${tag}>`;}).join('')}</tr>`).join('')}</tbody></table>${m.tableNote?`<div class="table-note" data-text data-module-field="tableNote" ${editable(edit,'')}>${field(m,'tableNote')}</div>`:''}</div>`;
- }
+ if(m.type==='table')content=renderTables(m,{esc,editable,edit});
  if(m.type==='formula')content=`<div class="formula-parts" style="--cols:${cols}">${m.parts.map((p,i)=>{let math;try{math=formulaHTML(p.latex);}catch(error){math='<span class="formula-error">'+esc(error.message)+'</span>';}return `<section class="formula-card" data-shape><h3 data-text data-part="${i}" data-field="title" ${textStyle(p,'title')} ${editable(edit,'')}>${field(p,'title')}</h3><div class="formula-expression" data-formula-part="${i}" data-raster aria-label="双击修改 LaTeX">${math}</div><div class="paragraph" data-text data-part="${i}" data-field="text" ${textStyle(p,'text')} ${editable(edit,'')}>${field(p,'text')}</div></section>`;}).join('')}</div>`;
  if(m.type==='shape')content=`<div class="graphic-shape" data-shape style="background:var(--primary)"></div>`;
- return `<div class="module ${m.type}-module ${m.isToc?'toc-module':''} ${esc(m.role||'')}" data-module="${m.id}" style="left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{text:'文字',media:'图像 / 视频',table:'表格',shape:'图形',formula:'公式',timeline:'时间轴'}[m.type]}</span></div>`;
+ return `<div class="module ${m.type}-module ${m.isToc?'toc-module':''} ${esc(m.role||'')}" data-module="${m.id}" ${Number.isFinite(m.cardPaddingPt)?'data-card-padding':''} style="${Number.isFinite(m.cardPaddingPt)?'--card-pad:'+m.cardPaddingPt/.6+'px;':''}left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{text:'文字',media:'图像 / 视频',table:'表格',shape:'图形',formula:'公式',timeline:'时间轴'}[m.type]}</span></div>`;
 }
 export function renderSlide(s,theme,index,total,edit=false,project=null){
  if(s.referenceLayout)return renderReferenceLayout(s,theme,index,total,edit,themeCSS(theme),project);
  if(s.kind==='transition')return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s,'title')} ${editable(edit,'')}>${field(s,'title')}</h1><p data-text data-slide-field="lead" ${textStyle(s,'lead')} ${editable(edit,'')}>${field(s,'lead')}</p></div></section>`;
  if(s.kind==='cover'||s.kind==='closing')return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark?`<img class="wordmark" data-image src="${esc(theme.wordmark)}" alt="校徽与校名">`:`<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s,'title')} ${editable(edit,'')}>${field(s,'title')}</h1><p data-text data-slide-field="lead" ${textStyle(s,'lead')} ${editable(edit,'')}>${field(s,'lead')}</p></div><table class="cover-info">${[['presenter','汇报人'],['institute','学院'],['date','日期']].map(([k,n])=>`<tr><th data-text data-slide-field="${k}Label" ${editable(edit,'')}>${field(s,k+'Label',n)}</th><td data-text data-slide-field="${k}" ${textStyle(s,k)} ${editable(edit,'')}>${field(s,k)}</td></tr>`).join('')}</table></section>`;
- const content=`<div class="module-layer">${s.modules.map(m=>renderModule(m,edit)).join('')}</div>`;
+ const content=profileCardHTML(s,edit,themeCSS(theme))+`<div class="module-layer">${s.modules.map(m=>renderModule(m,edit)).join('')}</div>`;
  return `<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind==='toc'||s.chapterId?'':editable(edit,'')}>${s.kind==='toc'?'目录':esc(s.section)}</span><span data-text data-slide-field="group" ${s.kind==='toc'||s.chapterId?'':editable(edit,'')}>${esc(s.kind==='toc'?'汇报概览':s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s,'title')} ${editable(edit,'')}>${field(s,'title')}</h2>${s.hideLogo?'':theme.logo?`<img class="slide-logo" data-image src="${esc(theme.logo)}" alt="校徽">`:`<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s,'lead')} ${editable(edit,'')}>${field(s,'lead')}</div>${content}${s.summary?`<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s,'summary')} ${editable(edit,'')}>${field(s,'summary')}</div></div>`:''}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit,'')}>${field(s,'footer',theme.name+' · 科研汇报')}</span><span class="source" data-text data-slide-field="source" ${textStyle(s,'source')} ${editable(edit,'')}>${s.sourceUrl?`<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl)?esc(s.sourceUrl):'#'}" target="_blank" rel="noopener">${field(s,'source')}</a>`:esc(s.source)}</span><span data-text>${String(index+1).padStart(2,'0')} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`;
 }
 export function fitMedia(el){
@@ -56,10 +54,10 @@ export function fitMedia(el){
 export function fitTable(el){
  fitTimeline(el);
  for(const part of el.querySelectorAll('.text-part')){
-  if(!part.dataset.basePadding){const cs=getComputedStyle(part);part.dataset.basePadding=JSON.stringify([parseFloat(cs.paddingTop)||0,parseFloat(cs.paddingBottom)||0]);}
-  const [top,bottom]=JSON.parse(part.dataset.basePadding);part.style.paddingTop=top+'px';part.style.paddingBottom=bottom+'px';
-  const excess=Math.max(0,flowHeight(part)-part.clientHeight),reduceBottom=Math.min(excess,Math.max(0,bottom-4));
-  part.style.paddingBottom=bottom-reduceBottom+'px';part.style.paddingTop=top-Math.min(Math.max(0,excess-reduceBottom),Math.max(0,top-4))+'px';
+  const cs=getComputedStyle(part);if(!part.dataset.basePadding)part.dataset.basePadding=JSON.stringify(['Top','Bottom','Left','Right'].map(k=>parseFloat(cs['padding'+k])||0));
+  const [top,bottom,left,right]=JSON.parse(part.dataset.basePadding);Object.assign(part.style,{paddingTop:top+'px',paddingBottom:bottom+'px',paddingLeft:left+'px',paddingRight:right+'px'});
+  if(part.closest('.style-cards,.style-unified,.style-note'))for(let cut=2;flowHeight(part)>part.clientHeight+1&&cut<=Math.max(left,right)-4;cut+=2){part.style.paddingLeft=Math.max(part.closest('.style-note')?10:4,left-cut)+'px';part.style.paddingRight=Math.max(4,right-cut)+'px';}
+  const excess=Math.max(0,flowHeight(part)-part.clientHeight),reduceBottom=Math.min(excess,Math.max(0,bottom-(part.querySelector('.toc-page-range')?32:2)));part.style.paddingBottom=bottom-reduceBottom+'px';part.style.paddingTop=top-Math.min(Math.max(0,excess-reduceBottom),Math.max(0,top-2))+'px';
  }
  for(const part of el.querySelectorAll('.style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part')){
   const wrap=part.querySelector('.part-title-wrap'),title=wrap?.querySelector('.part-title-text');if(!title)continue;
@@ -68,9 +66,11 @@ export function fitTable(el){
   wrap.style.width=Math.min(available,Math.max(preferred,natural))+'px';
  }
  fitMedia(el);
- const table=el.querySelector('.data-table');if(!table)return;
- const wrap=table.parentElement;
- for(const pt of (table.classList.contains('reference-table')?[12,11,10,8]:[14,12,11,10,8])){table.style.fontSize=`${pt/0.6}px`;table.style.setProperty('--cell-pad',`${table.hasAttribute('data-cell-padding')&&table.dataset.cellPadding!==''?Number(table.dataset.cellPadding):Math.max(3,pt-7)}px`);if(wrap.scrollHeight<=wrap.clientHeight+1&&table.scrollWidth<=wrap.clientWidth+1)break;}
+ for(const table of el.querySelectorAll('.data-table')){
+ const wrap=table.closest('.table-wrap'),base=Number(table.dataset.baseFont)||14;
+ for(const pt of (table.hasAttribute('data-fixed-font')?[base]:[base,...[14,12,11,10,8].filter(n=>n<base)])){table.style.fontSize=pt/.6+'px';table.style.setProperty('--cell-pad',table.dataset.cellPadding!==''?Number(table.dataset.cellPadding)+'px':Math.max(3,pt-7)+'px');if(wrap.scrollHeight<=wrap.clientHeight+1&&table.scrollWidth<=wrap.clientWidth+1)break;}
+ }
+
 }
 // Measure natural flow, not rounded scrollHeight of grid tracks already stretched to fill a box.
 function flowHeight(element){
@@ -81,7 +81,7 @@ function flowHeight(element){
 }
 export function measuredHeight(el,m){
  if(m.type==='timeline')return timelineHeight(el);
- if(m.type==='table')return flowHeight(el.querySelector('.table-wrap'));
+ if(m.type==='table'){const wrap=el.querySelector('.table-wrap');return [...wrap.querySelectorAll('.table-section')].reduce((n,p)=>n+flowHeight(p),0)+Math.max(0,wrap.children.length-1)*(parseFloat(getComputedStyle(wrap).rowGap)||0);}
  if(m.type==='text'){
   const grid=el.querySelector('.text-parts'),cols=Number(getComputedStyle(grid).getPropertyValue('--cols'))||1,parts=[...grid.querySelectorAll('.text-part')];let height=0;
   for(let row=0;row<Math.ceil(parts.length/cols);row++)height+=Math.max(...parts.slice(row*cols,(row+1)*cols).map(flowHeight));
@@ -100,6 +100,7 @@ export function measuredHeight(el,m){
 export function audit(slideEl,model){
  const errors=[];if(model.referenceLayout){const footer=slideEl.querySelector('.slide-footer')?.getBoundingClientRect();for(const table of slideEl.querySelectorAll('table'))if(footer&&table.getBoundingClientRect().bottom>footer.top+2)errors.push('表格进入页脚区域，请减小行高或拆页。');for(const node of slideEl.querySelectorAll('[data-slide-field],.formula-card,.math-expression')){if(node.scrollHeight>node.clientHeight+3||node.scrollWidth>node.clientWidth+3)errors.push('文字超出原版式区域，请删改或调整行距。');}return errors;}if(model.kind==='transition'){const content=slideEl.querySelector('.transition-content'),title=content.querySelector('h1');if(title.scrollWidth>title.clientWidth+2)errors.push('\u8fc7\u6e21\u9875\u6807\u9898\u4e0d\u5141\u8bb8\u81ea\u52a8\u6362\u884c\uff0c\u8bf7\u7cbe\u7b80\u6216\u6309\u8bed\u4e49\u624b\u52a8\u5206\u884c\u3002');if(content.scrollHeight>content.clientHeight+2)errors.push('过渡页文字过长，请精简。');return errors;}
  if(model.kind==='cover'||model.kind==='closing'){const band=slideEl.querySelector('.cover-band');if(band.scrollHeight>band.clientHeight+2)errors.push('封面标题过长，请精简或手动分成两行。');const info=slideEl.querySelector('.cover-info');if(info.offsetTop+info.offsetHeight>880)errors.push('署名内容过长，请精简。');return errors;}
+ const identity=slideEl.querySelector('.profile-fixed .profile-identity');if(identity&&(identity.scrollHeight>identity.clientHeight+2||identity.scrollWidth>identity.clientWidth+2))errors.push('Author card overflow.');
  const heading=slideEl.querySelector('h2');if(heading.scrollHeight>heading.clientHeight+2)errors.push('页面标题过长，请精简。');
  const lead=slideEl.querySelector('.slide-lead'),contentTop=Math.max(SAFE.y,model.modules.length?Math.min(...model.modules.map(m=>m.y)):SAFE.y);if(lead.offsetTop+lead.scrollHeight>contentTop-16)errors.push('页首句过长：请精简或分成其他页面。');
  const summary=slideEl.querySelector('.slide-summary');if(summary&&summary.scrollHeight>summary.clientHeight+2)errors.push('页尾总结过长，请精简为一行。');

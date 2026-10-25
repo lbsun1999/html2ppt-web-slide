@@ -40,11 +40,11 @@ try{
  const paint=await page.locator('#canvas .standalone-text .paragraph').evaluateAll(es=>es.map(el=>({color:getComputedStyle(el).color,bg:getComputedStyle(el.parentElement).backgroundColor})));
  assert.equal(paint[0].color,'rgb(255, 255, 255)');assert.equal(paint[1].bg,'rgb(255, 255, 255)');assert.notEqual(paint[1].color,paint[0].color);
  await page.locator('[data-page="2"]').click();if(await page.evaluate(()=>window.slideStudio.getMode())!=='edit')await page.locator('[data-action="mode-edit"]').first().click();await page.locator('#canvas .table-module').click();
- await page.locator('#table-cell-padding').fill('2');await page.locator('#page-label').click();await page.locator('#table-row-height').fill('48');await page.locator('#page-label').click();const tall=await page.locator('#canvas table tr').first().evaluate(el=>el.offsetHeight);
- await page.locator('#table-row-height').fill('32');await page.locator('#page-label').click();const compact=await page.locator('#canvas table tr').first().evaluate(el=>el.offsetHeight);assert.ok(tall>compact+20);
+ await page.locator('#table-cell-padding').fill('2');await page.locator('.brand').click();await page.locator('#table-row-height').fill('48');await page.locator('.brand').click();const tall=await page.locator('#canvas table tr').first().evaluate(el=>el.offsetHeight);
+ await page.locator('#table-row-height').fill('32');await page.locator('.brand').click();const compact=await page.locator('#canvas table tr').first().evaluate(el=>el.offsetHeight);assert.ok(tall>compact+20);
  assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
  await draw(58,776,600,56,'light');assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
- await page.locator('[data-page="3"]').click();await page.locator('#reference-cell-padding').fill('3');await page.locator('#page-label').click();assert.ok(await page.locator('#canvas table td').first().evaluate(el=>Math.abs(parseFloat(getComputedStyle(el).paddingTop)-5)<.1));
+ await page.locator('[data-page="3"]').click();await page.locator('#reference-cell-padding').fill('3');await page.locator('.brand').click();assert.ok(await page.locator('#canvas table td').first().evaluate(el=>Math.abs(parseFloat(getComputedStyle(el).paddingTop)-5)<.1));
  const saved=page.waitForEvent('download');await page.locator('[data-action="html"]').first().click();const download=await saved;await download.saveAs('ect/editor-refinements.html');
  const offline=await browser.newPage();await offline.goto(new URL('../ect/editor-refinements.html',import.meta.url).href);await offline.waitForFunction(()=>window.slideStudio);
  const restored=await offline.evaluate(()=>window.slideStudio.getProject());assert.equal(restored.slides[1].modules[1].boxTone,'light');assert.equal(restored.slides[2].modules[0].rowHeightPt,32);assert.equal(restored.slides[2].modules[0].cellPaddingPt,2);assert.equal(restored.slides[3].referenceCellPaddingPt,3);

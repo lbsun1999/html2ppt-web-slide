@@ -1,5 +1,6 @@
 import {applyReferenceLayout} from './reference-layouts.js';
-import {textBlock,summaryPage,profilePage} from './page-presets.js';
+import {textBlock} from './page-presets.js';
+import {restoreEditablePage} from './editable-layouts.js';
 
 // Shared final layout pass: both schools keep the same evidence and hierarchy.
 export function polishExample(project){
@@ -37,8 +38,8 @@ export function polishExample(project){
   project.slides.filter(s=>s.kind==='transition').forEach((s,i)=>toc.tocNotes[s.id]=descriptions[i]);
   toc.tocBullet=true;
  }
- const s=byTitle('阶段总结与后续计划');if(s){const tpl=summaryPage();s.modules=tpl.modules;delete s.referenceLayout;s.summary='';}
- const p=byTitle('作者简介');if(p){const tpl=profilePage();p.modules=tpl.modules;delete p.referenceLayout;p.summary='';}
+ const s=byTitle('阶段总结与后续计划');if(s)restoreEditablePage(s,'summary');
+ const p=byTitle('作者简介');if(p)restoreEditablePage(p,'profile');
 
  return project;
 }
