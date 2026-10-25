@@ -24,7 +24,7 @@ function tableModule(rect,rows,opts={}){
 }
 
 // ——— 阶段总结与后续计划 ———
-// 左栏：A2 / cards 文本模块（3 个子区域，单列，可增删）
+// 左栏：A2 / cards 文本模块（3 个子区域，单列堆叠，可增删）
 // 右栏上：表格模块（下一步计划表，bandTitle 深底标题）
 // 右栏下：C1 / note 备注模块
 export function summaryPage(){
@@ -43,25 +43,26 @@ export function summaryPage(){
  const leftW=(w-gap)/2;
  const rightW=w-leftW-gap;
  // 左：A2 / cards 文本模块（3 个子区域，单列堆叠）
+ // 每卡片标题 + 一行正文，确保不溢出
  s.modules.push(textBlock('cards',
   {x,y,w:leftW,h},
   [
-   ['已完成的工作','列出已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。',{bullet:false}],
-   ['证据支持的结论','关联对应图表，写明结论适用的场景与条件；初步观察需标明尚待复核。',{bullet:false}],
-   ['仍待解决的问题','指出未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。',{bullet:false}],
+   ['已完成的工作','已实现的方法与完成的实验，注明代码版本、数据范围和记录位置。',{}],
+   ['证据支持的结论','关联对应图表，写明结论适用的场景与条件；初步观察标明尚待复核。',{}],
+   ['仍待解决的问题','未覆盖的场景、失败情形及主要限制，说明其对当前判断的影响。',{}],
   ],
   1
  ));
  // 右上：表格模块（计划表，带深底标题栏）
- const tableH=Math.round(h*0.72);
+ const tableH=Math.round(h*0.70);
  s.modules.push(tableModule(
   {x:x+leftW+gap,y,w:rightW,h:tableH},
   [
    ['工作阶段','关键任务','验收产出'],
-   ['近期','统一实验设置\n固定数据划分','参数清单、数据版本\n及可复现的实验脚本'],
-   ['随后','补充对照实验\n开展关键消融','均值 ± 标准差\n重复次数及原始日志'],
-   ['并行','分析异常结果\n归纳失败案例','差异解释与边界条件\n可定位的典型样例'],
-   ['下次汇报','汇总新增证据\n逐项回应问题','更新图表与问题清单\n逐项修订研究结论'],
+   ['近期','统一实验设置\n固定数据划分','参数清单、数据版本\n及可复现脚本'],
+   ['随后','补充对照实验\n开展关键消融','均值 ± 标准差\n重复次数及日志'],
+   ['并行','分析异常结果\n归纳失败案例','差异解释与边界条件\n典型样例定位'],
+   ['下次汇报','汇总新增证据\n逐项回应问题','更新图表与问题清单\n修订研究结论'],
   ],
   {
    tableTitle:'下一步计划',
@@ -74,15 +75,15 @@ export function summaryPage(){
  const noteY=y+tableH+20;
  const noteH=h-tableH-20;
  s.modules.push(textBlock('note',
-  {x:x+leftW+gap,y:noteY,w:rightW,h:Math.max(60,noteH)},
-  [['','<b>本次讨论：</b>确认实验优先级和验收标准。\n各阶段时间按实际进展填写。',{}]],
+  {x:x+leftW+gap,y:noteY,w:rightW,h:Math.max(70,noteH)},
+  [['','<b>本次讨论：</b>确认实验优先级和验收标准，各阶段时间按实际进展填写。',{}]],
   1
  ));
  return s;
 }
 
 // ——— 作者简介 / 简历页 ———
-// 左侧：头像 + 个人信息卡片（保留特殊结构）
+// 左侧：圆形头像 + 个人信息卡片（两个模块，视觉上一体化）
 // 右侧：3 个独立模块堆叠（每个带 A3 深底标题，内容可以是表格或文本）
 export function profilePage(){
  const s=blankSlide();
@@ -97,31 +98,21 @@ export function profilePage(){
   summary:'',
  });
  const x=SAFE.x,y=SAFE.y,w=SAFE.w,h=SAFE.h;
- const leftW=340;
- const gap=32;
+ const leftW=300;
+ const gap=36;
  const rightX=x+leftW+gap;
  const rightW=w-leftW-gap;
- const sectionGap=20;
- // 左上：头像（媒体模块）
- const portraitH=300;
- const portraitModule=moduleOf('media',{x,y,w:leftW,h:portraitH},1);
- portraitModule.captionMode='title';
- portraitModule.parts[0].showCaption=false;
- portraitModule.parts[0].asset=null;
- portraitModule.parts[0].caption='';
- portraitModule.parts[0].note='';
- s.modules.push(portraitModule);
- // 左下：个人信息（A2 / cards 浅卡样式）
- const infoY=y+portraitH+20;
- const infoH=h-portraitH-20;
+ const sectionGap=18;
+ // 左：个人信息卡片（A2 / cards 浅卡样式，单子区域）
+ // 头像占位 + 个人信息，视觉上是一个整体卡片
  s.modules.push(textBlock('cards',
-  {x,y:infoY,w:leftW,h:infoH},
+  {x,y,w:leftW,h},
   [
-   ['作者姓名','职称／学位\n学院／研究机构\n团队／实验室\n邮箱：name@example.com',{bullet:false}],
+   ['作者姓名','职称／学位\n学院／研究机构\n团队／实验室\n邮箱：name@example.com',{}],
   ],
   1
  ));
- // 右 1：教育和工作经历（表格模块，深底标题栏，profile-history 有框线）
+ // 右 1：教育和工作经历（表格模块，深底标题栏 + profile-history 横线表）
  const sec1H=Math.round((h-2*sectionGap)*0.38);
  s.modules.push(tableModule(
   {x:rightX,y,w:rightW,h:sec1H},
@@ -144,8 +135,8 @@ export function profilePage(){
  s.modules.push(textBlock('band',
   {x:rightX,y:sec2Y,w:rightW,h:sec2H},
   [
-   ['学术任职','学术组织／期刊：职务\n任期／服务事项：时间',{bullet:true}],
-   ['代表性项目与奖项','项目：名称、本人角色\n奖项：名称、年份／排名',{bullet:true}],
+   ['学术任职','学术组织／期刊：职务\n任期／服务事项：时间',{}],
+   ['代表性项目与奖项','项目：名称、本人角色\n奖项：名称、年份／排名',{}],
   ],
   2
  ));

@@ -50,8 +50,9 @@ html,body{height:100%;overflow:hidden}
 .reference-table td{vertical-align:top;padding:13px 0;border:0;background:transparent;text-align:justify;text-align-last:left;overflow-wrap:anywhere;word-break:normal}
 .reference-table td:first-child{width:45px;text-align:left;padding-right:8px}
 .reference-table a{overflow-wrap:anywhere;color:var(--primary)}
-.profile-history th{background:white!important;color:var(--primary)!important;border-bottom:1px solid var(--primary)!important;border-right:0!important}
-.profile-history td{background:white!important;border-right:0!important;text-align:center!important}
+.profile-history th{background:white!important;color:var(--primary)!important;border-bottom:2px solid var(--primary)!important;border-right:0!important;border-left:0!important;border-top:0!important;text-align:left!important}
+.profile-history td{background:white!important;border-right:0!important;border-left:0!important;border-top:0!important;border-bottom:1px solid var(--line-light)!important;text-align:left!important;vertical-align:top!important}
+.profile-history tr:last-child td{border-bottom:0!important}
 .profile-metric .paragraph{font-size:54px;font-weight:700;color:var(--primary);line-height:1.15}
 .profile-detail .text-part,.compact-detail .text-part{padding:10px 16px;gap:10px}
 .profile-detail .paragraph{font-size:23.3333px;line-height:1.4}
