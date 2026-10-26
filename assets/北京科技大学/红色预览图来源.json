@@ -1,0 +1,30 @@
+{
+  "source": "北京科技大学多媒体课件视觉规范.pdf",
+  "sourceSha256": "6f82360078b051d9c445e113d8c083765cd8a7642c462fc615af5d443bd58f9a",
+  "images": {
+    "example-red-standard-cover.png": {
+      "width": 1330,
+      "height": 744,
+      "source": "北京科技大学多媒体课件视觉规范.pdf",
+      "pdfPage": 2,
+      "figure": "B1-01-01 行政类PPT模板：单独校字封面",
+      "extraction": "由原PDF渲染后裁取完整红色示例区域，未重新绘制内容"
+    },
+    "example-red-motto-cover.png": {
+      "width": 1876,
+      "height": 1048,
+      "source": "北京科技大学多媒体课件视觉规范.pdf",
+      "pdfPage": 5,
+      "figure": "B1-01-04 行政类PPT模板：钢铁摇篮封面",
+      "extraction": "由原PDF渲染后裁取完整红色示例区域，未重新绘制内容"
+    },
+    "example-red-tiangong-cover.png": {
+      "width": 861,
+      "height": 481,
+      "source": "北京科技大学多媒体课件视觉规范.pdf",
+      "pdfPage": 2,
+      "figure": "B1-01-01 行政类PPT模板：天工大厦字效封面",
+      "extraction": "由原PDF渲染后裁取完整红色示例区域，未重新绘制内容"
+    }
+  }
+}

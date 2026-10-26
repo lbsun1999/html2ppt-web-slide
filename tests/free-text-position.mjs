@@ -19,23 +19,23 @@ try{
  await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});
  await page.goto(pathToFileURL(path.resolve('ect/free-text-position-source.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
  const state=()=>page.evaluate(()=>window.slideStudio.getProject());
- const first=page.locator('#canvas .equation-explanation').first();await first.focus();
+ const first=page.locator('#canvas .slide-lead').first();await first.focus();
  assert.equal(await page.locator('#inspector h2').innerText(),'当前文字块');
  const initialY=Number(await page.locator('#free-text-y').inputValue());
  await page.locator('#free-text-step').selectOption('5');await page.locator('[data-free-text-move="down"]').click();
- assert.ok(Math.abs((await state()).slides[0].textPositions.legacy_5.dy-5)<.01);
+ assert.ok(Math.abs((await state()).slides[0].textPositions.lead.dy-5)<.01);
  await page.locator('#free-text-y').fill(String(initialY+8));await page.locator('#free-text-x').focus();
- assert.ok(Math.abs((await state()).slides[0].textPositions.legacy_5.dy-8)<.02);
+ assert.ok(Math.abs((await state()).slides[0].textPositions.lead.dy-8)<.02);
  const preserved=structuredClone((await state()).slides[0].textPositions);
  await page.locator('#free-text-y').fill('20');await page.locator('#free-text-x').focus();assert.deepEqual((await state()).slides[0].textPositions,preserved);
  await page.locator('#free-text-x').fill('1000');await page.locator('#free-text-y').focus();assert.deepEqual((await state()).slides[0].textPositions,preserved);
  await page.locator('#free-text-x').fill('300');await page.locator('#free-text-y').focus();assert.deepEqual((await state()).slides[0].textPositions,preserved,'Cannot cross into the adjacent formula card or symbols');
- await page.locator('[data-action="undo"]').first().click();assert.ok(Math.abs((await state()).slides[0].textPositions.legacy_5.dy-5)<.01);
+ await page.locator('[data-action="undo"]').first().click();assert.ok(Math.abs((await state()).slides[0].textPositions.lead.dy-5)<.01);
  await page.locator('[data-action="redo"]').first().click();assert.deepEqual((await state()).slides[0].textPositions,preserved);
- await page.locator('#canvas .equation-explanation').nth(1).focus();assert.ok(Number(await page.locator('#free-text-y').inputValue())>600,'Caret switches target');
+ await page.locator('#canvas .formula-module .paragraph').first().focus();assert.equal(await page.locator('#free-text-x').count(),0,'Formula explanations now belong to the movable module');
  await page.locator('#canvas .slide-header h2').focus();assert.equal(await page.locator('#free-text-x').count(),0,'Header stays fixed');
- await page.locator('#canvas .equation-explanation').first().focus();await page.locator('#free-text-reset').click();assert.equal((await state()).slides[0].textPositions,undefined);
- await page.locator('[data-free-text-move="down"]').click();assert.ok((await state()).slides[0].textPositions.legacy_5.dy>0);
+ await page.locator('#canvas .slide-lead').first().focus();await page.locator('#free-text-reset').click();assert.equal((await state()).slides[0].textPositions,undefined);
+ await page.locator('[data-free-text-move="down"]').click();assert.ok((await state()).slides[0].textPositions.lead.dy>0);
  await page.locator('[data-page="1"]').click();await page.locator('#canvas .slide-lead').focus();await page.locator('[data-free-text-move="down"]').click();assert.ok((await state()).slides[1].textPositions.lead.dy>0);
  await page.locator('#canvas .standalone-text .paragraph').focus();assert.equal(await page.locator('#free-text-x').count(),1);
  await page.locator('[data-free-text-move="down"]').click();const movedY=(await state()).slides[1].modules[0].y;assert.ok(movedY>300);
@@ -45,9 +45,8 @@ try{
  await page.locator('[data-resize="w+"]').click();await page.locator('[data-resize="h+"]').click();const resized=(await state()).slides[1].modules[1];
  assert.equal(resized.x+resized.w/2,prior.x+prior.w/2);assert.equal(resized.y+resized.h/2,prior.y+prior.h/2);assert.ok(resized.w>prior.w&&resized.h>prior.h);
  await page.locator('[data-page="2"]').click();await page.locator('#canvas .bibliography-table td').first().focus();assert.equal(await page.locator('#free-text-x').count(),0,'Table cells preserve row alignment');
- await page.locator('[data-page="0"]').click();await page.locator('#canvas .equation-explanation').first().focus();assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
- const edge=await page.locator('#canvas .equation-explanation').first().evaluate(el=>{const canvas=el.closest('.slide'),box=canvas.getBoundingClientRect(),k=box.width/1600,card=el.closest('.formula-card').getBoundingClientRect();return {y:(card.bottom-box.top)/k+3-el.getBoundingClientRect().height/k};});
- await page.locator('#free-text-y').fill(String(edge.y));await page.locator('#free-text-x').focus();assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[],'A translated paragraph can use blank space beyond its original card without false overflow');
+ await page.locator('[data-page="0"]').click();await page.locator('#canvas .slide-lead').first().focus();assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
+ await page.locator('#free-text-y').fill('200');await page.locator('#free-text-x').focus();assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
  const exported=await state();await fs.writeFile('ect/free-text-position-project.json',JSON.stringify(exported));
  const downloading=page.waitForEvent('download');await page.locator('[data-action="html"]').first().click();await (await downloading).saveAs('ect/free-text-position-saved.html');
  const offline=await browser.newPage();await offline.goto(pathToFileURL(path.resolve('ect/free-text-position-saved.html')).href);await offline.waitForFunction(()=>window.slideStudio);
@@ -58,7 +57,7 @@ try{
   assert.equal(response.status,200,response.status===200?'':await response.text());await fs.writeFile('ect/free-text-position.'+kind,Buffer.from(await response.arrayBuffer()));
  }
  execFileSync('python',['-X','utf8','tests/inspect-free-text-position.py','ect/free-text-position.pptx','ect/free-text-position-project.json'],{stdio:'inherit'});
- const invalid=structuredClone(exported);invalid.slides[0].textPositions.legacy_5.dy=-400;
+ const invalid=structuredClone(exported);invalid.slides[0].textPositions.lead.dy=-400;
  const rejected=await fetch('http://127.0.0.1:4317/api/export/pptx',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(invalid)});assert.equal(rejected.status,400);
  assert.deepEqual(errors,[]);console.log('PASS caret targeting, free movement, collision rejection, undo/reset, offline save and PDF/PPTX export');
 }finally{await browser.close();}

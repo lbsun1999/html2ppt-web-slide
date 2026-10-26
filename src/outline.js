@@ -1,4 +1,4 @@
-import {clone,createProject,makePage,blankSlide,moduleOf,SAFE,validateProject,documentSections} from './model.js';
+import {clone,createProject,makePage,blankSlide,validateProject,documentSections} from './model.js';
 import {duplicatePages} from './page-operations.js';
 
 export const OUTLINE_EXAMPLE='# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n这里可以补充本页需要使用的材料，生成后保存在备注中。\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n';
@@ -58,11 +58,7 @@ export function reconcileOutlineBindings(previous,next,values,chapters=false){
  return out;
 }
 function newContent(title){
- const s=blankSlide();s.title=title;s.lead='';s.source='大纲草稿 · 请补充真实材料';
- const m=moduleOf('text',{...SAFE},2);m.style='cards';m.columns=2;
- Object.assign(m.parts[0],{title:'本页要回答的问题',text:'明确本页的核心问题与判断依据。\n补充背景、条件和必要的术语说明。',bullet:true});
- Object.assign(m.parts[1],{title:'证据与来源',text:'添加实际图表、公式、数据或文献。\n区分已有结论、待验证假设和后续计划。',bullet:true});
- s.modules=[m];return s;
+ const s=blankSlide();s.title=title;s.lead='';s.source='';s.modules=[];return s;
 }
 export function buildOutlineProject(current,outline,{toc=true,closing=true,transitions=true,lastAppendix,reuse={},sourceText=''}={}){
  if(outline.errors.length)throw Error(outline.errors.join('\n'));

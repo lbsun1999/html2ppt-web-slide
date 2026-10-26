@@ -8,14 +8,16 @@
     "node": ">=20.10"
   },
   "scripts": {
-    "start": "node server.mjs",
+    "start": "node scripts/start.mjs --open",
     "build:styles": "node scripts/build-style-gallery.mjs",
-    "test": "node --test tests/layout.test.mjs tests/outline.test.mjs tests/table-text.test.mjs",
+    "test": "node --test tests/layout.test.mjs tests/outline.test.mjs tests/table-text.test.mjs tests/startup.test.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test:styles": "node tests/text-styles.mjs",
     "build:examples": "node scripts/prepare-example.mjs",
     "clean": "node scripts/clean.mjs",
-    "preview:docs": "node scripts/preview-workbench.mjs"
+    "preview:docs": "node scripts/preview-workbench.mjs",
+    "build:lishui": "node scripts/prepare-example.mjs --lishui-only",
+    "test:all": "node scripts/self-check.mjs"
   },
   "dependencies": {
     "esbuild": "0.28.2",

@@ -5,7 +5,7 @@ import {blankSlide,makePage,moduleOf,part,syncSections} from './model.js';
 
 // Shared editable guide; school variants are derived from the USTB master.
 function baseExample({logo='',wordmark=''}={}){
- const theme={name:'丽水学院',primary:'#0F6674',secondary:'#248B96',accent:'#D8AB64',emphasis:'#A55240',tint:'#EDF6F5',ink:'#18383F',logo,wordmark};
+ const theme={name:'丽水学院',primary:'#0F6674',secondary:'#248B96',accent:'#D8AB64',emphasis:'#A55240',tint:'#EDF6F5',ink:'#000000',logo,wordmark};
  const pages=[];
  const text=(style,rect,items,columns=items.length)=>{const m=moduleOf('text',rect,items.length);m.style=style;m.columns=columns;m.headerWidth=90;m.parts=items.map(([title,body,extra={}])=>({...part(),title,text:body,bullet:true,...extra}));return m;};
  const whole={x:58,y:256,w:1484,h:554},left={x:58,y:256,w:724,h:554},right={x:806,y:256,w:736,h:554};
@@ -60,7 +60,7 @@ function baseExample({logo='',wordmark=''}={}){
  const logos=moduleOf('media',{x:58,y:256,w:1484,h:280},2);
  if(logo)logos.parts[0].asset={src:logo,kind:'image',ratio:729/755,naturalRatio:729/755,fit:'contain',ratioMode:'original',zoom:1,cx:50,cy:50};
  if(wordmark)logos.parts[1].asset={src:wordmark,kind:'image',ratio:3500/978,naturalRatio:3500/978,fit:'contain',ratioMode:'original',zoom:1,cx:50,cy:50};
- logos.parts[0].caption='图 2　独立校徽：原始比例';logos.parts[1].caption='图 3　组合标识：原始比例';logos.parts.forEach(p=>p.captionMode='title');
+ logos.parts[0].caption='图 2　独立校徽：原始比例';logos.parts[1].caption='图 3　组合标识：原始比例';logos.parts.forEach((p,i)=>{p.captionMode='title';if(p.asset)p.asset.themeLogo=i===0?'logo':'wordmark';});
  body('比例可以不同，画面高度必须一致','以两份用户提供的校方标识为例：保留各自比例，统一并列画面的实际高度。',[
   logos,text('cards',{x:58,y:560,w:724,h:250},[['自由指定比例','自定义宽、高可使用小数，如 2.35:1。\n输入必须为正数；设置会随 HTML 保存。\n再次打开媒体弹窗仍保留原来的选择。']]),
   text('cards',{x:806,y:560,w:736,h:250},[['等高不等于拉伸','同一行使用所有媒体都能容纳的高度。\n宽度随比例改变，图注在画面下方对齐。\n图注长短不同，也不改变并列画面的高度。']])

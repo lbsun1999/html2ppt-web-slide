@@ -6,7 +6,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {randomUUID} from 'node:crypto';
-import {spawn} from 'node:child_process';
+import {openBrowser} from './src/server/open-browser.mjs';
+import {browserPaths} from './src/server/browser-paths.mjs';
 import {build} from 'esbuild';
 import ExcelJS from 'exceljs';
 import {chromium} from 'playwright';
@@ -17,12 +18,12 @@ import {finishPptxTypography,nativeText,nativeBullet} from './src/server/pptx-ty
 import {MANUAL_BREAK_SELECTOR} from './src/title-policy.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
-const PORT=Number(process.env.PORT||4317),HOST='127.0.0.1';
+const PORT=Number(process.env.PORT||4317),HOST='127.0.0.1',APP_VERSION=JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8')).version;
 const bundle=await build({absWorkingDir:ROOT,entryPoints:['src/app.js'],bundle:true,write:false,format:'iife',target:'chrome110',charset:'utf8'});
 const code=bundle.outputFiles[0].text;
 const sessions=new Map();let browserPromise,exportQueue=Promise.resolve();
 async function browser(){if(!browserPromise)browserPromise=(async()=>{
- const candidates=[process.env.CHROME_PATH,...['PROGRAMFILES','PROGRAMFILES(X86)','LOCALAPPDATA'].flatMap(k=>process.env[k]?[path.join(process.env[k],'Google/Chrome/Application/chrome.exe'),path.join(process.env[k],'Microsoft/Edge/Application/msedge.exe')]:[]),...(process.platform==='darwin'?['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']:['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'])].filter(Boolean);
+ const candidates=browserPaths();
  for(const candidate of candidates){try{await fs.access(candidate);return await chromium.launch({executablePath:candidate,headless:true});}catch{}}
  try{return await chromium.launch({headless:true});}catch{browserPromise=null;throw Error('未找到 Chrome / Edge。请安装浏览器，或运行 npx playwright install chromium。');}
  })();return browserPromise;}
@@ -56,6 +57,13 @@ async function capture(page){return await page.evaluate(async titleSelector=>{
   return lines.length;
  };
  return await Promise.all([...document.querySelectorAll('.slide')].map(async slide=>{
+  // Keep inline mathematics as one raster object. Native text extraction must
+  // not collect KaTeX's internal glyphs again from the containing table cell.
+  for(const root of slide.querySelectorAll('[data-text]'))if(root.querySelector('.cell-math')){
+   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),nodes=[];while(walker.nextNode())if(!walker.currentNode.parentElement.closest('.cell-math')&&walker.currentNode.textContent.trim())nodes.push(walker.currentNode);
+   for(const node of nodes){const span=document.createElement('span');span.dataset.text='';node.replaceWith(span);span.append(node);}
+   root.removeAttribute('data-text');
+  }
   const box=slide.getBoundingClientRect(),geometry=el=>{const r=el.getBoundingClientRect();return {x:r.x-box.x,y:r.y-box.y,w:r.width,h:r.height};};
   const paintOrder=new Map([...slide.querySelectorAll('*')].map((el,i)=>[el,i*2]));
   const shapes=[...slide.querySelectorAll('[data-shape]')].flatMap(el=>{
@@ -122,7 +130,7 @@ async function pptxExport(page,project){
    if(item.kind==='shape'){const s=item,opts={x:px(s.x),y:px(s.y),w:px(s.w),h:px(s.h),line:{color:s.line||s.fill||'FFFFFF',transparency:s.line?0:100,width:s.lineWidth*.6},fill:{color:s.fill||'FFFFFF',transparency:s.fill?0:100}};slide.addShape(s.arrow?deck.ShapeType.chevron:deck.ShapeType.rect,opts);}
    if(item.kind==='text'){const t=item;slide.addText(nativeText(t),{x:px(t.x),y:px(t.y),w:px(t.w),h:px(t.h),fontFace:t.fontFace||'Microsoft YaHei',fontSize:t.fontSize*.6,bold:t.fontWeight>=600,color:t.color||'000000',lang:'zh-CN',margin:0,breakLine:false,bullet:nativeBullet(t),wrap:!t.noWrap,fit:'none',valign:'top',align:['center','right','justify'].includes(t.align)?t.align:'left',paraSpaceAfter:t.paragraphGap,lineSpacing:t.fontSize*t.lineHeight*.6,hyperlink:t.targetIndex!==null?{slide:t.targetIndex+1}:t.link?{url:t.link}:undefined});}
    if(item.kind==='decoration')slide.addImage({data:item.data,x:px(item.x),y:px(item.y),w:px(item.w),h:px(item.h)});
-   if(item.kind==='media'){const m=item,element=page.locator('.slide').nth(n).locator(`[data-capture-id="${m.id}"]`);const png=await element.screenshot({type:'png'});const data='image/png;base64,'+png.toString('base64');if(m.video){slide.addMedia({type:'video',data:m.video.src,extn:m.video.mime.includes('webm')?'webm':'mp4',cover:data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}else slide.addImage({data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}
+   if(item.kind==='media'){const m=item,element=page.locator('.slide').nth(n).locator(`[data-capture-id="${m.id}"]`);const svgPNG=await element.evaluate(async el=>{if(el.tagName!=='IMG'||!el.src.startsWith('data:image/svg+xml'))return null;await el.decode();const width=el.clientWidth,height=el.clientHeight,canvas=document.createElement('canvas');canvas.width=Math.ceil(width*4);canvas.height=Math.ceil(height*4);const ctx=canvas.getContext('2d');ctx.scale(4,4);const fit=getComputedStyle(el).objectFit;let w=width,h=height;if(fit==='contain'||fit==='cover'){const scale=(fit==='contain'?Math.min:Math.max)(width/el.naturalWidth,height/el.naturalHeight);w=el.naturalWidth*scale;h=el.naturalHeight*scale;}ctx.drawImage(el,(width-w)/2,(height-h)/2,w,h);return canvas.toDataURL('image/png');});const png=svgPNG?null:await element.screenshot({type:'png'});const data=svgPNG||'image/png;base64,'+png.toString('base64');if(m.video){slide.addMedia({type:'video',data:m.video.src,extn:m.video.mime.includes('webm')?'webm':'mp4',cover:data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}else slide.addImage({data,x:px(m.x),y:px(m.y),w:px(m.w),h:px(m.h)});}
   }
  }
  return finishPptxTypography(await deck.write({outputType:'nodebuffer'}));
@@ -143,7 +151,7 @@ const server=http.createServer(async(req,res)=>{try{
  const host=req.headers.host;if(![`127.0.0.1:${PORT}`,`localhost:${PORT}`].includes(host)){json(res,{error:'仅允许本机访问。'},403);return;}
  if(req.method==='POST'&&req.headers.origin&&!['http://127.0.0.1:'+PORT,'http://localhost:'+PORT].includes(req.headers.origin)){json(res,{error:'不允许跨站请求。'},403);return;}
  res.setHeader('X-Content-Type-Options','nosniff');const url=new URL(req.url,`http://${HOST}:${PORT}`),route=url.pathname;
- if(req.method==='GET'&&route==='/health')return json(res,{ok:true});
+ if(req.method==='GET'&&route==='/health')return json(res,{ok:true,app:'html2ppt-web-slide',version:APP_VERSION});
  if(req.method==='GET'&&route==='/app.bundle.js'){res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-store'});res.end(code);return;}
  if(req.method==='GET'&&(route==='/api/default-logos'||route==='/api/example-project')){const options=await schoolOptions(url.searchParams.get('school')==='lishui'?'lishui':'ustb',ROOT);return json(res,route==='/api/default-logos'?{logo:options.logo,wordmark:options.wordmark}:createExample(options));}
  if(req.method==='GET'&&route.startsWith('/api/render/')){const p=sessions.get(route.split('/').pop());return json(res,p||{error:'导出会话已过期。'},p?200:404);}
@@ -156,6 +164,6 @@ const server=http.createServer(async(req,res)=>{try{
  if(req.method==='GET'&&files[route]){const file=files[route];res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store'});res.end(await fs.readFile(path.join(ROOT,file)));return;}
  json(res,{error:'找不到该资源。'},404);
  }catch(e){console.error('[request]',e.message);if(!res.headersSent)json(res,{error:e.message},400);else res.end();}});
-server.listen(PORT,HOST,()=>{const url=`http://${HOST}:${PORT}`;console.log(`\nWeb Slide 已启动：${url}\n仅本机访问。按 Ctrl+C 停止。\n`);if(process.argv.includes('--open')){if(process.platform==='win32')spawn('cmd.exe',['/c','start','',url],{windowsHide:true,stdio:'ignore'});else spawn(process.platform==='darwin'?'open':'xdg-open',[url],{stdio:'ignore'});}});
+server.listen(PORT,HOST,()=>{const url=`http://${HOST}:${PORT}`;console.log(`\nWeb Slide 已启动：${url}\n仅本机访问。按 Ctrl+C 停止。\n`);if(process.argv.includes('--open'))openBrowser(url);});
 server.on('error',e=>{console.error(e.code==='EADDRINUSE'?`端口 ${PORT} 已被使用，请关闭旧服务或设置 PORT。`:e.message);process.exitCode=1;});
 async function stop(){server.close();if(browserPromise)try{(await browserPromise).close();}catch{}setTimeout(()=>process.exit(0),300).unref();}process.on('SIGINT',stop);process.on('SIGTERM',stop);

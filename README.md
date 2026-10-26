@@ -31,7 +31,7 @@
 
 ### 下载项目
 
-- [下载完整项目ZIP](https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip)：源码、两校独立HTML、说明、参考示例及正式PDF/PPTX。
+- [下载完整项目ZIP](https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip)：源码、北科科研／红色政务HTML、说明、参考示例及正式PDF/PPTX。
 - [版本发布与打包资源](https://github.com/lbsun1999/html2ppt-web-slide/releases)：下载已整理的版本包，解压后即可打开学校HTML。
 - 使用Git：`git clone https://github.com/lbsun1999/html2ppt-web-slide.git`。
 
@@ -46,9 +46,21 @@
 | 学校 | 可编辑源稿 | 导出文件 | 30页总览 |
 | --- | --- | --- | --- |
 | 北京科技大学 | [HTML源稿](北京科技大学_WebSlide科研汇报示例.html) | [PDF](output/北京科技大学_WebSlide科研汇报示例.pdf) · [PPTX](output/北京科技大学_WebSlide科研汇报示例.pptx) | [5×6预览](docs/images/ustb-preview.png) |
-| 丽水学院 | [HTML源稿](丽水学院_WebSlide制作与演示指南.html) | [PDF](output/丽水学院_WebSlide制作与演示指南.pdf) · [PPTX](output/丽水学院_WebSlide制作与演示指南.pptx) | [5×6预览](docs/images/lishui-preview.png) |
+| 北科红色政务 | [HTML源稿](北京科技大学红色政务_WebSlide科研汇报示例.html) | [PDF](output/北京科技大学红色政务_WebSlide科研汇报示例.pdf) · [PPTX](output/北京科技大学红色政务_WebSlide科研汇报示例.pptx) | [公式页预览](docs/images/red-formula-theme.png) |
 
-两校共用北科底稿，丽水版替换学校标识、校园资料与单一青色主题，保留同一组功能和标准页。真实汇报的页数由内容决定，不要求保留全部30页。
+主分支以北科科研与红色政务两套模板为使用入口。丽水学院作为[额外Release资源包](extensions/lishui/README.md)提供，共用本分支的基础接口与转换配置，无需维护重复分支。真实汇报的页数由内容决定，不要求保留全部30页。
+
+另有[北科红色政务HTML](北京科技大学红色政务_WebSlide科研汇报示例.html)，保留用户指定的钢铁红与浅红底，使用原始SVG校徽。浅卡片、分割线、默认人物占位随主题变化；辅助灰字对齐主题色相，保留原色的饱和度和明度，正文与封面填写信息使用纯黑。实际上传的照片不会自动重着色。
+
+### 公式、符号与样式表
+
+公式示例页由三个真实模块组成：左侧一个公式模块，默认两个可增减、排序的子区域；右上为白底符号表，右下为浅底字体样式表。各模块标题18pt，两张表按可用空间在8–14pt内适配，可在右栏移动、伸缩、增减行列或切换默认／A类卡片样式。选择固定字号时取消自适应；内容仍超出时应扩大模块或拆页。
+
+双击公式，或两张表内的任意数学符号，均可编辑、复制LaTeX。弹窗“使用主题色”勾选为当前主题色，取消为纯黑；右栏同名选项统一设置当前模块全部公式。表格支持在单元格内输入`$\theta$`等行内公式，批量编辑时保留源码。语法错误会提示，取消保留原值。PDF保留排版效果，PPTX的数学部分为独立图像，表格说明文字仍可编辑。
+
+[![红色公式页：左侧公式子区域、右侧两个可编辑表格模块](docs/images/red-formula-theme.png)](docs/images/red-formula-theme.png)
+
+图片模块、时间轴图片和主题标识均支持PNG／JPEG／WebP及纯图形SVG。SVG在HTML中保留矢量源；第14页的校徽示范默认绑定当前主题标识，双击换为自己的图片后解除绑定。作者页邮箱下方另有可编辑电话行。
 
 **PPTX导出后必须人工逐页审核，再用于正式汇报或交付。** 当前结果已支持在PowerPoint中继续编辑，仍可能出现局部字体颜色偏差、字体替代或标点断行等细节，需要人工确认并微调。HTML或PDF检查通过不能代替PPTX人工审阅。
 
@@ -61,14 +73,19 @@
 | 图片／视频上传与取景 | 支持 | 支持 |
 | 导出PDF／PPTX、导入Excel | 需要服务 | 支持 |
 
-Windows双击[启动.cmd](启动.cmd)，或在项目目录执行：
+完整解压项目后，Windows双击[启动.cmd](启动.cmd)。双击失败时，在项目文件夹打开终端执行：
 
 ```powershell
-npm.cmd ci
-npm.cmd start
+node scripts/start.mjs --open
 ```
 
-需要Node.js 20.10+及Chrome／Edge，首次安装依赖需要网络；无需Microsoft Office或Python。服务启动后访问 `http://127.0.0.1:4317`，点击“打开 HTML”或拖入已有文稿。服务仅监听本机。
+需要Node.js 20.10+及Chrome／Edge，首次恢复依赖需要网络；无需Microsoft Office或Python。看到“服务已就绪”后保持启动窗口开启。服务仅监听本机，可复用已运行的Web Slide服务，错误保存在`ect/startup.log`。
+
+离线HTML点击导出后，可在弹窗中“传送当前文稿”到本地工作台，再在新窗口导出，尚未保存的修改也能传过去。也可访问 `http://127.0.0.1:4317`，点击“打开HTML”选择文件，**无需拖拽**。
+
+[![离线导出连接弹窗：启动命令、本机地址及传送当前文稿按钮](docs/images/local-export-connection.png)](docs/images/local-export-connection.png)
+
+如果Windows提示“这些文件可能对你的计算机有害”、确认后闪退，或终端提示缺少依赖／端口占用，按[启动与导出排障](docs/启动与导出排障.md)处理。新版已修复旧ZIP中批处理LF换行导致的错行问题；无需关闭Windows安全防护。
 
 `index.html`是服务使用的工作台入口，直接双击会显示启动指引。日常离线编辑优先打开上表中的学校HTML。
 
@@ -101,7 +118,7 @@ npm.cmd start
 
 默认更新当前文稿：下方预览显示每个题目对应的现有页，改名和排序后保留原页正文、图表、局部格式、位置和备注，目录同步更新。新增题目可选占位页或复制旧页，删去题目会移出对应页面，应用前检查映射和移出数量。**“最后一章为附录”**可以明确末章身份，章名不限于“附录”；勾选后默认无过渡页、不进入正文目录。
 
-也可选择“另建文稿”，沿用当前主题和所选版式副本。取消不会改稿，应用后可撤销，保存HTML才写入文件。大纲建立的是结构，不自动完成研究文案；说明文字放备注，AI仍需根据真实材料加工正文、替换旧图表及来源。详见[人机分工与逐页制作流程](docs/AI制作与迭代流程.md#3-提纲与逐页结构)。
+也可选择“另建文稿”，沿用当前主题。**默认正文内容区完全留空**，只保留大纲题目、章节和页眉页脚；非正文页保留必要标题与信息，填写提示放备注。同名示例也不会自动复制正文；需要复用时，在对应页下拉框明确选择旧页。取消不会改稿，应用后可撤销，保存HTML才写入文件。大纲建立的是结构，不自动完成研究文案。详见[人机分工与逐页制作流程](docs/AI制作与迭代流程.md#3-提纲与逐页结构)。
 
 ### 页面复制、多选与排序
 
@@ -326,6 +343,7 @@ docs中的说明、原始规范和截图记录均可从这里进入：
 | 文档 | 适合何时阅读 |
 | --- | --- |
 | [AI制作与迭代流程](docs/AI制作与迭代流程.md) | 从原始需求、材料到提纲、成稿，再到人工修改和功能迭代 |
+| [启动与导出排障](docs/启动与导出排障.md) | Windows来源提醒、启动闪退、日志、端口及无需拖拽的导出流程 |
 | [可导入的大纲示例](docs/大纲示例.md) | 三级标题的MD原稿，可直接粘贴或导入文档大纲 |
 | [AI接口与排版规则](docs/AI接口与排版规则.md) | 生成或修改project-data、模块、逐段格式、章节与成熟页面 |
 | [版式细则与错误复盘](docs/版式细则与错误复盘.md) | 检查内容密度、标题层级、短尾行、表头、公式、对齐及代表性错误 |
@@ -336,7 +354,7 @@ docs中的说明、原始规范和截图记录均可从这里进入：
 | [验收记录](docs/验收记录.md) | 查回归检查、验证范围与已知限制 |
 | [工作台截图记录](docs/工作台截图记录.json) | 复查README截图的源稿哈希、界面状态及窗口尺寸 |
 
-更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [丽水30页预览](docs/images/lishui-preview.png) · [总结与计划版式](docs/images/summary-layout.png) · [三份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
+更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [丽水独立扩展](extensions/lishui/README.md) · [总结与计划版式](docs/images/summary-layout.png) · [三份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
 
 维护示例与插图可运行：
 
@@ -354,3 +372,11 @@ npm.cmd run clean
 丽水资料见[学校概况](https://www.lsu.edu.cn/44/list.htm)、[历史沿革](https://www.lsu.edu.cn/47/list.htm)及[素材记录](assets/丽水学院/manifest.json)。校徽检索可参考[中国高校校徽（LOGO）官方下载资源汇总](https://www.cnblogs.com/cdz-111/articles/22432508 "发布于 2026-08-12 22:38")，最终以学校官方原件为准。
 
 项目示例不代表学校官方软件，图片和标识权益归各自权利人。校史、占位数据及教学说明用于版式展示，制作真实科研汇报时应替换为对应材料和可追踪来源。
+
+## 目录与学校扩展
+
+根目录的两份北科HTML是可直接打开的正式源稿；output只放这两套模板的PDF/PPTX。src、样式、server.mjs和启动脚本是共用运行时；docs与reference是说明和已确认的参考示例。assets保留北科及丽水生成配置实际需要的资源。丽水的独立HTML、PDF/PPTX在额外Release包内，构建中间文件放ect，不进入主分支。
+
+选择额外资源包而非长期学校分支，可避免相同接口在不同分支逐渐分叉。所有学校仍使用同一套修复与新功能；新增学校可参考[丽水扩展说明](extensions/lishui/README.md)。
+
+完整自检：保持本地工作台服务开启，执行`npm.cmd run test:all`。该命令运行单元测试、生成丽水测试扩展及各功能检查，详细日志在ect/self-check；中间文件不进入发布包。

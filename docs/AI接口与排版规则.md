@@ -73,7 +73,9 @@ slide.modules = [m];
 
 优先保留成熟信息关系：时间轴用上述原生模块复现共底色、统一裁剪与对齐连接线；公式深色标题贴浅色解释框；参考文献无表头两列且顶端对齐；作者页五列履历与对齐身份区。不能简化成几个普通卡片。结构性修改同步调整对应渲染与局部样式；快照及局部样式已内置，生成文稿不调用旧模板导入脚本。
 
-公式用 `referenceLatex[index]` 修改，普通公式模块用 `parts[index].latex`。头像覆盖为 `referencePortrait` 图片 data URL。原矢量公式与修改后的 KaTeX 只显示一份；变量、函数、单位、向量与矩阵样式按材料统一。
+公式预设`formulaPage()`现在生成三个模块，左侧`type:'formula',style:'band',columns:1`含两个子区域，源码在`parts[index].latex`，解释在`text`；右侧为`role:'formula-symbols'`的白底表与`role:'formula-styles'`的浅底表。表格`cardStyle`可为plain/unified/cards/band，保持模块独立位置及尺寸。标题统一18pt；`fontPt:14,fixedFont:false`使表格在8–14pt范围适配，实际选择固定字号时设为true。
+
+表格`rows`中的`$LaTeX$`渲染为可双击的行内数学内容；编辑器读取时还原源码，不保存KaTeX内部字形。`mathUseThemeColor`为模块默认，公式子区域`useThemeColor`及表格`cellMathColors['行,列,公式序号']`可覆盖。LaTeX弹窗可选主题色／纯黑。统一切换模块颜色时清除这些覆盖。旧`referenceLayout:'formula'`在验证载入时迁移为真实模块，保留页ID、用户解释文字和已编辑LaTeX，清除已迁入模块的旧自由文字占位。头像覆盖仍为`referencePortrait`。
 
 公式容器清除 KaTeX 默认展示段的外边距，解释文字保持正常流，不用绝对定位压入公式区域。提交前检查公式和解释的实际高度；超过当前版式时保留编辑框、提示精简或拆行，原公式保持不变。
 

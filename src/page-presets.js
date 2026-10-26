@@ -1,6 +1,7 @@
 import {summaryPage,profilePage} from './editable-layouts.js';
 import {blankSlide,moduleOf,part,SAFE} from './model.js';
 import {applyReferenceLayout} from './reference-layouts.js';
+import {modularizeFormula} from './formula-layout.js';
 
 export function textBlock(style,rect,items,columns=null,extra={}){
  const m=moduleOf('text',rect,items.length);
@@ -11,7 +12,7 @@ export function textBlock(style,rect,items,columns=null,extra={}){
 
 export {summaryPage,profilePage};
 
-export function formulaPage(){return applyReferenceLayout(blankSlide(),'formula');}
+export function formulaPage(){return modularizeFormula(applyReferenceLayout(blankSlide(),'formula'));}
 export function referencePage(){const s=applyReferenceLayout(blankSlide(),'references');Object.assign(s,{chapterMode:'manual',section:'附录',group:'参考与作者'});return s;}
 
 export function sourcePage(){
@@ -37,5 +38,7 @@ export function sourcePage(){
 export function makePreset(kind){
  if(kind==='formula-page')return formulaPage();
  if(kind==='references-page')return referencePage();
+ if(kind==='profile-page')return profilePage();
+ if(kind==='summary-page')return summaryPage();
  return blankSlide();
 }

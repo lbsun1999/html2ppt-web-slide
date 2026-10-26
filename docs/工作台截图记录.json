@@ -1,6 +1,6 @@
 {
   "source": "北京科技大学_WebSlide科研汇报示例.html",
-  "sha256": "80d7d9375c44b62e826520ea93a9b9065c777cbf569d9681645789eac283f54d",
+  "sha256": "686e819a718a8ce39276a5eddcc0d874694a2ad0d952fb4be56df9746993b226",
   "viewport": {
     "width": 1920,
     "height": 1200
@@ -299,7 +299,7 @@
         }
       },
       "mode": "text",
-      "currentPage": 18
+      "currentPage": 15
     },
     {
       "image": "images/formula-editor.png",
@@ -309,9 +309,36 @@
         "target": "#formula-dialog",
         "clip": {
           "x": 610,
-          "y": 241.953125,
+          "y": 223.953125,
           "width": 700,
-          "height": 716.078125
+          "height": 752.078125
+        }
+      },
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 18
+    },
+    {
+      "image": "images/local-export-connection.png",
+      "description": "从离线文稿传送当前编辑内容到本机服务，无需拖动文件。",
+      "capture": {
+        "kind": "detail",
+        "target": "#local-export-dialog",
+        "clip": {
+          "x": 610,
+          "y": 217.109375,
+          "width": 700,
+          "height": 765.78125
         }
       },
       "view": {

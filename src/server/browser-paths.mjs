@@ -1,0 +1,2 @@
+import path from 'node:path';
+export function browserPaths(){return [...new Set([process.env.CHROME_PATH,...['PROGRAMFILES','PROGRAMFILES(X86)','LOCALAPPDATA'].flatMap(k=>process.env[k]?[path.join(process.env[k],'Google/Chrome/Application/chrome.exe'),path.join(process.env[k],'Microsoft/Edge/Application/msedge.exe')]:[]),...(process.platform==='darwin'?['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']:['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'])].filter(Boolean))];}

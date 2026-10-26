@@ -9,7 +9,7 @@
 .style-plain .text-part{padding:22px 24px;border:0;background:white}
 .style-unified{background:var(--tint)}
 .style-unified .text-part{border:0;padding:22px 24px;background:transparent}
-.part-divider{position:absolute;z-index:2;display:block;background:#9ea8ae;pointer-events:none}
+.part-divider{position:absolute;z-index:2;display:block;background:#777777;pointer-events:none}
 .part-divider.horizontal{height:1px;bottom:0;left:20px;right:20px}
 .part-divider.vertical{width:1px;right:0;top:20px;bottom:20px}
 .style-cards .text-part{background:var(--tint);padding:22px 24px}

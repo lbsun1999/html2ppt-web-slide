@@ -6,10 +6,11 @@
 *.json text eol=lf
 *.md text eol=lf
 # Generated HTML snapshots have recorded hashes; preserve their exact bytes.
-*.html -text
+*.html -text whitespace=cr-at-eol
 *.css text eol=lf
 *.py text eol=lf
-*.cmd text eol=crlf
+# Preserve CRLF in repository blobs as well as ZIP archives (not just checkouts).
+*.cmd -text whitespace=cr-at-eol
 *.png binary
 *.jpg binary
 *.svg text eol=lf

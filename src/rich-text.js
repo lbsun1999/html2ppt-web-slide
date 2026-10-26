@@ -14,6 +14,7 @@ export function readRich(el){
  const runs=[];function add(text,format){if(!text)return;const prev=runs.at(-1);if(prev&&prev.bold===format.bold&&prev.italic===format.italic&&prev.color===format.color&&prev.fontSize===format.fontSize)prev.text+=text;else runs.push({text,...format});}
  function visit(node,format={}){
   if(node.nodeType===3){add(node.nodeValue.replace(/\u00a0/g,' '),format);return;}if(node.nodeType!==1)return;
+  if(node.dataset.latex!==undefined&&node.classList.contains('cell-math')){add('$'+node.dataset.latex+'$',format);return;}
   if(node.tagName==='BR'){add('\n',format);return;}
   const next={...format};if(['VAR','I','EM'].includes(node.tagName)||node.style.fontStyle==='italic')next.italic=true;const weight=node.style.fontWeight,color=node.style.color||node.getAttribute('color');
   if(weight)next.bold=weight==='bold'||Number(weight)>=600;else if(['B','STRONG'].includes(node.tagName))next.bold=true;

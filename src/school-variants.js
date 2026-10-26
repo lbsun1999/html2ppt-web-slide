@@ -4,7 +4,7 @@ export function applyLishuiVariant(project,{logo,wordmark,assets={}}){
  replace(project);
  const oldPalette=new Set(['#005b94','#005894','#1766a9','#2ba3c0','#a31418']);
  const recolor=value=>{if(typeof value==='string')return oldPalette.has(value.toLowerCase())?'#0F6674':value;if(Array.isArray(value))return value.map(recolor);if(value&&typeof value==='object')for(const key of Object.keys(value))value[key]=recolor(value[key]);return value;};recolor(project);
- Object.assign(project.theme,{name:'丽水学院',primary:'#0F6674',secondary:'#0F6674',accent:'#0F6674',emphasis:'#0F6674',tint:'#EDF6F5',ink:'#18383F',monochrome:true,logo,wordmark});
+ Object.assign(project.theme,{name:'丽水学院',primary:'#0F6674',secondary:'#0F6674',accent:'#0F6674',emphasis:'#0F6674',tint:'#EDF6F5',ink:'#000000',monochrome:true,logo,wordmark});
  project.title='丽水学院_WebSlide制作与演示指南';
  const color=project.slides.find(s=>s.title==='主题色彩与字号口径');if(color){color.lead='以校徽中的青色作为唯一主题色，配合深色文字与同色浅底，统一标题、表头和强调区域。';const text=color.modules.find(m=>m.type==='text');text.parts[0].text='标题、表头与重点线条统一使用主题青色，浅青底用于分组；不另设第二种强调色。';}
  const history=project.slides.find(s=>s.referenceLayout==='history'||s.modules.some(m=>m.type==='timeline'&&m.schoolHistory));

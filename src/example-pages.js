@@ -5,7 +5,7 @@ import {textBlock,formulaPage,referencePage,profilePage,sourcePage} from './page
 
 export function augmentExample(p,{assets={}}={}){
  const name='北京科技大学';
- Object.assign(p.theme,{name,primary:'#005B94',secondary:'#1766A9',accent:'#2BA3C0',emphasis:'#A31418',tint:'#EEF5F9',ink:'#12374E'});
+ Object.assign(p.theme,{name,primary:'#005B94',secondary:'#1766A9',accent:'#2BA3C0',emphasis:'#A31418',tint:'#EEF5F9',ink:'#000000'});
  p.title=name+'_科研汇报与平台指南';
  for(const s of p.slides){if(s.footer)s.footer=s.footer.replaceAll('丽水学院',name);if(s.institute)s.institute=s.institute.replaceAll('丽水学院',name);if(s.notes)s.notes=s.notes.replaceAll('丽水学院',name);}
  const make=(title,lead,modules,notes)=>({...blankSlide(),title,lead,modules,notes,footer:name+' · Web Slide 示例',source:'版式及操作示例，使用真实材料时请核对数据与来源。'});

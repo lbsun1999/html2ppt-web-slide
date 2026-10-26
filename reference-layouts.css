@@ -10,8 +10,8 @@
 .legacy-page::before{content: ""; position: absolute; inset: 0px 0px auto; height: var(--top-trim); background: linear-gradient(90deg,var(--ustb-blue) 0 68%,var(--ustb-blue-mid) 68% 88%,var(--ustb-cyan) 88%);}
 .legacy-page .slide-header{position: relative; height: var(--header-height); padding: 34px 208px 20px var(--page-margin);}
 .legacy-page .slide-header::after{content: ""; position: absolute; left: var(--page-margin); right: var(--page-margin); bottom: 0px; height: var(--header-rule); background: var(--ustb-blue);}
-.legacy-page .section-line{display: flex; align-items: center; gap: 14px; height: 30px; font-size: var(--fs-label); font-weight: 600; color: rgb(64, 100, 125);}
-.legacy-page .section-index{display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 30px; border-radius: 4px; background: rgb(228, 238, 245); color: var(--ustb-blue); font-size: var(--fs-caption); font-family: Arial, sans-serif;}
+.legacy-page .section-line{display: flex; align-items: center; gap: 14px; height: 30px; font-size: var(--fs-label); font-weight: 600; color: var(--primary);}
+.legacy-page .section-index{display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 30px; border-radius: 4px; background: var(--tint); color: var(--ustb-blue); font-size: var(--fs-caption); font-family: Arial, sans-serif;}
 .legacy-page .appendix-index{width: auto; min-width: 58px; padding: 0px 10px; font-family: inherit; white-space: nowrap;}
 .legacy-page .slide-header h2{font-size: var(--fs-h2); line-height: 1.22; font-weight: 700; margin: 16px 0px 0px; letter-spacing: 0.5px;}
 .legacy-page .slide-logo{position: absolute; top: calc((var(--header-height) + var(--top-trim) - var(--header-rule) - var(--logo-size)) / 2); right: var(--page-margin); width: var(--logo-size); height: var(--logo-size); object-fit: contain;}
@@ -36,8 +36,8 @@
 .legacy-page .ruled{border-left: 1px solid var(--line); padding-left: 34px;}
 .legacy-page .history-slide .lead{text-align: justify; text-align-last: left;}
 .legacy-page .history-timeline{position: relative; display: grid; grid-template-columns: repeat(4, minmax(0px, 1fr)); grid-template-rows: minmax(0px, 1fr) 58px; gap: 16px; padding: 0px 32px;}
-.legacy-page .history-timeline::before{content: ""; position: absolute; left: 0px; right: 0px; bottom: 0px; height: 58px; background: rgb(227, 237, 243); clip-path: polygon(0px 0px, 97.5% 0px, 100% 50%, 97.5% 100%, 0px 100%);}
-.legacy-page .history-stage{position: relative; display: flex; flex-direction: column; gap: 16px; min-width: 0px; min-height: 0px; background: rgb(241, 247, 251);}
+.legacy-page .history-timeline::before{content: ""; position: absolute; left: 0px; right: 0px; bottom: 0px; height: 58px; background: var(--tint); clip-path: polygon(0px 0px, 97.5% 0px, 100% 50%, 97.5% 100%, 0px 100%);}
+.legacy-page .history-stage{position: relative; display: flex; flex-direction: column; gap: 16px; min-width: 0px; min-height: 0px; background: var(--tint);}
 .legacy-page .history-stage::before{content: ""; position: absolute; left: -1px; top: 0px; bottom: 0px; width: 2px; background: var(--stage-color);}
 .legacy-page .history-track{grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0px, 1fr)); gap: 16px; position: relative;}
 .legacy-page .history-marker{position: relative; display: flex; align-items: center; min-width: 0px; padding: 0px 12px 0px 20px;}
@@ -53,11 +53,11 @@
 .legacy-page .data-table thead{color: white; background: var(--ustb-blue);}
 .legacy-page .data-table th{font-weight: 600;}
 .legacy-page .data-table a, .legacy-page .bibliography-table a, .legacy-page .reference-link{white-space: normal; overflow-wrap: anywhere; word-break: normal;}
-.legacy-page .data-table tbody tr:nth-child(2n){background: rgb(244, 248, 251);}
+.legacy-page .data-table tbody tr:nth-child(2n){background: var(--tint);}
 .legacy-page .formula-sheet{display: grid; grid-template-rows: 1.1fr 1fr; gap: 20px; min-width: 0px; min-height: 0px;}
 .legacy-page .formula-card{display: flex; flex-direction: column; min-width: 0px; min-height: 0px;}
 .legacy-page .equation-label{flex: 0 0 auto; margin: 0px; padding: 10px 22px; color: white; background: var(--ustb-blue); font-size: var(--fs-h3); line-height: 1.3; font-weight: 700;}
-.legacy-page .formula-body{flex: 1 1 0%; min-width: 0px; min-height: 0px; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 14px 22px 16px; border-width: 0px 1px 1px; border-style: none solid solid; border-color: currentcolor rgb(217, 231, 241) rgb(217, 231, 241); border-image: none; background: rgb(241, 247, 251);}
+.legacy-page .formula-body{flex: 1 1 0%; min-width: 0px; min-height: 0px; display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 14px 22px 16px; border-width: 0px 1px 1px; border-style: none solid solid; border-color: currentcolor var(--line) var(--line); border-image: none; background: var(--tint);}
 .legacy-page .equation-explanation{margin: 0px; font-size: var(--fs-body); line-height: 1.5; color: var(--ink);}
 .legacy-page .equation-row{display: grid; grid-template-columns: minmax(0px, 1fr) 48px; align-items: center; gap: 16px;}
 .legacy-page .equation-number{font-size: var(--fs-caption); text-align: right; color: var(--muted);}
@@ -73,12 +73,12 @@
 .legacy-page .math-symbol .formula-image{max-width: none;}
 .legacy-page .symbols{display: grid; grid-template-columns: 88px minmax(0px, 1fr); gap: 8px 18px; margin: 0px; font-size: var(--fs-caption); line-height: 1.4;}
 .legacy-page .symbols dt{color: var(--ustb-blue); font-family: "Cambria Math", serif; font-size: var(--fs-body); line-height: 1.1;}
-.legacy-page .symbols dd{margin: 0px; color: var(--muted);}
+.legacy-page .symbols dd{margin: 0px; color: var(--ink);}
 .legacy-page var{font-family: "Cambria Math", "Times New Roman", serif; font-style: italic; font-weight: 400;}
 .legacy-page .symbols sub{font-size: 0.72em; line-height: 0; vertical-align: -0.25em;}
 .legacy-page .symbols-panel{gap: 12px;}
 .legacy-page .symbols-panel > .group-title{margin-bottom: 0px;}
-.legacy-page .symbol-note{margin-top: auto; padding: 14px 18px; background: rgb(241, 247, 251); border: 1px solid rgb(223, 235, 243); font-size: var(--fs-caption); line-height: 1.55;}
+.legacy-page .symbol-note{margin-top: auto; padding: 14px 18px; background: var(--tint); border: 1px solid var(--line); font-size: var(--fs-caption); line-height: 1.55;}
 .legacy-page .math-style-title{margin: 0px 0px 8px; color: var(--ustb-blue); font-size: var(--fs-h3); font-weight: 700; line-height: 1.3;}
 .legacy-page .math-style-list{display: grid; grid-template-columns: 98px minmax(0px, 1fr); gap: 8px 12px; margin: 0px; line-height: 1.4;}
 .legacy-page .math-style-list dt{font-weight: 600;}
@@ -91,9 +91,9 @@
 .legacy-page .bibliography-table td:last-child{padding-left: 0px; text-align: justify; text-align-last: left; text-justify: inter-word; word-break: normal;}
 .legacy-page .reference-token{white-space: nowrap;}
 .legacy-page .reference-date{white-space: normal; word-break: normal; overflow-wrap: normal;}
-.legacy-page .bibliography-table tr:target{background: rgb(241, 247, 251); outline: rgb(180, 207, 223) solid 2px; outline-offset: 3px;}
+.legacy-page .bibliography-table tr:target{background: var(--tint); outline: var(--line) solid 2px; outline-offset: 3px;}
 .legacy-page .profile-layout{display: grid; grid-template-columns: 340px minmax(0px, 1fr); gap: 32px;}
-.legacy-page .profile-identity{display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 20px 12px; border: 1px solid rgb(223, 235, 243); border-radius: 6px; background: rgb(241, 247, 251); text-align: center;}
+.legacy-page .profile-identity{display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 20px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--tint); text-align: center;}
 .legacy-page .profile-portrait{flex: 0 0 auto; display: block; width: 196px; height: 220px; object-fit: contain;}
 .legacy-page .profile-identity .profile-name{margin: 0px; font-size: var(--fs-group); line-height: 1.3;}
 .legacy-page .profile-role, .legacy-page .profile-unit{font-size: var(--fs-label); line-height: 1.45;}
@@ -117,7 +117,7 @@
 .legacy-page .profile-section-body h4{margin: 0px 0px 6px; font-size: var(--fs-label); line-height: 1.35; color: var(--ustb-blue);}
 .legacy-page .profile-section-body .points{font-size: var(--fs-caption); line-height: 1.4;}
 .legacy-page .profile-section-body .points > li + li{margin-top: 8px;}
-.legacy-page .profile-research{flex: 1 1 0%; grid-template-columns: repeat(3, minmax(0px, 1fr)); gap: 20px; background: rgb(247, 250, 252);}
+.legacy-page .profile-research{flex: 1 1 0%; grid-template-columns: repeat(3, minmax(0px, 1fr)); gap: 20px; background: var(--tint);}
 .legacy-page .profile-research > div{display: flex; flex-direction: column;}
 .legacy-page .profile-research .points{margin-top: auto;}
 .legacy-page .footer-source a{color: inherit; text-decoration: underline; text-underline-offset: 3px;}
@@ -137,8 +137,8 @@
 .legacy-page[data-reference-layout="summary"]::before{content: ""; position: absolute; inset: 0px 0px auto; height: var(--top-trim); background: linear-gradient(90deg,var(--ustb-blue) 0 68%,var(--ustb-blue-mid) 68% 88%,var(--ustb-cyan) 88%);}
 .legacy-page[data-reference-layout="summary"] .slide-header{position: relative; height: var(--header-height); padding: 34px 208px 20px var(--page-margin);}
 .legacy-page[data-reference-layout="summary"] .slide-header::after{content: ""; position: absolute; left: var(--page-margin); right: var(--page-margin); bottom: 0px; height: var(--header-rule); background: var(--ustb-blue);}
-.legacy-page[data-reference-layout="summary"] .section-line{display: flex; align-items: center; gap: 14px; height: 30px; font-size: var(--fs-label); font-weight: 600; color: rgb(64, 100, 125);}
-.legacy-page[data-reference-layout="summary"] .section-index{display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 30px; border-radius: 4px; background: rgb(228, 238, 245); color: var(--ustb-blue); font-size: var(--fs-caption); font-family: Arial, sans-serif;}
+.legacy-page[data-reference-layout="summary"] .section-line{display: flex; align-items: center; gap: 14px; height: 30px; font-size: var(--fs-label); font-weight: 600; color: var(--primary);}
+.legacy-page[data-reference-layout="summary"] .section-index{display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 30px; border-radius: 4px; background: var(--tint); color: var(--ustb-blue); font-size: var(--fs-caption); font-family: Arial, sans-serif;}
 .legacy-page[data-reference-layout="summary"] .slide-header h2{font-size: var(--fs-h2); line-height: 1.22; font-weight: 700; margin: 16px 0px 0px; letter-spacing: 0.5px;}
 .legacy-page[data-reference-layout="summary"] .slide-logo{position: absolute; top: calc((var(--header-height) + var(--top-trim) - var(--header-rule) - var(--logo-size)) / 2); right: var(--page-margin); width: var(--logo-size); height: var(--logo-size); object-fit: contain;}
 .legacy-page[data-reference-layout="summary"] .slide-content{position: absolute; top: 192px; left: var(--page-margin); right: var(--page-margin); bottom: 90px; display: flex; flex-direction: column; gap: 22px; min-width: 0px; min-height: 0px;}
@@ -159,14 +159,14 @@
 .legacy-page[data-reference-layout="summary"] .data-table thead{color: white; background: var(--ustb-blue);}
 .legacy-page[data-reference-layout="summary"] .data-table th{font-weight: 600;}
 .legacy-page[data-reference-layout="summary"] .data-table a{white-space: normal; overflow-wrap: anywhere; word-break: normal;}
-.legacy-page[data-reference-layout="summary"] .data-table tbody tr:nth-child(2n){background: rgb(244, 248, 251);}
+.legacy-page[data-reference-layout="summary"] .data-table tbody tr:nth-child(2n){background: var(--tint);}
 .legacy-page[data-reference-layout="summary"] .data-table.plan-table{height: auto; font-size: var(--fs-label); line-height: 1.45;}
 .legacy-page[data-reference-layout="summary"] .data-table.plan-table th,.legacy-page[data-reference-layout="summary"] .data-table.plan-table td{padding: 8px 12px;}
 .legacy-page[data-reference-layout="summary"] .summary-panel{display: flex; flex-direction: column; min-height: 0px; min-width: 0px;}
 .legacy-page[data-reference-layout="summary"] .summary-panel > .group-title{flex: 0 0 auto; margin-bottom: 16px;}
 .legacy-page[data-reference-layout="summary"] .summary-list{flex: 1 1 0%; min-height: 0px; display: grid; grid-template-rows: repeat(3, minmax(0px, 1fr)); gap: 14px; counter-reset: summary 0; margin: 0px; padding: 0px; list-style: none;}
-.legacy-page[data-reference-layout="summary"] .summary-list li{counter-increment: summary 1; position: relative; display: flex; flex-direction: column; justify-content: center; padding: 14px 18px 14px 62px; border: 1px solid rgb(223, 235, 243); background: rgb(241, 247, 251); border-radius: 6px;}
-.legacy-page[data-reference-layout="summary"] .summary-list li::before{content: counter(summary, decimal-leading-zero); position: absolute; top: 18px; left: 16px; color: rgb(121, 164, 189); font: var(--fs-h3)/1.35 Arial,sans-serif;}
+.legacy-page[data-reference-layout="summary"] .summary-list li{counter-increment: summary 1; position: relative; display: flex; flex-direction: column; justify-content: center; padding: 14px 18px 14px 62px; border: 1px solid var(--line); background: var(--tint); border-radius: 6px;}
+.legacy-page[data-reference-layout="summary"] .summary-list li::before{content: counter(summary, decimal-leading-zero); position: absolute; top: 18px; left: 16px; color: var(--primary); font: var(--fs-h3)/1.35 Arial,sans-serif;}
 .legacy-page[data-reference-layout="summary"] .summary-list .item-title{font-size: var(--fs-item-title); margin-bottom: 8px;}
 .legacy-page[data-reference-layout="summary"] .summary-list .body-copy{font-size: var(--fs-body); line-height: 1.5;}
 .legacy-page[data-reference-layout="summary"] .plan-wrap{flex: 0 0 auto; min-height: auto; margin-bottom: 14px;}

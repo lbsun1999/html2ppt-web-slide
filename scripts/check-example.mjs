@@ -6,7 +6,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chr
 const page=await browser.newPage({viewport:{width:1720,height:1080}});page.on('pageerror',e=>console.log('JS ERROR',e.message));
 try{
  const school=process.argv.includes('--lishui')?'lishui':'ustb';const folder='ect/'+school+'-pages';
- await page.goto(pathToFileURL(path.resolve(school==='ustb'?'北京科技大学_WebSlide科研汇报示例.html':'丽水学院_WebSlide制作与演示指南.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');await page.evaluate(()=>document.fonts.ready);
+ await page.goto(pathToFileURL(path.resolve(school==='ustb'?'北京科技大学_WebSlide科研汇报示例.html':'ect/lishui-release/丽水学院_WebSlide制作与演示指南.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');await page.evaluate(()=>document.fonts.ready);
  const model=await page.evaluate(()=>window.slideStudio.getProject());console.log('Pages:',model.slides.length);const errors=[];
  await fs.mkdir(folder,{recursive:true});
  for(let i=0;i<model.slides.length;i++){

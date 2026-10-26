@@ -1,3 +1,5 @@
+import {decodeSVGData} from './svg.js';
+import {modularizeFormula} from './formula-layout.js';
 import {TEXT_STYLES} from './text-styles.js';
 export const W=1600,H=900,GAP=12,SAFE={x:58,y:256,w:1484,h:554};
 export const contentBounds=(summary=false)=>({...SAFE,h:(summary?750:834)-SAFE.y});
@@ -13,6 +15,7 @@ export function moduleOf(type,rect,count=1){const m={id:uid(),type,style:'plain'
 export function blankSlide(){return {id:uid(),kind:'body',section:'01',group:'研究背景',title:'新的研究页面',lead:'用一句话说明本页研究问题、证据或结论。',source:'',sourceUrl:'',summary:'',notes:'',modules:[]};}
 export function makePage(kind='body'){
  const s={...blankSlide(),kind};
+ if(kind==='body')s.lead='';
  if(kind==='toc')Object.assign(s,{title:'汇报目录',group:'汇报概览',lead:'围绕研究问题、方法设计与实验结果展开汇报。',tocNotes:{}});
  if(kind==='transition')Object.assign(s,{title:'新章节',lead:'本章概览'});
  if(kind==='cover'||kind==='closing')Object.assign(s,{title:kind==='cover'?'科研汇报':'感谢聆听，恳请批评指正',lead:'研究问题 · 方法设计 · 实验验证',presenter:'汇报人姓名',institute:'学院 / 研究团队',date:'汇报日期'});
@@ -35,7 +38,7 @@ export function syncSections(p){
  }
  return p;
 }
-export function newDocument(title='未命名文稿',examples=false){const p=createProject();p.title=title;if(!examples){const t=makePage('transition');t.title='研究背景';p.slides=[makePage('cover'),makePage('toc'),t,blankSlide(),makePage('closing')];}return syncSections(p);}
+export function newDocument(title='未命名文稿',examples=false){const p=createProject();p.title=title;if(!examples){const t=makePage('transition');t.title='研究背景';p.slides=[makePage('cover'),makePage('toc'),t,makePage('body'),makePage('closing')];}return syncSections(p);}
 export function createProject({withSections=true}={}){
  const background=blankSlide();background.title='研究背景与问题定义';
  const a=moduleOf('text',{x:58,y:256,w:724,h:554},3);a.columns=1;a.style='unified';
@@ -52,13 +55,15 @@ export function createProject({withSections=true}={}){
 }
 export function validateProject(p){
  if(!p||p.version!==1||!Array.isArray(p.slides)||!p.slides.length||p.slides.length>100)throw Error('项目格式不正确，需为本编辑器保存的 HTML 文稿（1–100 页）。');
+ for(const s of p.slides)modularizeFormula(s);
  const ids=new Set();const checkId=id=>{if(!/^[a-zA-Z0-9_-]{1,80}$/.test(id)||ids.has(id))throw Error('页面或模块标识无效、重复。');ids.add(id);};
  for(const s of p.slides)if(s.textPositions){
   if(typeof s.textPositions!=='object'||Array.isArray(s.textPositions)||Object.keys(s.textPositions).length>100)throw Error('文字位置数据无效。');
   for(const [key,r]of Object.entries(s.textPositions))if(!/^[a-zA-Z][\w-]{0,79}$/.test(key)||typeof s[key]!=='string'||!r||['x','y','w','h','dx','dy'].some(k=>!Number.isFinite(r[k]))||r.w<=0||r.h<=0||Math.abs(r.dx)>1600||Math.abs(r.dy)>900)throw Error('文字位置数据无效。');
  }
  for(const key of ['primary','secondary','accent','emphasis','tint','ink'])if(!/^#[\da-f]{6}$/i.test(p.theme?.[key]||''))throw Error('主题色格式不正确。');
- for(const key of ['logo','wordmark'])if(p.theme[key]&&!/^data:image\/(png|jpeg|webp);base64,/i.test(p.theme[key]))throw Error('标志必须是内嵌的 PNG/JPEG/WebP 图片。');
- for(const s of p.slides){checkId(s.id);if(!['body','cover','closing','toc','transition'].includes(s.kind)||typeof s.title!=='string'||typeof s.lead!=='string')throw Error('页面类型或标题格式无效。');if(!Array.isArray(s.modules)||s.modules.length>40)throw Error('每页最多 40 个模块。');for(const m of s.modules){checkId(m.id);if(m.type==='text'&&m.style==='group')m.innerStyle='plain';if(!['text','table','media','shape','formula','timeline'].includes(m.type)||!Array.isArray(m.parts)||!m.parts.length||m.parts.length>12)throw Error('模块类型或子区域数量无效。');for(const k of ['x','y','w','h'])if(!Number.isFinite(m[k]))throw Error('模块坐标无效。');if(m.type==='table'&&(!Array.isArray(m.rows)||!m.rows.length||m.rows.length>100||m.rows.some(r=>!Array.isArray(r)||!r.length||r.length>30)))throw Error('表格最多 100 行、30 列，且不能为空。');if(m.type==='timeline'){if(m.hideTimeline===undefined)m.hideTimeline=false;if(m.parts.length>6||m.parts.some(p=>typeof p.year!=='string')||(m.stageColors&&(!Array.isArray(m.stageColors)||!m.stageColors.length||m.stageColors.length>6||m.stageColors.some(c=>!/^#[\da-f]{6}$/i.test(c)))))throw Error('Invalid timeline stages, year labels or colors.');}for(const a of m.parts){if(m.sectionedTable&&(!Array.isArray(a.rows)||!a.rows.length||a.rows.length>100||a.rows.some(r=>!Array.isArray(r)||!r.length||r.length>12)))throw Error('Invalid table section rows or columns.');if(typeof a.text!=='string'||typeof a.title!=='string')throw Error('子区域文字格式无效。');if(a.asset&&!/^data:(image\/(png|jpeg|webp)|video\/(mp4|webm));base64,/i.test(a.asset.src||''))throw Error('媒体格式不受支持。');}}}
+ for(const key of ['logo','wordmark'])if(p.theme[key]&&!/^data:image\/(png|jpeg|webp|svg\+xml);base64,/i.test(p.theme[key]))throw Error('标志必须是内嵌的PNG/JPEG/WebP或纯图形SVG。');
+ for(const key of ['logo','wordmark'])if(p.theme[key]?.startsWith('data:image/svg+xml;base64,'))decodeSVGData(p.theme[key]);
+ for(const s of p.slides){checkId(s.id);if(!['body','cover','closing','toc','transition'].includes(s.kind)||typeof s.title!=='string'||typeof s.lead!=='string')throw Error('页面类型或标题格式无效。');if(!Array.isArray(s.modules)||s.modules.length>40)throw Error('每页最多 40 个模块。');for(const m of s.modules){checkId(m.id);if(m.type==='text'&&m.style==='group')m.innerStyle='plain';if(!['text','table','media','shape','formula','timeline'].includes(m.type)||!Array.isArray(m.parts)||!m.parts.length||m.parts.length>12)throw Error('模块类型或子区域数量无效。');for(const k of ['x','y','w','h'])if(!Number.isFinite(m[k]))throw Error('模块坐标无效。');if(m.type==='table'&&(!Array.isArray(m.rows)||!m.rows.length||m.rows.length>100||m.rows.some(r=>!Array.isArray(r)||!r.length||r.length>30)))throw Error('表格最多 100 行、30 列，且不能为空。');if(m.type==='timeline'){if(m.hideTimeline===undefined)m.hideTimeline=false;if(m.parts.length>6||m.parts.some(p=>typeof p.year!=='string')||(m.stageColors&&(!Array.isArray(m.stageColors)||!m.stageColors.length||m.stageColors.length>6||m.stageColors.some(c=>!/^#[\da-f]{6}$/i.test(c)))))throw Error('Invalid timeline stages, year labels or colors.');}for(const a of m.parts){if(m.sectionedTable&&(!Array.isArray(a.rows)||!a.rows.length||a.rows.length>100||a.rows.some(r=>!Array.isArray(r)||!r.length||r.length>12)))throw Error('Invalid table section rows or columns.');if(typeof a.text!=='string'||typeof a.title!=='string')throw Error('子区域文字格式无效。');if(a.asset&&!/^data:(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm));base64,/i.test(a.asset.src||''))throw Error('媒体格式不受支持。');if(a.asset?.src?.startsWith('data:image/svg+xml;base64,'))decodeSVGData(a.asset.src);}}}
  return syncSections(p);
 }

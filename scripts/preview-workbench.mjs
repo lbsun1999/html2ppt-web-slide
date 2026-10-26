@@ -58,12 +58,13 @@ try{
  assert.equal(await page.locator('.slide-thumb.is-selected').count(),2);
  assert.ok(await ui('copy-pages').isVisible());await shot('page-controls','左侧多选页面，底部固定复制、粘贴、上移、下移和删除；缩略图列表独立滚动。');
 
- await open('目标函数与参数更新');await mode('text');await page.locator('#canvas .equation-explanation').first().focus();assert.equal(await page.locator('#free-text-x').isVisible(),true);
+ await open('主图与关键信息');await mode('text');await page.locator('#canvas .slide-lead').focus();assert.equal(await page.locator('#free-text-x').isVisible(),true);
  await page.locator('[data-free-text-move="down"]').click();assert.equal(await page.locator('#free-text-reset').isVisible(),true);
  await shot('free-text-controls','文字光标定位正文块：右侧坐标、1px／5px／网格步进、平移箭头及恢复原位。');
- await open('目标函数与参数更新');await mode('preview');await page.locator('#canvas [data-reference-formula]').first().dblclick();assert.equal(await page.locator('#formula-dialog').isVisible(),true);
+ await open('目标函数与参数更新');await mode('preview');await page.locator('#canvas [data-formula-part]').first().dblclick();assert.equal(await page.locator('#formula-dialog').isVisible(),true);
  await shot('formula-editor','公式编辑框：LaTeX源码、复制按钮、数学预览、取消和确定。',{target:'#formula-dialog'});await page.locator('#formula-dialog button[value="cancel"]').last().click();
 
+ await open('目标函数与参数更新');await mode('preview');await ui('export-pdf').click();await shot('local-export-connection','从离线文稿传送当前编辑内容到本机服务，无需拖动文件。',{target:'#local-export-dialog'});await page.locator('#local-export-dialog button[value="cancel"]').last().click();
  await open('逐页备注：给演讲者留一份讲解线索');await mode('preview');await ui('page-settings').click();await page.locator('#page-notes').scrollIntoViewIfNeeded();assert.equal(await page.locator('#page-notes').isVisible(),true);
  await shot('page-settings-notes','当前页设置弹窗：页尾总结、脚注、本页备注和来源；备注保存后由页面备注面板自动载入。',{target:'#page-dialog'});await page.locator('#page-dialog button[value="cancel"]').last().click();
 

@@ -16,6 +16,6 @@ try{
  await page.locator('[data-action="undo"]').click();assert.equal((await page.evaluate(()=>window.slideStudio.getProject())).slides[1].modules[0].parts[0].bullet,false);
  await page.locator('[data-action="redo"]').click();assert.equal((await page.evaluate(()=>window.slideStudio.getProject())).slides[1].modules[0].parts[0].marker,'✓');
  console.log('PASS custom markers and project undo/redo');
- await page.locator('[data-action="present"]').click();await page.waitForTimeout(100);assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('presenting')),true);await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#page-label').innerText().then(t=>t.startsWith('03')),true);await page.keyboard.press('Escape');assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('presenting')),false);
+ await page.locator('[data-action="present"]').click();await page.waitForTimeout(100);assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('presenting')),true);await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#sidebar-page-count').innerText().then(t=>t.startsWith('03')),true);await page.keyboard.press('Escape');assert.equal(await page.locator('body').evaluate(e=>e.classList.contains('presenting')),false);
  console.log('PASS fullscreen navigation and exit');
 }finally{await browser.close();}

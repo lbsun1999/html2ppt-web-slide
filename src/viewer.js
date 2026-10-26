@@ -8,7 +8,7 @@ export class SlideViewer{
   this.mode='scroll';this.columns=2;this.present=false;this.overview=false;this.zoom=1;this.pan={x:0,y:0};this.wheelUntil=0;this.restoreEscapeAt=0;
   root.addEventListener('wheel',e=>this.wheel(e),{passive:false});
   root.addEventListener('pointerdown',e=>this.pointer(e));
-  root.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;const hash=a.getAttribute('href'),slides=this.getProject().slides;const n=hash.startsWith('#slide-')?slides.findIndex(s=>s.id===hash.slice(7)):hash.startsWith('#ref-')?slides.findIndex(s=>s.referenceLayout==='references'):-1;if(n>=0){e.preventDefault();e.stopPropagation();this.select(n);}});
+  root.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;if(!this.present&&a.closest('.mode-edit,.mode-delete')){e.preventDefault();return;}const hash=a.getAttribute('href'),slides=this.getProject().slides;const n=hash.startsWith('#slide-')?slides.findIndex(s=>s.id===hash.slice(7)):hash.startsWith('#ref-')?slides.findIndex(s=>s.referenceLayout==='references'):-1;if(n>=0){e.preventDefault();e.stopPropagation();this.select(n);}});
   this.document.addEventListener('fullscreenchange',()=>{
    if(this.document.fullscreenElement||!this.present||this.ending)return;
    if(this.zoom>1.001||Date.now()-this.restoreEscapeAt<700){this.resetZoom();this.updateHUD();return;}
