@@ -11,7 +11,7 @@ const examples=[
  {name:'text-styles-example',columns:3,width:1920,focus:4,inspect:true}
 ];
 const manifest=path.join(root,'reference/snapshots.json');
-const runtimeFile='北京科技大学_WebSlide科研汇报示例.html',runtimeBytes=await fs.readFile(path.join(root,runtimeFile)),runtimeSha256=createHash('sha256').update(runtimeBytes).digest('hex');
+const runtimeFile='templates/template-1/ustb-blue/template.html',runtimeBytes=await fs.readFile(path.join(root,runtimeFile)),runtimeSha256=createHash('sha256').update(runtimeBytes).digest('hex');
 const expected=JSON.parse(await fs.readFile(manifest,'utf8'));
 const pageCounts=new Map();
 // Verify all approved HTML files before replacing derived previews.

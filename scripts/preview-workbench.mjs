@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const file=path.join(root,'北京科技大学_WebSlide科研汇报示例.html'),out=path.join(root,'docs/images');
+const file=path.join(root,'templates/template-1/ustb-blue/template.html'),out=path.join(root,'docs/images');
 const digest=async()=>createHash('sha256').update(await fs.readFile(file)).digest('hex'),before=await digest();
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
@@ -73,5 +73,5 @@ try{
  await page.evaluate(()=>document.querySelector('.workspace').scrollTo({top:0,behavior:'instant'}));
  assert.equal(await page.locator('.presentation-overview .view-page').count(),30);await shot('presentation-overview','放映中双击进入每行4页的总览，滚动查找并双击目标页继续放映。');await page.keyboard.press('Escape');
  assert.equal(await digest(),before,'Screenshots must not modify the source HTML');
- await fs.writeFile(path.join(root,'docs/工作台截图记录.json'),JSON.stringify({source:path.basename(file),sha256:before,viewport:page.viewportSize(),screenshots:records},null,2)+'\n');
+ await fs.writeFile(path.join(root,'docs/工作台截图记录.json'),JSON.stringify({source:path.relative(root,file).replaceAll('\\','/'),sha256:before,viewport:page.viewportSize(),screenshots:records},null,2)+'\n');
 }finally{await browser.close();}

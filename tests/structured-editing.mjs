@@ -4,7 +4,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {chromium} from 'playwright';
 import {blankSlide,moduleOf,createProject,validateProject} from '../src/model.js';
-const rootFile='北京科技大学_WebSlide科研汇报示例.html';
+const rootFile='templates/template-1/ustb-blue/template.html';
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 const page=await browser.newPage({viewport:{width:1720,height:1100},acceptDownloads:true});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));

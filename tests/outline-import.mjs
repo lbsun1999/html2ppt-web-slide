@@ -8,7 +8,7 @@ await fs.mkdir('ect',{recursive:true});
 const b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const page=await b.newPage({viewport:{width:1920,height:1200},acceptDownloads:true}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});
- await page.goto(pathToFileURL(path.resolve('北京科技大学_WebSlide科研汇报示例.html')).href);await page.waitForFunction(()=>window.slideStudio);
+ await page.goto(pathToFileURL(path.resolve('templates/template-1/ustb-blue/template.html')).href);await page.waitForFunction(()=>window.slideStudio);
  const original=await page.evaluate(()=>window.slideStudio.getProject()),formula=original.slides.find(s=>s.modules.some(m=>m.role==='objective-formulas')),refs=original.slides.find(s=>s.referenceLayout==='references');
  const manager=()=>page.locator('[data-action="outline"]').click();
  await manager();assert.equal(await page.locator('#outline-dialog').isVisible(),true);assert.equal(await page.locator('#outline-apply').isEnabled(),true);assert.ok((await page.locator('#outline-text').inputValue()).includes('### '+formula.title));assert.equal(await page.locator('#outline-appendix').isChecked(),true);assert.match(await page.locator('#outline-status').innerText(),/预计30页/);

@@ -2,7 +2,9 @@
 
 把原始材料交给 AI 组织内容，在浏览器里继续精修、演示与交付。同一份 HTML 同时承载文案、版式、素材和编辑功能，人工修改后还能交回 AI 继续加工。
 
-平台支持按用户偏好扩展：丽水学院示例由北科母版自动转换，替换主题色、校徽、校园素材及学校介绍，同时保留共同的版式与编辑、放映、导出能力。也可按其他学校、机构或汇报场景定制内容和视觉风格，让AI加工与人工调整持续配合。
+平台支持按用户偏好扩展：北科蓝、北科红与丽院青均放在独立模板包中，共用版式与编辑、放映、导出能力。新增学校、机构或汇报场景时，可以只增加一个自带HTML、素材和说明的模板目录，不必修改核心代码。
+
+> **许可提示：本仓库临时公开，仅供查看、学习与参考，不授予复制、分发、修改、再许可、公开传播或商业使用许可。后续重大功能更新将迁移至私有仓库维护。完整条款见[LICENSE](LICENSE)。**
 
 [快速开始](#快速开始) · [控件使用](#控件使用) · [放映与备注](#放映与备注) · [AI协作](#ai协作) · [文件与导出](#文件与导出) · [完整文档导航](#完整文档导航)
 
@@ -15,7 +17,7 @@
 | 特点 | 实际可以做什么 |
 | --- | --- |
 | AI与人工使用同一份源稿 | AI归纳材料并选版式，人工继续改文字、图表和备注；下一轮读取最新保存的HTML，保留人工修改 |
-| 共用母版，可按偏好扩展 | 以北科→丽水的自动转换为例，替换身份、主题色及素材；可继续适配其他学校、机构与汇报场景，定制文案和版式 |
+| 核心与模板包分离 | 北科蓝、北科红与丽院青各自携带HTML、素材和导出物；复制模板目录即可增量添加新身份与主题 |
 | 直接打开已有示例 | 学校HTML内嵌脚本、样式、字体与媒体，下载后双击即可编辑和放映 |
 | 大纲贯穿整个制作过程 | 按总标题、章节、单页题目组织文稿；随时修改并检查对应页面，末章可明确设为附录 |
 | 科研内容有成熟版式 | 提供研究现状、公式、实验表、伪代码、主图、总结计划、参考文献和作者简介 |
@@ -31,7 +33,7 @@
 
 ### 下载项目
 
-- [下载完整项目ZIP](https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip)：源码、北科科研／红色政务HTML、说明、参考示例及正式PDF/PPTX。
+- [下载完整项目ZIP](https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip)：源码、三个模板包、说明、参考示例及正式PDF/PPTX。
 - [版本发布与打包资源](https://github.com/lbsun1999/html2ppt-web-slide/releases)：下载已整理的版本包，解压后即可打开学校HTML。
 - 使用Git：`git clone https://github.com/lbsun1999/html2ppt-web-slide.git`。
 
@@ -43,14 +45,15 @@
 
 先下载项目文件夹，再打开其中的HTML。GitHub中的HTML链接用于查看源文件，不能代替本地运行工作台。
 
-| 学校 | 可编辑源稿 | 导出文件 | 30页总览 |
+| 模板 | 可编辑源稿 | 导出文件 | 30页总览 |
 | --- | --- | --- | --- |
-| 北京科技大学 | [HTML源稿](北京科技大学_WebSlide科研汇报示例.html) | [PDF](output/北京科技大学_WebSlide科研汇报示例.pdf) · [PPTX](output/北京科技大学_WebSlide科研汇报示例.pptx) | [5×6预览](docs/images/ustb-preview.png) |
-| 北科红色政务 | [HTML源稿](北京科技大学红色政务_WebSlide科研汇报示例.html) | [PDF](output/北京科技大学红色政务_WebSlide科研汇报示例.pdf) · [PPTX](output/北京科技大学红色政务_WebSlide科研汇报示例.pptx) | [公式页预览](docs/images/red-formula-theme.png) |
+| 北科科研·科技蓝 | [HTML源稿](templates/template-1/ustb-blue/template.html) | [PDF](templates/template-1/ustb-blue/output/template.pdf) · [PPTX](templates/template-1/ustb-blue/output/template.pptx) | [5×6预览](docs/images/ustb-preview.png) |
+| 北科党政·钢铁红 | [HTML源稿](templates/template-1/ustb-red/template.html) | [PDF](templates/template-1/ustb-red/output/template.pdf) · [PPTX](templates/template-1/ustb-red/output/template.pptx) | [公式页预览](docs/images/red-formula-theme.png) |
+| 丽水学院·主题青 | [HTML源稿](templates/template-1/lishui-cyan/template.html) | [PDF](templates/template-1/lishui-cyan/output/template.pdf) · [PPTX](templates/template-1/lishui-cyan/output/template.pptx) | 同版式族换肤示例 |
 
-主分支以北科科研与红色政务两套模板为使用入口。丽水学院作为[额外Release资源包](extensions/lishui/README.md)提供，共用本分支的基础接口与转换配置，无需维护重复分支。真实汇报的页数由内容决定，不要求保留全部30页。
+三套模板都属于[Template 1版式族](templates/template-1/)，但彼此拥有独立的HTML、`assets/`、说明和`output/`。真实汇报的页数由内容决定，不要求保留全部30页。
 
-另有[北科红色政务HTML](北京科技大学红色政务_WebSlide科研汇报示例.html)，保留用户指定的钢铁红与浅红底，使用原始SVG校徽。浅卡片、分割线、默认人物占位随主题变化；辅助灰字对齐主题色相，保留原色的饱和度和明度，正文与封面填写信息使用纯黑。实际上传的照片不会自动重着色。
+另有[北科红色政务HTML](templates/template-1/ustb-red/template.html)，保留用户指定的钢铁红与浅红底，使用原始SVG校徽。浅卡片、分割线、默认人物占位随主题变化；辅助灰字对齐主题色相，保留原色的饱和度和明度，正文与封面填写信息使用纯黑。实际上传的照片不会自动重着色。
 
 ### 公式、符号与样式表
 
@@ -334,7 +337,7 @@ node scripts/start.mjs --open
 
 PDF／PPTX导出需要本地服务。不能把HTML改扩展名冒充PPTX；交付前仍须在目标PowerPoint环境复查字体、显式换行与媒体播放。随附PDF/PPTX是导出时的快照，HTML内容变化后需重新导出。
 
-正式HTML放根目录或用户指定位置，`output/`只放正式PDF/PPTX；`docs/images/`保存说明书插图，`ect/`放可再生中间数据与检查产物。分享整套生成／导出能力时保留项目源码和资源，依赖可用`npm.cmd ci`恢复。
+内置正式HTML、源素材和导出快照均放在各自模板包；用户成稿可放在用户指定位置。`docs/images/`保存说明书插图，`ect/`放可再生中间数据与检查产物。分享整套生成／导出能力时保留项目源码和资源，依赖可用`npm.cmd ci`恢复。
 
 ## 完整文档导航
 
@@ -354,7 +357,7 @@ docs中的说明、原始规范和截图记录均可从这里进入：
 | [验收记录](docs/验收记录.md) | 查回归检查、验证范围与已知限制 |
 | [工作台截图记录](docs/工作台截图记录.json) | 复查README截图的源稿哈希、界面状态及窗口尺寸 |
 
-更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [丽水独立扩展](extensions/lishui/README.md) · [总结与计划版式](docs/images/summary-layout.png) · [三份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
+更多可视资料：[北科30页预览](docs/images/ustb-preview.png) · [模板包目录](templates/README.md) · [总结与计划版式](docs/images/summary-layout.png) · [三份参考HTML及多页工作台](reference/README.md) · [十种文字样式展示](文本块样式展示.html)。本页插图可直接点开查看原尺寸。
 
 维护示例与插图可运行：
 
@@ -369,14 +372,18 @@ npm.cmd run clean
 
 ## 资料与标识来源
 
-丽水资料见[学校概况](https://www.lsu.edu.cn/44/list.htm)、[历史沿革](https://www.lsu.edu.cn/47/list.htm)及[素材记录](assets/丽水学院/manifest.json)。校徽检索可参考[中国高校校徽（LOGO）官方下载资源汇总](https://www.cnblogs.com/cdz-111/articles/22432508 "发布于 2026-08-12 22:38")，最终以学校官方原件为准。
+丽水资料见[学校概况](https://www.lsu.edu.cn/44/list.htm)、[历史沿革](https://www.lsu.edu.cn/47/list.htm)及[素材记录](templates/template-1/lishui-cyan/assets/manifest.json)。校徽检索可参考[中国高校校徽（LOGO）官方下载资源汇总](https://www.cnblogs.com/cdz-111/articles/22432508 "发布于 2026-08-12 22:38")，最终以学校官方原件为准。
 
 项目示例不代表学校官方软件，图片和标识权益归各自权利人。校史、占位数据及教学说明用于版式展示，制作真实科研汇报时应替换为对应材料和可追踪来源。
 
 ## 目录与学校扩展
 
-根目录的两份北科HTML是可直接打开的正式源稿；output只放这两套模板的PDF/PPTX。src、样式、server.mjs和启动脚本是共用运行时；docs与reference是说明和已确认的参考示例。assets保留北科及丽水生成配置实际需要的资源。丽水的独立HTML、PDF/PPTX在额外Release包内，构建中间文件放ect，不进入主分支。
+`templates/`保存独立模板包；`src/`、样式、`server.mjs`和启动脚本是共用运行时；`docs/`与`reference/`是说明和已确认的参考示例。每个模板包自带`template.html`、`assets/`、README、清单与可选`output/`，根目录不再堆放学校成稿。
 
-选择额外资源包而非长期学校分支，可避免相同接口在不同分支逐渐分叉。所有学校仍使用同一套修复与新功能；新增学校可参考[丽水扩展说明](extensions/lishui/README.md)。
+新增学校或视觉主题时，复制最接近的模板包并替换其数据与素材即可；工作台可直接打开任意符合约定的HTML，不需要在核心代码中登记模板名称。只有新增通用模块或编辑能力时才修改公共运行时。具体约定见[模板包目录说明](templates/README.md)。
+
+## 使用许可
+
+本项目不是开放源代码许可项目。仓库暂时公开不等于授权复用；除非获得著作权人的明确书面授权，不得复制、分发、修改、再许可、公开传播或商业使用。后续重大功能更新将迁移至私有仓库维护。学校标识、校园图片及其他第三方材料另受各自权利人的权利限制，详见[LICENSE](LICENSE)。
 
 完整自检：保持本地工作台服务开启，执行`npm.cmd run test:all`。该命令运行单元测试、生成丽水测试扩展及各功能检查，详细日志在ect/self-check；中间文件不进入发布包。

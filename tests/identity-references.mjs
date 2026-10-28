@@ -8,7 +8,7 @@ import {createProject} from '../src/model.js';
 import {profilePage} from '../src/editable-layouts.js';
 import {writeDocument} from '../scripts/build-document.mjs';
 
-const source=await fs.readFile('北京科技大学_WebSlide科研汇报示例.html','utf8');
+const source=await fs.readFile('templates/template-1/ustb-blue/template.html','utf8');
 const master=JSON.parse(source.match(/<script id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
 const p=createProject({withSections:false}),custom=profilePage();
 custom.legacy_3='示例作者';custom.legacy_4='研究人员／工程师';custom.legacy_5='研究院／研究中心\n团队／联合实验室';custom.legacy_6='邮箱：contact@example.org';

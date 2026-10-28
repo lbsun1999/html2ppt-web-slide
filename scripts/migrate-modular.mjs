@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import {summaryPage, profilePage} from '../src/page-presets.js';
 
-const file = '北京科技大学_WebSlide科研汇报示例.html';
+const file = 'templates/template-1/ustb-blue/template.html';
 let html = fs.readFileSync(file, 'utf8');
 
 const match = html.match(/<script\b(?=[^>]*\bid=["']project-data["'])[^>]*>([\s\S]*?)<\/script>/i);

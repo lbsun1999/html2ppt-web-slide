@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "id": "template-1-lishui-cyan",
+  "family": "template-1",
+  "name": "丽水学院汇报示例",
+  "theme": "主题青",
+  "entry": "template.html",
+  "assets": "assets",
+  "output": "output"
+}

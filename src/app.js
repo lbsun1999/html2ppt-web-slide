@@ -4,6 +4,7 @@ import {chooseExportTarget,writeExport} from './export-target.js';
 import {TextBlockSelection} from './text-block-selection.js';
 import {openOutlineImport} from './outline-import.js';
 import {openLocalExport,acceptLocalProject} from './local-workbench.js';
+import {droppedHTML} from './html-drop.js';
 import {replaceTableText} from './table-text.js';
 import {initTableTextEditor} from './table-text-editor.js';
 import {FreeTextPosition} from './free-text-position.js';
@@ -125,7 +126,7 @@ function bootUI(){
  $('#html-file').onchange=async e=>{if(e.target.files[0])await loadHTML(e.target.files[0]);e.target.value='';};
  $('#excel-file').onchange=importExcel;
  document.addEventListener('dragover',e=>{if(e.dataTransfer?.types.includes('Files'))e.preventDefault();});
- document.addEventListener('drop',async e=>{if(!e.dataTransfer?.files.length)return;e.preventDefault();const file=e.dataTransfer.files[0];if(/\.html?$/i.test(file.name))await loadHTML(file);else toast('请拖入已保存的 HTML；图片、视频和表格请用各自的插入按钮。',true);});
+ document.addEventListener('drop',async e=>{if(!e.dataTransfer?.items.length&&!e.dataTransfer?.files.length)return;e.preventDefault();const picked=await droppedHTML(e.dataTransfer);if(picked)await loadHTML(picked.file,{handle:picked.handle});else toast('请拖入已保存的 HTML，或包含 template.html 的模板包目录。',true);});
 }
 async function loadHTML(file,{handle=null}={}){try{const parsed=new DOMParser().parseFromString(await file.text(),'text/html'),data=parsed.querySelector('script#project-data[type="application/json"]');if(!data)throw Error('此文件没有工作台的文稿数据，请选择用“保存 HTML”生成的文件。');const next=validateProject(JSON.parse(data.textContent));if(present)viewer.end();savePoint();project=next;htmlFileHandle=handle;project.title=file.name.replace(/\.html?$/i,'');index=0;selected=null;mode='text';render();pageList.reset();persist();toast('HTML 已载入，可继续编辑或导出。');}catch(error){toast(error.message,true);}}
 function filename(value){const name=value.trim().replace(/\.html?$/i,'');if(!name||/[<>:"/\\|?*]/.test(name))throw Error('请填写文件名称，避免使用路径符号或冒号等特殊字符。');return name;}

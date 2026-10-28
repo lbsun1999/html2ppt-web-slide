@@ -40,7 +40,7 @@ test('new outline bodies are clean and do not inherit teaching modules or lead t
  const o=parseOutline('# 新文稿\n## 章节\n### 待制作页面\n材料写在备注里'),{project}=buildOutlineProject(createProject(),o);const s=project.slides.find(s=>s.kind==='body');assert.deepEqual(s.modules,[]);assert.equal(s.lead,'');assert.equal(s.summary,'');assert.equal(s.source,'');assert.match(s.notes,/材料写在备注里/);assert.equal(s.title,'待制作页面');
 });
 
-const master=()=>JSON.parse(fs.readFileSync('北京科技大学_WebSlide科研汇报示例.html','utf8').match(/<script[^>]*id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
+const master=()=>JSON.parse(fs.readFileSync('templates/template-1/ustb-blue/template.html','utf8').match(/<script[^>]*id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
 test('current outline roundtrip retains authored pages, IDs, notes, formats and appendix',()=>{
  const current=master(),before=structuredClone(current),o=describeCurrentOutline(current);assert.deepEqual(o.parsed.errors,[]);
  const {project}=updateProjectOutline(current,o.parsed,{reuse:o.bindings,chapters:o.chapters});

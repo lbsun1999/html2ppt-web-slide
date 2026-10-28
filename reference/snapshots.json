@@ -12,8 +12,8 @@
       "width": 1920,
       "height": 1528
     },
-    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
-    "runtimeSha256": "f970959c916a1333c5062c24255cff396b9aa303f26edecee4a65bf587e23162"
+    "runtimeSource": "templates/template-1/ustb-blue/template.html",
+    "runtimeSha256": "6904257841e590b71b3e6073169479c805ebe22aafe88b187b827b8620672e62"
   },
   {
     "file": "navigation.html",
@@ -28,8 +28,8 @@
       "width": 1920,
       "height": 1435
     },
-    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
-    "runtimeSha256": "f970959c916a1333c5062c24255cff396b9aa303f26edecee4a65bf587e23162"
+    "runtimeSource": "templates/template-1/ustb-blue/template.html",
+    "runtimeSha256": "6904257841e590b71b3e6073169479c805ebe22aafe88b187b827b8620672e62"
   },
   {
     "file": "text-styles-example.html",
@@ -44,7 +44,7 @@
       "width": 1920,
       "height": 1435
     },
-    "runtimeSource": "北京科技大学_WebSlide科研汇报示例.html",
-    "runtimeSha256": "f970959c916a1333c5062c24255cff396b9aa303f26edecee4a65bf587e23162"
+    "runtimeSource": "templates/template-1/ustb-blue/template.html",
+    "runtimeSha256": "6904257841e590b71b3e6073169479c805ebe22aafe88b187b827b8620672e62"
   }
 ]

@@ -6,7 +6,7 @@ await fs.mkdir('ect',{recursive:true});
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const source=await browser.newPage({viewport:{width:1720,height:1080},acceptDownloads:true}),errors=[];await source.addInitScript(()=>window.showSaveFilePicker=undefined);source.on('pageerror',e=>errors.push(e.message));
- await source.goto(new URL('../北京科技大学_WebSlide科研汇报示例.html',import.meta.url).href);await source.waitForFunction(()=>window.slideStudio);
+ await source.goto(new URL('../templates/template-1/ustb-blue/template.html',import.meta.url).href);await source.waitForFunction(()=>window.slideStudio);
  const p=createProject(),body=blankSlide(),m=moduleOf('text',{x:58,y:256,w:1484,h:500});m.parts[0].text='当前修改直接传入本机工作台，不需要拖动文件。';body.modules=[m];p.slides=[p.slides[0],body];p.slides[0].presenter='传送测试';
  await source.locator('#html-file').setInputFiles({name:'local-export-test.html',mimeType:'text/html',buffer:Buffer.from('<script id="project-data" type="application/json">'+JSON.stringify(p)+'</script>')});await source.locator('#canvas [data-slide-field="presenter"]').fill('尚未保存的修改');
  const original=await source.evaluate(()=>window.slideStudio.getProject());await source.locator('[data-action="export-pdf"]').first().click();assert.equal(await source.locator('#local-export-dialog').isVisible(),true);

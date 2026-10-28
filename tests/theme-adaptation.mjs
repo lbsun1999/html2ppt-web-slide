@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-const file='北京科技大学红色政务_WebSlide科研汇报示例.html',html=await fs.readFile(file,'utf8'),original=JSON.parse(html.match(/<script[^>]*id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]),b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+const file='templates/template-1/ustb-red/template.html',html=await fs.readFile(file,'utf8'),original=JSON.parse(html.match(/<script[^>]*id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]),b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const page=await b.newPage({viewport:{width:1920,height:1200}}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(new URL('../'+file,import.meta.url).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
  async function open(title){const i=original.slides.findIndex(s=>s.title===title);await page.locator(`[data-page="${i}"]`).click();await page.evaluate(()=>document.fonts.ready);return i;}

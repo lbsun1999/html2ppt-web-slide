@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "id": "template-1-ustb-red",
+  "family": "template-1",
+  "name": "北京科技大学党政汇报",
+  "theme": "钢铁红",
+  "entry": "template.html",
+  "assets": "assets",
+  "output": "output"
+}

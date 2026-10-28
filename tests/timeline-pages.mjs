@@ -16,7 +16,7 @@ const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(
 const ui=a=>page.locator(`[data-action="${a}"]`).first(),state=()=>page.evaluate(()=>window.slideStudio.getProject());
 const go=n=>page.locator(`[data-page="${n}"]`).click();
 const load=async(data,name='测试')=>{await page.locator('#html-file').setInputFiles({name:name+'.html',mimeType:'text/html',buffer:Buffer.from(`<script id="project-data" type="application/json">${JSON.stringify(data)}</script>`)});};
-const formal=JSON.parse((await fs.readFile('北京科技大学_WebSlide科研汇报示例.html','utf8')).match(/<script id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
+const formal=JSON.parse((await fs.readFile('templates/template-1/ustb-blue/template.html','utf8')).match(/<script id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
 const geometry=()=>page.locator('#canvas .timeline-media').evaluateAll(els=>els.map(el=>({w:el.clientWidth,h:el.clientHeight})));
 try{
  await fs.mkdir('ect',{recursive:true});await page.goto('http://127.0.0.1:4317');await page.waitForFunction(()=>window.slideStudio);await load(formal);await page.locator('#view-mode').selectOption('single');await go(7);await page.evaluate(()=>document.fonts.ready);

@@ -16,7 +16,7 @@ export function applyLishuiVariant(project,{logo,wordmark,assets={}}){
   legacy_12:'师范薪火初传',legacy_13:'重建延续文脉',legacy_14:'升本拓展格局',legacy_15:'服务地方发展',
   referenceImages:['school-origin.jpg','school-rebuild.jpg','school-campus.jpg','school-library.jpg'].map(name=>assets[name]?.src||logo),
   source:'来源：丽水学院官网·学校概况与历史沿革；配图为校史／校园资料，非逐年实景',sourceUrl:'https://www.lsu.edu.cn/47/list.htm',
-  notes:'文字依据丽水学院官网学校概况及历史沿革。首图官网标注为1906年的处州学堂，作为源流资料配图；第二图为1946年重建处州师范学校。后两图为现代校园及图书馆，不代表2004年或对应阶段的实景。全部照片来源见 assets/丽水学院/manifest.json。实际研究现状汇报请替换为领域文献、方法演进及研究差距。'};
+  notes:'文字依据丽水学院官网学校概况及历史沿革。首图官网标注为1906年的处州学堂，作为源流资料配图；第二图为1946年重建处州师范学校。后两图为现代校园及图书馆，不代表2004年或对应阶段的实景。全部照片来源见当前模板包 assets/manifest.json。实际研究现状汇报请替换为领域文献、方法演进及研究差距。'};
  if(history.referenceLayout)Object.assign(history,historyFields);
  else{const m=history.modules.find(m=>m.type==='timeline'&&m.schoolHistory);for(const key of ['title','lead','source','sourceUrl','notes'])history[key]=historyFields[key];m.monochrome=true;const names=['school-origin.jpg','school-rebuild.jpg','school-campus.jpg','school-library.jpg'];m.parts.forEach((p,i)=>{if(i<4){p.year=historyFields['legacy_'+(4+i*2)];p.text=historyFields['legacy_'+(5+i*2)];p.title=historyFields['legacy_'+(12+i)];if(p.asset)p.asset={...p.asset,name:names[i],src:historyFields.referenceImages[i]};}});}}
  for(const s of project.slides)for(const m of s.modules)for(const part of m.parts){if(part.asset?.name==='example-campus.png')part.asset.name='school-campus.jpg';if(part.asset?.name==='example-motto.png')part.asset.name='school-library.jpg';const replacement=assets[part.asset?.name];if(replacement&&part.asset){part.asset.src=replacement.src;if(replacement.width&&replacement.height)part.asset.naturalRatio=replacement.width/replacement.height;}}

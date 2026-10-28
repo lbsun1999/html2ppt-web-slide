@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';import {chromium} from 'playwright';
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const page=await browser.newPage({viewport:{width:1920,height:1200},acceptDownloads:true}),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>window.showSaveFilePicker=undefined);
- await page.goto(new URL('../北京科技大学红色政务_WebSlide科研汇报示例.html',import.meta.url).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
+ await page.goto(new URL('../templates/template-1/ustb-red/template.html',import.meta.url).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
  const initial=await page.evaluate(()=>window.slideStudio.getProject()),index=initial.slides.findIndex(s=>s.modules.some(m=>m.role==='objective-formulas')),s=initial.slides[index];await page.locator(`[data-page="${index}"]`).click();
  assert.equal(s.modules.length,3);assert.equal(s.modules[0].parts.length,2);assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[]);
  const symbol='#canvas .formula-symbols [data-cell-formula]',style='#canvas .formula-styles [data-cell-formula]';assert.equal(await page.locator(symbol).count(),6);assert.equal(await page.locator(style).count(),4);

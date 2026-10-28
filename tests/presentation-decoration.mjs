@@ -59,7 +59,7 @@ try{
   console.log('PASS '+style+': preview, hidden thumbnails in fullscreen, overview, zoom and presenter window use their own SVG resources');
  }
  assert.deepEqual(await page.evaluate(()=>window.slideStudio.getProject()),before,'Viewing must not change project data');
- for(const file of ['北京科技大学_WebSlide科研汇报示例.html','ect/lishui-release/丽水学院_WebSlide制作与演示指南.html','reference/example-project.html','reference/text-styles-example.html','reference/navigation.html']){
+ for(const file of ['templates/template-1/ustb-blue/template.html','templates/template-1/lishui-cyan/template.html','reference/example-project.html','reference/text-styles-example.html','reference/navigation.html']){
   await page.goto(pathToFileURL(path.resolve(file)).href);await page.waitForFunction(()=>window.slideStudio);
   let index=await page.evaluate(()=>window.slideStudio.getProject().slides.findIndex(s=>s.modules.some(m=>['ribbon','arrow','group'].includes(m.style))));
   if(index<0){await page.locator('#html-file').setInputFiles({name:'decoration-check.html',mimeType:'text/html',buffer:Buffer.from('<script id="project-data" type="application/json">'+JSON.stringify(p)+'</script>')});await page.waitForFunction(()=>window.slideStudio.getProject().slides[0].modules[0]?.style==='ribbon');index=0;}

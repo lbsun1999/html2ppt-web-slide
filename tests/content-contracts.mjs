@@ -6,7 +6,7 @@ const b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Ap
 try{
  const page=await b.newPage({viewport:{width:1720,height:1080}});
  await page.goto(pathToFileURL(path.resolve('index.html')).href);assert.ok(await page.getByText('此入口需要本地服务。',{exact:false}).isVisible());
- await page.goto(pathToFileURL(path.resolve('北京科技大学_WebSlide科研汇报示例.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
+ await page.goto(pathToFileURL(path.resolve('templates/template-1/ustb-blue/template.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
  const types=await page.evaluate(()=>window.slideStudio.getProject().slides.map(s=>s.kind));for(let i=0;i<types.length;i++)if(['cover','closing','transition'].includes(types[i])){await page.locator(`[data-page="${i}"]`).click();assert.equal(await page.locator('#canvas .slide-footer').count(),0,'Cover, closing and transition pages have no footer/page number');}
  await page.locator('[data-page="23"]').click();assert.equal(await page.locator('#canvas .summary-cards .text-part').count(),3);
  const style=await page.locator('#canvas .plan-module table').evaluate(t=>({body:[...t.querySelectorAll('tr:not(:first-child) td:first-child')].map(n=>({bg:getComputedStyle(n).backgroundColor,color:getComputedStyle(n).color})),head:[...t.querySelectorAll('tr:first-child th')].map(n=>getComputedStyle(n).backgroundColor),font:parseFloat(getComputedStyle(t).fontSize)*.6,padding:parseFloat(getComputedStyle(t.querySelector('td')).paddingTop)}));
