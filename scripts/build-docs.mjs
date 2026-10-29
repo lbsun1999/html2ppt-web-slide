@@ -5,7 +5,10 @@ import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),out=path.join(root,'docs/site');
 const sources=[
  ['README.md','README.html','完整使用说明'],['SKILL.md','SKILL.html','AI 协作规范'],['CHANGELOG.md','CHANGELOG.html','版本记录'],
- ['templates/README.md','templates-README.html','模板扩展说明'],['reference/README.md','reference-README.html','参考示例库']
+ ['templates/README.md','templates-README.html','模板扩展说明'],['reference/README.md','reference-README.html','参考示例库'],
+ ['templates/template-1/ustb-blue/README.md','template-ustb-blue.html','北科科技蓝模板'],
+ ['templates/template-1/ustb-red/README.md','template-ustb-red.html','北科钢铁红模板'],
+ ['templates/template-1/lishui-cyan/README.md','template-lishui-cyan.html','丽水学院主题青模板']
 ];
 for(const name of await fs.readdir(path.join(root,'docs')))if(name.endsWith('.md'))sources.push(['docs/'+name,name.replace(/\.md$/,'.html'),name.replace(/\.md$/,'')]);
 const map=new Map(sources.map(([src,dest])=>[path.resolve(root,src).toLowerCase(),dest]));

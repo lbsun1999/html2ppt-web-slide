@@ -4,7 +4,7 @@
 
 Web Slide 把 AI 内容加工、浏览器人工精修、演讲备注和 PDF／PPTX 交付放在同一份可继续编辑的 HTML 中。AI 可以整理材料和选择版式，用户继续修改文字、公式、表格、图片与模块；保存后的 HTML 还能交回 AI 迭代，不必从头制作。
 
-> ## 主入口：[打开 `index.html`](index.html)
+> ## 主入口：`index.html`
 >
 > **`index.html` 是项目的主入口、离线导航页和使用说明入口。** 下载并解压后优先双击它，再从图文导航进入主模板、交互教学、说明文档和参考页面。
 
@@ -20,7 +20,7 @@ Web Slide 把 AI 内容加工、浏览器人工精修、演讲备注和 PDF／PP
 ## 三分钟开始
 
 1. 下载[完整项目 ZIP](https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip)，解压到普通本地文件夹。
-2. 双击根目录的 [`index.html`](index.html)。
+2. 双击根目录的 `index.html`；GitHub 页面只用于阅读说明，不要直接点击 HTML 源文件。
 3. 第一次使用选择“交互式入门教学”；已有经验可直接进入北科科技蓝主模板。
 4. 在工作台中先确定文档大纲，再修改页面、模块、文字、图表和备注。
 5. 保存 HTML；需要 PDF／PPTX 时运行 [`启动.cmd`](启动.cmd)，在本地工作台中导出。
@@ -48,7 +48,7 @@ Web Slide 把 AI 内容加工、浏览器人工精修、演讲备注和 PDF／PP
 | 浏览与放映 | 单页、单列和多页滚动；页面备注；演讲者双窗口；全屏、总览、缩放和拖动 | 制作检查与正式汇报 |
 | 导出与迭代 | 指定路径导出PDF／PPTX；保留可编辑文字和列表；最新版HTML继续交给AI加工 | 交付后仍能人工修改和继续迭代 |
 
-详细操作见[控件与编辑说明](docs/site/README.html)，AI 与人工的责任边界见[AI制作与迭代流程](docs/AI制作与迭代流程.md)。
+详细操作见[AI接口与排版规则](docs/AI接口与排版规则.md)，AI 与人工的责任边界见[AI制作与迭代流程](docs/AI制作与迭代流程.md)。
 
 [![文档大纲：总标题、章节、页面、附录和对应页面设置](docs/images/outline-manager.png)](docs/images/outline-manager.png)
 
@@ -58,11 +58,11 @@ Web Slide 把 AI 内容加工、浏览器人工精修、演讲备注和 PDF／PP
 
 北科科技蓝是当前主模板。北科钢铁红演示同一版式如何迁移到党政主题；丽院青用于验证学校、主题和素材的增量扩展。模板之间共享工作台能力，但各自携带独立 HTML、素材、说明和导出快照。
 
-| 模板 | HTML源稿 | 导出快照 | 预览 |
+| 模板 | 图文说明 | 下载后打开 | 导出快照与预览 |
 | --- | --- | --- | --- |
-| 北科科研·科技蓝 | [打开](templates/template-1/ustb-blue/template.html) | [PDF](templates/template-1/ustb-blue/output/template.pdf) · [PPTX](templates/template-1/ustb-blue/output/template.pptx) | [30页总览](docs/images/ustb-preview.png) |
-| 北科党政·钢铁红 | [打开](templates/template-1/ustb-red/template.html) | [PDF](templates/template-1/ustb-red/output/template.pdf) · [PPTX](templates/template-1/ustb-red/output/template.pptx) | [公式页](docs/images/red-formula-theme.png) |
-| 丽水学院·主题青 | [打开](templates/template-1/lishui-cyan/template.html) | [PDF](templates/template-1/lishui-cyan/output/template.pdf) · [PPTX](templates/template-1/lishui-cyan/output/template.pptx) | 同版式族换肤示例 |
+| 北科科研·科技蓝 | [模板说明](templates/template-1/ustb-blue/README.md) | `templates/template-1/ustb-blue/template.html` | [PDF](templates/template-1/ustb-blue/output/template.pdf) · [PPTX](templates/template-1/ustb-blue/output/template.pptx) · [30页总览](docs/images/ustb-preview.png) |
+| 北科党政·钢铁红 | [模板说明](templates/template-1/ustb-red/README.md) | `templates/template-1/ustb-red/template.html` | [PDF](templates/template-1/ustb-red/output/template.pdf) · [PPTX](templates/template-1/ustb-red/output/template.pptx) · [公式页](docs/images/red-formula-theme.png) |
+| 丽水学院·主题青 | [模板说明](templates/template-1/lishui-cyan/README.md) | `templates/template-1/lishui-cyan/template.html` | [PDF](templates/template-1/lishui-cyan/output/template.pdf) · [PPTX](templates/template-1/lishui-cyan/output/template.pptx) |
 
 交互教学统一从北科科技蓝主模板进入，逐项练习：
 
@@ -109,8 +109,8 @@ node scripts/start.mjs --open
 
 | 重要级别 | 文件／目录 | 作用 |
 | --- | --- | --- |
-| **首先打开** | **[`index.html`](index.html)** | **项目主入口、离线导航页；集中链接模板、教学、说明和参考资料** |
-| 新手教学 | [`文本块样式展示.html`](文本块样式展示.html) | 交互式操作训练，不再是静态样式展板 |
+| **首先打开** | **`index.html`** | **下载后在本地双击；项目主入口、离线导航页，集中链接模板、教学、说明和参考资料** |
+| 新手教学 | `文本块样式展示.html` | 下载后从主入口进入；交互式操作训练，不再是静态样式展板 |
 | AI入口 | [`SKILL.md`](SKILL.md) | AI读取的完整制作、排版、迭代和验收规范 |
 | 使用说明 | [`README.md`](README.md) | 当前项目总览与最短使用路径 |
 | 本地服务 | [`启动.cmd`](启动.cmd) | 启动工作台、PDF/PPTX导出与Excel导入服务 |
@@ -127,7 +127,7 @@ node scripts/start.mjs --open
 
 | 文档 | 用途 |
 | --- | --- |
-| [完整图文说明](docs/site/index.html) | 从浏览器离线查看所有主要说明 |
+| [项目使用总览](README.md) | 入口、功能地图、模板、放映、导出与文件列表 |
 | [AI制作与迭代流程](docs/AI制作与迭代流程.md) | 材料、大纲、逐页制作、人机边界和续改流程 |
 | [AI接口与排版规则](docs/AI接口与排版规则.md) | project-data、模块、富文本、章节和特殊页面接口 |
 | [版式细则与错误复盘](docs/版式细则与错误复盘.md) | 内容密度、短尾行、表格、公式、图文和常见错误 |
