@@ -121,15 +121,30 @@ export function startTutorial({onSkipTheme}={}){
  const placeGuide=control=>{
   if(!control||manualPosition)return;
   const gap=18,pad=16,rect=control.getBoundingClientRect(),w=root.offsetWidth,h=Math.min(root.offsetHeight,innerHeight-pad*2),clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+  const contextNodes=[control],add=node=>{if(node&&!contextNodes.includes(node))contextNodes.push(node);};
+  const owner=control.closest('label,.field-line,.size-grid,.outline-options,.view-controls');add(owner);
+  if(owner?.nextElementSibling?.matches('.hint,.file-note,.tutorial-notice'))add(owner.nextElementSibling);
+  const inspector=control.closest('.inspector');
+  if(inspector){
+   const headings=[...inspector.querySelectorAll('h3')],heading=headings.filter(node=>node.compareDocumentPosition(control)&Node.DOCUMENT_POSITION_FOLLOWING).at(-1);
+   if(heading){add(heading);for(let node=heading.nextElementSibling;node&&!node.matches('h3,hr');node=node.nextElementSibling)add(node);}
+  }
+  const boxes=contextNodes.map(node=>node.getBoundingClientRect()).filter(box=>box.width&&box.height),avoid=boxes.reduce((all,box)=>({left:Math.min(all.left,box.left),top:Math.min(all.top,box.top),right:Math.max(all.right,box.right),bottom:Math.max(all.bottom,box.bottom)}),{left:rect.left,top:rect.top,right:rect.right,bottom:rect.bottom});
+  avoid.left-=8;avoid.top-=8;avoid.right+=8;avoid.bottom+=8;
   const candidates=[
-   {x:rect.right+gap,y:clamp(rect.top,pad,innerHeight-h-pad)},
-   {x:rect.left-w-gap,y:clamp(rect.top,pad,innerHeight-h-pad)},
-   {x:clamp(rect.left,pad,innerWidth-w-pad),y:rect.bottom+gap},
-   {x:clamp(rect.left,pad,innerWidth-w-pad),y:rect.top-h-gap}
+   {x:avoid.right+gap,y:avoid.top},
+   {x:avoid.right+gap,y:avoid.bottom-h},
+   {x:avoid.right+gap,y:(avoid.top+avoid.bottom-h)/2},
+   {x:avoid.left-w-gap,y:avoid.top},
+   {x:avoid.left-w-gap,y:avoid.bottom-h},
+   {x:avoid.left-w-gap,y:(avoid.top+avoid.bottom-h)/2},
+   {x:clamp(rect.left,pad,innerWidth-w-pad),y:avoid.bottom+gap},
+   {x:clamp(rect.left,pad,innerWidth-w-pad),y:avoid.top-h-gap}
   ];
-  const overlap=box=>Math.max(0,Math.min(box.x+w,rect.right)-Math.max(box.x,rect.left))*Math.max(0,Math.min(box.y+h,rect.bottom)-Math.max(box.y,rect.top));
+  const overlap=(box,bounds)=>Math.max(0,Math.min(box.x+w,bounds.right)-Math.max(box.x,bounds.left))*Math.max(0,Math.min(box.y+h,bounds.bottom)-Math.max(box.y,bounds.top));
   const visible=box=>Math.max(0,Math.min(box.x+w,innerWidth)-Math.max(box.x,0))*Math.max(0,Math.min(box.y+h,innerHeight)-Math.max(box.y,0));
-  const best=candidates.map(box=>({...box,score:visible(box)-overlap(box)*5})).sort((a,b)=>b.score-a.score)[0];
+  const distance=box=>Math.hypot(box.x+w/2-(rect.left+rect.right)/2,box.y+h/2-(rect.top+rect.bottom)/2);
+  const best=candidates.map(box=>({...box,x:clamp(box.x,pad,Math.max(pad,innerWidth-w-pad)),y:clamp(box.y,pad,Math.max(pad,innerHeight-h-pad))})).map(box=>({...box,score:visible(box)-overlap(box,avoid)*12-overlap(box,rect)*80-distance(box)*3})).sort((a,b)=>b.score-a.score)[0];
   root.style.left=`${clamp(best.x,pad,Math.max(pad,innerWidth-w-pad))}px`;root.style.top=`${clamp(best.y,pad,Math.max(pad,innerHeight-h-pad))}px`;root.style.right='auto';root.style.bottom='auto';
  };
  const startDrag=event=>{if(event.button!==0)return;event.preventDefault();manualPosition=true;const box=root.getBoundingClientRect(),dx=event.clientX-box.left,dy=event.clientY-box.top,move=e=>{const x=Math.max(8,Math.min(innerWidth-root.offsetWidth-8,e.clientX-dx)),y=Math.max(8,Math.min(innerHeight-root.offsetHeight-8,e.clientY-dy));root.style.left=`${x}px`;root.style.top=`${y}px`;root.style.right='auto';root.style.bottom='auto';},up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);};addEventListener('pointermove',move);addEventListener('pointerup',up,{once:true});};

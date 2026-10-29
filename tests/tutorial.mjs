@@ -26,6 +26,8 @@ try{
  await page.locator('[data-action="theme"]').click();
  for(const id of ['theme-secondary','theme-accent','theme-emphasis']){await page.locator(`#${id}.tutorial-target`).waitFor();await page.locator('#'+id).fill('');await page.locator('#'+id).press('Tab');}
  await page.locator('#theme-primary.tutorial-target').waitFor();
+ const contextOverlap=await page.evaluate(()=>{const guide=document.querySelector('.tutorial-guide').getBoundingClientRect(),label=document.querySelector('#theme-primary').closest('label').getBoundingClientRect();return Math.max(0,Math.min(guide.right,label.right)-Math.max(guide.left,label.left))*Math.max(0,Math.min(guide.bottom,label.bottom)-Math.max(guide.top,label.top));});
+ assert.equal(contextOverlap,0,'tutorial card avoids the active control label and its explanatory context');
  await page.locator('#theme-primary').fill('#A31418');await page.locator('#theme-primary').press('Tab');
  await page.locator('#theme-tint.tutorial-target').waitFor();
  await page.locator('#theme-tint').fill('#FCF1EE');await page.locator('#theme-tint').press('Tab');
