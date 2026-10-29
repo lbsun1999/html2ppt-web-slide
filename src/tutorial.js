@@ -49,11 +49,14 @@ const steps=[
  {group:'模块与内容',title:'进入空白正文练习页',text:'请打开“空白正文与卡片排版”。正文安全区没有预置模块，便于清楚观察插入、缩放和移动如何共同形成可用留白。',target:'.slide-thumb',targetText:'空白正文与卡片排版',event:'click'},
  {title:'从“＋”插入文字卡片',text:'打开顶部“＋”并选择“文字模块”。系统会优先放入连续空白区；若存在多个互不相连的空白区，会让你选择。',target:'#insert-menu',event:'change',selectValue:'text'},
  {title:'选中刚插入的卡片',text:'点击新卡片进入模块编辑。右侧会显示固定锚点、尺寸、位置和子区域设置。',target:'#canvas .module',event:'click'},
+ {title:'开启网格与自动吸附',text:'先勾选顶部“网格”。显示网格时，拖动、移动和参考线会自动吸附；关闭网格后才是自由拖动。',target:'#grid-visible',event:'change',selectValue:true},
+ {title:'调整网格间距',text:'把网格间距调到24 px。网格越小越适合精调，网格越大越适合快速建立整齐的页面骨架。',target:'#grid-step',event:'input',selectValue:'24'},
+ {title:'选择五格快调',text:'在右侧“单次步进”中选择“5格”。尺寸和位置按钮会按“网格间距 × 步进格数”快速调整；也可以长按按钮连续变化，或用 Shift＋单击临时调整5格。',target:'#adjust-multiplier',event:'change',selectValue:'5'},
  {title:'选择缩放锚点',text:'缩放可以固定四角，也可以固定中心。先选择“中心”，观察卡片向两侧同时扩展，便于快速对齐页面中心。',target:'#resize-anchor',event:'change',selectValue:'center'},
- {title:'收窄卡片宽度',text:'自动插入会优先使用当前最大的连续空白区，因此卡片初始通常已经最宽。点击“收窄”，在固定中心的情况下观察左右两侧同步收缩；之后再按实际内容小步精调。',target:'[data-resize="w-"]',event:'click'},
- {title:'移动卡片位置',text:'点击向右箭头，让卡片按网格移动一格。页面开启网格时自动吸附；关闭网格后可自由拖动。',target:'[data-move="right"]',event:'click'},
+ {title:'快速收窄卡片',text:'自动插入会优先使用当前最大的连续空白区，因此卡片初始通常已经最宽。点击一次“收窄”，用5格快调观察卡片围绕中心明显收缩。',target:'[data-resize="w-"]',event:'click'},
+ {title:'恢复一格精调',text:'把“单次步进”改回“1格”。大范围关系确定后，使用1格逐步修正边缘、间距和对齐，避免一次跨得太远。',target:'#adjust-multiplier',event:'change',selectValue:'1'},
+ {title:'移动卡片位置',text:'点击向右箭头，让卡片按当前网格移动一格。此时24 px网格仍开启，所以卡片位置会保持在网格线上。',target:'[data-move="right"]',event:'click'},
  {title:'多子区域不是固定截图',text:'右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。',target:'[data-action="add-part"]',event:'click'},
- {title:'网格就是吸附开关',text:'勾选网格后，拖动与参考线自动吸附；关闭网格则自由移动。请切换一次网格。',target:'#grid-visible',event:'change'},
  {title:'文字可逐段精调',text:'点击“编辑文字”，随后可选中文字调整字号、粗细、颜色、行距、段后距和对齐。Shift 可多选文字块。',target:'[data-action="mode-text"]',event:'click'},
  {title:'插入表格、公式与图文模块',text:'顶部“＋”统一收纳文字、表格、图片／视频和更多模块。表格支持粘贴或导入；公式保留 LaTeX；图像支持 SVG、裁剪和图注。',target:'#insert-menu',notice:'插入前先找连续空白区；有多个空白区时由用户选择。表格、公式和图片都是真实模块，插入后仍可移动、缩放、增减子区域。'},
  {title:'图文混排与图片替换',text:'媒体模块可包含多个等高子区域。双击图片或占位符即可上传 PNG、JPEG、WebP、SVG 或视频，并调整比例、缩放、取景和图注。',target:'#canvas',notice:'没有图注时不保留多余图注高度；并列图片保持实际等高。图片只是占位符时，也应明确可双击替换。'},
@@ -73,6 +76,8 @@ const steps=[
  {title:'进入模块编辑',text:'点击“编辑模块”，再选择需要作为基准的板块。',target:'[data-action="mode-edit"]',event:'click'},
  {title:'选择一个练习板块',text:'点击画布中的任意练习板块，右侧会出现“高级对齐与分布”。',target:'#canvas .module',event:'click'},
  {title:'进入高级对齐',text:'点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。',target:'[data-action="advanced-align"]',event:'click'},
+ {title:'关闭参考线吸附',text:'先关闭顶部“网格”。此时拖动纵向或横向参考线不会吸附到网格，适合自由寻找视觉位置。',target:'#grid-visible',event:'change',selectValue:false},
+ {title:'重新开启参考线吸附',text:'再次开启“网格”。参考线现在会按当前网格间距吸附，适合建立可重复、可检查的对齐基准。',target:'#grid-visible',event:'change',selectValue:true},
  {title:'多选、等距与环形分布',text:'点击“多选开关”，再在画布中选择多个模块。可固定最外边界后平均间隙，也可把文本块组成可整体移动的环形组。',target:'[data-align-mode="multi"]',event:'click'},
  {title:'高级排版的边界',text:'纵／横参考线负责对齐或拉伸；垂直／水平等距会展开多子区域参与计算；环形分布可设置数量、半径与角度。',target:'#alignment-panel',notice:'对齐只改变几何关系，不替代内容判断。必须复查安全区、遮挡、模块边缘、留白和阅读顺序；越界结果不能直接导出。'},
  {group:'环形排版',title:'打开环形文字排版练习页',text:'请打开“环形文字排版练习”。本页从空白正文开始，先插入独立文字块，再进行环形分布。',target:'.slide-thumb',targetText:'环形文字排版练习',event:'click'},
@@ -141,7 +146,7 @@ export function startTutorial({onSkipTheme}={}){
  const go=(nextIndex,{closeModal=false,reward=false}={})=>{if(closeModal)leaveModal();clear();index=Math.max(0,Math.min(steps.length-1,nextIndex));playCue();if(reward)burst();setTimeout(show,120);};
  const waitFor=selector=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{const node=document.querySelector(selector);if(node)return resolve(node);if(++tries>40)return reject(Error('教学控件未出现'));setTimeout(check,100);};check();});
  const setValue=(node,value)=>{node.value=value;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));};
- const autoStep=()=>{const step=steps[index];if(step.input){const input=find(step.input);setValue(input,step.copy??'');return;}if(step.fileStep){onSkipTheme?.();go(index+1,{reward:true});return;}if(step.selectValue&&target){target.value=step.selectValue;target.dispatchEvent(new Event(step.event||'change',{bubbles:true}));return;}if(step.event&&target){target.click();return;}go(index+1,{reward:true});};
+ const autoStep=()=>{const step=steps[index];if(step.input){const input=find(step.input);setValue(input,step.copy??'');return;}if(step.fileStep){onSkipTheme?.();go(index+1,{reward:true});return;}if(step.selectValue!==undefined&&target){if(target.type==='checkbox')target.checked=Boolean(step.selectValue);else target.value=step.selectValue;target.dispatchEvent(new Event(step.event||'change',{bubbles:true}));return;}if(step.event&&target){target.click();return;}go(index+1,{reward:true});};
  const autoGroup=async()=>{const meta=groupMeta(index),nextIndex=meta.indices.at(-1)+1;try{
   if(meta.name==='主题换肤')onSkipTheme?.();
   else if(meta.name==='大纲教学'){
