@@ -50,6 +50,7 @@
 /* Theme-aware advanced alignment controls. */
 .alignment-tool svg{border-color:color-mix(in srgb,var(--primary) 38%,#87939b);background:color-mix(in srgb,var(--primary) 8%,white);fill:color-mix(in srgb,var(--primary) 15%,#c9ced1);stroke:color-mix(in srgb,var(--primary) 72%,#172f41)}
 .tutorial-guide.tutorial-modal{top:24px;bottom:auto}
+.tutorial-progress{cursor:move;user-select:none;touch-action:none}
 .tutorial-guide{position:fixed;right:24px;bottom:24px;z-index:10020;width:min(430px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;padding:22px;background:#fff;border:1px solid color-mix(in srgb,var(--primary) 28%,#dce5eb);border-radius:14px;box-shadow:0 24px 80px #102d4155;color:#15384d}.tutorial-guide h2{margin:10px 0;font-size:22px;color:var(--primary)}.tutorial-guide p{margin:0 0 14px;line-height:1.7}.tutorial-progress{display:grid;gap:9px;font-size:12px;font-weight:700;letter-spacing:0;color:var(--primary)}.tutorial-progress-label{font-weight:800;letter-spacing:.06em}.tutorial-ruler{position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 7px}.tutorial-ruler::before{content:"";position:absolute;left:8px;right:8px;top:50%;height:2px;transform:translateY(-50%);background:color-mix(in srgb,var(--primary) 20%,#dbe4e9);border-radius:2px}.tutorial-tick{position:relative;z-index:1;display:block;border-radius:50%;background:#fff;border:2px solid color-mix(in srgb,var(--primary) 30%,#cbd7de);box-shadow:0 0 0 3px #fff;transition:.2s ease}.tutorial-tick.done{background:color-mix(in srgb,var(--primary) 62%,#fff);border-color:var(--primary)}.tutorial-tick.active{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,#fff);transform:scale(1.15)}.major-tick{width:14px;height:14px}.major-tick::after{content:attr(data-label);position:absolute;top:17px;left:50%;max-width:58px;transform:translateX(-50%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:700;color:#66808f}.major-tick.active::after{color:var(--primary)}.tutorial-ruler.major{margin-bottom:15px}.minor-tick{width:8px;height:8px;border-width:1.5px}.tutorial-ruler.minor::before{height:1px}.tutorial-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:16px}.tutorial-exit{margin-right:auto}.tutorial-notice{display:grid;gap:6px;padding:12px 14px;background:color-mix(in srgb,var(--primary) 7%,#fff);border-left:4px solid var(--primary);line-height:1.6}.tutorial-notice strong{color:var(--primary)}.tutorial-copy-text{max-height:190px;overflow:auto;margin:8px 0;padding:12px;white-space:pre-wrap;background:#f4f6f7;border:1px solid #dbe3e8;border-radius:7px;font:13px/1.6 Consolas,monospace}.tutorial-target{position:relative!important;z-index:10010!important;outline:4px solid #f1b82d!important;outline-offset:4px!important;animation:tutorial-pulse .8s ease-in-out infinite alternate}.tutorial-reward{position:fixed;left:50%;top:42%;z-index:10040;transform:translate(-50%,-50%);display:grid;place-items:center;min-width:190px;padding:22px 34px;color:#fff;background:var(--primary);border-radius:14px;box-shadow:0 20px 70px #102d4166;animation:tutorial-pop .9s both;pointer-events:none}.tutorial-reward strong{font-size:25px}.tutorial-reward span{font-size:13px}.tutorial-reward i{position:absolute;width:9px;height:16px;animation:tutorial-confetti .8s ease-out both}@keyframes tutorial-pulse{to{box-shadow:0 0 0 10px #f1b82d33}}@keyframes tutorial-pop{0%{opacity:0;transform:translate(-50%,-40%) scale(.7)}20%,75%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(.9)}}@keyframes tutorial-confetti{to{transform:translate(var(--x),130px) rotate(var(--r));opacity:0}}@media(max-width:700px){.tutorial-guide{right:16px;bottom:16px}}
 
 /* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
@@ -9667,8 +9668,8 @@ body.export-view .toc-note:empty{display:none}
       stack.push(makeGlyphSpan(bottom3, font, mode2));
       stack.push(lap);
       if (middle === null) {
-        var innerHeight = realHeightTotal - topHeightTotal - bottomHeightTotal + 2 * lapInEms;
-        stack.push(makeInner(repeat, innerHeight, options));
+        var innerHeight2 = realHeightTotal - topHeightTotal - bottomHeightTotal + 2 * lapInEms;
+        stack.push(makeInner(repeat, innerHeight2, options));
       } else {
         var _innerHeight = (realHeightTotal - topHeightTotal - bottomHeightTotal - middleHeightTotal) / 2 + 2 * lapInEms;
         stack.push(makeInner(repeat, _innerHeight, options));
@@ -10077,24 +10078,24 @@ body.export-view .toc-note:empty{display:none}
     htmlBuilder: (group, options) => {
       assertParsed(group);
       var inner2 = buildExpression$1(group.body, options, true, ["mopen", "mclose"]);
-      var innerHeight = 0;
+      var innerHeight2 = 0;
       var innerDepth = 0;
       var hadMiddle = false;
       for (var i2 = 0; i2 < inner2.length; i2++) {
         if (inner2[i2].isMiddle) {
           hadMiddle = true;
         } else {
-          innerHeight = Math.max(inner2[i2].height, innerHeight);
+          innerHeight2 = Math.max(inner2[i2].height, innerHeight2);
           innerDepth = Math.max(inner2[i2].depth, innerDepth);
         }
       }
-      innerHeight *= options.sizeMultiplier;
+      innerHeight2 *= options.sizeMultiplier;
       innerDepth *= options.sizeMultiplier;
       var leftDelim;
       if (group.left === ".") {
         leftDelim = makeNullDelimiter(options, ["mopen"]);
       } else {
-        leftDelim = delimiter.leftRightDelim(group.left, innerHeight, innerDepth, options, group.mode, ["mopen"]);
+        leftDelim = delimiter.leftRightDelim(group.left, innerHeight2, innerDepth, options, group.mode, ["mopen"]);
       }
       inner2.unshift(leftDelim);
       if (hadMiddle) {
@@ -10102,7 +10103,7 @@ body.export-view .toc-note:empty{display:none}
           var middleDelim = inner2[_i6];
           var isMiddle = middleDelim.isMiddle;
           if (isMiddle) {
-            inner2[_i6] = delimiter.leftRightDelim(isMiddle.delim, innerHeight, innerDepth, isMiddle.options, group.mode, []);
+            inner2[_i6] = delimiter.leftRightDelim(isMiddle.delim, innerHeight2, innerDepth, isMiddle.options, group.mode, []);
           }
         }
       }
@@ -10111,7 +10112,7 @@ body.export-view .toc-note:empty{display:none}
         rightDelim = makeNullDelimiter(options, ["mclose"]);
       } else {
         var colorOptions = group.rightColor ? options.withColor(group.rightColor) : options;
-        rightDelim = delimiter.leftRightDelim(group.right, innerHeight, innerDepth, colorOptions, group.mode, ["mclose"]);
+        rightDelim = delimiter.leftRightDelim(group.right, innerHeight2, innerDepth, colorOptions, group.mode, ["mclose"]);
       }
       inner2.push(rightDelim);
       return buildCommon.makeSpan(["minner"], inner2, options);
@@ -18021,6 +18022,7 @@ body.export-view .toc-note:empty{display:none}
     root.setAttribute("role", "dialog");
     root.setAttribute("aria-live", "polite");
     const progress = el("div", "tutorial-progress"), progressLabel = el("div", "tutorial-progress-label"), majorRuler = el("div", "tutorial-ruler major"), minorRuler = el("div", "tutorial-ruler minor"), title = el("h2"), text3 = el("p"), copyBox = el("div", "tutorial-copy"), actions = el("div", "tutorial-actions");
+    progress.title = "按住此处可拖动教学卡片";
     progress.append(progressLabel, majorRuler, minorRuler);
     const exit = el("button", "tutorial-exit", "退出教学"), skipStep = el("button", "", "代我完成此步"), skipGroup = el("button", "", "代我完成本大项"), next = el("button", "primary", "我已阅读，继续");
     actions.append(exit, skipStep, skipGroup, next);
@@ -18035,6 +18037,42 @@ body.export-view .toc-note:empty{display:none}
       const name = groupOf(i2), indices = steps.map((_, n) => n).filter((n) => groupOf(n) === name), position = indices.indexOf(i2) + 1, number = groupNames.indexOf(name) + 1;
       return { name, indices, position, number, total: indices.length };
     };
+    let manualPosition = false;
+    const placeGuide = (control) => {
+      if (!control || manualPosition) return;
+      const gap = 18, pad2 = 16, rect = control.getBoundingClientRect(), w = root.offsetWidth, h = Math.min(root.offsetHeight, innerHeight - pad2 * 2), clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      const candidates = [
+        { x: rect.right + gap, y: clamp(rect.top, pad2, innerHeight - h - pad2) },
+        { x: rect.left - w - gap, y: clamp(rect.top, pad2, innerHeight - h - pad2) },
+        { x: clamp(rect.left, pad2, innerWidth - w - pad2), y: rect.bottom + gap },
+        { x: clamp(rect.left, pad2, innerWidth - w - pad2), y: rect.top - h - gap }
+      ];
+      const overlap = (box) => Math.max(0, Math.min(box.x + w, rect.right) - Math.max(box.x, rect.left)) * Math.max(0, Math.min(box.y + h, rect.bottom) - Math.max(box.y, rect.top));
+      const visible = (box) => Math.max(0, Math.min(box.x + w, innerWidth) - Math.max(box.x, 0)) * Math.max(0, Math.min(box.y + h, innerHeight) - Math.max(box.y, 0));
+      const best = candidates.map((box) => ({ ...box, score: visible(box) - overlap(box) * 5 })).sort((a, b) => b.score - a.score)[0];
+      root.style.left = `${clamp(best.x, pad2, Math.max(pad2, innerWidth - w - pad2))}px`;
+      root.style.top = `${clamp(best.y, pad2, Math.max(pad2, innerHeight - h - pad2))}px`;
+      root.style.right = "auto";
+      root.style.bottom = "auto";
+    };
+    const startDrag = (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      manualPosition = true;
+      const box = root.getBoundingClientRect(), dx = event.clientX - box.left, dy = event.clientY - box.top, move = (e) => {
+        const x = Math.max(8, Math.min(innerWidth - root.offsetWidth - 8, e.clientX - dx)), y = Math.max(8, Math.min(innerHeight - root.offsetHeight - 8, e.clientY - dy));
+        root.style.left = `${x}px`;
+        root.style.top = `${y}px`;
+        root.style.right = "auto";
+        root.style.bottom = "auto";
+      }, up = () => {
+        removeEventListener("pointermove", move);
+        removeEventListener("pointerup", up);
+      };
+      addEventListener("pointermove", move);
+      addEventListener("pointerup", up, { once: true });
+    };
+    progress.addEventListener("pointerdown", startDrag);
     const renderRuler = (meta) => {
       progressLabel.textContent = meta.number > 0 ? `第 ${meta.number}.${meta.position} 步 · ${meta.name}` : `导览 · ${meta.name}`;
       majorRuler.replaceChildren(...groupNames.map((name, n) => {
@@ -18161,6 +18199,11 @@ body.export-view .toc-note:empty{display:none}
     };
     const show = () => {
       clear();
+      manualPosition = false;
+      root.style.removeProperty("left");
+      root.style.removeProperty("top");
+      root.style.removeProperty("right");
+      root.style.removeProperty("bottom");
       const step = steps[index2], meta = groupMeta(index2);
       renderRuler(meta);
       title.textContent = step.title;
@@ -18208,6 +18251,14 @@ body.export-view .toc-note:empty{display:none}
         document.querySelectorAll(".tutorial-target").forEach((node) => node.classList.remove("tutorial-target"));
         target.classList.add("tutorial-target");
         target.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+        requestAnimationFrame(() => placeGuide(target));
+        const reposition = () => placeGuide(target);
+        addEventListener("resize", reposition);
+        addEventListener("scroll", reposition, true);
+        cleanups.push(() => {
+          removeEventListener("resize", reposition);
+          removeEventListener("scroll", reposition, true);
+        });
         if (step.event) {
           const watched = target, done = () => advance();
           watched.addEventListener(step.event, done, { once: true });

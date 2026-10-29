@@ -88,11 +88,29 @@ export function startTutorial({onSkipTheme}={}){
  let index=0,target=null,cleanups=[],waitTimer=0;
  const root=el('section','tutorial-guide');root.setAttribute('role','dialog');root.setAttribute('aria-live','polite');
  const progress=el('div','tutorial-progress'),progressLabel=el('div','tutorial-progress-label'),majorRuler=el('div','tutorial-ruler major'),minorRuler=el('div','tutorial-ruler minor'),title=el('h2'),text=el('p'),copyBox=el('div','tutorial-copy'),actions=el('div','tutorial-actions');
+ progress.title='按住此处可拖动教学卡片';
  progress.append(progressLabel,majorRuler,minorRuler);
  const exit=el('button','tutorial-exit','退出教学'),skipStep=el('button','','代我完成此步'),skipGroup=el('button','','代我完成本大项'),next=el('button','primary','我已阅读，继续');actions.append(exit,skipStep,skipGroup,next);root.append(progress,title,text,copyBox,actions);document.body.append(root);
  const groupOf=i=>{for(let n=i;n>=0;n--)if(steps[n].group)return steps[n].group;return '开始';};
  const groupNames=[...new Set(steps.map((_,i)=>groupOf(i)))].filter(name=>name!=='开始');
  const groupMeta=i=>{const name=groupOf(i),indices=steps.map((_,n)=>n).filter(n=>groupOf(n)===name),position=indices.indexOf(i)+1,number=groupNames.indexOf(name)+1;return {name,indices,position,number,total:indices.length};};
+ let manualPosition=false;
+ const placeGuide=control=>{
+  if(!control||manualPosition)return;
+  const gap=18,pad=16,rect=control.getBoundingClientRect(),w=root.offsetWidth,h=Math.min(root.offsetHeight,innerHeight-pad*2),clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+  const candidates=[
+   {x:rect.right+gap,y:clamp(rect.top,pad,innerHeight-h-pad)},
+   {x:rect.left-w-gap,y:clamp(rect.top,pad,innerHeight-h-pad)},
+   {x:clamp(rect.left,pad,innerWidth-w-pad),y:rect.bottom+gap},
+   {x:clamp(rect.left,pad,innerWidth-w-pad),y:rect.top-h-gap}
+  ];
+  const overlap=box=>Math.max(0,Math.min(box.x+w,rect.right)-Math.max(box.x,rect.left))*Math.max(0,Math.min(box.y+h,rect.bottom)-Math.max(box.y,rect.top));
+  const visible=box=>Math.max(0,Math.min(box.x+w,innerWidth)-Math.max(box.x,0))*Math.max(0,Math.min(box.y+h,innerHeight)-Math.max(box.y,0));
+  const best=candidates.map(box=>({...box,score:visible(box)-overlap(box)*5})).sort((a,b)=>b.score-a.score)[0];
+  root.style.left=`${clamp(best.x,pad,Math.max(pad,innerWidth-w-pad))}px`;root.style.top=`${clamp(best.y,pad,Math.max(pad,innerHeight-h-pad))}px`;root.style.right='auto';root.style.bottom='auto';
+ };
+ const startDrag=event=>{if(event.button!==0)return;event.preventDefault();manualPosition=true;const box=root.getBoundingClientRect(),dx=event.clientX-box.left,dy=event.clientY-box.top,move=e=>{const x=Math.max(8,Math.min(innerWidth-root.offsetWidth-8,e.clientX-dx)),y=Math.max(8,Math.min(innerHeight-root.offsetHeight-8,e.clientY-dy));root.style.left=`${x}px`;root.style.top=`${y}px`;root.style.right='auto';root.style.bottom='auto';},up=()=>{removeEventListener('pointermove',move);removeEventListener('pointerup',up);};addEventListener('pointermove',move);addEventListener('pointerup',up,{once:true});};
+ progress.addEventListener('pointerdown',startDrag);
  const renderRuler=(meta)=>{
   progressLabel.textContent=meta.number>0?`第 ${meta.number}.${meta.position} 步 · ${meta.name}`:`导览 · ${meta.name}`;
   majorRuler.replaceChildren(...groupNames.map((name,n)=>{const dot=el('span','tutorial-tick major-tick');dot.dataset.label=name;dot.title=name;if(n+1<meta.number)dot.classList.add('done');else if(n+1===meta.number)dot.classList.add('active');return dot;}));
@@ -120,12 +138,12 @@ export function startTutorial({onSkipTheme}={}){
   go(nextIndex,{closeModal:true,reward:true});
  }catch(error){const n=el('aside','tutorial-notice');n.innerHTML='<strong>自动完成失败</strong><span></span>';n.querySelector('span').textContent=error.message+'，请完成当前控件或退出后重新进入教学。';copyBox.append(n);}};
  const show=()=>{
-  clear();const step=steps[index],meta=groupMeta(index);renderRuler(meta);title.textContent=step.title;text.textContent=step.text;copyBox.replaceChildren();
+  clear();manualPosition=false;root.style.removeProperty('left');root.style.removeProperty('top');root.style.removeProperty('right');root.style.removeProperty('bottom');const step=steps[index],meta=groupMeta(index);renderRuler(meta);title.textContent=step.title;text.textContent=step.text;copyBox.replaceChildren();
   skipStep.hidden=step.finish;skipGroup.hidden=step.finish||meta.name==='开始';next.hidden=!!step.event;next.textContent=step.finish?'完成并退出':step.input?'完成填写，继续':'我已阅读，继续';
   if(step.notice){const n=el('aside','tutorial-notice');n.innerHTML='<strong>必读告示</strong><span></span>';n.querySelector('span').textContent=step.notice;copyBox.append(n);}
   if(step.copy){const pre=el('pre','tutorial-copy-text',step.copy),button=el('button','','复制练习内容');button.type='button';button.onclick=async()=>{try{await navigator.clipboard.writeText(step.copy);button.textContent='已复制 ✓';}catch{pre.focus();const range=document.createRange();range.selectNodeContents(pre);getSelection().removeAllRanges();getSelection().addRange(range);button.textContent='已选中，请按 Ctrl+C';}};copyBox.append(pre,button);}
   const bind=()=>{
-   if(index>=steps.length)return;target=find(step.target,step.targetText);if(!target){waitTimer=setTimeout(bind,180);return;}const modal=target.closest('dialog[open]');root.classList.toggle('tutorial-modal',!!modal);if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target.classList.add('tutorial-target');target.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
+   if(index>=steps.length)return;target=find(step.target,step.targetText);if(!target){waitTimer=setTimeout(bind,180);return;}const modal=target.closest('dialog[open]');root.classList.toggle('tutorial-modal',!!modal);if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target.classList.add('tutorial-target');target.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});requestAnimationFrame(()=>placeGuide(target));const reposition=()=>placeGuide(target);addEventListener('resize',reposition);addEventListener('scroll',reposition,true);cleanups.push(()=>{removeEventListener('resize',reposition);removeEventListener('scroll',reposition,true);});
    if(step.event){const watched=target,done=()=>advance();watched.addEventListener(step.event,done,{once:true});cleanups.push(()=>watched.removeEventListener(step.event,done));}
    if(step.input){const input=find(step.input),done=()=>{if(step.allowEmpty||input.value.trim())advance();},paste=()=>setTimeout(done,30);input.addEventListener('change',done,{once:true});input.addEventListener('paste',paste,{once:true});cleanups.push(()=>{input.removeEventListener('change',done);input.removeEventListener('paste',paste);});
     if(step.input==='#outline-text'){const file=document.querySelector('#outline-file'),stepIndex=index,onFile=()=>{const timer=setTimeout(()=>{if(index===stepIndex&&input.value.trim())advance();},120);cleanups.push(()=>clearTimeout(timer));};file?.addEventListener('change',onFile,{once:true});if(file)cleanups.push(()=>file.removeEventListener('change',onFile));}

@@ -18,6 +18,11 @@ try{
  await page.locator('[data-action="theme"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/1\.1/);
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),1);
+ const targetBox=await page.locator('[data-action="theme"]').boundingBox(),guideBox=await page.locator('.tutorial-guide').boundingBox();
+ const overlap=Math.max(0,Math.min(targetBox.x+targetBox.width,guideBox.x+guideBox.width)-Math.max(targetBox.x,guideBox.x))*Math.max(0,Math.min(targetBox.y+targetBox.height,guideBox.y+guideBox.height)-Math.max(targetBox.y,guideBox.y));
+ assert.equal(overlap,0,'tutorial card automatically avoids the active control');
+ const handle=await page.locator('.tutorial-progress').boundingBox();await page.mouse.move(handle.x+20,handle.y+10);await page.mouse.down();await page.mouse.move(handle.x+70,handle.y+55);await page.mouse.up();
+ const draggedBox=await page.locator('.tutorial-guide').boundingBox();assert.ok(Math.abs(draggedBox.x-guideBox.x)>20||Math.abs(draggedBox.y-guideBox.y)>20,'tutorial card can be dragged manually');
  await page.locator('[data-action="theme"]').click();
  for(const id of ['theme-secondary','theme-accent','theme-emphasis']){await page.locator(`#${id}.tutorial-target`).waitFor();await page.locator('#'+id).fill('');await page.locator('#'+id).press('Tab');}
  await page.locator('#theme-primary.tutorial-target').waitFor();
