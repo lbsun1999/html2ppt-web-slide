@@ -17970,7 +17970,7 @@ body.export-view .toc-note:empty{display:none}
     { title: "观察一列纵向排布", text: "现在已有3个子区域，但列数仍为1，所以它们从上到下排列。子区域数量决定内容项，列数决定这些内容项如何换行。", target: "#module-columns", notice: "先观察画布中的纵向堆叠，再继续改变列数。" },
     { title: "改成两列观察换行", text: "把“列数”改成2列。前两项并排，第三项自动换到下一行；这种形式适合三项内容需要更宽正文时使用。", target: "#module-columns", event: "change", selectValue: "2" },
     { title: "改成三列并排", text: "再把“列数”改成3列。三个子区域会在同一行均分宽度，适合文字长度和信息层级接近的并列内容。", target: "#module-columns", event: "change", selectValue: "3" },
-    { title: "选择文本块样式", text: "在“文本块样式”中选择“B2 深色标题带”。样式只负责视觉层级，内容结构和子区域仍可继续调整。", target: "#module-style", event: "change", selectValue: "band" },
+    { title: "切换为 A3 卡片样式", text: "自动插入使用的默认样式只是起点，并非必须保留。打开“文本块样式”，切换为“A3 深底标题”，观察深色标题带、白字标题和浅底正文形成的层级；内容结构与子区域仍可继续调整。", target: "#module-style", event: "change", selectValue: "band" },
     { title: "进入文字编辑", text: "点击“编辑文字”。之后可逐段修改标题与正文，也可以选中局部文字调整字号、粗细、颜色、行距、段后距和对齐。", target: '[data-action="mode-text"]', event: "click" },
     { title: "粘贴一段含公式的正文", text: "点击第一个子区域正文，把示例文字粘贴进去。正文中的 $...$ 会按行内 LaTeX 公式显示。", target: '#canvas [data-field="text"]', input: '#canvas [data-field="text"]', copy: "以目标函数 $J(\\theta)$ 为例，先说明变量含义，再给出优化方向与适用条件。" },
     { title: "选择需要强调的文字", text: "在刚才的正文中拖动选择一句或几个词。文字格式只作用于当前选区；按住 Shift 还可选择多个文字块统一调整。", target: '#canvas [data-field="text"]', event: "mouseup", notice: "选区建立后教学会自动继续，避免点击“继续”时取消文字选择。" },
