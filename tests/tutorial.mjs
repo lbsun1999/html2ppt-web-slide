@@ -11,13 +11,15 @@ try{
  await page.locator('a[href*="ustb-blue"]').click();
  await page.waitForFunction(()=>window.slideStudio);
  await page.locator('.tutorial-guide').waitFor();
- assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),10,'major ruler exposes every tutorial section');
+ assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),9,'major ruler exposes every tutorial section');
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),0,'welcome does not mark a section as active');
  assert.match(await page.locator('.tutorial-guide').innerText(),/欢迎进入交互训练场/);
  await page.getByRole('button',{name:'我已阅读，继续'}).click();
  await page.locator('[data-action="theme"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/1\.1/);
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),1);
+ const visibleMajorLabels=await page.locator('.tutorial-ruler.major .major-tick').evaluateAll(nodes=>nodes.filter(node=>getComputedStyle(node,'::after').content&&!['none','""'].includes(getComputedStyle(node,'::after').content)).length);
+ assert.equal(visibleMajorLabels,1,'only the current major tutorial label is shown');
  const targetBox=await page.locator('[data-action="theme"]').boundingBox(),guideBox=await page.locator('.tutorial-guide').boundingBox();
  const overlap=Math.max(0,Math.min(targetBox.x+targetBox.width,guideBox.x+guideBox.width)-Math.max(targetBox.x,guideBox.x))*Math.max(0,Math.min(targetBox.y+targetBox.height,guideBox.y+guideBox.height)-Math.max(targetBox.y,guideBox.y));
  assert.equal(overlap,0,'tutorial card automatically avoids the active control');

@@ -52,6 +52,8 @@
 .tutorial-guide.tutorial-modal{top:24px;bottom:auto}
 .tutorial-progress{cursor:move;user-select:none;touch-action:none}
 .tutorial-guide{position:fixed;right:24px;bottom:24px;z-index:10020;width:min(430px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;padding:22px;background:#fff;border:1px solid color-mix(in srgb,var(--primary) 28%,#dce5eb);border-radius:14px;box-shadow:0 24px 80px #102d4155;color:#15384d}.tutorial-guide h2{margin:10px 0;font-size:22px;color:var(--primary)}.tutorial-guide p{margin:0 0 14px;line-height:1.7}.tutorial-progress{display:grid;gap:9px;font-size:12px;font-weight:700;letter-spacing:0;color:var(--primary)}.tutorial-progress-label{font-weight:800;letter-spacing:.06em}.tutorial-ruler{position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 7px}.tutorial-ruler::before{content:"";position:absolute;left:8px;right:8px;top:50%;height:2px;transform:translateY(-50%);background:color-mix(in srgb,var(--primary) 20%,#dbe4e9);border-radius:2px}.tutorial-tick{position:relative;z-index:1;display:block;border-radius:50%;background:#fff;border:2px solid color-mix(in srgb,var(--primary) 30%,#cbd7de);box-shadow:0 0 0 3px #fff;transition:.2s ease}.tutorial-tick.done{background:color-mix(in srgb,var(--primary) 62%,#fff);border-color:var(--primary)}.tutorial-tick.active{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px color-mix(in srgb,var(--primary) 18%,#fff);transform:scale(1.15)}.major-tick{width:14px;height:14px}.major-tick::after{content:attr(data-label);position:absolute;top:17px;left:50%;max-width:58px;transform:translateX(-50%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px;font-weight:700;color:#66808f}.major-tick.active::after{color:var(--primary)}.tutorial-ruler.major{margin-bottom:15px}.minor-tick{width:8px;height:8px;border-width:1.5px}.tutorial-ruler.minor::before{height:1px}.tutorial-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;margin-top:16px}.tutorial-exit{margin-right:auto}.tutorial-notice{display:grid;gap:6px;padding:12px 14px;background:color-mix(in srgb,var(--primary) 7%,#fff);border-left:4px solid var(--primary);line-height:1.6}.tutorial-notice strong{color:var(--primary)}.tutorial-copy-text{max-height:190px;overflow:auto;margin:8px 0;padding:12px;white-space:pre-wrap;background:#f4f6f7;border:1px solid #dbe3e8;border-radius:7px;font:13px/1.6 Consolas,monospace}.tutorial-target{position:relative!important;z-index:10010!important;outline:4px solid #f1b82d!important;outline-offset:4px!important;animation:tutorial-pulse .8s ease-in-out infinite alternate}.tutorial-reward{position:fixed;left:50%;top:42%;z-index:10040;transform:translate(-50%,-50%);display:grid;place-items:center;min-width:190px;padding:22px 34px;color:#fff;background:var(--primary);border-radius:14px;box-shadow:0 20px 70px #102d4166;animation:tutorial-pop .9s both;pointer-events:none}.tutorial-reward strong{font-size:25px}.tutorial-reward span{font-size:13px}.tutorial-reward i{position:absolute;width:9px;height:16px;animation:tutorial-confetti .8s ease-out both}@keyframes tutorial-pulse{to{box-shadow:0 0 0 10px #f1b82d33}}@keyframes tutorial-pop{0%{opacity:0;transform:translate(-50%,-40%) scale(.7)}20%,75%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(.9)}}@keyframes tutorial-confetti{to{transform:translate(var(--x),130px) rotate(var(--r));opacity:0}}@media(max-width:700px){.tutorial-guide{right:16px;bottom:16px}}
+/* 教学进度只标注当前大项，避免所有标签同时显示而重叠。 */
+.major-tick::after{content:""}.major-tick.active::after{content:attr(data-label);max-width:120px}
 
 /* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
 .text-parts{position:relative;gap:24px;grid-auto-rows:auto}
@@ -17963,8 +17965,15 @@ body.export-view .toc-note:empty{display:none}
     { title: "快速收窄卡片", text: "自动插入会优先使用当前最大的连续空白区，因此卡片初始通常已经最宽。点击一次“收窄”，用5格快调观察卡片围绕中心明显收缩。", target: '[data-resize="w-"]', event: "click" },
     { title: "恢复一格精调", text: "把“单次步进”改回“1格”。大范围关系确定后，使用1格逐步修正边缘、间距和对齐，避免一次跨得太远。", target: "#adjust-multiplier", event: "change", selectValue: "1" },
     { title: "移动卡片位置", text: "点击向右箭头，让卡片按当前网格移动一格。此时24 px网格仍开启，所以卡片位置会保持在网格线上。", target: '[data-move="right"]', event: "click" },
-    { title: "多子区域不是固定截图", text: "右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。", target: '[data-action="add-part"]', event: "click" },
-    { title: "文字可逐段精调", text: "点击“编辑文字”，随后可选中文字调整字号、粗细、颜色、行距、段后距和对齐。Shift 可多选文字块。", target: '[data-action="mode-text"]', event: "click" },
+    { title: "增加第二个子区域", text: "点击右侧“＋ 子区域”。同一模块的每个子区域都能独立编辑、排序和删除，适合表达并列关系。", target: '[data-action="add-part"]', event: "click" },
+    { title: "增加第三个子区域", text: "再增加一个子区域，使当前文字模块包含3项内容。一个模块通常不超过4个并列要点；更多内容应拆分或换页。", target: '[data-action="add-part"]', event: "click" },
+    { title: "设置为三列", text: "把“列数”设为3列。子区域数量决定内容项，列数决定它们如何换行排布；3个子区域也可以根据页面宽度改成1列或2列。", target: "#module-columns", event: "change", selectValue: "3" },
+    { title: "选择文本块样式", text: "在“文本块样式”中选择“B2 深色标题带”。样式只负责视觉层级，内容结构和子区域仍可继续调整。", target: "#module-style", event: "change", selectValue: "band" },
+    { title: "进入文字编辑", text: "点击“编辑文字”。之后可逐段修改标题与正文，也可以选中局部文字调整字号、粗细、颜色、行距、段后距和对齐。", target: '[data-action="mode-text"]', event: "click" },
+    { title: "粘贴一段含公式的正文", text: "点击第一个子区域正文，把示例文字粘贴进去。正文中的 $...$ 会按行内 LaTeX 公式显示。", target: '#canvas [data-field="text"]', input: '#canvas [data-field="text"]', copy: "以目标函数 $J(\\theta)$ 为例，先说明变量含义，再给出优化方向与适用条件。" },
+    { title: "选择需要强调的文字", text: "在刚才的正文中拖动选择一句或几个词。文字格式只作用于当前选区；按住 Shift 还可选择多个文字块统一调整。", target: '#canvas [data-field="text"]', event: "mouseup", notice: "选区建立后教学会自动继续，避免点击“继续”时取消文字选择。" },
+    { title: "修改选中文字颜色", text: "打开颜色选项并选择“主题色”。也可保留原色、使用强调色或自选颜色；修改只作用于当前选中的文字。", target: "#format-color", event: "change", selectValue: "theme" },
+    { title: "修改选中文字字号", text: "将选中文字设为14 pt。文字编辑支持10、12、14、16 pt，并可继续调整粗体、列表、行距、段后距和左中右／两端对齐。", target: "#format-font-size", event: "change", selectValue: "14" },
     { title: "插入表格、公式与图文模块", text: "顶部“＋”统一收纳文字、表格、图片／视频和更多模块。表格支持粘贴或导入；公式保留 LaTeX；图像支持 SVG、裁剪和图注。", target: "#insert-menu", notice: "插入前先找连续空白区；有多个空白区时由用户选择。表格、公式和图片都是真实模块，插入后仍可移动、缩放、增减子区域。" },
     { title: "图文混排与图片替换", text: "媒体模块可包含多个等高子区域。双击图片或占位符即可上传 PNG、JPEG、WebP、SVG 或视频，并调整比例、缩放、取景和图注。", target: "#canvas", notice: "没有图注时不保留多余图注高度；并列图片保持实际等高。图片只是占位符时，也应明确可双击替换。" },
     { title: "同一区域也可放多个模块", text: "先用“圈定范围”划出空白区域，再从“＋”插入独立模块；模块之间不能遮挡，边缘与间距应有明确关系。", target: '[data-action="draw"]', notice: "模块数量不是越多越好。一个文字板块一般不超过4点；超过时先凝练、拆分或换版式。" },
@@ -17975,19 +17984,27 @@ body.export-view .toc-note:empty{display:none}
     { title: "选择 LaTeX 公式", text: "把模块类型改为“LaTeX 公式”。", target: "#insert-type", event: "change", selectValue: "formula" },
     { title: "设置两个公式子区域", text: "子区域数量填写2，分别用于目标函数和参数更新。公式较多时可以继续增加，但要同步检查页面高度。", target: "#insert-count", input: "#insert-count", copy: "2" },
     { title: "确认插入公式模块", text: "点击“插入”。之后双击任一公式即可复制或修改 LaTeX；语法错误时系统会要求重新填写。", target: '[data-action="insert-dialog-apply"]', event: "click" },
+    { title: "双击打开公式编辑器", text: "双击第一个公式。编辑器会显示可复制的 LaTeX 源码、实时预览和主题色开关。", target: '#canvas [data-formula-part="0"]', event: "dblclick" },
+    { title: "修改公式 LaTeX", text: "把示例源码粘贴到编辑框。这里不需要外层 $；若语法错误，系统会保留输入并提示重新修改。", target: "#formula-latex", input: "#formula-latex", copy: "J(\\theta)=\\frac{1}{2m}\\sum_{i=1}^{m}(\\theta^T x_i-y_i)^2" },
+    { title: "确认公式修改", text: "检查实时预览后点击“确定”。公式会回到原模块，不会转成不可编辑的截图。", target: '[data-action="formula-dialog-apply"]', event: "click" },
+    { title: "编辑公式介绍文字", text: "点击“编辑文字”，然后可修改公式标题和公式下方的解释。公式页不能只有公式，必须说明含义、作用或适用条件。", target: '[data-action="mode-text"]', event: "click" },
+    { title: "补充公式解释", text: "在第一条公式下方粘贴说明，交代该式计算什么以及正则项或参数的作用。", target: '#canvas .formula-module [data-field="text"]', input: '#canvas .formula-module [data-field="text"]', copy: "该目标函数衡量预测误差，并通过参数约束控制模型复杂度。" },
     { group: "图片与媒体", title: "打开图片与视频练习页", text: "请打开“图片与视频练习”。这里从空白正文插入含两个子区域的媒体模块。", target: ".slide-thumb", targetText: "图片与视频练习", event: "click" },
     { title: "插入图片／视频模块", text: "从“＋”选择“图片／视频”。插入后可增加子区域；并列媒体必须保持绝对等高。", target: "#insert-menu", event: "change", selectValue: "media" },
     { title: "增加第二个媒体子区域", text: "点击“＋ 子区域”，把媒体模块改为两个并列区域。系统会重新分配宽度，并保持两张画面的绝对高度一致。", target: '[data-action="add-part"]', event: "click" },
-    { title: "替换练习图片", text: "双击占位图后，从 tutorial-assets/media 选择练习 SVG。图片、视频和 SVG 都支持替换；图注为空时不要保留冗余图注高度。", target: "#canvas .media-window", notice: "练习目录已准备 01-教学图片-结构.svg 与 02-教学图片-数据.svg。它们只用于练习替换，不写入正式模板素材。" },
+    { title: "打开媒体替换弹窗", text: "双击第一个媒体占位区。教学卡片会进入媒体弹窗，继续说明上传、比例、取景和图注设置。", target: "#canvas .media-window", event: "dblclick" },
+    { title: "选择练习图片", text: "点击“上传媒体”，从 tutorial-assets/media 选择“01-教学图片-结构.svg”。选择完成后继续设置裁剪比例。", target: "#media-file", event: "change", notice: "练习目录还准备了“02-教学图片-数据.svg”。图片、视频和 SVG 都支持替换。" },
+    { title: "选择媒体比例", text: "将裁剪比例改为4:3并观察预览。也可选16:9、1:1、原始比例或自定义比例；并列媒体最终仍需保持实际画面等高。", target: "#media-ratio", event: "change", selectValue: "1.3333333333333333" },
+    { title: "应用媒体设置", text: "点击“确定”返回页面。没有图注时应取消“保留图标题”，不要留下无意义的图注高度。", target: '[data-action="media-dialog-apply"]', event: "click" },
     { group: "高级对齐", title: "打开高级对齐练习页", text: "请打开“高级对齐练习”。本页故意放置了三个尺寸相近但位置不齐的板块，便于观察对齐前后的真实差异。", target: ".slide-thumb", targetText: "高级对齐练习", event: "click" },
     { title: "进入模块编辑", text: "点击“编辑模块”，再选择需要作为基准的板块。", target: '[data-action="mode-edit"]', event: "click" },
     { title: "选择一个练习板块", text: "点击画布中的任意练习板块，右侧会出现“高级对齐与分布”。", target: "#canvas .module", event: "click" },
     { title: "进入高级对齐", text: "点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。", target: '[data-action="advanced-align"]', event: "click" },
     { title: "关闭参考线吸附", text: "先关闭顶部“网格”。此时拖动纵向或横向参考线不会吸附到网格，适合自由寻找视觉位置。", target: "#grid-visible", event: "change", selectValue: false },
     { title: "重新开启参考线吸附", text: "再次开启“网格”。参考线现在会按当前网格间距吸附，适合建立可重复、可检查的对齐基准。", target: "#grid-visible", event: "change", selectValue: true },
-    { title: "多选、等距与环形分布", text: "点击“多选开关”，再在画布中选择多个模块。可固定最外边界后平均间隙，也可把文本块组成可整体移动的环形组。", target: '[data-align-mode="multi"]', event: "click" },
-    { title: "高级排版的边界", text: "纵／横参考线负责对齐或拉伸；垂直／水平等距会展开多子区域参与计算；环形分布可设置数量、半径与角度。", target: "#alignment-panel", notice: "对齐只改变几何关系，不替代内容判断。必须复查安全区、遮挡、模块边缘、留白和阅读顺序；越界结果不能直接导出。" },
-    { group: "环形排版", title: "打开环形文字排版练习页", text: "请打开“环形文字排版练习”。本页从空白正文开始，先插入独立文字块，再进行环形分布。", target: ".slide-thumb", targetText: "环形文字排版练习", event: "click" },
+    { title: "多选与等距分布", text: "点击“多选开关”，再在画布中选择多个模块。左／中／右、顶／中／底对齐用于统一边缘，水平／垂直等距用于固定最外边界后平均分配间隙。", target: '[data-align-mode="multi"]', event: "click" },
+    { title: "高级排版的边界", text: "纵／横参考线可用于对齐或拉伸；等距分布会展开多子区域参与计算。对齐完成后仍须检查安全区、遮挡、留白和阅读顺序。", target: "#alignment-panel", notice: "对齐只改变几何关系，不替代内容判断；越界或文字溢出的结果不能直接导出。" },
+    { title: "最后练习环形分布", text: "完成基础对齐后，再打开“环形文字排版练习”。本页从空白正文开始，先插入独立文字块，再进行环形分布。", target: ".slide-thumb", targetText: "环形文字排版练习", event: "click" },
     { title: "插入第一个独立文字块", text: "从“＋”选择“独立文字块 · 白底深字”。重复插入时先为每个文字块保留近似相同的尺寸。", target: "#insert-menu", event: "change", selectValue: "textbox-light" },
     { title: "为环形准备多个文字块", text: "请继续插入若干独立文字块，建议总数为6。每个文字块只放一个短概念，避免长段文字绕成难读的圆环。", target: "#insert-menu", notice: "可以使用“代我完成本大项”跳过重复插入。进入环形分布前，先统一尺寸并把文字块移动到正文安全区内。" },
     { title: "多选后执行环形分布", text: "进入“编辑模块”，选择一个文字块后打开高级对齐，启用多选并选择全部文字块，再设置环形中心、半径与角度。", target: '[data-action="mode-edit"]', notice: "环形排版完成后仍需检查标题、页首句和页尾区域，不能让文字块越过正文安全区。" },
@@ -18183,7 +18200,8 @@ body.export-view .toc-note:empty{display:none}
       check2();
     });
     const setValue = (node, value) => {
-      node.value = value;
+      if (node.isContentEditable) node.textContent = value;
+      else node.value = value;
       node.dispatchEvent(new Event("input", { bubbles: true }));
       node.dispatchEvent(new Event("change", { bubbles: true }));
     };
