@@ -11,9 +11,13 @@ try{
  await page.locator('a[href*="ustb-blue"]').click();
  await page.waitForFunction(()=>window.slideStudio);
  await page.locator('.tutorial-guide').waitFor();
+ assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),7,'major ruler exposes every tutorial section');
+ assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),0,'welcome does not mark a section as active');
  assert.match(await page.locator('.tutorial-guide').innerText(),/欢迎进入交互训练场/);
  await page.getByRole('button',{name:'我已阅读，继续'}).click();
  await page.locator('[data-action="theme"].tutorial-target').waitFor();
+ assert.match(await page.locator('.tutorial-progress-label').innerText(),/1\.1/);
+ assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),1);
  await page.locator('[data-action="theme"]').click();
  for(const id of ['theme-secondary','theme-accent','theme-emphasis']){await page.locator(`#${id}.tutorial-target`).waitFor();await page.locator('#'+id).fill('');await page.locator('#'+id).press('Tab');}
  await page.locator('#theme-primary.tutorial-target').waitFor();
@@ -23,15 +27,24 @@ try{
  await page.locator('#theme-ink.tutorial-target').waitFor();
  await page.locator('#theme-ink').fill('#000000');await page.locator('#theme-ink').press('Tab');
  if(await page.getByRole('button',{name:'完成填写，继续'}).isVisible())await page.getByRole('button',{name:'完成填写，继续'}).click();
- await page.locator('#theme-logo.tutorial-target').setInputFiles('templates/template-1/ustb-blue/assets/red-logo-solo.svg');
- await page.locator('#theme-wordmark.tutorial-target').setInputFiles('templates/template-1/ustb-blue/assets/logo-full-steel-red.svg');
+ await page.locator('#theme-logo.tutorial-target').setInputFiles('tutorial-assets/01-钢铁红-独立校徽.svg');
+ await page.locator('#theme-wordmark.tutorial-target').setInputFiles('tutorial-assets/02-钢铁红-校名组合标志.svg');
  assert.equal(await page.locator('#theme-primary').inputValue(),'#A31418');
+ await page.locator('[data-action="theme-dialog-apply"].tutorial-target').waitFor();
+ assert.equal((await page.locator('[data-action="theme-dialog-apply"]').innerText()).trim(),'应用');
+ assert.match(await page.locator('.tutorial-guide').innerText(),/点击“应用”/);
  await page.locator('[data-action="theme-dialog-apply"].tutorial-target').click();
  await page.waitForFunction(()=>window.slideStudio.getProject().theme.primary==='#A31418');
  const redTheme=await page.evaluate(()=>window.slideStudio.getProject().theme);assert.equal(redTheme.primary,'#A31418');assert.match(redTheme.logo,/^data:image\/svg\+xml;base64,/);assert.match(redTheme.wordmark,/^data:image\/svg\+xml;base64,/);
  await page.locator('[data-action="outline"].tutorial-target').waitFor();await page.locator('[data-action="outline"]').click();
  await page.locator('#outline-text.tutorial-target').waitFor();
- assert.match(await page.locator('.tutorial-copy-text').innerText(),/# 智能 Slide 入门练习/);
+ assert.match(await page.locator('.tutorial-copy-text').innerText(),/# 研究进展汇报/);
+ assert.equal(await page.locator('.tutorial-target').count(),1,'only the current control remains highlighted');
+ await page.getByRole('button',{name:'代我完成本大项'}).click();
+ await page.locator('[data-action="page-settings"].tutorial-target').waitFor();
+ assert.match(await page.locator('.tutorial-progress-label').innerText(),/3\.1/);
+ assert.equal(await page.locator('.tutorial-target').count(),1,'group automation clears stale highlights');
+ assert.equal(await page.locator('.tutorial-guide').count(),1,'completing a section does not exit tutorial');
  await page.screenshot({path:'ect/tutorial-onboarding.png'});
  console.log('PASS interactive onboarding launcher and real-control guidance');
 }finally{await browser.close();}
