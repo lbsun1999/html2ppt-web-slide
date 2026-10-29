@@ -1,8 +1,15 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>完整使用说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>完整使用说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="CHANGELOG.html">版本记录</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台</a><a class="l2" href="#三分钟开始">三分钟开始</a><a class="l2" href="#入口怎么选">入口怎么选</a><a class="l2" href="#核心工作流">核心工作流</a><a class="l2" href="#模板与交互教学">模板与交互教学</a><a class="l2" href="#放映备注与导出">放映、备注与导出</a><a class="l3" href="#两种正式放映方式">两种正式放映方式</a><a class="l3" href="#本地导出">本地导出</a><a class="l2" href="#主入口与文件列表">主入口与文件列表</a><a class="l2" href="#文档索引">文档索引</a><a class="l2" href="#维护与验证">维护与验证</a><a class="l2" href="#许可与资料来源">许可与资料来源</a></nav><article class="doc"><h1 id="web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台<a class="anchor" href="#web-slideai-与人工协作的科研幻灯片工作台">#</a></h1>
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>完整使用说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>完整使用说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="CHANGELOG.html">版本记录</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台</a><a class="l2" href="#三分钟开始">三分钟开始</a><a class="l2" href="#核心工作流">核心工作流</a><a class="l2" href="#功能地图">功能地图</a><a class="l2" href="#模板与交互教学">模板与交互教学</a><a class="l2" href="#放映备注与导出">放映、备注与导出</a><a class="l3" href="#两种正式放映方式">两种正式放映方式</a><a class="l3" href="#本地导出">本地导出</a><a class="l2" href="#主入口与文件列表">主入口与文件列表</a><a class="l2" href="#文档索引">文档索引</a><a class="l2" href="#维护与验证">维护与验证</a><a class="l2" href="#许可与资料来源">许可与资料来源</a></nav><article class="doc"><h1 id="web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台<a class="anchor" href="#web-slideai-与人工协作的科研幻灯片工作台">#</a></h1>
 <p>当前稳定版本：<strong>v0.2.0</strong>。</p>
 <p>Web Slide 把 AI 内容加工、浏览器人工精修、演讲备注和 PDF／PPTX 交付放在同一份可继续编辑的 HTML 中。AI 可以整理材料和选择版式，用户继续修改文字、公式、表格、图片与模块；保存后的 HTML 还能交回 AI 迭代，不必从头制作。</p>
 <blockquote>## 主入口：<a href="../../index.html">打开 `index.html`</a>&lt;br&gt;&lt;br&gt;<strong><code>index.html</code> 是项目的主入口、离线导航页和使用说明入口。</strong> 下载并解压后优先双击它，再从图文导航进入主模板、交互教学、说明文档和参考页面。</blockquote>
-<p><a href="../images/workbench-overview.png"><a class="image-link" href="../images/workbench-overview.png"><img src="../images/workbench-overview.png" alt="Web Slide 多页工作台：顶部控件、左侧缩略图、中央画布和右侧设置"></a></a></p>
+<p><a href="../images/index-navigation.png"><a class="image-link" href="../images/index-navigation.png"><img src="../images/index-navigation.png" alt="index.html 主入口：模板、说明文档、参考页面与本地服务提示"></a></a></p>
+<p><code>index.html</code> 将项目内容分成四组，避免用户进入目录后无从下手：</p>
+<ul>
+<li><strong>主模板</strong>：北科科技蓝、北科钢铁红和丽院青示例；</li>
+<li><strong>工作台说明</strong>：完整使用说明、AI协作规范和模板扩展接口；</li>
+<li><strong>学习与参考</strong>：交互式入门、综合示例、文字样式、导航与时间轴；</li>
+<li><strong>本地服务提示</strong>：需要导出PDF／PPTX时，提示启动方式和访问地址。</li>
+</ul>
 <h2 id="三分钟开始">三分钟开始<a class="anchor" href="#三分钟开始">#</a></h2>
 <ol>
 <li>下载<a href="https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip">完整项目 ZIP</a>，解压到普通本地文件夹。</li>
@@ -12,20 +19,12 @@
 <li>保存 HTML；需要 PDF／PPTX 时运行 <a href="../../启动.cmd">`启动.cmd`</a>，在本地工作台中导出。</li>
 </ol>
 <p>直接编辑和放映 HTML 不需要安装环境。导出、Excel 导入及完整自检需要 Node.js 20.10+、Chrome／Edge和项目依赖；不要求 Microsoft Office 或 Python。</p>
-<h2 id="入口怎么选">入口怎么选<a class="anchor" href="#入口怎么选">#</a></h2>
-<div class="table-scroll"><table><thead><tr><th>需求</th><th>打开这里</th></tr></thead><tbody><tr><td>浏览整个项目</td><td><strong><a href="../../index.html">`index.html`：主入口与图文导航</a></strong></td></tr><tr><td>第一次学习</td><td><a href="../../文本块样式展示.html">`文本块样式展示.html`：交互式入门教学</a></td></tr><tr><td>制作北科科研汇报</td><td><a href="../../templates/template-1/ustb-blue/template.html">北科科技蓝主模板</a></td></tr><tr><td>制作北科党政汇报</td><td><a href="../../templates/template-1/ustb-red/template.html">北科钢铁红模板</a></td></tr><tr><td>查看学校主题迁移</td><td><a href="../../templates/template-1/lishui-cyan/template.html">丽水学院主题青模板</a></td></tr><tr><td>查完整说明</td><td><a href="index.html">离线图文说明中心</a></td></tr><tr><td>让 AI 制作或续改</td><td><a href="SKILL.html">SKILL.md</a></td></tr></tbody></table></div>
-<p>GitHub 中的 HTML 链接用于查看源文件。要运行完整工作台，请下载后从本地打开。</p>
 <h2 id="核心工作流">核心工作流<a class="anchor" href="#核心工作流">#</a></h2>
 <pre data-lang="text"><code>原始材料 → AI/人工确认大纲 → 选择现有页面与模块 → 浏览器精修
         → 保存可继续编辑的 HTML → 备注与放映 → PDF/PPTX → 人工终审</code></pre>
-<ul>
-<li><strong>大纲先行</strong>：使用 <code># 总标题</code>、<code>## 章节</code>、<code>### 页面标题</code>建立结构；可更新当前文稿，也可另建正文干净的新文稿。</li>
-<li><strong>模块化制作</strong>：支持文字、表格、公式、图片／视频、时间轴、伪代码、参考文献、作者简介和总结计划。</li>
-<li><strong>人工精修</strong>：逐字符调整字号、粗细和颜色，逐段调整列表、对齐、行距及段后距；Shift 可多选文字块统一修改。</li>
-<li><strong>结构调整</strong>：模块和子区域可增删、排序、移动、缩放；网格显示时自动吸附，关闭后自由移动。</li>
-<li><strong>高级对齐</strong>：参考线平移／拉伸、多模块等距分布和环形组合；多子区域会展开参与间隙计算。</li>
-<li><strong>连续迭代</strong>：人工保存的最新版 HTML 是下一轮 AI 加工的源稿，已有内容和位置不能被无故重置。</li>
-</ul>
+<p><a href="../images/workbench-overview.png"><a class="image-link" href="../images/workbench-overview.png"><img src="../images/workbench-overview.png" alt="Web Slide 多页工作台：顶部控件、左侧缩略图、中央画布和右侧设置"></a></a></p>
+<h2 id="功能地图">功能地图<a class="anchor" href="#功能地图">#</a></h2>
+<div class="table-scroll"><table><thead><tr><th>功能组</th><th>主要能力</th><th>典型用途</th></tr></thead><tbody><tr><td>文档与大纲</td><td>新建／打开／保存HTML；导入或粘贴三级大纲；更新现稿或生成干净新稿；设置目录、过渡页与附录</td><td>先确定章节和逐页标题，再开始制作</td></tr><tr><td>页面与文字</td><td>页面复制、排序、删除；标题、页首句、页尾总结、来源和备注；字符级字号、粗细、颜色；段落列表、对齐、行距和段后距</td><td>人工精修文案与层级</td></tr><tr><td>模块与子区域</td><td>文字、表格、公式、媒体、时间轴；子区域增删排序；模块移动、缩放和固定中心；独立深／浅色文本块</td><td>复用成熟版式并自由调整结构</td></tr><tr><td>对齐与布局</td><td>网格吸附、自由拖动、参考线平移／拉伸、多选等距、环形分布；多子区域参与间距计算</td><td>保持板块边缘、中心和间隙一致</td></tr><tr><td>数据与媒体</td><td>表格批量粘贴、Excel／CSV导入、行高和字号；LaTeX公式；PNG／JPEG／WebP／SVG／视频上传、裁剪和等高图文</td><td>处理实验数据、公式和证据图片</td></tr><tr><td>浏览与放映</td><td>单页、单列和多页滚动；页面备注；演讲者双窗口；全屏、总览、缩放和拖动</td><td>制作检查与正式汇报</td></tr><tr><td>导出与迭代</td><td>指定路径导出PDF／PPTX；保留可编辑文字和列表；最新版HTML继续交给AI加工</td><td>交付后仍能人工修改和继续迭代</td></tr></tbody></table></div>
 <p>详细操作见<a href="README.html">控件与编辑说明</a>，AI 与人工的责任边界见<a href="AI制作与迭代流程.html">AI制作与迭代流程</a>。</p>
 <p><a href="../images/outline-manager.png"><a class="image-link" href="../images/outline-manager.png"><img src="../images/outline-manager.png" alt="文档大纲：总标题、章节、页面、附录和对应页面设置"></a></a></p>
 <p><a href="../images/module-controls.png"><a class="image-link" href="../images/module-controls.png"><img src="../images/module-controls.png" alt="模块编辑：尺寸、位置、样式和子区域控件"></a></a></p>
