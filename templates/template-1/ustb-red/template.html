@@ -17957,7 +17957,7 @@ body.export-view .toc-note:empty{display:none}
     { title: "从“＋”插入文字卡片", text: "打开顶部“＋”并选择“文字模块”。系统会优先放入连续空白区；若存在多个互不相连的空白区，会让你选择。", target: "#insert-menu", event: "change", selectValue: "text" },
     { title: "选中刚插入的卡片", text: "点击新卡片进入模块编辑。右侧会显示固定锚点、尺寸、位置和子区域设置。", target: "#canvas .module", event: "click" },
     { title: "选择缩放锚点", text: "缩放可以固定四角，也可以固定中心。先选择“中心”，观察卡片向两侧同时扩展，便于快速对齐页面中心。", target: "#resize-anchor", event: "change", selectValue: "center" },
-    { title: "放大卡片宽度", text: "点击“加宽”。先把卡片放大到接近目标区域，再做小步调整，通常比反复拖动更容易对齐。", target: '[data-resize="w+"]', event: "click" },
+    { title: "收窄卡片宽度", text: "自动插入会优先使用当前最大的连续空白区，因此卡片初始通常已经最宽。点击“收窄”，在固定中心的情况下观察左右两侧同步收缩；之后再按实际内容小步精调。", target: '[data-resize="w-"]', event: "click" },
     { title: "移动卡片位置", text: "点击向右箭头，让卡片按网格移动一格。页面开启网格时自动吸附；关闭网格后可自由拖动。", target: '[data-move="right"]', event: "click" },
     { title: "多子区域不是固定截图", text: "右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。", target: '[data-action="add-part"]', event: "click" },
     { title: "网格就是吸附开关", text: "勾选网格后，拖动与参考线自动吸附；关闭网格则自由移动。请切换一次网格。", target: "#grid-visible", event: "change" },
