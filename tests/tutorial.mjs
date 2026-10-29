@@ -55,7 +55,9 @@ try{
  assert.match(tocText,/01 基础设置/);assert.doesNotMatch(tocText,/01\s+01\s+基础设置/,'chapter number is generated once');
  await page.locator('.slide-thumb.tutorial-target').filter({hasText:'页面信息与备注练习'}).waitFor();
  await page.locator('.slide-thumb.tutorial-target').filter({hasText:'页面信息与备注练习'}).click();
+ await page.waitForTimeout(1000);
  assert.match(await page.locator('.slide-thumb.current .thumb-caption').innerText(),/页面信息与备注练习/,'one click opens the exact practice page instead of a TOC preview match');
+ assert.equal(await page.locator('.slide-thumb.is-selected').count(),1,'one click keeps a single selected page after smooth scrolling');
  await page.locator('[data-action="page-settings"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/3\.2/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'group automation clears stale highlights');

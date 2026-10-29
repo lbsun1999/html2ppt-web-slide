@@ -17,7 +17,7 @@ export class SlideViewer{
   });
  }
  scrolled(){
-  if(this.present||this.mode!=='scroll'||this.scrollTimer)return;
+  if(this.present||this.mode!=='scroll'||Date.now()<(this.programmaticScrollUntil||0)||this.scrollTimer)return;
   this.scrollTimer=this.window.setTimeout(()=>{this.scrollTimer=null;const host=this.scrollHost.getBoundingClientRect(),pages=[...this.root.querySelectorAll('[data-view-page]')];if(!pages.length)return;const current=pages.map(page=>({page,distance:Math.abs(page.getBoundingClientRect().top-host.top-8)})).sort((a,b)=>a.distance-b.distance)[0].page,index=Number(current.dataset.viewPage);if(index!==this.getIndex()){this.onIndex(index);this.onRender();}},120);
  }
  render({mode='text',showGrid=false,grid=20,selected=null,drawing=false}={}){
@@ -46,7 +46,7 @@ export class SlideViewer{
   if(this.present&&!this.overview)this.transform();
  }
  setView(mode,columns=this.columns){if(!['single','scroll','grid'].includes(mode))return;this.mode=mode;this.columns=Math.max(1,Math.min(6,Number(columns)||2));this.onRender();this.scrollTo(this.getIndex(),false);}
- scrollTo(index,smooth=true){if(this.present||this.mode==='single')return;this.root.querySelector(`[data-view-page="${index}"]`)?.scrollIntoView({block:'start',behavior:smooth?'smooth':'instant'});}
+ scrollTo(index,smooth=true){if(this.present||this.mode==='single')return;this.programmaticScrollUntil=Date.now()+(smooth?900:80);this.root.querySelector(`[data-view-page="${index}"]`)?.scrollIntoView({block:'start',behavior:smooth?'smooth':'instant'});}
  async start(index=this.getIndex()){
   if(this.exitPromise)await this.exitPromise;
   this.lastDrag=0;

@@ -17908,20 +17908,20 @@ body.export-view .toc-note:empty{display:none}
   // src/tutorial.js
   var OUTLINE = `# Web Slide 交互教学
 
-## 01 基础设置
+## 基础设置
 
 ### 页面信息与备注练习
 ### 空白正文与卡片排版
 ### 文字层级与列表练习
 
-## 02 内容模块
+## 内容模块
 
 ### 表格练习
 ### 公式练习
 ### 图片与视频练习
 ### 时间轴与图文练习
 
-## 03 排版与交付
+## 排版与交付
 
 ### 高级对齐练习
 ### 环形文字排版练习
@@ -18121,7 +18121,11 @@ body.export-view .toc-note:empty{display:none}
     const find = (selector, contains3) => {
       if (!selector) return null;
       const items = [...document.querySelectorAll(selector)];
-      return contains3 ? items.find((node) => (node.textContent || node.getAttribute("aria-label") || "").includes(contains3)) : items[0];
+      if (!contains3) return items[0];
+      return items.find((node) => {
+        const label = node.matches?.(".slide-thumb") ? node.getAttribute("aria-label") || node.querySelector(".thumb-caption")?.textContent || "" : node.getAttribute("aria-label") || node.textContent || "";
+        return label.includes(contains3);
+      });
     };
     const leaveModal = () => {
       const modal = root.closest("dialog");
@@ -18646,7 +18650,7 @@ body.export-view .toc-note:empty{display:none}
       });
     }
     scrolled() {
-      if (this.present || this.mode !== "scroll" || this.scrollTimer) return;
+      if (this.present || this.mode !== "scroll" || Date.now() < (this.programmaticScrollUntil || 0) || this.scrollTimer) return;
       this.scrollTimer = this.window.setTimeout(() => {
         this.scrollTimer = null;
         const host = this.scrollHost.getBoundingClientRect(), pages = [...this.root.querySelectorAll("[data-view-page]")];
@@ -18705,6 +18709,7 @@ body.export-view .toc-note:empty{display:none}
     }
     scrollTo(index2, smooth = true) {
       if (this.present || this.mode === "single") return;
+      this.programmaticScrollUntil = Date.now() + (smooth ? 900 : 80);
       this.root.querySelector(`[data-view-page="${index2}"]`)?.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "instant" });
     }
     async start(index2 = this.getIndex()) {

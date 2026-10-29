@@ -18650,7 +18650,7 @@ body.export-view .toc-note:empty{display:none}
       });
     }
     scrolled() {
-      if (this.present || this.mode !== "scroll" || this.scrollTimer) return;
+      if (this.present || this.mode !== "scroll" || Date.now() < (this.programmaticScrollUntil || 0) || this.scrollTimer) return;
       this.scrollTimer = this.window.setTimeout(() => {
         this.scrollTimer = null;
         const host = this.scrollHost.getBoundingClientRect(), pages = [...this.root.querySelectorAll("[data-view-page]")];
@@ -18709,6 +18709,7 @@ body.export-view .toc-note:empty{display:none}
     }
     scrollTo(index2, smooth = true) {
       if (this.present || this.mode === "single") return;
+      this.programmaticScrollUntil = Date.now() + (smooth ? 900 : 80);
       this.root.querySelector(`[data-view-page="${index2}"]`)?.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "instant" });
     }
     async start(index2 = this.getIndex()) {
