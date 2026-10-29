@@ -85,7 +85,7 @@ function playCue(){
 
 export function startTutorial({onSkipTheme}={}){
  if(new URLSearchParams(location.search).get('tutorial')!=='1')return;
- let index=0,target=null,cleanup=()=>{},waitTimer=0;
+ let index=0,target=null,cleanups=[],waitTimer=0;
  const root=el('section','tutorial-guide');root.setAttribute('role','dialog');root.setAttribute('aria-live','polite');
  const progress=el('div','tutorial-progress'),progressLabel=el('div','tutorial-progress-label'),majorRuler=el('div','tutorial-ruler major'),minorRuler=el('div','tutorial-ruler minor'),title=el('h2'),text=el('p'),copyBox=el('div','tutorial-copy'),actions=el('div','tutorial-actions');
  progress.append(progressLabel,majorRuler,minorRuler);
@@ -99,9 +99,9 @@ export function startTutorial({onSkipTheme}={}){
   minorRuler.replaceChildren(...meta.indices.map((stepIndex,n)=>{const dot=el('span','tutorial-tick minor-tick');dot.title=steps[stepIndex].title;if(n+1<meta.position)dot.classList.add('done');else if(n+1===meta.position)dot.classList.add('active');return dot;}));
   minorRuler.hidden=meta.name==='开始';
  };
- const clear=()=>{clearTimeout(waitTimer);cleanup();cleanup=()=>{};document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target=null;};
+ const clear=()=>{clearTimeout(waitTimer);for(const dispose of cleanups.splice(0))dispose();document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target=null;};
  const find=(selector,contains)=>{if(!selector)return null;const items=[...document.querySelectorAll(selector)];return contains?items.find(node=>(node.textContent||node.getAttribute('aria-label')||'').includes(contains)):items[0];};
- const leaveModal=()=>{const modal=root.closest('dialog');if(modal){document.body.append(root);modal.close();}};
+ const leaveModal=()=>{const modal=root.closest('dialog');root.classList.remove('tutorial-modal');if(modal){document.body.append(root);modal.close();}};
  const go=(nextIndex,{closeModal=false,reward=false}={})=>{if(closeModal)leaveModal();clear();index=Math.max(0,Math.min(steps.length-1,nextIndex));playCue();if(reward)burst();setTimeout(show,120);};
  const waitFor=selector=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{const node=document.querySelector(selector);if(node)return resolve(node);if(++tries>40)return reject(Error('教学控件未出现'));setTimeout(check,100);};check();});
  const setValue=(node,value)=>{node.value=value;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));};
@@ -125,9 +125,12 @@ export function startTutorial({onSkipTheme}={}){
   if(step.notice){const n=el('aside','tutorial-notice');n.innerHTML='<strong>必读告示</strong><span></span>';n.querySelector('span').textContent=step.notice;copyBox.append(n);}
   if(step.copy){const pre=el('pre','tutorial-copy-text',step.copy),button=el('button','','复制练习内容');button.type='button';button.onclick=async()=>{try{await navigator.clipboard.writeText(step.copy);button.textContent='已复制 ✓';}catch{pre.focus();const range=document.createRange();range.selectNodeContents(pre);getSelection().removeAllRanges();getSelection().addRange(range);button.textContent='已选中，请按 Ctrl+C';}};copyBox.append(pre,button);}
   const bind=()=>{
-   if(index>=steps.length)return;target=find(step.target,step.targetText);if(!target){waitTimer=setTimeout(bind,180);return;}const modal=target.closest('dialog[open]');if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target.classList.add('tutorial-target');target.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
-   if(step.event){const watched=target,done=()=>advance();watched.addEventListener(step.event,done,{once:true});cleanup=()=>watched.removeEventListener(step.event,done);}
-   if(step.input){const input=find(step.input),done=()=>{if(step.allowEmpty||input.value.trim())advance();};input.addEventListener('change',done,{once:true});input.addEventListener('paste',()=>setTimeout(done,30),{once:true});cleanup=()=>input.removeEventListener('change',done);}
+   if(index>=steps.length)return;target=find(step.target,step.targetText);if(!target){waitTimer=setTimeout(bind,180);return;}const modal=target.closest('dialog[open]');root.classList.toggle('tutorial-modal',!!modal);if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target.classList.add('tutorial-target');target.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
+   if(step.event){const watched=target,done=()=>advance();watched.addEventListener(step.event,done,{once:true});cleanups.push(()=>watched.removeEventListener(step.event,done));}
+   if(step.input){const input=find(step.input),done=()=>{if(step.allowEmpty||input.value.trim())advance();},paste=()=>setTimeout(done,30);input.addEventListener('change',done,{once:true});input.addEventListener('paste',paste,{once:true});cleanups.push(()=>{input.removeEventListener('change',done);input.removeEventListener('paste',paste);});
+    if(step.input==='#outline-text'){const file=document.querySelector('#outline-file'),stepIndex=index,onFile=()=>{const timer=setTimeout(()=>{if(index===stepIndex&&input.value.trim())advance();},120);cleanups.push(()=>clearTimeout(timer));};file?.addEventListener('change',onFile,{once:true});if(file)cleanups.push(()=>file.removeEventListener('change',onFile));}
+   }
+   if(meta.name==='大纲教学'){const apply=document.querySelector('#outline-apply'),finish=()=>{const nextIndex=meta.indices.at(-1)+1;setTimeout(()=>{if(groupOf(index)==='大纲教学')go(nextIndex,{closeModal:true,reward:true});},0);};apply?.addEventListener('click',finish,{once:true});if(apply)cleanups.push(()=>apply.removeEventListener('click',finish));}
   };bind();
  };
  const advance=()=>{if(root.closest('dialog'))document.body.append(root);clear();playCue();burst();if(index>=steps.length-1){root.remove();history.replaceState(null,'',location.pathname+location.hash);return;}index++;setTimeout(show,280);};

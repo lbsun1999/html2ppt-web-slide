@@ -40,11 +40,17 @@ try{
  await page.locator('#outline-text.tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-copy-text').innerText(),/# 研究进展汇报/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'only the current control remains highlighted');
- await page.getByRole('button',{name:'代我完成本大项'}).click();
+ const imported='# 项目研究进展\n\n## 01 研究背景\n### 修改后的研究题目\n\n## 附录\n### 参考文献';
+ await page.locator('#outline-file').setInputFiles({name:'教学大纲.md',mimeType:'text/markdown',buffer:Buffer.from(imported)});
+ await page.waitForFunction(value=>document.querySelector('#outline-text')?.value===value,imported);
+ await page.locator('#outline-mode.tutorial-target').waitFor();
+ await page.locator('#outline-mode').selectOption('current');
+ await page.locator('#outline-apply').click();
  await page.locator('[data-action="page-settings"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/3\.1/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'group automation clears stale highlights');
- assert.equal(await page.locator('.tutorial-guide').count(),1,'completing a section does not exit tutorial');
+ assert.equal(await page.locator('.tutorial-guide').count(),1,'importing and applying an outline does not exit tutorial');
+ assert.equal(await page.evaluate(()=>window.slideStudio.getProject().slides.find(slide=>slide.kind==='cover')?.title),'项目研究进展','imported outline updates the real cover title');
  await page.screenshot({path:'ect/tutorial-onboarding.png'});
  console.log('PASS interactive onboarding launcher and real-control guidance');
 }finally{await browser.close();}
