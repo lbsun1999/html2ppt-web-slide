@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="#eef6fa"/>
+  <path d="M110 338H1090" stroke="#005b94" stroke-width="10"/>
+  <g fill="#fff" stroke="#005b94" stroke-width="6">
+    <rect x="105" y="238" width="240" height="200" rx="18"/><rect x="480" y="238" width="240" height="200" rx="18"/><rect x="855" y="238" width="240" height="200" rx="18"/>
+  </g>
+  <g fill="#005b94" font-family="Microsoft YaHei, sans-serif" font-size="42" font-weight="700" text-anchor="middle">
+    <text x="225" y="330">输入材料</text><text x="600" y="330">分析方法</text><text x="975" y="330">汇报结论</text>
+  </g>
+  <g fill="#27485d" font-family="Microsoft YaHei, sans-serif" font-size="26" text-anchor="middle">
+    <text x="225" y="382">数据 · 文献 · 图像</text><text x="600" y="382">归纳 · 比较 · 验证</text><text x="975" y="382">证据 · 边界 · 建议</text>
+  </g>
+</svg>

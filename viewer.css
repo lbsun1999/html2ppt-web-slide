@@ -14,7 +14,7 @@ html,body{height:100%;overflow:hidden}
 .canvas-frame.show-grid .body-slide::after{top:256px}
 .size-grid button{touch-action:none;user-select:none}
 #media-custom-fields[hidden]{display:none}
-.notes-panel{max-width:1600px;margin:20px auto 0;border:1px solid #cbdce5;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 4px 18px #163c5010}
+.notes-panel{width:100%;max-width:1600px;margin:16px auto 0;border:1px solid #cbdce5;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 4px 18px #163c5010;flex:none}
 .notes-panel[hidden]{display:none!important}
 .notes-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 17px;background:#f4f8fb;font-size:13px;color:#244b61}
 .notes-heading span{font-size:11px;color:#7891a1}
@@ -81,7 +81,8 @@ html,body{height:100%;overflow:hidden}
 .topbar .brand{margin-right:12px}
 .shell{height:calc(100vh - var(--chrome-height,126px));min-height:0}
 .sidebar,.inspector{position:static;height:100%;min-height:0}
-.workspace{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.workspace{height:100%;min-height:0;overflow:hidden;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.pages-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
 .workspace-head{position:sticky;top:-30px;z-index:25;background:#edf1f5ef;padding:12px 0;backdrop-filter:blur(8px)}
 .pages-surface{display:grid;grid-template-columns:repeat(var(--view-columns,1),minmax(0,1fr));gap:28px;width:100%;align-items:start}
 .view-page{min-width:0;scroll-margin-top:60px}
@@ -103,6 +104,7 @@ html,body{height:100%;overflow:hidden}
 @media print{.free-text-active{outline:none!important}}
 .presenting .shell{height:100vh;display:block}
 .presenting .workspace{display:block;height:100vh;overflow:hidden;padding:0;scrollbar-gutter:auto}
+.presenting .pages-scroll{width:100%;height:100%;overflow:hidden;scrollbar-gutter:auto}
 .presenting .pages-surface.presentation-stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
 .presenting .presentation-stage .view-page{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
 .presenting .presentation-stage .view-page-label{display:none}

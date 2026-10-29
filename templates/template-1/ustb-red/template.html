@@ -146,7 +146,7 @@ html,body{height:100%;overflow:hidden}
 .canvas-frame.show-grid .body-slide::after{top:256px}
 .size-grid button{touch-action:none;user-select:none}
 #media-custom-fields[hidden]{display:none}
-.notes-panel{max-width:1600px;margin:20px auto 0;border:1px solid #cbdce5;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 4px 18px #163c5010}
+.notes-panel{width:100%;max-width:1600px;margin:16px auto 0;border:1px solid #cbdce5;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 4px 18px #163c5010;flex:none}
 .notes-panel[hidden]{display:none!important}
 .notes-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:13px 17px;background:#f4f8fb;font-size:13px;color:#244b61}
 .notes-heading span{font-size:11px;color:#7891a1}
@@ -213,7 +213,8 @@ html,body{height:100%;overflow:hidden}
 .topbar .brand{margin-right:12px}
 .shell{height:calc(100vh - var(--chrome-height,126px));min-height:0}
 .sidebar,.inspector{position:static;height:100%;min-height:0}
-.workspace{height:100%;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+.workspace{height:100%;min-height:0;overflow:hidden;display:grid;grid-template-rows:minmax(0,1fr) auto}
+.pages-scroll{min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
 .workspace-head{position:sticky;top:-30px;z-index:25;background:#edf1f5ef;padding:12px 0;backdrop-filter:blur(8px)}
 .pages-surface{display:grid;grid-template-columns:repeat(var(--view-columns,1),minmax(0,1fr));gap:28px;width:100%;align-items:start}
 .view-page{min-width:0;scroll-margin-top:60px}
@@ -235,6 +236,7 @@ html,body{height:100%;overflow:hidden}
 @media print{.free-text-active{outline:none!important}}
 .presenting .shell{height:100vh;display:block}
 .presenting .workspace{display:block;height:100vh;overflow:hidden;padding:0;scrollbar-gutter:auto}
+.presenting .pages-scroll{width:100%;height:100%;overflow:hidden;scrollbar-gutter:auto}
 .presenting .pages-surface.presentation-stage{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
 .presenting .presentation-stage .view-page{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
 .presenting .presentation-stage .view-page-label{display:none}
@@ -17904,34 +17906,26 @@ body.export-view .toc-note:empty{display:none}
   }
 
   // src/tutorial.js
-  var OUTLINE = `# 研究进展汇报
+  var OUTLINE = `# Web Slide 交互教学
 
-## 01 问题背景与意义
+## 01 基础设置
 
-### 研究背景与问题定义
-### 当前研究现状
-### 目标与技术路线
+### 页面信息与备注练习
+### 空白正文与卡片排版
+### 文字层级与列表练习
 
-## 02 方法设计与实现
+## 02 内容模块
 
-### 研究方法与总体框架
-### 目标函数与参数更新
-### 算法流程与实现要点
+### 表格练习
+### 公式练习
+### 图片与视频练习
+### 时间轴与图文练习
 
-## 03 实验结果与分析
+## 03 排版与交付
 
-### 实验设置与评价指标
-### 实验结果与方法比较
-### 消融实验与误差分析
-
-## 04 总结与计划
-
-### 阶段总结与后续计划
-
-## 附录
-
-### 参考文献
-### 作者简介`;
+### 高级对齐练习
+### 环形文字排版练习
+### 备注、放映与导出练习`;
   var steps = [
     { group: "开始", title: "欢迎进入交互训练场", text: "这不是视频教程：接下来请直接操作真实工作台。完成一个动作，系统才会带你进入下一步。", notice: "教学统一使用北科科技蓝主模板。红色主题和其他学校版本由同一主模板增量换肤，不重复建设教学。" },
     { group: "主题换肤", title: "从蓝色主模板开始换肤", text: "点击“主题与标志”。接下来把科技蓝主模板改成钢铁红，同时保持页面结构和编辑能力不变。", target: '[data-action="theme"]', event: "click" },
@@ -17949,29 +17943,55 @@ body.export-view .toc-note:empty{display:none}
     { title: "选择“更新当前文稿”", text: "本次练习请选择界面中的“更新当前文稿”，让大纲直接作用于当前页面，后续教学才能连续衔接。完成教学后如需一份正文干净的新稿，再单独使用界面中的“另建文稿，沿用当前主题”。", target: "#outline-mode", notice: "工作台中的修改不会自动覆盖磁盘上的蓝色模板；只有你主动执行“保存 HTML”才会写文件。因此退出或刷新后，仍可从原始模板重新进入教学。" },
     { title: "目录开关", text: "勾选后根据章节顺序自动生成目录，章节名与页码范围随页面变化更新。", target: "#outline-toc", notice: "目录条目之后仍可单独隐藏、恢复或补充说明；附录默认不进入目录。" },
     { title: "章节过渡页", text: "勾选后，每个普通章节前生成过渡页；正文左上角的章节标签也由过渡页继承。", target: "#outline-transitions", notice: "没有过渡页的短汇报也可以关闭；附录通常不生成过渡页。" },
-    { title: "最后一章作为附录", text: "当末章是参考文献、作者简介或补充材料时勾选。系统会使用“附录”标签，并默认从目录排除。", target: "#outline-appendix", notice: "章节标题不必手写“附录”二字，勾选项负责语义与目录规则。" },
+    { title: "最后一章作为附录", text: "本练习最后一章仍是正文，请保持未勾选。正式文稿若末章是参考文献、作者简介或补充材料，再勾选此项。", target: "#outline-appendix", notice: "章节标题不必手写“附录”二字，勾选项负责语义与目录规则。" },
     { title: "结束页开关", text: "勾选后保留或生成结束页。封面、过渡页和结束页不显示页脚及页码。", target: "#outline-closing", notice: "正式答辩通常保留；内部短会可按需要关闭。" },
     { title: "点击“应用到当前文稿”", text: "确认应用方式为“更新当前文稿”，再点击界面中的“应用到当前文稿”。页面标题和章节关系会更新，后续教学仍在当前页面中继续。", target: "#outline-apply", event: "click" },
-    { group: "页面设置", title: "点击“标题、页首句与来源”", text: "在右侧“当前页设置”中点击“标题、页首句与来源”，打开标题、页首句、页尾总结、脚注与备注。若当前不是正文页，也可以先在左侧切换一页。", target: '[data-action="page-settings"]', event: "click" },
+    { group: "页面设置", title: "打开页面信息练习页", text: "请在左侧打开“页面信息与备注练习”。这页专门练习标题、页首句、来源和备注，不与其他内容混在一起。", target: ".slide-thumb", targetText: "页面信息与备注练习", event: "click" },
+    { title: "点击“标题、页首句与来源”", text: "在右侧“当前页设置”中点击“标题、页首句与来源”，打开标题、页首句、页尾总结、脚注与备注。", target: '[data-action="page-settings"]', event: "click" },
     { title: "写一条演讲备注", text: "把下面提示复制到“本页备注”。备注不会出现在画面或导出页中，但会在演讲者视图自动跟随。", target: "#page-notes", input: "#page-notes", copy: "本页先交代研究问题，再说明证据来源；结尾用一句话过渡到下一页。" },
     { title: "点击“应用”", text: "点击弹窗中的“应用”，让标题、脚注与备注写回当前页。", target: '[data-action="page-dialog-apply"]', event: "click" },
-    { title: "切换到正文练习页", text: "请在左侧缩略图中选择一张普通正文页。后面的模块、图文和对齐练习都在正文安全区内完成。", target: '.slide-thumb[data-page="3"]', event: "click" },
-    { group: "模块与内容", title: "学习模块编辑", text: "点击“编辑模块”，再点击画布中的任意模块。右侧可以调整样式、子区域、尺寸与位置。", target: '[data-action="mode-edit"]', event: "click" },
-    { title: "选中一个真实模块", text: "请点击画布里的任意模块。选中后会出现轮廓和右侧属性。", target: "#canvas .module", event: "click" },
+    { title: "点击“页面备注”", text: "备注保存后不会自动占用画面。点击顶部工具栏中的“页面备注”，在工作台底部显示当前页备注。", target: '[data-action="notes"]', event: "click" },
+    { title: "确认备注已经载入", text: "底部停靠区显示当前页备注，可继续直接编辑。单列滚动停到其他页面后，这里会自动切换为对应页面的备注。", target: "#speaker-notes", notice: "备注只供演讲者查看，不印入 PDF 幻灯片；导出 PPTX 时会写入对应页面的原生备注。" },
+    { title: "再次点击“页面备注”收起", text: "再次点击同一个“页面备注”按钮即可隐藏停靠区。备注内容仍保存在当前页面中，之后随时可以重新显示。", target: '[data-action="notes"]', event: "click" },
+    { group: "模块与内容", title: "进入空白正文练习页", text: "请打开“空白正文与卡片排版”。正文安全区没有预置模块，便于清楚观察插入、缩放和移动如何共同形成可用留白。", target: ".slide-thumb", targetText: "空白正文与卡片排版", event: "click" },
+    { title: "从“＋”插入文字卡片", text: "打开顶部“＋”并选择“文字模块”。系统会优先放入连续空白区；若存在多个互不相连的空白区，会让你选择。", target: "#insert-menu", event: "change", selectValue: "text" },
+    { title: "选中刚插入的卡片", text: "点击新卡片进入模块编辑。右侧会显示固定锚点、尺寸、位置和子区域设置。", target: "#canvas .module", event: "click" },
+    { title: "选择缩放锚点", text: "缩放可以固定四角，也可以固定中心。先选择“中心”，观察卡片向两侧同时扩展，便于快速对齐页面中心。", target: "#resize-anchor", event: "change", selectValue: "center" },
+    { title: "放大卡片宽度", text: "点击“加宽”。先把卡片放大到接近目标区域，再做小步调整，通常比反复拖动更容易对齐。", target: '[data-resize="w+"]', event: "click" },
+    { title: "移动卡片位置", text: "点击向右箭头，让卡片按网格移动一格。页面开启网格时自动吸附；关闭网格后可自由拖动。", target: '[data-move="right"]', event: "click" },
     { title: "多子区域不是固定截图", text: "右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。", target: '[data-action="add-part"]', event: "click" },
     { title: "网格就是吸附开关", text: "勾选网格后，拖动与参考线自动吸附；关闭网格则自由移动。请切换一次网格。", target: "#grid-visible", event: "change" },
     { title: "文字可逐段精调", text: "点击“编辑文字”，随后可选中文字调整字号、粗细、颜色、行距、段后距和对齐。Shift 可多选文字块。", target: '[data-action="mode-text"]', event: "click" },
     { title: "插入表格、公式与图文模块", text: "顶部“＋”统一收纳文字、表格、图片／视频和更多模块。表格支持粘贴或导入；公式保留 LaTeX；图像支持 SVG、裁剪和图注。", target: "#insert-menu", notice: "插入前先找连续空白区；有多个空白区时由用户选择。表格、公式和图片都是真实模块，插入后仍可移动、缩放、增减子区域。" },
     { title: "图文混排与图片替换", text: "媒体模块可包含多个等高子区域。双击图片或占位符即可上传 PNG、JPEG、WebP、SVG 或视频，并调整比例、缩放、取景和图注。", target: "#canvas", notice: "没有图注时不保留多余图注高度；并列图片保持实际等高。图片只是占位符时，也应明确可双击替换。" },
     { title: "同一区域也可放多个模块", text: "先用“圈定范围”划出空白区域，再从“＋”插入独立模块；模块之间不能遮挡，边缘与间距应有明确关系。", target: '[data-action="draw"]', notice: "模块数量不是越多越好。一个文字板块一般不超过4点；超过时先凝练、拆分或换版式。" },
-    { group: "高级对齐", title: "进入高级对齐", text: "重新选中一个模块后，点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。", target: '[data-action="advanced-align"]', event: "click" },
+    { group: "表格与公式", title: "打开表格练习页", text: "请打开“表格练习”。这页没有预置正文模块，先插入一张表格，再学习行列、字号、单元格高度和批量替换。", target: ".slide-thumb", targetText: "表格练习", event: "click" },
+    { title: "插入表格", text: "从“＋”选择“表格”。表格使用一个区域；插入后可在右侧统一增减行列、调整单元格高度或打开粘贴替换。", target: "#insert-menu", event: "change", selectValue: "table" },
+    { title: "打开公式练习页", text: "请打开“公式练习”。公式模块可以有多个子区域，每个子区域包含公式标题、LaTeX 公式和解释文字。", target: ".slide-thumb", targetText: "公式练习", event: "click" },
+    { title: "打开“更多模块”", text: "从“＋”选择“更多模块：公式、时间轴等”，打开完整插入弹窗。", target: "#insert-menu", event: "change", selectValue: "more" },
+    { title: "选择 LaTeX 公式", text: "把模块类型改为“LaTeX 公式”。", target: "#insert-type", event: "change", selectValue: "formula" },
+    { title: "设置两个公式子区域", text: "子区域数量填写2，分别用于目标函数和参数更新。公式较多时可以继续增加，但要同步检查页面高度。", target: "#insert-count", input: "#insert-count", copy: "2" },
+    { title: "确认插入公式模块", text: "点击“插入”。之后双击任一公式即可复制或修改 LaTeX；语法错误时系统会要求重新填写。", target: '[data-action="insert-dialog-apply"]', event: "click" },
+    { group: "图片与媒体", title: "打开图片与视频练习页", text: "请打开“图片与视频练习”。这里从空白正文插入含两个子区域的媒体模块。", target: ".slide-thumb", targetText: "图片与视频练习", event: "click" },
+    { title: "插入图片／视频模块", text: "从“＋”选择“图片／视频”。插入后可增加子区域；并列媒体必须保持绝对等高。", target: "#insert-menu", event: "change", selectValue: "media" },
+    { title: "增加第二个媒体子区域", text: "点击“＋ 子区域”，把媒体模块改为两个并列区域。系统会重新分配宽度，并保持两张画面的绝对高度一致。", target: '[data-action="add-part"]', event: "click" },
+    { title: "替换练习图片", text: "双击占位图后，从 tutorial-assets/media 选择练习 SVG。图片、视频和 SVG 都支持替换；图注为空时不要保留冗余图注高度。", target: "#canvas .media-window", notice: "练习目录已准备 01-教学图片-结构.svg 与 02-教学图片-数据.svg。它们只用于练习替换，不写入正式模板素材。" },
+    { group: "高级对齐", title: "打开高级对齐练习页", text: "请打开“高级对齐练习”。本页故意放置了三个尺寸相近但位置不齐的板块，便于观察对齐前后的真实差异。", target: ".slide-thumb", targetText: "高级对齐练习", event: "click" },
+    { title: "进入模块编辑", text: "点击“编辑模块”，再选择需要作为基准的板块。", target: '[data-action="mode-edit"]', event: "click" },
+    { title: "选择一个练习板块", text: "点击画布中的任意练习板块，右侧会出现“高级对齐与分布”。", target: "#canvas .module", event: "click" },
+    { title: "进入高级对齐", text: "点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。", target: '[data-action="advanced-align"]', event: "click" },
     { title: "多选、等距与环形分布", text: "点击“多选开关”，再在画布中选择多个模块。可固定最外边界后平均间隙，也可把文本块组成可整体移动的环形组。", target: '[data-align-mode="multi"]', event: "click" },
     { title: "高级排版的边界", text: "纵／横参考线负责对齐或拉伸；垂直／水平等距会展开多子区域参与计算；环形分布可设置数量、半径与角度。", target: "#alignment-panel", notice: "对齐只改变几何关系，不替代内容判断。必须复查安全区、遮挡、模块边缘、留白和阅读顺序；越界结果不能直接导出。" },
-    { group: "时间轴与图文", title: "时间轴也能变成图文卡片", text: "请在左侧打开“研究现状分析”页。时间轴本质上是可增减、排序的图文子区域，不是固定图片。", target: ".slide-thumb", targetText: "研究现状分析", event: "click" },
+    { group: "环形排版", title: "打开环形文字排版练习页", text: "请打开“环形文字排版练习”。本页从空白正文开始，先插入独立文字块，再进行环形分布。", target: ".slide-thumb", targetText: "环形文字排版练习", event: "click" },
+    { title: "插入第一个独立文字块", text: "从“＋”选择“独立文字块 · 白底深字”。重复插入时先为每个文字块保留近似相同的尺寸。", target: "#insert-menu", event: "change", selectValue: "textbox-light" },
+    { title: "为环形准备多个文字块", text: "请继续插入若干独立文字块，建议总数为6。每个文字块只放一个短概念，避免长段文字绕成难读的圆环。", target: "#insert-menu", notice: "可以使用“代我完成本大项”跳过重复插入。进入环形分布前，先统一尺寸并把文字块移动到正文安全区内。" },
+    { title: "多选后执行环形分布", text: "进入“编辑模块”，选择一个文字块后打开高级对齐，启用多选并选择全部文字块，再设置环形中心、半径与角度。", target: '[data-action="mode-edit"]', notice: "环形排版完成后仍需检查标题、页首句和页尾区域，不能让文字块越过正文安全区。" },
+    { group: "时间轴与图文", title: "时间轴也能变成图文卡片", text: "请在左侧打开“时间轴与图文练习”页。时间轴本质上是可增减、排序的图文子区域，不是固定图片。", target: ".slide-thumb", targetText: "时间轴与图文练习", event: "click" },
     { title: "重新进入模块编辑", text: "点击“编辑模块”，准备选中时间轴本身，而不是修改卡片里的文字。", target: '[data-action="mode-edit"]', event: "click" },
     { title: "选中时间轴模块", text: "点击时间轴中的任意卡片，右侧会显示阶段排序、删除、添加以及“隐藏时间轴装饰”。", target: "#canvas .timeline-grid", event: "click" },
     { title: "切换为普通并列图文", text: "勾选“隐藏时间轴装饰”，年份、连线、圆点和箭头会隐藏，同一组内容立即退化为普通并列图文卡片；再次取消即可恢复。请切换一次。", target: "#hide-timeline", event: "change" },
-    { group: "备注与放映", title: "页面备注与双窗口放映", text: "请点击“页面备注”查看刚才的内容。演讲者视图适合双屏：观众窗口只显示画面，工作台保留备注并同步翻页。", target: '[data-action="notes"]', event: "click" },
+    { group: "备注与放映", title: "打开放映练习页", text: "请打开“备注、放映与导出练习”。这页集中说明演讲者视图、全屏放映、保存与导出。", target: ".slide-thumb", targetText: "备注、放映与导出练习", event: "click" },
+    { title: "页面备注与双窗口放映", text: "请点击“页面备注”查看本页内容。演讲者视图适合双屏：观众窗口只显示画面，工作台保留备注并同步翻页。", target: '[data-action="notes"]', event: "click" },
     { title: "三种浏览与两种正式放映", text: "视图菜单提供单页、单列滚动和多页滚动；正式演示可选“演讲者视图”或“全屏放映”。", target: "#view-mode", notice: "双屏优先演讲者视图：独立观众窗口可拖到投影屏，工作台保留备注并同步翻页。单屏专注画面时用全屏放映；双击进入总览，Ctrl＋滚轮缩放，放大后左键拖动，Esc先复位再退出。" },
     { title: "保存与导出须知", text: "保存 HTML 优先覆盖当前文件，“另存为”保留副本。PDF/PPTX 导出需运行本地服务；PPTX 已尽量贴近 HTML，但仍须人工复核字体、标点断行与引用。", notice: "“演讲者视图”和“全屏放映”是两种并列方式。教学不会替你启动窗口或导出文件，避免打断当前练习。" },
     { title: "训练完成", text: "你已经走完模板、大纲、页面、模块、文字、备注与导出的完整路径。接下来可继续编辑，也可退出教学回到正常工作台。", finish: true }
@@ -18146,6 +18166,11 @@ body.export-view .toc-note:empty{display:none}
         go2(index2 + 1, { reward: true });
         return;
       }
+      if (step.selectValue && target) {
+        target.value = step.selectValue;
+        target.dispatchEvent(new Event(step.event || "change", { bubbles: true }));
+        return;
+      }
       if (step.event && target) {
         target.click();
         return;
@@ -18165,10 +18190,12 @@ body.export-view .toc-note:empty{display:none}
           setValue(dialog2.querySelector("#outline-text"), OUTLINE);
           dialog2.querySelector("#outline-mode").value = "current";
           dialog2.querySelector("#outline-mode").dispatchEvent(new Event("change", { bubbles: true }));
-          for (const id of ["outline-toc", "outline-transitions", "outline-appendix", "outline-closing"]) {
+          for (const id of ["outline-toc", "outline-transitions", "outline-closing"]) {
             const box = dialog2.querySelector("#" + id);
             if (!box.checked) box.click();
           }
+          const appendix = dialog2.querySelector("#outline-appendix");
+          if (appendix.checked) appendix.click();
           await new Promise((resolve) => setTimeout(resolve, 180));
           dialog2.querySelector("#outline-apply")?.click();
           await new Promise((resolve) => setTimeout(resolve, 180));
@@ -18591,6 +18618,8 @@ body.export-view .toc-note:empty{display:none}
       this.restoreEscapeAt = 0;
       root.addEventListener("wheel", (e) => this.wheel(e), { passive: false });
       root.addEventListener("pointerdown", (e) => this.pointer(e));
+      this.scrollHost = root.parentElement;
+      this.scrollHost.addEventListener("scroll", () => this.scrolled(), { passive: true });
       root.addEventListener("click", (e) => {
         const a = e.target.closest('a[href^="#"]');
         if (!a) return;
@@ -18615,6 +18644,19 @@ body.export-view .toc-note:empty{display:none}
         }
         this.end();
       });
+    }
+    scrolled() {
+      if (this.present || this.mode !== "scroll" || this.scrollTimer) return;
+      this.scrollTimer = this.window.setTimeout(() => {
+        this.scrollTimer = null;
+        const host = this.scrollHost.getBoundingClientRect(), pages = [...this.root.querySelectorAll("[data-view-page]")];
+        if (!pages.length) return;
+        const current = pages.map((page) => ({ page, distance: Math.abs(page.getBoundingClientRect().top - host.top - 8) })).sort((a, b) => a.distance - b.distance)[0].page, index2 = Number(current.dataset.viewPage);
+        if (index2 !== this.getIndex()) {
+          this.onIndex(index2);
+          this.onRender();
+        }
+      }, 120);
     }
     render({ mode: mode2 = "text", showGrid: showGrid2 = false, grid = 20, selected: selected2 = null, drawing: drawing2 = false } = {}) {
       const project2 = this.getProject(), index2 = this.getIndex(), scroll = this.root.parentElement.scrollTop;
@@ -19410,7 +19452,7 @@ body.export-view .toc-note:empty{display:none}
     return `<dialog id="${id}"><form method="dialog"><div class="dialog-head"><h2>${title}</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body">${body}</div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" data-action="${id}-apply">${action}</button></div></form></dialog>`;
   }
   function bootUI() {
-    $("#app").innerHTML = `<header class="topbar"><div class="brand"><div class="brand-icon">▤</div><div><strong>Web Slide</strong><small>RESEARCH PRESENTATION STUDIO</small></div></div><button data-action="rename" id="document-caption" class="document-caption" title="修改文件名称"></button><button data-action="new">新建 HTML</button><button data-action="outline">文档大纲</button><button data-action="theme">主题与标志</button><button data-action="open-html">打开 HTML</button><button data-action="html-as">另存为</button><button data-action="html" class="primary">保存 HTML</button><button data-action="export-pdf">导出 PDF</button><button data-action="export-pptx">导出 PPTX</button></header><nav class="toolbar"><select id="insert-menu" aria-label="插入内容" title="插入内容"><option value="">＋</option><option value="text">文字模块</option><option value="textbox-dark">独立文字块 · 深底白字</option><option value="textbox-light">独立文字块 · 白底深字</option><option value="table">表格</option><option value="media">图片／视频</option><option value="more">更多模块：公式、时间轴等</option></select><button data-action="mode-edit" id="mode-edit">编辑模块</button><button data-action="mode-delete" id="mode-delete" class="danger">删除模块</button><span class="divider"></span><button data-action="mode-text" id="mode-text">编辑文字</button><span id="text-formatbar" class="text-formatbar"><select id="format-font-size" aria-label="文字字号"><option value="10">10 pt</option><option value="12">12 pt</option><option value="14">14 pt</option><option value="16" selected>16 pt</option></select><select id="format-list" aria-label="当前正文列表"><option value="">普通段落</option><option value="•">• 列表</option><option value="–">– 列表</option><option value="▪">▪ 列表</option><option value="▸">▸ 列表</option></select><button id="format-bold" title="选中文字后加粗或取消加粗"><b>B</b></button><select id="format-color" aria-label="文字颜色"><option value="theme">主题色</option><option value="emphasis">强调色</option><option value="original">原来的颜色</option><option value="custom">自选颜色</option></select><input id="format-custom-color" type="color" value="#005894" aria-label="自选文字颜色"><label>行距<input id="format-line-spacing" type="number" min="0.5" max="5" step="0.05" value="1.55" title="行距倍数；输入后点到框外应用"></label><label>段后<input id="format-paragraph-after" type="number" min="0" max="48" step="1" value="6" title="段后距（pt）；选中段落后修改"></label><span id="format-selection-count" class="format-selection-count" hidden></span><select id="delete-edit-scope" aria-label="删除正在编辑的文字块" disabled><option value="">删除文字块…</option><option value="part">删除当前子区域</option><option value="module">删除整个模块</option></select></span><button data-action="undo" title="撤销修改">↶</button><button data-action="redo" title="重做修改">↷</button><label class="view-controls">视图<select id="view-mode"><option value="single">单页展示</option><option value="scroll">单列滚动</option><option value="grid">多页滚动</option></select><select id="view-columns" aria-label="每行页数">${Array.from({ length: 6 }, (_, i2) => `<option value="${i2 + 1}">每行 ${i2 + 1} 页</option>`).join("")}</select></label><label><input type="checkbox" id="grid-visible">网格<input type="range" id="grid-step" min="8" max="40" step="4"><span id="grid-label"></span></label><button data-action="draw">圈定范围</button><button data-action="notes" id="notes-toggle" aria-pressed="false">页面备注</button><button data-action="presenter">演讲者视图</button><button data-action="end-session" class="end-session">结束双窗口</button><button data-action="present" class="grow">全屏放映 ▷</button></nav><div class="shell"><aside class="sidebar"><div class="sidebar-heading"><span>幻灯片</span><span id="sidebar-page-count" class="sidebar-page-count"></span><button data-action="add-slide" title="新增页面">＋</button></div><div id="slides"></div><button data-action="delete-slide" class="danger">删除当前页</button></aside><main class="workspace"><div id="pages-surface"></div><section id="notes-panel" class="notes-panel" hidden><div class="notes-heading"><strong>本页备注</strong><span>仅供演讲者查看 · 不印在幻灯片上</span></div><textarea id="speaker-notes" rows="4" placeholder="写下本页讲解要点、过渡提示或补充数据…"></textarea></section></main><div class="inspector-resizer" id="inspector-resizer" title="拖动调整右侧栏宽度"></div><aside class="inspector" id="inspector"></aside></div><div id="present-hud" class="present-hud" hidden><span></span><button data-action="end-present">退出放映</button></div><div id="toast" class="toast" role="status"></div><div id="dialogs"></div><input id="html-file" type="file" accept=".html,.htm" hidden><input id="excel-file" type="file" accept=".xlsx,.csv" hidden>`;
+    $("#app").innerHTML = `<header class="topbar"><div class="brand"><div class="brand-icon">▤</div><div><strong>Web Slide</strong><small>RESEARCH PRESENTATION STUDIO</small></div></div><button data-action="rename" id="document-caption" class="document-caption" title="修改文件名称"></button><button data-action="new">新建 HTML</button><button data-action="outline">文档大纲</button><button data-action="theme">主题与标志</button><button data-action="open-html">打开 HTML</button><button data-action="html-as">另存为</button><button data-action="html" class="primary">保存 HTML</button><button data-action="export-pdf">导出 PDF</button><button data-action="export-pptx">导出 PPTX</button></header><nav class="toolbar"><select id="insert-menu" aria-label="插入内容" title="插入内容"><option value="">＋</option><option value="text">文字模块</option><option value="textbox-dark">独立文字块 · 深底白字</option><option value="textbox-light">独立文字块 · 白底深字</option><option value="table">表格</option><option value="media">图片／视频</option><option value="more">更多模块：公式、时间轴等</option></select><button data-action="mode-edit" id="mode-edit">编辑模块</button><button data-action="mode-delete" id="mode-delete" class="danger">删除模块</button><span class="divider"></span><button data-action="mode-text" id="mode-text">编辑文字</button><span id="text-formatbar" class="text-formatbar"><select id="format-font-size" aria-label="文字字号"><option value="10">10 pt</option><option value="12">12 pt</option><option value="14">14 pt</option><option value="16" selected>16 pt</option></select><select id="format-list" aria-label="当前正文列表"><option value="">普通段落</option><option value="•">• 列表</option><option value="–">– 列表</option><option value="▪">▪ 列表</option><option value="▸">▸ 列表</option></select><button id="format-bold" title="选中文字后加粗或取消加粗"><b>B</b></button><select id="format-color" aria-label="文字颜色"><option value="theme">主题色</option><option value="emphasis">强调色</option><option value="original">原来的颜色</option><option value="custom">自选颜色</option></select><input id="format-custom-color" type="color" value="#005894" aria-label="自选文字颜色"><label>行距<input id="format-line-spacing" type="number" min="0.5" max="5" step="0.05" value="1.55" title="行距倍数；输入后点到框外应用"></label><label>段后<input id="format-paragraph-after" type="number" min="0" max="48" step="1" value="6" title="段后距（pt）；选中段落后修改"></label><span id="format-selection-count" class="format-selection-count" hidden></span><select id="delete-edit-scope" aria-label="删除正在编辑的文字块" disabled><option value="">删除文字块…</option><option value="part">删除当前子区域</option><option value="module">删除整个模块</option></select></span><button data-action="undo" title="撤销修改">↶</button><button data-action="redo" title="重做修改">↷</button><label class="view-controls">视图<select id="view-mode"><option value="single">单页展示</option><option value="scroll">单列滚动</option><option value="grid">多页滚动</option></select><select id="view-columns" aria-label="每行页数">${Array.from({ length: 6 }, (_, i2) => `<option value="${i2 + 1}">每行 ${i2 + 1} 页</option>`).join("")}</select></label><label><input type="checkbox" id="grid-visible">网格<input type="range" id="grid-step" min="8" max="40" step="4"><span id="grid-label"></span></label><button data-action="draw">圈定范围</button><button data-action="notes" id="notes-toggle" aria-pressed="false">页面备注</button><button data-action="presenter">演讲者视图</button><button data-action="end-session" class="end-session">结束双窗口</button><button data-action="present" class="grow">全屏放映 ▷</button></nav><div class="shell"><aside class="sidebar"><div class="sidebar-heading"><span>幻灯片</span><span id="sidebar-page-count" class="sidebar-page-count"></span><button data-action="add-slide" title="新增页面">＋</button></div><div id="slides"></div><button data-action="delete-slide" class="danger">删除当前页</button></aside><main class="workspace"><div class="pages-scroll"><div id="pages-surface"></div></div><section id="notes-panel" class="notes-panel" hidden><div class="notes-heading"><strong>本页备注</strong><span>仅供演讲者查看 · 不印在幻灯片上</span></div><textarea id="speaker-notes" rows="4" placeholder="写下本页讲解要点、过渡提示或补充数据…"></textarea></section></main><div class="inspector-resizer" id="inspector-resizer" title="拖动调整右侧栏宽度"></div><aside class="inspector" id="inspector"></aside></div><div id="present-hud" class="present-hud" hidden><span></span><button data-action="end-present">退出放映</button></div><div id="toast" class="toast" role="status"></div><div id="dialogs"></div><input id="html-file" type="file" accept=".html,.htm" hidden><input id="excel-file" type="file" accept=".xlsx,.csv" hidden>`;
     viewer = new SlideViewer({ root: $("#pages-surface"), getProject: () => project, getIndex: () => index, onIndex: (n) => {
       index = n;
       selected = null;

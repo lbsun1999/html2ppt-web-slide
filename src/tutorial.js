@@ -1,31 +1,23 @@
-const OUTLINE=`# 研究进展汇报
+const OUTLINE=`# Web Slide 交互教学
 
-## 01 问题背景与意义
+## 01 基础设置
 
-### 研究背景与问题定义
-### 当前研究现状
-### 目标与技术路线
+### 页面信息与备注练习
+### 空白正文与卡片排版
+### 文字层级与列表练习
 
-## 02 方法设计与实现
+## 02 内容模块
 
-### 研究方法与总体框架
-### 目标函数与参数更新
-### 算法流程与实现要点
+### 表格练习
+### 公式练习
+### 图片与视频练习
+### 时间轴与图文练习
 
-## 03 实验结果与分析
+## 03 排版与交付
 
-### 实验设置与评价指标
-### 实验结果与方法比较
-### 消融实验与误差分析
-
-## 04 总结与计划
-
-### 阶段总结与后续计划
-
-## 附录
-
-### 参考文献
-### 作者简介`;
+### 高级对齐练习
+### 环形文字排版练习
+### 备注、放映与导出练习`;
 
 const steps=[
  {group:'开始',title:'欢迎进入交互训练场',text:'这不是视频教程：接下来请直接操作真实工作台。完成一个动作，系统才会带你进入下一步。',notice:'教学统一使用北科科技蓝主模板。红色主题和其他学校版本由同一主模板增量换肤，不重复建设教学。'},
@@ -44,29 +36,55 @@ const steps=[
  {title:'选择“更新当前文稿”',text:'本次练习请选择界面中的“更新当前文稿”，让大纲直接作用于当前页面，后续教学才能连续衔接。完成教学后如需一份正文干净的新稿，再单独使用界面中的“另建文稿，沿用当前主题”。',target:'#outline-mode',notice:'工作台中的修改不会自动覆盖磁盘上的蓝色模板；只有你主动执行“保存 HTML”才会写文件。因此退出或刷新后，仍可从原始模板重新进入教学。'},
  {title:'目录开关',text:'勾选后根据章节顺序自动生成目录，章节名与页码范围随页面变化更新。',target:'#outline-toc',notice:'目录条目之后仍可单独隐藏、恢复或补充说明；附录默认不进入目录。'},
  {title:'章节过渡页',text:'勾选后，每个普通章节前生成过渡页；正文左上角的章节标签也由过渡页继承。',target:'#outline-transitions',notice:'没有过渡页的短汇报也可以关闭；附录通常不生成过渡页。'},
- {title:'最后一章作为附录',text:'当末章是参考文献、作者简介或补充材料时勾选。系统会使用“附录”标签，并默认从目录排除。',target:'#outline-appendix',notice:'章节标题不必手写“附录”二字，勾选项负责语义与目录规则。'},
+ {title:'最后一章作为附录',text:'本练习最后一章仍是正文，请保持未勾选。正式文稿若末章是参考文献、作者简介或补充材料，再勾选此项。',target:'#outline-appendix',notice:'章节标题不必手写“附录”二字，勾选项负责语义与目录规则。'},
  {title:'结束页开关',text:'勾选后保留或生成结束页。封面、过渡页和结束页不显示页脚及页码。',target:'#outline-closing',notice:'正式答辩通常保留；内部短会可按需要关闭。'},
  {title:'点击“应用到当前文稿”',text:'确认应用方式为“更新当前文稿”，再点击界面中的“应用到当前文稿”。页面标题和章节关系会更新，后续教学仍在当前页面中继续。',target:'#outline-apply',event:'click'},
- {group:'页面设置',title:'点击“标题、页首句与来源”',text:'在右侧“当前页设置”中点击“标题、页首句与来源”，打开标题、页首句、页尾总结、脚注与备注。若当前不是正文页，也可以先在左侧切换一页。',target:'[data-action="page-settings"]',event:'click'},
+ {group:'页面设置',title:'打开页面信息练习页',text:'请在左侧打开“页面信息与备注练习”。这页专门练习标题、页首句、来源和备注，不与其他内容混在一起。',target:'.slide-thumb',targetText:'页面信息与备注练习',event:'click'},
+ {title:'点击“标题、页首句与来源”',text:'在右侧“当前页设置”中点击“标题、页首句与来源”，打开标题、页首句、页尾总结、脚注与备注。',target:'[data-action="page-settings"]',event:'click'},
  {title:'写一条演讲备注',text:'把下面提示复制到“本页备注”。备注不会出现在画面或导出页中，但会在演讲者视图自动跟随。',target:'#page-notes',input:'#page-notes',copy:'本页先交代研究问题，再说明证据来源；结尾用一句话过渡到下一页。'},
  {title:'点击“应用”',text:'点击弹窗中的“应用”，让标题、脚注与备注写回当前页。',target:'[data-action="page-dialog-apply"]',event:'click'},
- {title:'切换到正文练习页',text:'请在左侧缩略图中选择一张普通正文页。后面的模块、图文和对齐练习都在正文安全区内完成。',target:'.slide-thumb[data-page="3"]',event:'click'},
- {group:'模块与内容',title:'学习模块编辑',text:'点击“编辑模块”，再点击画布中的任意模块。右侧可以调整样式、子区域、尺寸与位置。',target:'[data-action="mode-edit"]',event:'click'},
- {title:'选中一个真实模块',text:'请点击画布里的任意模块。选中后会出现轮廓和右侧属性。',target:'#canvas .module',event:'click'},
+ {title:'点击“页面备注”',text:'备注保存后不会自动占用画面。点击顶部工具栏中的“页面备注”，在工作台底部显示当前页备注。',target:'[data-action="notes"]',event:'click'},
+ {title:'确认备注已经载入',text:'底部停靠区显示当前页备注，可继续直接编辑。单列滚动停到其他页面后，这里会自动切换为对应页面的备注。',target:'#speaker-notes',notice:'备注只供演讲者查看，不印入 PDF 幻灯片；导出 PPTX 时会写入对应页面的原生备注。'},
+ {title:'再次点击“页面备注”收起',text:'再次点击同一个“页面备注”按钮即可隐藏停靠区。备注内容仍保存在当前页面中，之后随时可以重新显示。',target:'[data-action="notes"]',event:'click'},
+ {group:'模块与内容',title:'进入空白正文练习页',text:'请打开“空白正文与卡片排版”。正文安全区没有预置模块，便于清楚观察插入、缩放和移动如何共同形成可用留白。',target:'.slide-thumb',targetText:'空白正文与卡片排版',event:'click'},
+ {title:'从“＋”插入文字卡片',text:'打开顶部“＋”并选择“文字模块”。系统会优先放入连续空白区；若存在多个互不相连的空白区，会让你选择。',target:'#insert-menu',event:'change',selectValue:'text'},
+ {title:'选中刚插入的卡片',text:'点击新卡片进入模块编辑。右侧会显示固定锚点、尺寸、位置和子区域设置。',target:'#canvas .module',event:'click'},
+ {title:'选择缩放锚点',text:'缩放可以固定四角，也可以固定中心。先选择“中心”，观察卡片向两侧同时扩展，便于快速对齐页面中心。',target:'#resize-anchor',event:'change',selectValue:'center'},
+ {title:'放大卡片宽度',text:'点击“加宽”。先把卡片放大到接近目标区域，再做小步调整，通常比反复拖动更容易对齐。',target:'[data-resize="w+"]',event:'click'},
+ {title:'移动卡片位置',text:'点击向右箭头，让卡片按网格移动一格。页面开启网格时自动吸附；关闭网格后可自由拖动。',target:'[data-move="right"]',event:'click'},
  {title:'多子区域不是固定截图',text:'右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。',target:'[data-action="add-part"]',event:'click'},
  {title:'网格就是吸附开关',text:'勾选网格后，拖动与参考线自动吸附；关闭网格则自由移动。请切换一次网格。',target:'#grid-visible',event:'change'},
  {title:'文字可逐段精调',text:'点击“编辑文字”，随后可选中文字调整字号、粗细、颜色、行距、段后距和对齐。Shift 可多选文字块。',target:'[data-action="mode-text"]',event:'click'},
  {title:'插入表格、公式与图文模块',text:'顶部“＋”统一收纳文字、表格、图片／视频和更多模块。表格支持粘贴或导入；公式保留 LaTeX；图像支持 SVG、裁剪和图注。',target:'#insert-menu',notice:'插入前先找连续空白区；有多个空白区时由用户选择。表格、公式和图片都是真实模块，插入后仍可移动、缩放、增减子区域。'},
  {title:'图文混排与图片替换',text:'媒体模块可包含多个等高子区域。双击图片或占位符即可上传 PNG、JPEG、WebP、SVG 或视频，并调整比例、缩放、取景和图注。',target:'#canvas',notice:'没有图注时不保留多余图注高度；并列图片保持实际等高。图片只是占位符时，也应明确可双击替换。'},
  {title:'同一区域也可放多个模块',text:'先用“圈定范围”划出空白区域，再从“＋”插入独立模块；模块之间不能遮挡，边缘与间距应有明确关系。',target:'[data-action="draw"]',notice:'模块数量不是越多越好。一个文字板块一般不超过4点；超过时先凝练、拆分或换版式。'},
- {group:'高级对齐',title:'进入高级对齐',text:'重新选中一个模块后，点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。',target:'[data-action="advanced-align"]',event:'click'},
+ {group:'表格与公式',title:'打开表格练习页',text:'请打开“表格练习”。这页没有预置正文模块，先插入一张表格，再学习行列、字号、单元格高度和批量替换。',target:'.slide-thumb',targetText:'表格练习',event:'click'},
+ {title:'插入表格',text:'从“＋”选择“表格”。表格使用一个区域；插入后可在右侧统一增减行列、调整单元格高度或打开粘贴替换。',target:'#insert-menu',event:'change',selectValue:'table'},
+ {title:'打开公式练习页',text:'请打开“公式练习”。公式模块可以有多个子区域，每个子区域包含公式标题、LaTeX 公式和解释文字。',target:'.slide-thumb',targetText:'公式练习',event:'click'},
+ {title:'打开“更多模块”',text:'从“＋”选择“更多模块：公式、时间轴等”，打开完整插入弹窗。',target:'#insert-menu',event:'change',selectValue:'more'},
+ {title:'选择 LaTeX 公式',text:'把模块类型改为“LaTeX 公式”。',target:'#insert-type',event:'change',selectValue:'formula'},
+ {title:'设置两个公式子区域',text:'子区域数量填写2，分别用于目标函数和参数更新。公式较多时可以继续增加，但要同步检查页面高度。',target:'#insert-count',input:'#insert-count',copy:'2'},
+ {title:'确认插入公式模块',text:'点击“插入”。之后双击任一公式即可复制或修改 LaTeX；语法错误时系统会要求重新填写。',target:'[data-action="insert-dialog-apply"]',event:'click'},
+ {group:'图片与媒体',title:'打开图片与视频练习页',text:'请打开“图片与视频练习”。这里从空白正文插入含两个子区域的媒体模块。',target:'.slide-thumb',targetText:'图片与视频练习',event:'click'},
+ {title:'插入图片／视频模块',text:'从“＋”选择“图片／视频”。插入后可增加子区域；并列媒体必须保持绝对等高。',target:'#insert-menu',event:'change',selectValue:'media'},
+ {title:'增加第二个媒体子区域',text:'点击“＋ 子区域”，把媒体模块改为两个并列区域。系统会重新分配宽度，并保持两张画面的绝对高度一致。',target:'[data-action="add-part"]',event:'click'},
+ {title:'替换练习图片',text:'双击占位图后，从 tutorial-assets/media 选择练习 SVG。图片、视频和 SVG 都支持替换；图注为空时不要保留冗余图注高度。',target:'#canvas .media-window',notice:'练习目录已准备 01-教学图片-结构.svg 与 02-教学图片-数据.svg。它们只用于练习替换，不写入正式模板素材。'},
+ {group:'高级对齐',title:'打开高级对齐练习页',text:'请打开“高级对齐练习”。本页故意放置了三个尺寸相近但位置不齐的板块，便于观察对齐前后的真实差异。',target:'.slide-thumb',targetText:'高级对齐练习',event:'click'},
+ {title:'进入模块编辑',text:'点击“编辑模块”，再选择需要作为基准的板块。',target:'[data-action="mode-edit"]',event:'click'},
+ {title:'选择一个练习板块',text:'点击画布中的任意练习板块，右侧会出现“高级对齐与分布”。',target:'#canvas .module',event:'click'},
+ {title:'进入高级对齐',text:'点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。',target:'[data-action="advanced-align"]',event:'click'},
  {title:'多选、等距与环形分布',text:'点击“多选开关”，再在画布中选择多个模块。可固定最外边界后平均间隙，也可把文本块组成可整体移动的环形组。',target:'[data-align-mode="multi"]',event:'click'},
  {title:'高级排版的边界',text:'纵／横参考线负责对齐或拉伸；垂直／水平等距会展开多子区域参与计算；环形分布可设置数量、半径与角度。',target:'#alignment-panel',notice:'对齐只改变几何关系，不替代内容判断。必须复查安全区、遮挡、模块边缘、留白和阅读顺序；越界结果不能直接导出。'},
- {group:'时间轴与图文',title:'时间轴也能变成图文卡片',text:'请在左侧打开“研究现状分析”页。时间轴本质上是可增减、排序的图文子区域，不是固定图片。',target:'.slide-thumb',targetText:'研究现状分析',event:'click'},
+ {group:'环形排版',title:'打开环形文字排版练习页',text:'请打开“环形文字排版练习”。本页从空白正文开始，先插入独立文字块，再进行环形分布。',target:'.slide-thumb',targetText:'环形文字排版练习',event:'click'},
+ {title:'插入第一个独立文字块',text:'从“＋”选择“独立文字块 · 白底深字”。重复插入时先为每个文字块保留近似相同的尺寸。',target:'#insert-menu',event:'change',selectValue:'textbox-light'},
+ {title:'为环形准备多个文字块',text:'请继续插入若干独立文字块，建议总数为6。每个文字块只放一个短概念，避免长段文字绕成难读的圆环。',target:'#insert-menu',notice:'可以使用“代我完成本大项”跳过重复插入。进入环形分布前，先统一尺寸并把文字块移动到正文安全区内。'},
+ {title:'多选后执行环形分布',text:'进入“编辑模块”，选择一个文字块后打开高级对齐，启用多选并选择全部文字块，再设置环形中心、半径与角度。',target:'[data-action="mode-edit"]',notice:'环形排版完成后仍需检查标题、页首句和页尾区域，不能让文字块越过正文安全区。'},
+ {group:'时间轴与图文',title:'时间轴也能变成图文卡片',text:'请在左侧打开“时间轴与图文练习”页。时间轴本质上是可增减、排序的图文子区域，不是固定图片。',target:'.slide-thumb',targetText:'时间轴与图文练习',event:'click'},
  {title:'重新进入模块编辑',text:'点击“编辑模块”，准备选中时间轴本身，而不是修改卡片里的文字。',target:'[data-action="mode-edit"]',event:'click'},
  {title:'选中时间轴模块',text:'点击时间轴中的任意卡片，右侧会显示阶段排序、删除、添加以及“隐藏时间轴装饰”。',target:'#canvas .timeline-grid',event:'click'},
  {title:'切换为普通并列图文',text:'勾选“隐藏时间轴装饰”，年份、连线、圆点和箭头会隐藏，同一组内容立即退化为普通并列图文卡片；再次取消即可恢复。请切换一次。',target:'#hide-timeline',event:'change'},
- {group:'备注与放映',title:'页面备注与双窗口放映',text:'请点击“页面备注”查看刚才的内容。演讲者视图适合双屏：观众窗口只显示画面，工作台保留备注并同步翻页。',target:'[data-action="notes"]',event:'click'},
+ {group:'备注与放映',title:'打开放映练习页',text:'请打开“备注、放映与导出练习”。这页集中说明演讲者视图、全屏放映、保存与导出。',target:'.slide-thumb',targetText:'备注、放映与导出练习',event:'click'},
+ {title:'页面备注与双窗口放映',text:'请点击“页面备注”查看本页内容。演讲者视图适合双屏：观众窗口只显示画面，工作台保留备注并同步翻页。',target:'[data-action="notes"]',event:'click'},
  {title:'三种浏览与两种正式放映',text:'视图菜单提供单页、单列滚动和多页滚动；正式演示可选“演讲者视图”或“全屏放映”。',target:'#view-mode',notice:'双屏优先演讲者视图：独立观众窗口可拖到投影屏，工作台保留备注并同步翻页。单屏专注画面时用全屏放映；双击进入总览，Ctrl＋滚轮缩放，放大后左键拖动，Esc先复位再退出。'},
  {title:'保存与导出须知',text:'保存 HTML 优先覆盖当前文件，“另存为”保留副本。PDF/PPTX 导出需运行本地服务；PPTX 已尽量贴近 HTML，但仍须人工复核字体、标点断行与引用。',notice:'“演讲者视图”和“全屏放映”是两种并列方式。教学不会替你启动窗口或导出文件，避免打断当前练习。'},
  {title:'训练完成',text:'你已经走完模板、大纲、页面、模块、文字、备注与导出的完整路径。接下来可继续编辑，也可退出教学回到正常工作台。',finish:true}
@@ -123,12 +141,12 @@ export function startTutorial({onSkipTheme}={}){
  const go=(nextIndex,{closeModal=false,reward=false}={})=>{if(closeModal)leaveModal();clear();index=Math.max(0,Math.min(steps.length-1,nextIndex));playCue();if(reward)burst();setTimeout(show,120);};
  const waitFor=selector=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{const node=document.querySelector(selector);if(node)return resolve(node);if(++tries>40)return reject(Error('教学控件未出现'));setTimeout(check,100);};check();});
  const setValue=(node,value)=>{node.value=value;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));};
- const autoStep=()=>{const step=steps[index];if(step.input){const input=find(step.input);setValue(input,step.copy??'');return;}if(step.fileStep){onSkipTheme?.();go(index+1,{reward:true});return;}if(step.event&&target){target.click();return;}go(index+1,{reward:true});};
+ const autoStep=()=>{const step=steps[index];if(step.input){const input=find(step.input);setValue(input,step.copy??'');return;}if(step.fileStep){onSkipTheme?.();go(index+1,{reward:true});return;}if(step.selectValue&&target){target.value=step.selectValue;target.dispatchEvent(new Event(step.event||'change',{bubbles:true}));return;}if(step.event&&target){target.click();return;}go(index+1,{reward:true});};
  const autoGroup=async()=>{const meta=groupMeta(index),nextIndex=meta.indices.at(-1)+1;try{
   if(meta.name==='主题换肤')onSkipTheme?.();
   else if(meta.name==='大纲教学'){
    let dialog=document.querySelector('#outline-dialog');if(!dialog){document.querySelector('[data-action="outline"]')?.click();dialog=await waitFor('#outline-dialog');}
-   setValue(dialog.querySelector('#outline-text'),OUTLINE);dialog.querySelector('#outline-mode').value='current';dialog.querySelector('#outline-mode').dispatchEvent(new Event('change',{bubbles:true}));for(const id of ['outline-toc','outline-transitions','outline-appendix','outline-closing']){const box=dialog.querySelector('#'+id);if(!box.checked)box.click();}await new Promise(resolve=>setTimeout(resolve,180));dialog.querySelector('#outline-apply')?.click();await new Promise(resolve=>setTimeout(resolve,180));
+   setValue(dialog.querySelector('#outline-text'),OUTLINE);dialog.querySelector('#outline-mode').value='current';dialog.querySelector('#outline-mode').dispatchEvent(new Event('change',{bubbles:true}));for(const id of ['outline-toc','outline-transitions','outline-closing']){const box=dialog.querySelector('#'+id);if(!box.checked)box.click();}const appendix=dialog.querySelector('#outline-appendix');if(appendix.checked)appendix.click();await new Promise(resolve=>setTimeout(resolve,180));dialog.querySelector('#outline-apply')?.click();await new Promise(resolve=>setTimeout(resolve,180));
   }else if(meta.name==='页面设置'){
    let dialog=document.querySelector('#page-dialog');if(!dialog){document.querySelector('[data-action="page-settings"]')?.click();dialog=await waitFor('#page-dialog');}setValue(dialog.querySelector('#page-notes'),'本页先交代研究问题，再说明证据来源；结尾用一句话过渡到下一页。');dialog.querySelector('[data-action="page-dialog-apply"]')?.click();
   }else if(meta.name==='模块与内容')document.querySelector('[data-action="mode-text"]')?.click();

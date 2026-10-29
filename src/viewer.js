@@ -8,12 +8,17 @@ export class SlideViewer{
   this.mode='scroll';this.columns=2;this.present=false;this.overview=false;this.zoom=1;this.pan={x:0,y:0};this.wheelUntil=0;this.restoreEscapeAt=0;
   root.addEventListener('wheel',e=>this.wheel(e),{passive:false});
   root.addEventListener('pointerdown',e=>this.pointer(e));
+  this.scrollHost=root.parentElement;this.scrollHost.addEventListener('scroll',()=>this.scrolled(),{passive:true});
   root.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;if(!this.present&&a.closest('.mode-edit,.mode-delete')){e.preventDefault();return;}const hash=a.getAttribute('href'),slides=this.getProject().slides;const n=hash.startsWith('#slide-')?slides.findIndex(s=>s.id===hash.slice(7)):hash.startsWith('#ref-')?slides.findIndex(s=>s.referenceLayout==='references'):-1;if(n>=0){e.preventDefault();e.stopPropagation();this.select(n);}});
   this.document.addEventListener('fullscreenchange',()=>{
    if(this.document.fullscreenElement||!this.present||this.ending)return;
    if(this.zoom>1.001||Date.now()-this.restoreEscapeAt<700){this.resetZoom();this.updateHUD();return;}
    this.end();
   });
+ }
+ scrolled(){
+  if(this.present||this.mode!=='scroll'||this.scrollTimer)return;
+  this.scrollTimer=this.window.setTimeout(()=>{this.scrollTimer=null;const host=this.scrollHost.getBoundingClientRect(),pages=[...this.root.querySelectorAll('[data-view-page]')];if(!pages.length)return;const current=pages.map(page=>({page,distance:Math.abs(page.getBoundingClientRect().top-host.top-8)})).sort((a,b)=>a.distance-b.distance)[0].page,index=Number(current.dataset.viewPage);if(index!==this.getIndex()){this.onIndex(index);this.onRender();}},120);
  }
  render({mode='text',showGrid=false,grid=20,selected=null,drawing=false}={}){
   const project=this.getProject(),index=this.getIndex(),scroll=this.root.parentElement.scrollTop;

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <rect width="1200" height="675" fill="#f7fafc"/>
+  <path d="M120 540H1100M120 540V110" stroke="#8fa9b8" stroke-width="5"/>
+  <g fill="#005b94"><rect x="210" y="390" width="115" height="150"/><rect x="430" y="300" width="115" height="240"/><rect x="650" y="215" width="115" height="325"/><rect x="870" y="145" width="115" height="395"/></g>
+  <path d="M265 350L487 265L707 185L927 115" fill="none" stroke="#a31418" stroke-width="10"/>
+  <g fill="#a31418"><circle cx="265" cy="350" r="13"/><circle cx="487" cy="265" r="13"/><circle cx="707" cy="185" r="13"/><circle cx="927" cy="115" r="13"/></g>
+  <text x="610" y="625" text-anchor="middle" fill="#27485d" font-family="Microsoft YaHei, sans-serif" font-size="32">教学占位图：替换、裁剪与等高对齐</text>
+</svg>

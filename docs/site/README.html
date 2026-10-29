@@ -31,18 +31,19 @@
 <h2 id="模板与交互教学">模板与交互教学<a class="anchor" href="#模板与交互教学">#</a></h2>
 <p>北科科技蓝是当前主模板。北科钢铁红演示同一版式如何迁移到党政主题；丽院青用于验证学校、主题和素材的增量扩展。模板之间共享工作台能力，但各自携带独立 HTML、素材、说明和导出快照。</p>
 <div class="table-scroll"><table><thead><tr><th>模板</th><th>图文说明</th><th>下载后打开</th><th>导出快照与预览</th></tr></thead><tbody><tr><td>北科科研·科技蓝</td><td><a href="template-ustb-blue.html">模板说明</a></td><td><code>templates/template-1/ustb-blue/template.html</code></td><td><a href="../../templates/template-1/ustb-blue/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-blue/output/template.pptx">PPTX</a> · <a href="../images/ustb-preview.png">30页总览</a></td></tr><tr><td>北科党政·钢铁红</td><td><a href="template-ustb-red.html">模板说明</a></td><td><code>templates/template-1/ustb-red/template.html</code></td><td><a href="../../templates/template-1/ustb-red/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-red/output/template.pptx">PPTX</a> · <a href="../images/red-formula-theme.png">公式页</a></td></tr><tr><td>丽水学院·主题青</td><td><a href="template-lishui-cyan.html">模板说明</a></td><td><code>templates/template-1/lishui-cyan/template.html</code></td><td><a href="../../templates/template-1/lishui-cyan/output/template.pdf">PDF</a> · <a href="../../templates/template-1/lishui-cyan/output/template.pptx">PPTX</a></td></tr></tbody></table></div>
-<p>交互教学统一从北科科技蓝主模板进入，逐项练习：</p>
+<p>交互教学使用独立的北科科技蓝训练文稿 <code>templates/template-1/ustb-blue/tutorial.html</code>。每页对应一个教学单元：需要理解空白布局的卡片页与环形页从空白正文开始；表格、公式和媒体页采用“左侧规范示范＋右侧连续练习区”，既可直接编辑成品，也可亲手插入新模块。逐项练习：</p>
 <ol>
 <li>手动改成钢铁红主题，并上传独立校徽与组合标志 SVG；</li>
 <li>编写、粘贴和应用文档大纲；</li>
 <li>修改页面标题、页首句、页尾总结、来源和备注；</li>
-<li>操作多子区域、表格、公式、图片和图文混排；</li>
+<li>在空白页插入卡片，选择固定锚点，调整尺寸和位置，再用网格吸附建立清楚的空白关系；</li>
+<li>分页练习表格、双子区域公式、双子区域图片／视频及素材替换；</li>
 <li>将时间轴切换为普通并列图文卡片；</li>
-<li>使用参考线、等距和环形分布；</li>
+<li>插入多个独立文字块，使用参考线、等距和环形分布；</li>
 <li>学习多页浏览、演讲者视图、全屏放映与导出。</li>
 </ol>
 <p>教学窗顶部使用两层“进度标尺”：大圆点表示教学大项，小圆点表示当前大项内的具体步骤；已完成、当前和未开始状态用不同主题色区分，并同步显示“第 1.1 步”一类编号。切换步骤时只高亮当前需要操作的控件；教学卡片会根据控件的实时位置自动选择左、右、上、下方的可见空间，窗口或弹窗变化后重新定位。按住标尺区域可手动拖动卡片。操作成功后播放轻量提示音并显示完成特效。</p>
-<p>“代我完成此步”会自动执行当前操作并继续，“代我完成本大项”会补齐该组必要状态后进入下一大项，两者都不会退出教学；只有“退出教学”才结束整个流程。需要手动上传的钢铁红 SVG 已集中放在 <code>tutorial-assets/</code>，弹窗会给出准确文件名和路径。</p>
+<p>“代我完成此步”会自动执行当前操作并继续，“代我完成本大项”会补齐该组必要状态后进入下一大项，两者都不会退出教学；只有“退出教学”才结束整个流程。需要手动上传的钢铁红 SVG 已集中放在 <code>tutorial-assets/</code>；媒体替换练习素材位于 <code>tutorial-assets/media/</code>，弹窗会给出准确文件名和路径。</p>
 <p>大纲教学固定使用界面中的“更新当前文稿”，保证引导在当前页面中连续运行。工作台中的练习不会自动覆盖磁盘模板；只有主动执行“保存 HTML”才会写入文件，因此原始蓝色模板可反复用于重新教学。界面中的“另建文稿，沿用当前主题”保留给完成教学后的正式建稿，不作为教学中途步骤。</p>
 <p>大纲既可直接粘贴，也可导入 <code>.md</code>／<code>.txt</code> 文件。文件内容载入后教学会自动进入应用方式说明；即使提前点击“应用到当前文稿”，引导也会保留并继续进入下一大项，不随大纲弹窗关闭。</p>
 <p><a href="../images/timeline-controls.png"><a class="image-link" href="../images/timeline-controls.png"><img src="../images/timeline-controls.png" alt="时间轴模块：阶段排序、增删与普通并列图文切换"></a></a></p>
@@ -53,7 +54,7 @@
 <li><strong>全屏放映</strong>：适合单屏。方向键或滚轮翻页，双击进入总览；Ctrl＋滚轮缩放，放大后左键拖动；Esc 第一次复位、再次退出。</li>
 </ul>
 <p><a href="../images/presentation-fullscreen.png"><a class="image-link" href="../images/presentation-fullscreen.png"><img src="../images/presentation-fullscreen.png" alt="全屏放映画面与操作提示"></a></a></p>
-<p>工作台另有单页、单列滚动和可指定列数的多页滚动视图，用于制作与检查，不等同于正式放映。</p>
+<p>工作台另有单页、单列滚动和可指定列数的多页滚动视图，用于制作与检查，不等同于正式放映。点击“页面备注”后，备注作为工作台底部的独立停靠区显示，不再排到全部页面之后；单列滚动停到另一页时，备注随当前页自动切换，多页视图则以用户明确点击选中的页面为准。</p>
 <h3 id="本地导出">本地导出<a class="anchor" href="#本地导出">#</a></h3>
 <p>Windows 双击 <a href="../../启动.cmd">`启动.cmd`</a>，或在项目目录运行：</p>
 <pre data-lang="powershell"><code>node scripts/start.mjs --open</code></pre>

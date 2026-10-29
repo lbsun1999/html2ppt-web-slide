@@ -5,6 +5,7 @@ import {writeDocument} from './build-document.mjs';
 import {validateProject,clone} from '../src/model.js';
 import {applyLishuiVariant} from '../src/school-variants.js';
 import {svgDataURL} from '../src/svg.js';
+import {createTutorialProject} from '../src/tutorial-project.js';
 await fs.mkdir('ect',{recursive:true});
 const family='templates/template-1';
 const blueFile=family+'/ustb-blue/template.html';
@@ -30,3 +31,4 @@ for(const school of (process.argv.includes('--lishui-only')?['lishui']:['ustb'])
 }
 // A user-authored color variant keeps its own content and palette on runtime updates.
 if(!process.argv.includes('--lishui-only'))try{const html=await fs.readFile(redFile,'utf8'),match=html.match(/<script\b(?=[^>]*\bid=["']project-data["'])[^>]*>([\s\S]*?)<\/script>/i);if(!match)throw Error('红色文稿缺少project-data，已停止，避免覆盖人工成稿。');await writeDocument(validateProject(JSON.parse(match[1])),redFile,{exportFiles:process.argv.includes('--export'),exportDir:family+'/ustb-red/output'});}catch(error){if(error.code!=='ENOENT')throw error;}
+if(!process.argv.includes('--lishui-only')){const tutorial=createTutorialProject(master);await writeDocument(tutorial,family+'/ustb-blue/tutorial.html');console.log(`tutorial: ${tutorial.slides.length} pages`);}
