@@ -1,0 +1,35 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>项目结构与清理记录 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>项目结构与清理记录</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#项目结构与依赖">项目结构与依赖</a><a class="l2" href="#运行依赖及用途">运行依赖及用途</a><a class="l2" href="#目录用途">目录用途</a><a class="l2" href="#本轮清理">本轮清理</a><a class="l2" href="#清理后验证">清理后验证</a><a class="l2" href="#维护命令">维护命令</a><a class="l2" href="#当前模板包结构">当前模板包结构</a></nav><article class="doc"><h1 id="项目结构与依赖">项目结构与依赖<a class="anchor" href="#项目结构与依赖">#</a></h1>
+<h2 id="运行依赖及用途">运行依赖及用途<a class="anchor" href="#运行依赖及用途">#</a></h2>
+<p>文档大纲由<code>src/outline.js</code>解析、映射和更新数据，<code>src/outline-import.js</code>提供制作中可反复打开的管理弹窗。<code>src/table-text.js</code>负责当前表格的制表符文本往返与批量修改，<code>src/table-text-editor.js</code>显示金色Tab间隔并同步滚动；段落对齐继续复用<code>src/rich-text.js</code>，不增加编辑器分支或运行依赖。配套大纲示例位于<code>docs/大纲示例.md</code>。</p>
+<p>v0.1.2未增加运行依赖。<code>editable-layouts.js</code>负责作者／计划预设，<code>profile-card.js</code>保留固定身份卡，<code>table-blocks.js</code>负责履历及分组表格，<code>text-block-selection.js</code>管理临时多选；专用样式集中在<code>structured-layouts.css</code>并由共享CSS加载器统一内嵌。删除已不使用的旧预设辅助函数，测试及中间文件仍放ect，不进入分享包。</p>
+<div class="table-scroll"><table><thead><tr><th>依赖</th><th>实际用途</th><th>入口</th></tr></thead><tbody><tr><td>esbuild</td><td>工作台启动时打包浏览器脚本；生成独立 HTML</td><td>server.mjs、scripts/build-document.mjs</td></tr><tr><td>exceljs</td><td>读取 Excel 工作簿与合并单元格</td><td>server.mjs</td></tr><tr><td>katex</td><td>LaTeX 语法校验、预览和公式渲染</td><td>src/formula.js</td></tr><tr><td>playwright</td><td>PDF 导出及 PPTX 对象测量、媒体截图</td><td>server.mjs</td></tr><tr><td>pptxgenjs</td><td>写入可编辑 PPTX</td><td>server.mjs</td></tr><tr><td>jszip</td><td>规范PPTX段落XML，补全中文断行规则并保留原生列表属性</td><td>src/server/pptx-typography.mjs</td></tr></tbody></table></div>
+<p>v0.1.3将此前已被依赖树使用的JSZip显式列为直接依赖，用于PPTX段落规范化。以上六项均由实际功能引用，不删除或误移到仅开发依赖。<code>node_modules</code> 是安装产物，不手动裁剪其内部文件；分享源码时可不打包，由 <code>npm ci</code> 恢复。独立 HTML 的浏览、编辑与放映不读取 node_modules。</p>
+<h2 id="目录用途">目录用途<a class="anchor" href="#目录用途">#</a></h2>
+<div class="table-scroll"><table><thead><tr><th>位置</th><th>用途</th></tr></thead><tbody><tr><td>templates/</td><td>按版式族和模板包管理的正式HTML、素材、清单与导出快照</td></tr><tr><td>src/</td><td>编辑器、渲染、模型与学校变体</td></tr><tr><td>src/server/</td><td>服务端必需的学校资源和共享样式加载</td></tr><tr><td>scripts/</td><td>生成、检查、预览及清理等维护命令</td></tr><tr><td>reference/</td><td>三份参考HTML及截图／哈希；navigation第10页提供通用时间轴</td></tr><tr><td>docs/</td><td>说明、原始样式规范和正式预览图</td></tr><tr><td>tests/</td><td>回归测试；fixtures/ 为固定测试视频，不参与默认示例</td></tr><tr><td>ect/、test-results/</td><td>可再生检查产物，清理后按需重建</td></tr></tbody></table></div>
+<p>根目录保留使用说明、技能入口及运行入口；src存放模型与编辑逻辑，docs与reference分别承担说明和已确认参考。正式HTML、学校素材和对应PDF/PPTX全部进入各自模板包，避免学校成稿与公共运行时代码混放。</p>
+<p>GitHub包含公共源码、独立模板包、说明插图和reference；不包含node_modules、ect、test-results、本地备份和日志。依赖用package-lock.json锁定并通过npm ci恢复。发布前检查所有README本地链接可到达，避免移动模板后留下失效的HTML、素材或导出链接。</p>
+<h2 id="本轮清理">本轮清理<a class="anchor" href="#本轮清理">#</a></h2>
+<ul>
+<li>删除三个一次性迁移／取图脚本：import-reference-layouts.mjs、prepare-school-assets.mjs、prepare-lishui-assets.py。现有母版及资源已完整存入项目，正常运行和生成不依赖上一级学校目录或重新下载。</li>
+<li>清除无用导入和未调用的 changed 函数，移除预设页的重复初始化，以及生成后立即被成熟版式覆盖的临时时间轴对象、已不再走的旧学校分支。</li>
+<li>从局部母版 CSS 中移除 218 个未使用的旧页面／界面选择器，保留 142 个。两校八个特殊页面逐页图像比较通过，仅有 CSS 序列化造成的极小颜色舍入差（最大 2/255）。</li>
+<li>正式总览图迁到 docs/images；固定视频迁到 tests/fixtures，测试不再依赖旧临时文件或联网下载。</li>
+<li>清理历史截图、重复 HTML/PDF/PPTX、网页抓取文件、迁移脚本和中间模型；保留已认可的 reference 快照及正式交付物。</li>
+<li>清理前 ect 中历史产物约 82.84 MiB；正式总览图和固定测试视频已迁出，再删除临时目录。后续检查生成的临时文件也可用同一命令安全清理。</li>
+</ul>
+<h2 id="清理后验证">清理后验证<a class="anchor" href="#清理后验证">#</a></h2>
+<p>从空临时目录重新启动服务、生成两校正式 HTML/PDF/PPTX，并验证模型单元测试、Excel 导入、媒体上传、HTML 离线保存、公式编辑、富文本编辑、目录增删、窄文本框、备注及放映操作。PPTX 另查章节标题禁止自动换行和正文标题主题色。</p>
+<p>两校共60页的版面检查均无溢出错误。v0.1.0五份reference HTML的哈希保持一致；v0.1.1按用户要求精简为三份参考HTML，时间轴加入navigation并更新其哈希，其余两份内容不改。v0.1.0入口依赖图确认16个顶层源模块均可达；v0.1.1新增timeline、sidebar-pages和page-operations，均由实际运行入口引用，没有新增运行依赖。</p>
+<p>额外回归发现并修正两处旧问题：文字样式展示页的卡片高度不足，自定义列表符号的旧 CSS 覆盖了实际符号。十种文字样式、符号显示、撤销重做与离线导出均重新验证。发布整理时已删除examples空目录，其中没有运行文件或资源引用。</p>
+<h2 id="维护命令">维护命令<a class="anchor" href="#维护命令">#</a></h2>
+<pre data-lang="powershell"><code>npm.cmd start
+npm.cmd test
+npm.cmd run test:e2e
+npm.cmd run build:examples
+npm.cmd run clean</code></pre>
+<p><code>build:examples</code> 更新<code>templates/template-1/</code>内的北科蓝与北科红；<code>build:lishui</code>更新丽院青。追加 <code>-- --export</code> 可把正式PDF/PPTX写入对应包的<code>output/</code>，需要本地服务运行。<code>clean</code> 仅清理 ect 和 test-results，不处理模板包、reference或依赖目录。正式材料不要放在临时目录。</p>
+<p>运行编辑器只需 Node.js 20.10+、Chrome/Edge 和上述 npm 依赖。Python/Pillow 仅供部分检查、拼图工具使用；普通用户不必安装。</p>
+<h2 id="当前模板包结构">当前模板包结构<a class="anchor" href="#当前模板包结构">#</a></h2>
+<p><code>templates/template-1/</code>包含<code>ustb-blue</code>、<code>ustb-red</code>和<code>lishui-cyan</code>三个模板包。每个包都自带<code>template.html</code>、<code>template.json</code>、README、<code>assets/</code>和<code>output/</code>，可以单独复制和打开；公共运行时仍只有一份。</p>
+<p>新增同族模板时复制子目录并替换自身数据与素材；新增另一套页面体系时建立新的版式族目录。单纯新增模板不修改<code>src/</code>、不复制公共接口，也不建立长期学校分支。</p>
+<p>启动入口拆为保持真实CRLF的ASCII启动.cmd和可记录错误的scripts/start.mjs；Windows不会再依赖含中文的批处理逻辑。SVG、主题色、离线传送与保存路径选择均复用共用接口，未新增运行依赖。</p></article></main></body></html>

@@ -1,0 +1,176 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>完整使用说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>完整使用说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台</a><a class="l2" href="#产品特点">产品特点</a><a class="l2" href="#快速开始">快速开始</a><a class="l3" href="#下载项目">下载项目</a><a class="l3" href="#直接打开学校示例">直接打开学校示例</a><a class="l3" href="#公式符号与样式表">公式、符号与样式表</a><a class="l3" href="#需要导出或导入excel时启动服务">需要导出或导入Excel时启动服务</a><a class="l2" href="#控件使用">控件使用</a><a class="l3" href="#先选编辑模式">先选编辑模式</a><a class="l3" href="#先定大纲也能随时修改">先定大纲，也能随时修改</a><a class="l3" href="#页面复制多选与排序">页面复制、多选与排序</a><a class="l3" href="#选中文字再调格式">选中文字，再调格式</a><a class="l3" href="#模块尺寸位置与子区域">模块尺寸、位置与子区域</a><a class="l3" href="#作者简介与阶段计划">作者简介与阶段计划</a><a class="l3" href="#时间轴增减阶段照片或视频">时间轴：增减阶段、照片或视频</a><a class="l3" href="#图片视频表格和目录">图片、视频、表格和目录</a><a class="l3" href="#双击公式编辑latex">双击公式编辑LaTeX</a><a class="l2" href="#放映与备注">放映与备注</a><a class="l3" href="#浏览整份文稿">浏览整份文稿</a><a class="l3" href="#全屏放映与四列总览">全屏放映与四列总览</a><a class="l3" href="#演讲者视图与拓展屏">演讲者视图与拓展屏</a><a class="l3" href="#给当前页写备注">给当前页写备注</a><a class="l2" href="#ai协作">AI协作</a><a class="l2" href="#文件与导出">文件与导出</a><a class="l3" href="#保存原稿与另存为">保存原稿与另存为</a><a class="l3" href="#导出与分享">导出与分享</a><a class="l2" href="#完整文档导航">完整文档导航</a><a class="l2" href="#资料与标识来源">资料与标识来源</a><a class="l2" href="#目录与学校扩展">目录与学校扩展</a><a class="l2" href="#使用许可">使用许可</a></nav><article class="doc"><h1 id="web-slideai-与人工协作的科研幻灯片工作台">Web Slide：AI 与人工协作的科研幻灯片工作台<a class="anchor" href="#web-slideai-与人工协作的科研幻灯片工作台">#</a></h1>
+<p>把原始材料交给 AI 组织内容，在浏览器里继续精修、演示与交付。同一份 HTML 同时承载文案、版式、素材和编辑功能，人工修改后还能交回 AI 继续加工。</p>
+<p>平台支持按用户偏好扩展：北科蓝、北科红与丽院青均放在独立模板包中，共用版式与编辑、放映、导出能力。新增学校、机构或汇报场景时，可以只增加一个自带HTML、素材和说明的模板目录，不必修改核心代码。</p>
+<blockquote><strong>许可提示：本仓库临时公开，仅供查看、学习与参考，不授予复制、分发、修改、再许可、公开传播或商业使用许可。后续重大功能更新将迁移至私有仓库维护。完整条款见<a href="../../LICENSE">LICENSE</a>。</strong></blockquote>
+<p><a href="#快速开始">快速开始</a> · <a href="#控件使用">控件使用</a> · <a href="#放映与备注">放映与备注</a> · <a href="#ai协作">AI协作</a> · <a href="#文件与导出">文件与导出</a> · <a href="#完整文档导航">完整文档导航</a></p>
+<p><a href="../images/workbench-overview.png"><a class="image-link" href="../images/workbench-overview.png"><img src="../images/workbench-overview.png" alt="最新北科示例的多页工作台：顶部控件、左侧缩略图、中央多页画布和右侧设置"></a></a></p>
+<p>上图是当前北科示例的实际工作台，采用每行3页的多页视图。左侧选择页面，中央检查内容，右侧调整当前页或模块；页面较多时向下滚动。下文的工作台图保留完整界面，弹窗与短控件使用局部截图，便于看清操作；点击图片可查看原尺寸。</p>
+<h2 id="产品特点">产品特点<a class="anchor" href="#产品特点">#</a></h2>
+<p>新版“高级对齐与分布”支持主题色参考线、拖动／数值定位、平移、单边拉伸、多选等距和环形组合；多子区域会展开参与间隙计算。子区域还可选用 SVG 图标和 Markdown <code>$...$</code> 行内公式。完整技术标准与验收口径见<a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a>。直接双击<a href="../../index.html">index.html</a>可通过图文导航进入主模板、关键文档和参考页面。</p>
+<div class="table-scroll"><table><thead><tr><th>特点</th><th>实际可以做什么</th></tr></thead><tbody><tr><td>AI与人工使用同一份源稿</td><td>AI归纳材料并选版式，人工继续改文字、图表和备注；下一轮读取最新保存的HTML，保留人工修改</td></tr><tr><td>核心与模板包分离</td><td>北科蓝、北科红与丽院青各自携带HTML、素材和导出物；复制模板目录即可增量添加新身份与主题</td></tr><tr><td>直接打开已有示例</td><td>学校HTML内嵌脚本、样式、字体与媒体，下载后双击即可编辑和放映</td></tr><tr><td>大纲贯穿整个制作过程</td><td>按总标题、章节、单页题目组织文稿；随时修改并检查对应页面，末章可明确设为附录</td></tr><tr><td>科研内容有成熟版式</td><td>提供研究现状、公式、实验表、伪代码、主图、总结计划、参考文献和作者简介</td></tr><tr><td>文字可细调到选区与段落</td><td>选中字可改粗细、颜色和10/12/14/16pt字号；同块可混排普通段落与列表，行距和段后距独立调整</td></tr><tr><td>结构与媒体可调整</td><td>模块按网格移动、改尺寸和列数；媒体支持自定义比例、取景、等比缩放与并列实际等高</td></tr><tr><td>演示与交付完整</td><td>单页／多页浏览、全屏放映、缩放拖动、逐页备注、手动双窗口，以及PDF和可编辑PPTX导出</td></tr></tbody></table></div>
+<p>平台使用1600×900的16:9画布。正文默认16pt、图标题14pt、脚注与页码约10pt，表格8–14pt适配；具体内容仍需检查短尾行、对齐、密度和溢出。规则见<a href="版式细则与错误复盘.html">版式细则与错误复盘</a>。</p>
+<p>封面、结束页及章节过渡页不显示页脚和页码；正文、目录和附录保留来源与页码。实际页序和总页数仍完整计算，目录范围不变。</p>
+<h2 id="快速开始">快速开始<a class="anchor" href="#快速开始">#</a></h2>
+<h3 id="下载项目">下载项目<a class="anchor" href="#下载项目">#</a></h3>
+<ul>
+<li><a href="https://github.com/lbsun1999/html2ppt-web-slide/archive/refs/heads/main.zip">下载完整项目ZIP</a>：源码、三个模板包、说明、参考示例及正式PDF/PPTX。</li>
+<li><a href="https://github.com/lbsun1999/html2ppt-web-slide/releases">版本发布与打包资源</a>：下载已整理的版本包，解压后即可打开学校HTML。</li>
+<li>使用Git：<code>git clone https://github.com/lbsun1999/html2ppt-web-slide.git</code>。</li>
+</ul>
+<p>下载包不含node_modules与测试临时文件。直接打开学校HTML无需安装；需要本地服务时执行下文的依赖安装步骤。</p>
+<p>发布页保留初版与最新版。日常小修合并更新最新版的说明和资源包，重要版本再单独发布。</p>
+<h3 id="直接打开学校示例">直接打开学校示例<a class="anchor" href="#直接打开学校示例">#</a></h3>
+<p>先下载项目文件夹，再打开其中的HTML。GitHub中的HTML链接用于查看源文件，不能代替本地运行工作台。</p>
+<div class="table-scroll"><table><thead><tr><th>模板</th><th>可编辑源稿</th><th>导出文件</th><th>30页总览</th></tr></thead><tbody><tr><td>北科科研·科技蓝</td><td><a href="../../templates/template-1/ustb-blue/template.html">HTML源稿</a></td><td><a href="../../templates/template-1/ustb-blue/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-blue/output/template.pptx">PPTX</a></td><td><a href="../images/ustb-preview.png">5×6预览</a></td></tr><tr><td>北科党政·钢铁红</td><td><a href="../../templates/template-1/ustb-red/template.html">HTML源稿</a></td><td><a href="../../templates/template-1/ustb-red/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-red/output/template.pptx">PPTX</a></td><td><a href="../images/red-formula-theme.png">公式页预览</a></td></tr><tr><td>丽水学院·主题青</td><td><a href="../../templates/template-1/lishui-cyan/template.html">HTML源稿</a></td><td><a href="../../templates/template-1/lishui-cyan/output/template.pdf">PDF</a> · <a href="../../templates/template-1/lishui-cyan/output/template.pptx">PPTX</a></td><td>同版式族换肤示例</td></tr></tbody></table></div>
+<p>三套模板都属于<a href="../../templates/template-1">Template 1版式族</a>，但彼此拥有独立的HTML、<code>assets/</code>、说明和<code>output/</code>。真实汇报的页数由内容决定，不要求保留全部30页。</p>
+<p>另有<a href="../../templates/template-1/ustb-red/template.html">北科红色政务HTML</a>，保留用户指定的钢铁红与浅红底，使用原始SVG校徽。浅卡片、分割线、默认人物占位随主题变化；辅助灰字对齐主题色相，保留原色的饱和度和明度，正文与封面填写信息使用纯黑。实际上传的照片不会自动重着色。</p>
+<h3 id="公式符号与样式表">公式、符号与样式表<a class="anchor" href="#公式符号与样式表">#</a></h3>
+<p>公式示例页由三个真实模块组成：左侧一个公式模块，默认两个可增减、排序的子区域；右上为白底符号表，右下为浅底字体样式表。各模块标题18pt，两张表按可用空间在8–14pt内适配，可在右栏移动、伸缩、增减行列或切换默认／A类卡片样式。选择固定字号时取消自适应；内容仍超出时应扩大模块或拆页。</p>
+<p>双击公式，或两张表内的任意数学符号，均可编辑、复制LaTeX。弹窗“使用主题色”勾选为当前主题色，取消为纯黑；右栏同名选项统一设置当前模块全部公式。表格支持在单元格内输入<code>$\theta$</code>等行内公式，批量编辑时保留源码。语法错误会提示，取消保留原值。PDF保留排版效果，PPTX的数学部分为独立图像，表格说明文字仍可编辑。</p>
+<p><a href="../images/red-formula-theme.png"><a class="image-link" href="../images/red-formula-theme.png"><img src="../images/red-formula-theme.png" alt="红色公式页：左侧公式子区域、右侧两个可编辑表格模块"></a></a></p>
+<p>图片模块、时间轴图片和主题标识均支持PNG／JPEG／WebP及纯图形SVG。SVG在HTML中保留矢量源；第14页的校徽示范默认绑定当前主题标识，双击换为自己的图片后解除绑定。作者页邮箱下方另有可编辑电话行。</p>
+<p><strong>PPTX导出后必须人工逐页审核，再用于正式汇报或交付。</strong> 当前结果已支持在PowerPoint中继续编辑，仍可能出现局部字体颜色偏差、字体替代或标点断行等细节，需要人工确认并微调。HTML或PDF检查通过不能代替PPTX人工审阅。</p>
+<h3 id="需要导出或导入excel时启动服务">需要导出或导入Excel时启动服务<a class="anchor" href="#需要导出或导入excel时启动服务">#</a></h3>
+<div class="table-scroll"><table><thead><tr><th>操作</th><th>直接打开学校HTML</th><th>启动本地服务后</th></tr></thead><tbody><tr><td>编辑、保存、放映、填写备注</td><td>支持</td><td>支持</td></tr><tr><td>大纲管理、段落对齐、表格批量编辑</td><td>支持</td><td>支持</td></tr><tr><td>图片／视频上传与取景</td><td>支持</td><td>支持</td></tr><tr><td>导出PDF／PPTX、导入Excel</td><td>需要服务</td><td>支持</td></tr></tbody></table></div>
+<p>完整解压项目后，Windows双击<a href="../../启动.cmd">启动.cmd</a>。双击失败时，在项目文件夹打开终端执行：</p>
+<pre data-lang="powershell"><code>node scripts/start.mjs --open</code></pre>
+<p>需要Node.js 20.10+及Chrome／Edge，首次恢复依赖需要网络；无需Microsoft Office或Python。看到“服务已就绪”后保持启动窗口开启。服务仅监听本机，可复用已运行的Web Slide服务，错误保存在<code>ect/startup.log</code>。</p>
+<p>离线HTML点击导出后，可在弹窗中“传送当前文稿”到本地工作台，再在新窗口导出，尚未保存的修改也能传过去。也可访问 <code>http://127.0.0.1:4317</code>，点击“打开HTML”选择文件，<strong>无需拖拽</strong>。</p>
+<p><a href="../images/local-export-connection.png"><a class="image-link" href="../images/local-export-connection.png"><img src="../images/local-export-connection.png" alt="离线导出连接弹窗：启动命令、本机地址及传送当前文稿按钮"></a></a></p>
+<p>如果Windows提示“这些文件可能对你的计算机有害”、确认后闪退，或终端提示缺少依赖／端口占用，按<a href="启动与导出排障.html">启动与导出排障</a>处理。新版已修复旧ZIP中批处理LF换行导致的错行问题；无需关闭Windows安全防护。</p>
+<p><code>index.html</code>兼作图文内容导航与服务入口：直接双击时展示主模板、文档和参考页面；“功能与操作说明”等入口使用 <code>docs/site/</code> 中预生成的静态 HTML，离线也能正确显示目录、图片、表格和代码块。原始 Markdown 继续供 GitHub、AI 和维护者使用。通过本地服务访问时自动进入工作台。日常离线编辑仍优先打开上表中的学校HTML。</p>
+<h2 id="控件使用">控件使用<a class="anchor" href="#控件使用">#</a></h2>
+<h3 id="先选编辑模式">先选编辑模式<a class="anchor" href="#先选编辑模式">#</a></h3>
+<p><a href="../images/document-controls.png"><a class="image-link" href="../images/document-controls.png"><img src="../images/document-controls.png" alt="当前文档管理区：新建HTML、文档大纲、主题、打开、另存为、保存及导出"></a></a></p>
+<p>上图是顶部文档管理区。“文档大纲”与“新建HTML”并列，随时可以打开，不限于制作开始时使用。</p>
+<div class="table-scroll"><table><thead><tr><th>入口</th><th>使用方式</th></tr></thead><tbody><tr><td>新建HTML／打开HTML</td><td>新建文稿或载入已有源稿，不需要另外保存项目文件</td></tr><tr><td>文档大纲</td><td>制作中随时打开，现写／粘贴／读取MD或TXT，更新当前页题、章节与页序，或另建文稿</td></tr><tr><td>Web Slide旁的文件名</td><td>点击修改文稿名称</td></tr><tr><td>编辑文字</td><td>点击画布中的文字，或选中具体字符后调整格式；再次点击回到预览</td></tr><tr><td>编辑模块</td><td>点击模块，右侧出现尺寸、移动、样式与子区域控件；再次点击取消</td></tr><tr><td>＋文本块／圈定范围</td><td>插入深底白字或白底深字的独立文本块；可先圈定区域，位置和尺寸吸附网格</td></tr><tr><td>删除模块</td><td>进入删除模式后选择要删除的区域</td></tr><tr><td>左侧＋</td><td>新增内容页、过渡页、目录及附录示例</td></tr><tr><td>左下固定操作区</td><td>复制、粘贴、上移、下移、删除；缩略图列表单独滚动，按钮始终可见</td></tr><tr><td>↶／↷</td><td>撤销与重做</td></tr></tbody></table></div>
+<h3 id="先定大纲也能随时修改">先定大纲，也能随时修改<a class="anchor" href="#先定大纲也能随时修改">#</a></h3>
+<p><a href="../images/outline-manager.png"><a class="image-link" href="../images/outline-manager.png"><img src="../images/outline-manager.png" alt="文档大纲弹窗：当前标题与章节、三级格式说明、对应页预览及最后一章为附录选项"></a></a></p>
+<p>“文档大纲”位于顶部“新建HTML”旁边，制作到一半也能打开。弹窗会载入当前章序和每页题目；直接写、粘贴或读取MD／TXT文件均可，用<code># 总标题</code>、<code>## 章节标题</code>、<code>### 页面标题</code>区分层级。长标题需要手动分行时写<code>&lt;br&gt;</code>。可下载<a href="大纲示例.html">可导入的大纲示例</a>。</p>
+<p>默认更新当前文稿：下方预览显示每个题目对应的现有页，改名和排序后保留原页正文、图表、局部格式、位置和备注，目录同步更新。新增题目可选占位页或复制旧页，删去题目会移出对应页面，应用前检查映射和移出数量。<strong>“最后一章为附录”</strong>可以明确末章身份，章名不限于“附录”；勾选后默认无过渡页、不进入正文目录。</p>
+<p>也可选择“另建文稿”，沿用当前主题。<strong>默认正文内容区完全留空</strong>，只保留大纲题目、章节和页眉页脚；非正文页保留必要标题与信息，填写提示放备注。同名示例也不会自动复制正文；需要复用时，在对应页下拉框明确选择旧页。取消不会改稿，应用后可撤销，保存HTML才写入文件。大纲建立的是结构，不自动完成研究文案。详见<a href="AI制作与迭代流程.html#3-提纲与逐页结构">人机分工与逐页制作流程</a>。</p>
+<h3 id="页面复制多选与排序">页面复制、多选与排序<a class="anchor" href="#页面复制多选与排序">#</a></h3>
+<p><a href="../images/page-controls.png"><a class="image-link" href="../images/page-controls.png"><img src="../images/page-controls.png" alt="左侧缩略图可多选、拖动排序，复制粘贴和删除固定在左下角"></a></a></p>
+<p>点击缩略图选一页；Ctrl（macOS用Command）加点击可多选，Shift加点击可连续选择。拖动缩略图到目标位置，蓝线表示插入位置；也可用底部上移、下移按钮。调整顺序后，章节号、自动目录及页码范围一起更新。</p>
+<p>点击“复制”，再选定插入位置并点击“粘贴”，副本放在当前页之后。正文、图片／视频、时间轴、备注和富文本会一起复制，新页面使用独立ID。固定操作区支持多页删除，确认后可用撤销恢复，至少保留一页。左侧获得焦点时可用Ctrl／Command+C、V、A和Delete；编辑画布文字时仍使用正常的文字快捷键。</p>
+<p>同一窗口内的页面剪贴板不依赖浏览器权限；跨窗口粘贴需浏览器允许读取系统剪贴板，离线文件可能受限制。</p>
+<h3 id="选中文字再调格式">选中文字，再调格式<a class="anchor" href="#选中文字再调格式">#</a></h3>
+<p><a href="../images/text-controls.png"><a class="image-link" href="../images/text-controls.png"><img src="../images/text-controls.png" alt="文字编辑的实际界面：画布中保留选区，顶部展示字号、列表、粗细、颜色、行距和段后距"></a></a></p>
+<p>图中只选中了正文的几个字。操作时先建立选区，再点击上方控件；只修改选区的字符格式，不把整块一起改掉。</p>
+<p>选中文字或移动光标时，字号、行距、段后距、颜色、粗细和列表会自动读取当前样式；不同值显示“混合”，不保留上一次操作的旧值。可直接一次选择14pt，无需先切16pt。行距和段后距输入后，点击框外应用。</p>
+<div class="table-scroll"><table><thead><tr><th>控件</th><th>作用与范围</th></tr></thead><tbody><tr><td>10／12／14／16pt</td><td>修改选中文字的字号；未选字符时可调整当前字段</td></tr><tr><td>B</td><td>加粗或取消加粗</td></tr><tr><td>主题色／强调色／原色／自选色</td><td>修改选区颜色，保留与背景的可读对比</td></tr><tr><td>普通段落／列表</td><td>修改选中段落；允许第一行普通、后几行列点</td></tr><tr><td>行距</td><td>输入倍数，如1.55；点击框外应用</td></tr><tr><td>段后</td><td>输入PPT pt，默认6；与行距独立，作用于选中段落</td></tr><tr><td>右栏 L／E／R／J</td><td>左／中／右／两端对齐；Ctrl+L／E／R／J可直接切换</td></tr></tbody></table></div>
+<p>右侧的段落对齐控件如下，蓝色表示当前段落采用的方式：</p>
+<p><a href="../images/paragraph-alignment.png"><a class="image-link" href="../images/paragraph-alignment.png"><img src="../images/paragraph-alignment.png" alt="右侧四列段落对齐单选：L左对齐、E居中、R右对齐、J两端对齐"></a></a></p>
+<div class="table-scroll"><table><thead><tr><th>字母</th><th>对齐方式</th><th>文字编辑快捷键</th></tr></thead><tbody><tr><td>L</td><td>左对齐</td><td>Ctrl+L</td></tr><tr><td>E</td><td>居中</td><td>Ctrl+E</td></tr><tr><td>R</td><td>右对齐</td><td>Ctrl+R</td></tr><tr><td>J</td><td>两端对齐，末行自然左对齐</td><td>Ctrl+J</td></tr></tbody></table></div>
+<p>先把光标放入段落，或选中需要一起调整的几段，再点单选项或按快捷键。同一文字块可逐段设置；若选区包含多种方式，四项均不选中。HTML保存与PPTX导出保留设置。快捷键只在画布文字编辑时接管，普通输入框仍用浏览器原行为。</p>
+<p>模块也可先统一设置列表，再逐段细调。板块通常不超过四点，末行只剩一两个字时先改写或按完整语义分行，不靠缩字号硬塞。</p>
+<p>在“编辑文字”模式下，先点击一个文字块，再按住Shift点击其他文字块或表格单元格，可同时选中多个区域。虚线高亮和“已选N块”显示选择范围；字号、粗细、颜色、行距与段后距可统一修改，一次操作可整体撤销。普通点击或Esc退出多选；单个文字块内仍可按字符精调。多选状态不进入导出文件。</p>
+<h3 id="模块尺寸位置与子区域">模块尺寸、位置与子区域<a class="anchor" href="#模块尺寸位置与子区域">#</a></h3>
+<p><a href="../images/module-controls.png"><a class="image-link" href="../images/module-controls.png"><img src="../images/module-controls.png" alt="模块编辑工作台：右侧显示固定顶点、网格步进、尺寸、移动和子区域设置"></a></a></p>
+<p>图中选中主图右侧的说明模块，右侧控件与这个模块对应：先选固定锚点（四角或中心），再调整宽高；按网格移动可改变位置。尺寸按钮支持长按连续调整，步进可选1／2／5格，Shift＋单击可快速调整；一次长按可整体撤销。</p>
+<p>文字模块可换样式、调列数、增减子区域；切换样式保留内容。右侧子区域列表按名字显示，直接用<code>↑</code>、<code>↓</code>排序或点“删除”移除指定区域，移动时标题、内容、图片和格式一起保留。自动目录的顺序仍跟随章节。灰色尺寸按钮表示继续调整会越界、遮挡或导致内容溢出，真实问题需改文案、扩大区域或拆页。</p>
+<p>尺寸锚点可选四角或“中心”。固定中心时，调整宽高会向两侧平均扩展或收缩，中心位置保持不变；文字字号不随之缩小。新增模块后仍应检查它在正文区的居中关系、与其他模块的边缘／基线及间距，AI排版规范已覆盖这些要求；当前没有一键自动居中按钮。</p>
+<p>右侧“显示模块名称”可以隐藏或恢复标题，名称和正文仍保存在HTML里。有分组总标题时控制总标题，不影响下面各卡片的分项标题；无框线表格模块控制分组标题栏。编辑文字时，点击文字后可使用工具栏“删除文字块…”删除当前子区域或整个所属模块，确认框会标明范围，删除后可撤销。</p>
+<p>编辑文字时，光标进入页首句、成熟版式中的正文说明或独立文本框，右侧自动显示“当前文字块”，可输入X／Y坐标或用箭头平移，步进可选1px、5px和当前网格，Shift加点击为5倍步进。碰到模块、其他文字、图片或正文边界时会拒绝移动；原版式字段可恢复原位，操作可撤销。页眉、页脚、身份卡和表格单元格保留各自结构。模块内文字仍对应所属模块的控件；右侧模块列表作为快捷入口保留。</p>
+<p><a class="image-link" href="../images/free-text-controls.png"><img src="../images/free-text-controls.png" alt="光标所在正文说明块与右侧文字平移控件"></a></p>
+<p>平移位置随HTML保存，重新打开、放映和PDF／PPTX导出均保留。修改文字内容后，仍需检查新增行是否挤入其他内容。</p>
+<p>“＋”下拉菜单收纳了文字模块、独立文字块、表格、图片／视频以及更多模块。收起时只显示加号，鼠标悬停提示“插入内容”；展开后显示完整选项。直接插入时先检测真实空白区域：只有一处可用区域则直接放入；存在多个分离区域时，先显示位置预览供选择。插入后仍可按网格移动和调整尺寸，不占用作者身份卡等固定区域。</p>
+<p>独立文本块没有附带标题和分组装饰，可在右侧切换深底白字／白底深字。模块间建议留12px，紧凑时可缩小；页尾前也按实际可用空间检查，不因未留满24px标红。A类和C1卡片的内边距可留空自动调整，也可设为1–24pt，允许文字靠近边缘；C1仍给左侧色条留出净空。按真实内容判断截断和遮挡，不为留白硬性标红，也不缩小字号强塞。</p>
+<p>十种文字样式可先看<a href="../../文本块样式展示.html">独立样式展示</a>与<a href="文本块组件说明.html">组件说明</a>。作者简介与阶段计划已保留原有层级和信息关系，并改成可直接操作的模块，见下方说明。</p>
+<h3 id="作者简介与阶段计划">作者简介与阶段计划<a class="anchor" href="#作者简介与阶段计划">#</a></h3>
+<p><a href="../images/profile-modules.png"><a class="image-link" href="../images/profile-modules.png"><img src="../images/profile-modules.png" alt="作者简介：左侧固定身份卡，右侧履历表和分组表格可编辑"></a></a></p>
+<p>作者页左侧保留照片、姓名、单位和成果数量卡片，文字与照片可修改。右侧为两个模块：教育和工作经历是履历横线表，另一个无框线表格模块包含“学术任职／项目”和“研究方向”两个子区域，可继续增减、排序。点击右侧分组名后，行、列、行高、内边距和替换表格均针对该组。履历表正文居中，字段标题下用分段横线；无框线表格全部左对齐，首行主题色加粗。半个字符宽的履历间隔列自动生成。</p>
+<p>作者表格默认正文14pt、字段标题16pt。右侧可为整表或当前分组选择10／12／14／16pt，工具栏也可调整选中的单元格或字符。手动指定表格字号后固定该档位；内容过多时通过调整行列、留白、模块尺寸或拆页处理，系统不会悄悄把16pt改回14pt。</p>
+<p><a href="../images/summary-modules.png"><a class="image-link" href="../images/summary-modules.png"><img src="../images/summary-modules.png" alt="阶段总结：A2卡片、计划表与C1讨论区分别编辑"></a></a></p>
+<p>阶段总结是一个含三张A2卡片的文字模块，支持增减和排序，第四张会自动改成两列；“下一步计划”保留可替换的纯表格，下方讨论用独立C1模块。分组标题20pt、卡片标题18pt、正文16pt，计划表14pt。模块实际边界不相互遮挡，讨论区不覆盖表格。</p>
+<p>普通内容只有一个子区域时，选默认、A3或B1等无编号标题；C3适合多个有次序的子区域，避免单块内容上出现孤立的“01”。两校第13页已改为A3深底标题，保留原有文字说明。</p>
+<h3 id="时间轴增减阶段照片或视频">时间轴：增减阶段、照片或视频<a class="anchor" href="#时间轴增减阶段照片或视频">#</a></h3>
+<p><a href="../images/timeline-controls.png"><a class="image-link" href="../images/timeline-controls.png"><img src="../images/timeline-controls.png" alt="第8页时间轴及右侧阶段管理：增减、前后移动，卡片与媒体随数量调整"></a></a></p>
+<p>两校第8页现为可编辑时间轴。选择“编辑模块”，点击时间轴，右侧可添加阶段、删除任意阶段或前后移动；支持1–6阶段，建议2–5阶段。卡片宽度和媒体高度会自动调整，同排画面严格等高。阶段较多且文字较长时，应凝练或拆页，真实溢出仍会提示。</p>
+<p>切到“编辑文字”可直接改年份、箭头上的事件短名和段落介绍。双击照片上传PNG／JPEG／WebP或MP4／WebM视频，也可调整取景和缩放。所有年份深色底、圆点、连接线及事件标题统一跟随主题色，图文卡片和箭头保留浅底；新增阶段先给占位媒体，再替换真实资料。</p>
+<p>新页可通过“插入模块→时间轴”创建。<a href="../../reference/navigation.html">navigation示例</a>第10页提供不含校徽、使用媒体占位符的通用时间轴，可直接测试增减阶段及照片／视频替换；实际工作台截图见<a href="reference-README.html#导航与时间轴先看章节再调整阶段">reference说明</a>。</p>
+<p>勾选右侧“隐藏时间轴装饰”后，同一模块可作为并列图文卡片：箭头、圆点、连线和年份隐藏，事件短名转到卡片顶部；照片／视频和说明保留，媒体仍等高。取消勾选恢复时间轴，年份与事件数据不会丢失，无需重新插入另一种模块。</p>
+<h3 id="图片视频表格和目录">图片、视频、表格和目录<a class="anchor" href="#图片视频表格和目录">#</a></h3>
+<div class="table-scroll"><table><thead><tr><th>内容</th><th>入口与操作</th></tr></thead><tbody><tr><td>图片／视频</td><td>双击占位区域或已有媒体，上传文件，选择预设／自定义比例，再调取景和缩放</td></tr><tr><td>图标题／说明</td><td>在媒体设置中选择是否显示；无图注时不保留冗余高度；并列画面保持实际等高</td></tr><tr><td>表格</td><td>使用插入模块入口；可导入Excel／CSV或粘贴数据，在文字模式编辑单元格</td></tr><tr><td>粘贴替换当前表格</td><td>弹窗预填当前内容，按行和制表符分列，可批量改数字或增减行列；取消不改表</td></tr><tr><td>表格注释</td><td>选中表格后在右侧填写或清空；已有注释也可直接编辑，不给所有表自动追加指标说明</td></tr><tr><td>表格行高／内边距</td><td>选中表格后统一调整最小行高与上下内边距；0行高／空内边距恢复自动，内容多时自然增高。成熟页的表格在右侧页面栏调整</td></tr><tr><td>目录</td><td>从章节推导序号与页码范围；模块侧栏可增删条目、恢复隐藏项、补充章节说明</td></tr><tr><td>附录</td><td>默认不进入目录；在页面设置中自定义章节归属，也可明确勾选目录包含附录</td></tr></tbody></table></div>
+<p>表格的顶部表头行用深底白字，正文首列保持浅底深字；多级实验表的各级顶部表头同样处理。更多图文、表格和导航实例见<a href="reference-README.html">参考库的多页工作台说明</a>。</p>
+<p><a href="../images/table-bulk-edit.png"><a class="image-link" href="../images/table-bulk-edit.png"><img src="../images/table-bulk-edit.png" alt="表格批量编辑弹窗已载入原有数据，可直接改值并增减行列"></a></a></p>
+<ol>
+<li>进入“编辑模块”，点击表格；分组表先在右侧点选要改的分组。</li>
+<li>点击“粘贴替换当前表格”。上图显示自动载入的原内容，可直接改数字，也可从Excel整块粘贴。</li>
+<li>每行对应表格一行，Tab分列；添加／删去行或Tab即可调整行列。单元格内换行以双引号包住，空单元格保留。</li>
+<li>点击“应用”后检查表格；“取消”不改原表，应用后也可撤销。表格变大时应调整尺寸或拆页，确保文字完整。</li>
+</ol>
+<p><strong>土黄色（#ACA808）表示Tab分列符</strong>，已有和新输入的Tab都会高亮；连续Tab之间保留细白缝。下图是弹窗内临时输入的演示：每行三段高亮表示三个Tab，两端内容之间有两个空单元格。演示未应用到原表。</p>
+<p><a href="../images/table-tab-markers.png"><a class="image-link" href="../images/table-tab-markers.png"><img src="../images/table-tab-markers.png" alt="Tab高亮近景：每行三段土黄色之间有细白缝，表示两个空单元格"></a></a></p>
+<p>按Tab直接插入分列符，Shift+Tab可移出输入框；底色和白缝只是编辑提示，不写入表格数据。仍有效的合并表头保留。作者页的分组表格只改当前分组，履历的装饰空白列不算数据列。</p>
+<p>履历横线表及无框线表格采用上文的专用表头样式。导出PPTX时，A3深色标题底作为独立色块保留；页尾总结按整条内容区宽度、单行原生文本导出，避免末尾句号因文本框过窄而换行。</p>
+<p>标题类文字在HTML和PPTX中均默认单行，需要分行时按语义手动拆好，覆盖页面、模块、分组、图标题、目录及时间轴标题。超宽时提示精简、加宽或手动分行。PPTX中的脚注、来源、页码和作者姓名也强制单行。原本在网页中只有一行的文字关闭自动换行，多行正文继续自然排版，并写入中文标点断行规则。无序列表导出为可继续编辑的原生项目符号，保留普通段落与列表混排、所选符号及局部粗细和颜色，不把前导符直接拼进正文。</p>
+<p>作者身份卡中的职称、学院／研究机构、团队、联系方式等字段同样只保留手动分行，替换成自己的信息后继续遵守；过长时提示调整。参考文献导出时，序号与内容使用相同顶部位置和明确的顶端对齐，多行条目的首行也与序号保持齐平。</p>
+<h3 id="双击公式编辑latex">双击公式编辑LaTeX<a class="anchor" href="#双击公式编辑latex">#</a></h3>
+<p><a href="../images/formula-editor.png"><a class="image-link" href="../images/formula-editor.png"><img src="../images/formula-editor.png" alt="公式编辑框的真实截图：LaTeX源码、复制按钮、公式预览与确定和取消"></a></a></p>
+<p>单页或单列视图下双击公式，即使在预览模式也能打开。输入LaTeX时不需要外层美元符号；可复制源码、预览、确定或取消。语法错误或超出当前排版时保留输入和原式，按提示精简或拆行。</p>
+<p>公式只显示一份，修改后使用KaTeX HTML。变量、单位与函数的字体约定需保持全文一致。导出PPTX时公式是独立图片，<strong>不是Office原生公式</strong>；题目与解释仍可编辑。</p>
+<h2 id="放映与备注">放映与备注<a class="anchor" href="#放映与备注">#</a></h2>
+<h3 id="浏览整份文稿">浏览整份文稿<a class="anchor" href="#浏览整份文稿">#</a></h3>
+<p>顶部“视图”支持单页展示、单列滚动和多页滚动；多页可选择每行1–6页。单页查细节，单列检查叙事顺序，多页比较版式与密度。切换视图不改变幻灯片内的真实坐标。</p>
+<h3 id="全屏放映与四列总览">全屏放映与四列总览<a class="anchor" href="#全屏放映与四列总览">#</a></h3>
+<p><a href="../images/presentation-fullscreen.png"><a class="image-link" href="../images/presentation-fullscreen.png"><img src="../images/presentation-fullscreen.png" alt="全屏放映的实际画面，底部显示缩放、拖动、总览和退出提示"></a></a></p>
+<p>点击“全屏放映”，或双击左侧缩略图进入放映。工作台控件隐藏，底部保留操作提示。</p>
+<div class="table-scroll"><table><thead><tr><th>操作</th><th>放映时的效果</th></tr></thead><tbody><tr><td>方向键／PageUp／PageDown／普通滚轮</td><td>前后翻页；空格也可下一页</td></tr><tr><td>Home／End</td><td>到首页／末页</td></tr><tr><td>Ctrl＋滚轮</td><td>放大或缩小当前页</td></tr><tr><td>放大后按住鼠标左键拖动</td><td>查看局部内容</td></tr><tr><td>双击画面</td><td>进入每行4页的滚动总览</td></tr><tr><td>在总览中双击目标页</td><td>定位并继续放映</td></tr><tr><td>放大后按一次Esc</td><td>恢复原大小</td></tr><tr><td>原大小时再按Esc</td><td>退出放映</td></tr></tbody></table></div>
+<p><a href="../images/presentation-overview.png"><a class="image-link" href="../images/presentation-overview.png"><img src="../images/presentation-overview.png" alt="放映中的四列总览：保留当前页选中框，可滚动并双击目标页继续"></a></a></p>
+<p>上图是放映中的总览状态，与工作台的多页编辑视图不同。页面较多时滚动查找，双击需要讲解的页面即可返回；不会修改源稿中的页面内容或尺寸。</p>
+<h3 id="演讲者视图与拓展屏">演讲者视图与拓展屏<a class="anchor" href="#演讲者视图与拓展屏">#</a></h3>
+<p>“演讲者视图”与“全屏放映”是两种并列的放映方式。只有一块屏幕、需要直接专注画面时使用全屏放映；连接投影仪或第二块屏幕时，优先使用演讲者视图。</p>
+<p>点击“演讲者视图”后，系统打开独立的观众窗口，同时让原工作台保留为演讲者端：</p>
+<ul>
+<li>将观众窗口拖到投影屏或第二块显示器，再点击观众窗口中的“进入全屏”。</li>
+<li>演讲者端继续显示当前页备注，观众窗口不会收到或显示备注内容。</li>
+<li>在任一放映窗口翻页时，两边页码同步；演讲者端的备注会随当前页面自动切换。</li>
+<li>双窗口结束后点击“结束双窗口”，即可回到正常编辑状态。</li>
+</ul>
+<p>浏览器若拦截弹出窗口，请允许当前本地页面打开弹窗；项目不会自动检测或指定显示器，窗口放到哪块屏幕由用户手动决定。</p>
+<h3 id="给当前页写备注">给当前页写备注<a class="anchor" href="#给当前页写备注">#</a></h3>
+<p><a href="../images/page-settings-notes.png"><a class="image-link" href="../images/page-settings-notes.png"><img src="../images/page-settings-notes.png" alt="页面设置弹窗中的本页备注输入区，与标题、页尾总结和脚注共用设置入口"></a></a></p>
+<p>右侧“当前页设置”→“标题、页首句与来源”→填写“本页备注”并应用。也可点击顶部“页面备注”，直接在画布下方面板编辑；两个入口共用当前页的notes，打开或切页时自动载入，取消弹窗不更改原备注。</p>
+<p>同一弹窗还可改标题、可选页首句、主题色页尾总结、左下脚注和来源链接。备注放在画布之外，HTML保存、PPTX写入备注页、PDF可见页不包含。</p>
+<p>内容偏少时，可用有实际含义的页尾结论适当平衡留白。页尾总结采用醒目的主题深色底、白色16pt加粗样式；C1浅色备注不能替代此样式。</p>
+<h2 id="ai协作">AI协作<a class="anchor" href="#ai协作">#</a></h2>
+<p>把原始材料、汇报目的和已有HTML一起交给AI，从<a href="SKILL.html">SKILL.md</a>开始。先协商整篇大纲，确定逐页标题与章节关系，再在现有页面上加工；已有定稿大纲可直接使用。AI负责材料归纳、文案、版式和检查，人工决定事实、重点与最终采用的结论，保存精修后的HTML再交回AI继续。</p>
+<p>例如可以这样提出任务：</p>
+<blockquote>请使用北科母版，将这些论文和实验记录整理成一次研究进展汇报。听众是课题组，时长15分钟。先说明研究问题与现状，再讲方法、结果及局限，最后给出可检查的后续计划。缺失数据明确占位，不编造；保留现有HTML的编辑、备注、放映和导出功能。</blockquote>
+<p>继续迭代时提供<strong>最新保存的HTML</strong>及本次修改范围。AI应保留未改内容、页面ID、局部格式、逐段列表、媒体取景、备注与链接，不能重新生成示例覆盖人工修改。流程详见<a href="AI制作与迭代流程.html">AI制作与迭代流程</a>，数据结构见<a href="AI接口与排版规则.html">AI接口与排版规则</a>。</p>
+<p>支持本地skill的AI工具可将本目录作为完整技能资源使用，保留SKILL.md、源码、脚本、样式与素材；具体安装位置按所用工具配置。<strong>不需要先安装北科或辽工大的旧skill，也不需要作者的历史聊天记录。</strong> SKILL.md已写明资源位置、内容加工流程、页型选择、字号与版式标准、人工修改保留方式及交付检查。新用户调用示例见<a href="AI制作与迭代流程.html#首次接触本项目时">首次接触本项目</a>。项目不会自动覆盖原学校模板技能。</p>
+<h2 id="文件与导出">文件与导出<a class="anchor" href="#文件与导出">#</a></h2>
+<h3 id="保存原稿与另存为">保存原稿与另存为<a class="anchor" href="#保存原稿与另存为">#</a></h3>
+<p>“保存 HTML”优先写回已关联文件；“另存为”选择新文件，之后保存写回新目标。使用“打开 HTML”选择原文件可建立关联；双击、拖入或普通上传没有写入句柄时，第一次保存需在文件框中指定原文件。</p>
+<p>支持Ctrl+S保存、Ctrl+Shift+S另存为。刷新或重新打开后可能需要再次授权；取消选择不保存，写入失败会提示并保留当前文稿和原关联。不支持直接写回时明确回退为下载副本，不要把下载目录的同名副本误认为已覆盖原稿。实现依赖浏览器的<a href="https://developer.chrome.com/docs/capabilities/web-apis/file-system-access">File System Access API</a>。</p>
+<h3 id="导出与分享">导出与分享<a class="anchor" href="#导出与分享">#</a></h3>
+<div class="table-scroll"><table><thead><tr><th>格式</th><th>用途与限制</th></tr></thead><tbody><tr><td>HTML</td><td>可继续编辑的源稿，内嵌资源；分享单份HTML即可阅读、编辑和放映</td></tr><tr><td>PDF</td><td>稳定阅读，16:9、960×540pt，无浏览器日期、路径及额外页眉页脚</td></tr><tr><td>PPTX</td><td>标题、正文和单元格文字可编辑，媒体为独立对象；复杂装饰和公式采用图片，备注保留</td></tr></tbody></table></div>
+<p><strong>PPTX的人工审核是必要步骤。</strong> 请在实际使用的PowerPoint或其他演示软件中打开导出文件，逐页检查：</p>
+<ul>
+<li>字体、字重和颜色是否正确，深底白字／浅底深字是否清楚。</li>
+<li>标点是否留在不合适的行首或行尾，文本是否出现意外换行、短尾行或字体替代。</li>
+<li>标题层级、段落间距、对齐、图注、媒体和页码是否符合最终汇报要求。</li>
+</ul>
+<p>这些局部瑕疵通常可直接在PowerPoint中调整；正式汇报前应以人工审阅后的版本为准。自动检查只覆盖可检测的结构和边界问题，不能保证所有办公软件中的视觉效果完全一致。</p>
+<p>PDF／PPTX导出需要本地服务。不能把HTML改扩展名冒充PPTX；交付前仍须在目标PowerPoint环境复查字体、显式换行与媒体播放。随附PDF/PPTX是导出时的快照，HTML内容变化后需重新导出。</p>
+<p>内置正式HTML、源素材和导出快照均放在各自模板包；用户成稿可放在用户指定位置。<code>docs/images/</code>保存说明书插图，<code>ect/</code>放可再生中间数据与检查产物。分享整套生成／导出能力时保留项目源码和资源，依赖可用<code>npm.cmd ci</code>恢复。</p>
+<h2 id="完整文档导航">完整文档导航<a class="anchor" href="#完整文档导航">#</a></h2>
+<p>docs中的说明、原始规范和截图记录均可从这里进入：</p>
+<div class="table-scroll"><table><thead><tr><th>文档</th><th>适合何时阅读</th></tr></thead><tbody><tr><td><a href="AI制作与迭代流程.html">AI制作与迭代流程</a></td><td>从原始需求、材料到提纲、成稿，再到人工修改和功能迭代</td></tr><tr><td><a href="启动与导出排障.html">启动与导出排障</a></td><td>Windows来源提醒、启动闪退、日志、端口及无需拖拽的导出流程</td></tr><tr><td><a href="大纲示例.html">可导入的大纲示例</a></td><td>三级标题的MD原稿，可直接粘贴或导入文档大纲</td></tr><tr><td><a href="AI接口与排版规则.html">AI接口与排版规则</a></td><td>生成或修改project-data、模块、逐段格式、章节与成熟页面</td></tr><tr><td><a href="版式细则与错误复盘.html">版式细则与错误复盘</a></td><td>检查内容密度、标题层级、短尾行、表头、公式、对齐及代表性错误</td></tr><tr><td><a href="文本块组件说明.html">文本块组件说明</a></td><td>复用默认、A1–A3、B1–B3、C1–C3以及编辑与渲染代码</td></tr><tr><td><a href="../文本块样式规范.pdf">原始文本块样式规范PDF</a></td><td>对照最初的视觉要求，结合组件说明中的后续修订使用</td></tr><tr><td><a href="导出实现说明.html">导出实现说明</a></td><td>了解PDF/PPTX如何测量、转换和输出，以及当前边界</td></tr><tr><td><a href="项目结构与清理记录.html">项目结构与清理记录</a></td><td>查目录职责、运行依赖、维护命令与可清理内容</td></tr><tr><td><a href="验收记录.html">验收记录</a></td><td>查回归检查、验证范围与已知限制</td></tr><tr><td><a href="../工作台截图记录.json">工作台截图记录</a></td><td>复查README截图的源稿哈希、界面状态及窗口尺寸</td></tr></tbody></table></div>
+<p>更多可视资料：<a href="../images/ustb-preview.png">北科30页预览</a> · <a href="templates-README.html">模板包目录</a> · <a href="../images/summary-layout.png">总结与计划版式</a> · <a href="reference-README.html">三份参考HTML及多页工作台</a> · <a href="../../文本块样式展示.html">十种文字样式展示</a>。本页插图可直接点开查看原尺寸。</p>
+<p>维护示例与插图可运行：</p>
+<pre data-lang="powershell"><code>npm.cmd run build:examples
+npm.cmd run preview:docs
+node scripts/preview-reference.mjs
+npm.cmd run clean</code></pre>
+<p><code>build:examples</code>优先读取当前保存的北科正式HTML，保留手动优化的文字、格式、模块位置和尺寸，更新功能并同步丽水变体；仅北科文件不存在时才初始化默认示例，解析失败则停止。追加<code>-- --export</code>可生成正式PDF/PPTX，需先启动服务。<code>clean</code>仅清理ect和test-results，不删除源稿、正式导出、说明书插图或reference快照。自动检查不能替代逐页目视复核。</p>
+<h2 id="资料与标识来源">资料与标识来源<a class="anchor" href="#资料与标识来源">#</a></h2>
+<p>丽水资料见<a href="https://www.lsu.edu.cn/44/list.htm">学校概况</a>、<a href="https://www.lsu.edu.cn/47/list.htm">历史沿革</a>及<a href="../../templates/template-1/lishui-cyan/assets/manifest.json">素材记录</a>。校徽检索可参考<a href="https://www.cnblogs.com/cdz-111/articles/22432508">中国高校校徽（LOGO）官方下载资源汇总</a>，最终以学校官方原件为准。</p>
+<p>项目示例不代表学校官方软件，图片和标识权益归各自权利人。校史、占位数据及教学说明用于版式展示，制作真实科研汇报时应替换为对应材料和可追踪来源。</p>
+<h2 id="目录与学校扩展">目录与学校扩展<a class="anchor" href="#目录与学校扩展">#</a></h2>
+<p><code>templates/</code>保存独立模板包；<code>src/</code>、样式、<code>server.mjs</code>和启动脚本是共用运行时；<code>docs/</code>与<code>reference/</code>是说明和已确认的参考示例。每个模板包自带<code>template.html</code>、<code>assets/</code>、README、清单与可选<code>output/</code>，根目录不再堆放学校成稿。</p>
+<p>新增学校或视觉主题时，复制最接近的模板包并替换其数据与素材即可；工作台可直接打开任意符合约定的HTML，不需要在核心代码中登记模板名称。只有新增通用模块或编辑能力时才修改公共运行时。具体约定见<a href="templates-README.html">模板包目录说明</a>。</p>
+<h2 id="使用许可">使用许可<a class="anchor" href="#使用许可">#</a></h2>
+<p>本项目不是开放源代码许可项目。仓库暂时公开不等于授权复用；除非获得著作权人的明确书面授权，不得复制、分发、修改、再许可、公开传播或商业使用。后续重大功能更新将迁移至私有仓库维护。学校标识、校园图片及其他第三方材料另受各自权利人的权利限制，详见<a href="../../LICENSE">LICENSE</a>。</p>
+<p>完整自检：保持本地工作台服务开启，执行<code>npm.cmd run test:all</code>。该命令运行单元测试、生成丽水测试扩展及各功能检查，详细日志在ect/self-check；中间文件不进入发布包。</p></article></main></body></html>

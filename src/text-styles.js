@@ -29,7 +29,8 @@ export function textModuleHTML(m,{esc,editable,textBody,edit}){
   return '';
  };
  const titleText=(p,i)=>{const tag=m.isToc&&p.chapterId?'a':'h3',label=m.isToc&&p.chapterNumber&&style!=='numbered'?p.chapterNumber+' '+p.title:p.title;return `<${tag} class="part-title-text ${m.isToc?'toc-title':''}" data-text data-part="${i}" data-field="title" ${textStyle(p,'title')} ${tag==='a'?`data-jump="${p.targetIndex}" data-target-index="${p.targetIndex}" href="#slide-${p.chapterId}"`:editable(edit,'')}>${richHTML(label,p.rich?.title)}</${tag}>`;};
- const title=(p,i,kind=style)=>`<div class="part-title-wrap" data-shape>${decoration(kind)}${titleText(p,i)}</div>`;
+ const icon=(p,i)=>p.icon?.src&&!p.icon.hidden?`<img class="part-svg-icon" data-part-icon="${i}" data-image src="${esc(p.icon.src)}" alt="${esc(p.icon.name||'板块图标')}" title="${esc(p.icon.name||'板块图标')} · 双击替换">`:'';
+ const title=(p,i,kind=style)=>`<div class="part-title-wrap ${p.icon?.src&&!p.icon.hidden?'has-part-icon':''}" data-shape>${decoration(kind)}${icon(p,i)}${titleText(p,i)}</div>`;
  function parts(innerStyle=style){
   return m.parts.map((p,i)=>{
    const row=Math.floor(i/cols),col=i%cols,lastRow=Math.floor((m.parts.length-1)/cols);

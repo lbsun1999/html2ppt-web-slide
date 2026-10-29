@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>启动与导出排障 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>启动与导出排障</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#windows启动与pdfpptx导出">Windows启动与PDF／PPTX导出</a><a class="l2" href="#自选导出路径">自选导出路径</a><a class="l2" href="#推荐流程自动传送不需要拖拽">推荐流程：自动传送，不需要拖拽</a><a class="l2" href="#双击启动失败在终端中运行">双击启动失败：在终端中运行</a><a class="l2" href="#这些文件可能对你的计算机有害">“这些文件可能对你的计算机有害”</a><a class="l2" href="#旧版确认后闪退的已知原因">旧版“确认后闪退”的已知原因</a><a class="l2" href="#常见状态">常见状态</a></nav><article class="doc"><h1 id="windows启动与pdfpptx导出">Windows启动与PDF／PPTX导出<a class="anchor" href="#windows启动与pdfpptx导出">#</a></h1>
+<h2 id="自选导出路径">自选导出路径<a class="anchor" href="#自选导出路径">#</a></h2>
+<p>在本地工作台点击PDF或PPTX，支持文件系统访问的Chrome／Edge会先显示保存位置选择框，再生成文件。可取消而不启动生成；生成失败不覆盖已存在的目标文件。浏览器不支持该接口时使用下载，可在浏览器下载设置中开启“每次询问保存位置”。离线HTML仍先传送当前文稿到本地工作台，再选择导出位置。</p>
+<p>直接打开HTML可以编辑、保存和放映。PDF／PPTX由本机Node.js服务生成，因此需要先启动服务；把文件拖到仍是<code>file:///</code>的离线页面，不会自动启动服务。</p>
+<h2 id="推荐流程自动传送不需要拖拽">推荐流程：自动传送，不需要拖拽<a class="anchor" href="#推荐流程自动传送不需要拖拽">#</a></h2>
+<ol>
+<li>将完整项目ZIP解压到本地文件夹，保留<code>package.json</code>、<code>scripts</code>、<code>src</code>等文件。安装Node.js 20.10+和Chrome／Edge。</li>
+<li>双击<code>启动.cmd</code>。首次运行会恢复锁定的依赖；看到“服务已就绪”后保持该窗口开启。</li>
+<li>回到正在编辑的离线HTML，点击“导出PDF／PPTX”，在弹窗点击“传送当前文稿”。当前内容连同尚未保存的修改会载入新工作台窗口。</li>
+<li>在新窗口点击对应的导出按钮。也可直接访问<code>http://127.0.0.1:4317</code>，点击“打开HTML”选择文稿，使用文件选择器代替拖拽。</li>
+</ol>
+<p><a class="image-link" href="../images/local-export-connection.png"><img src="../images/local-export-connection.png" alt="离线导出弹窗：启动命令、本机地址与传送当前文稿"></a></p>
+<p>传送只允许<code>http://127.0.0.1:端口</code>或<code>http://localhost:端口</code>，通过新窗口消息交换结构化文稿，内容不传到外部网站。页面与随机令牌绑定，传送后移除URL中的临时令牌。原窗口继续保留修改；导出文件是当前内容的快照。</p>
+<h2 id="双击启动失败在终端中运行">双击启动失败：在终端中运行<a class="anchor" href="#双击启动失败在终端中运行">#</a></h2>
+<p>在项目文件夹的资源管理器地址栏输入<code>powershell</code>并回车，然后执行：</p>
+<pre data-lang="powershell"><code>node scripts/start.mjs --open</code></pre>
+<p>无需管理员权限。也可以先做环境检查：</p>
+<pre data-lang="powershell"><code>node scripts/start.mjs --check</code></pre>
+<p>若希望直接调用原服务，可执行<code>node server.mjs</code>，随后手动打开工作台地址。使用<code>npm.cmd start</code>也会调用新的启动器；Windows下明确使用<code>.cmd</code>，避免终端将<code>npm</code>解析为受执行策略限制的<code>npm.ps1</code>。</p>
+<p>启动日志保存在<code>ect/startup.log</code>，包含Node版本、依赖检查及服务输出。报错时提供日志末尾的错误信息；没有日志通常意味着启动器尚未执行，应先核对文件是否完整、Node是否安装、文件是否被系统拦截。</p>
+<h2 id="这些文件可能对你的计算机有害">“这些文件可能对你的计算机有害”<a class="anchor" href="#这些文件可能对你的计算机有害">#</a></h2>
+<p>若提示“你的Internet安全设置表示一个或多个文件可能有害”，先核对文件是否来自预期的项目下载。Windows会给下载文件附加Internet来源标记（Mark of the Web），该标记可能在打开、拖放或启动时触发安全提醒；提示本身不能用来判断文件已经被检出恶意软件。<a href="https://support.microsoft.com/en-us/windows/security/information-about-the-attachment-manager-in-microsoft-windows">Microsoft对附件管理器的说明</a>。</p>
+<p>对于已核对来源的本项目文件，可以右键文件→“属性”→“常规”，查看底部是否有“解除锁定／取消阻止”；存在时勾选后应用。若是下载ZIP，可在解压前对可信ZIP检查此属性，再重新完整解压。仅处理已确认的文件，不需要关闭Defender、SmartScreen或放宽整台电脑的安全策略。</p>
+<p>拖拽仍被阻止时，使用上面的“传送当前文稿”，或工作台的“打开HTML”按钮。若安全中心明确给出威胁名称、隔离记录或组织策略，则保留具体提示并进一步核实，不要将所有安全拦截都当作文件来源提醒处理。</p>
+<h2 id="旧版确认后闪退的已知原因">旧版“确认后闪退”的已知原因<a class="anchor" href="#旧版确认后闪退的已知原因">#</a></h2>
+<p>2026-10-26在实际Windows环境复现：旧ZIP中的<code>启动.cmd</code>是LF换行，CMD解析时出现命令被截断、中文被当成命令等错误，服务未启动。修复后的入口采用纯ASCII及CRLF换行，中文检查和日志交给Node.js。</p>
+<p>仓库对<code>*.cmd</code>使用<code>-text</code>保留实际CRLF字节，保证GitHub源码ZIP与发布包中的批处理也正确。仅设置<code>text eol=crlf</code>会转换检出工作区，Git归档仍可能输出规范化后的LF；维护发布时必须检查ZIP内的真实字节。可参考<a href="https://github.com/microsoft/vscode-docs/blob/main/docs/remote/troubleshooting.md">Microsoft的Windows批处理换行约定</a>。</p>
+<p>此原因已在本机复现和修复，不代表所有闪退都由换行造成；其余问题以日志为准。</p>
+<h2 id="常见状态">常见状态<a class="anchor" href="#常见状态">#</a></h2>
+<div class="table-scroll"><table><thead><tr><th>现象</th><th>处理方法</th></tr></thead><tbody><tr><td><code>node</code>不是内部或外部命令</td><td>安装官方Node.js 20.10+，重新打开终端，再检查<code>node --version</code></td></tr><tr><td>已有<code>node_modules</code>但仍提示缺模块</td><td>启动器会检查实际依赖；必要时在项目目录执行<code>npm.cmd ci</code>恢复，不只看文件夹是否存在</td></tr><tr><td>npm安装失败</td><td>查看日志中的网络、代理或权限错误；恢复网络后重试，不使用全局关闭安全校验的办法</td></tr><tr><td>已有Web Slide服务</td><td>启动器识别后复用，不重复占用端口；升级后需先关闭旧服务窗口再启动新版本</td></tr><tr><td>端口4317被其他或旧版服务占用</td><td>关闭对应旧服务，或在PowerShell执行下方命令改端口；传送弹窗同步填新地址</td></tr><tr><td>新窗口没有打开</td><td>允许当前页面弹出本机工作台窗口，或手动访问地址后使用“打开HTML”</td></tr><tr><td>提示未找到Chrome／Edge</td><td>安装浏览器；或执行<code>npx playwright install chromium</code>安装维护用Chromium</td></tr><tr><td>导出提示真实内容溢出</td><td>返回文稿修正对应页的越界／遮挡，不能用关闭检查来掩盖排版问题</td></tr></tbody></table></div>
+<pre data-lang="powershell"><code>$env:PORT = &#39;4318&#39;
+node scripts/start.mjs --open</code></pre>
+<p>此时使用<code>http://127.0.0.1:4318</code>。服务仍只监听本机地址，不需要为它开放外部网络访问。</p></article></main></body></html>

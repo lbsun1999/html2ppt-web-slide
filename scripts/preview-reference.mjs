@@ -45,7 +45,10 @@ try{
    assert.equal(state.view,'grid');assert.equal(state.columns,columns);assert.equal(state.visible,count,'All pages must appear: '+name);if(item.notes)assert.equal(state.notesVisible,true);
    await page.waitForFunction(()=>!document.querySelector('#toast')?.textContent.trim(),null,{timeout:10000});
    const viewport=page.viewportSize();await page.screenshot({path:path.join(root,'reference/images',name+'.png'),fullPage:true});
-   if(name==='navigation'){await page.locator('#view-mode').selectOption('single');await page.setViewportSize({width,height:1200});await page.screenshot({path:path.join(root,'reference/images/timeline.png')});}
+   if(name==='navigation'){
+    await page.locator('#view-mode').selectOption('single');await page.setViewportSize({width,height:1200});await page.screenshot({path:path.join(root,'reference/images/timeline.png')});
+    await page.locator('[data-page="10"]').click();if(await page.evaluate(()=>window.slideStudio.getMode())!=='edit')await page.locator('[data-action="mode-edit"]').first().click();await page.locator('#canvas .module').first().click();await page.locator('[data-action="advanced-align"]').click();await page.getByRole('button',{name:'纵向参考线平移'}).click();await page.screenshot({path:path.join(root,'reference/images/advanced-alignment.png')});
+   }
    records.push({...expected.find(r=>r.file===name+'.html'),view:'grid',columns,pages:count,focusPage:focus+1,notesVisible:state.notesVisible,viewport,runtimeSource:runtimeFile,runtimeSha256});
    console.log(`${name}: ${count} pages, ${columns} columns, full workbench ${viewport.width}x${viewport.height}`);
   }finally{await page.close();}

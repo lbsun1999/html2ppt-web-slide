@@ -11,10 +11,11 @@
   "scripts": {
     "start": "node scripts/start.mjs --open",
     "build:styles": "node scripts/build-style-gallery.mjs",
-    "test": "node --test tests/layout.test.mjs tests/outline.test.mjs tests/table-text.test.mjs tests/startup.test.mjs tests/html-drop.test.mjs",
+    "test": "node --test tests/layout.test.mjs tests/advanced-alignment.test.mjs tests/outline.test.mjs tests/table-text.test.mjs tests/startup.test.mjs tests/html-drop.test.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test:styles": "node tests/text-styles.mjs",
     "build:examples": "node scripts/prepare-example.mjs",
+    "build:docs": "node scripts/build-docs.mjs",
     "clean": "node scripts/clean.mjs",
     "preview:docs": "node scripts/preview-workbench.mjs",
     "build:lishui": "node scripts/prepare-example.mjs --lishui-only",

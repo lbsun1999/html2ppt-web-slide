@@ -1,0 +1,28 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>文本块组件说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>文本块组件说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#文本块组件说明">文本块组件说明</a><a class="l2" href="#复用方式">复用方式</a><a class="l2" href="#字体与结构">字体与结构</a><a class="l2" href="#结构与数据兼容">结构与数据兼容</a><a class="l2" href="#b1-对齐">B1 对齐</a><a class="l2" href="#导出">导出</a><a class="l2" href="#文字精修与间距">文字精修与间距</a></nav><article class="doc"><h1 id="文本块组件说明">文本块组件说明<a class="anchor" href="#文本块组件说明">#</a></h1>
+<p>依据用户提供的《文本块样式规范.pdf》，并纳入后续修订：C2 内部不再提供 A1，B1 折角右缘与白框左边线对齐。</p>
+<h2 id="复用方式">复用方式<a class="anchor" href="#复用方式">#</a></h2>
+<p><code>src/text-styles.js</code> 为十种样式的注册与渲染入口，<code>text-styles.css</code> 定义视觉规则；<code>src/style-picker.js</code> 提供编号选择器和预览。<code>src/render.js</code>、工作台、离线 HTML 和导出统一调用这些组件。</p>
+<p>运行 <code>npm run build:styles</code> 从共享代码生成独立的 <code>文本块样式展示.html</code>。不将 PDF 截图当作组件，也不在展示页重复维护另一套 HTML 样式。改变组件后重新生成展示页。</p>
+<h2 id="字体与结构">字体与结构<a class="anchor" href="#字体与结构">#</a></h2>
+<ul>
+<li>默认标题 30px≈18pt，正文 26.67px≈16pt，正文行高 1.55，不随拥挤自动缩小。</li>
+<li>新项目标题主色按示例使用 #005894，正文为黑色。定制主题后组件跟随主题色与正文颜色，不覆盖用户显式设置。</li>
+<li>C2 模块大标题 33.33px≈20pt，高于内部 18pt 分项标题。内部背景透明，仅靠标题和细线分组。</li>
+<li>C3 正文 16pt，加粗子标题同为 16pt，注释 14pt。可分别开关并直接编辑，保持独立字段。</li>
+<li>C3 序号使用 Times New Roman、20pt、700 粗体（1600px 标准宽屏画布约 33.33px），不使用 Georgia 等替代装饰字体。</li>
+<li>装饰标题宽度可调，长标题换行后仍通过模块测量检查可用高度。</li>
+<li>无序列表使用原有正文编辑机制，每个显式换行代表一项。</li>
+</ul>
+<h2 id="结构与数据兼容">结构与数据兼容<a class="anchor" href="#结构与数据兼容">#</a></h2>
+<p>默认、A1、A2、A3 继续使用 <code>plain</code>、<code>unified</code>、<code>cards</code>、<code>band</code> 内部 ID。B1、B2、B3 为 <code>ribbon</code>、<code>capsule</code>、<code>arrow</code>；C1、C2、C3 为 <code>note</code>、<code>group</code>、<code>numbered</code>。</p>
+<p>布局字段包括 <code>headerWidth</code>（标题装饰宽度百分比）、<code>groupTitle</code>（C2 模块大标题）、<code>numberStart</code>（C3 起始序号）。C3 的子标题、注释及显示开关放在各 <code>parts</code> 中。未显示的内容保持在数据内，样式切换不会删除用户文字。</p>
+<p>C2 的 <code>innerStyle</code> 在读入旧数据时归一化为 <code>plain</code>；渲染器也固定使用默认分组，即使历史数据仍带 <code>unified</code> 也不会绘制浅底。界面不再提供内部样式选择。</p>
+<h2 id="b1-对齐">B1 对齐<a class="anchor" href="#b1-对齐">#</a></h2>
+<p>组件局部坐标中，标题左缘位于 x=8，深色三角折角宽 14px，右缘为 x=22；白底文字框的左边线也位于 x=22。正文相对这条边线再留出内边距。改变标题宽度时只调整右端，折角与左边线保持固定。</p>
+<h2 id="导出">导出<a class="anchor" href="#导出">#</a></h2>
+<p>普通卡片、分隔线和文字仍输出为独立的原生 PPTX 对象。折角、胶囊、箭头、渐变边线与阴影通过独立 SVG 装饰绘制，导出时只栅格化纯装饰，文字不包含在装饰图片中。</p>
+<p>导出按 DOM 绘制顺序排序背景、装饰、文字和媒体，避免后添加的白底装饰遮盖 C2 内部分组或标题。PDF 使用同一浏览器布局。</p>
+<h2 id="文字精修与间距">文字精修与间距<a class="anchor" href="#文字精修与间距">#</a></h2>
+<p>正文可按当前文字块独立设置列表，模块统一设置仍保留。选区支持加粗、主题色／原色／自选色及 14／16pt；行距输入后失焦应用。段间距至少 6pt（10 画布 px），与行距分开控制。C3 下层为同形浅色梯形，向右偏移 16px。</p>
+<p>选区改变时，工具栏自动读取当前字号、行距、段后距、列表、颜色和粗细，不沿用历史操作值；多种值显示“混合”。输入控件保持焦点时不会被自动回显打断。独立文本块使用textBox与boxTone字段，单个正文区域可切深底白字／白底深字，不归入C1备注样式。</p>
+<p>模块间建议12px，紧凑时可缩小；真实遮挡、越界及文字截断才报错。文字块上下内边距可适度自适应，但不自动压缩字号或行距。</p></article></main></body></html>

@@ -5,7 +5,7 @@ import path from 'node:path';
 const b=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const page=await b.newPage({viewport:{width:1720,height:1080}});
- await page.goto(pathToFileURL(path.resolve('index.html')).href);assert.ok(await page.getByText('此入口需要本地服务。',{exact:false}).isVisible());
+ await page.goto(pathToFileURL(path.resolve('index.html')).href);assert.ok(await page.getByText('AI＋人工协作幻灯片平台',{exact:false}).isVisible());assert.ok(await page.getByText('北京科技大学 · 科技蓝',{exact:true}).isVisible());
  await page.goto(pathToFileURL(path.resolve('templates/template-1/ustb-blue/template.html')).href);await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');
  const types=await page.evaluate(()=>window.slideStudio.getProject().slides.map(s=>s.kind));for(let i=0;i<types.length;i++)if(['cover','closing','transition'].includes(types[i])){await page.locator(`[data-page="${i}"]`).click();assert.equal(await page.locator('#canvas .slide-footer').count(),0,'Cover, closing and transition pages have no footer/page number');}
  await page.locator('[data-page="23"]').click();assert.equal(await page.locator('#canvas .summary-cards .text-part').count(),3);

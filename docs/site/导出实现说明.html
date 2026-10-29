@@ -1,0 +1,25 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>导出实现说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>导出实现说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#导出实现说明">导出实现说明</a><a class="l2" href="#参考项目研究">参考项目研究</a><a class="l2" href="#一套模型与两种输出">一套模型与两种输出</a><a class="l2" href="#检查与约束">检查与约束</a><a class="l2" href="#固定版式与段落">固定版式与段落</a><a class="l2" href="#单行字段中文标点与原生列表">单行字段、中文标点与原生列表</a><a class="l2" href="#表格内行内公式与路径选择">表格内行内公式与路径选择</a></nav><article class="doc"><h1 id="导出实现说明">导出实现说明<a class="anchor" href="#导出实现说明">#</a></h1>
+<h2 id="参考项目研究">参考项目研究<a class="anchor" href="#参考项目研究">#</a></h2>
+<p>参考地址：https://github.com/arcsin1/oh-my-ppt</p>
+<p>重点阅读 <code>src/main/io/export-handlers.ts</code> 及 HTML-PPTX 渲染入口。该项目通过浏览器渲染页面、等待字体与布局稳定，然后分别生成 PDF 或提取对象交给其 HTML-PPTX 库；其 PDF 实现也包含逐页图像合并的路径。本项目采用相同的“先取得最终布局”原则，自行实现适合固定母版与三类模块的输出。</p>
+<p>未复制参考项目源码。所研究的 <code>@arcsin1/html2pptx</code> 包版本 0.2.1 标注 AGPL-3.0-only，本项目不将其作为依赖。这里记录参考路径，便于复核设计来源。</p>
+<h2 id="一套模型与两种输出">一套模型与两种输出<a class="anchor" href="#一套模型与两种输出">#</a></h2>
+<p>项目 JSON 保存主题、页序、文字、模块矩形、子区域、表格及内嵌媒体。编辑画布、侧栏预览、离线 HTML 与服务端导出均使用 <code>src/render.js</code>，避免为 PPTX 另写一套随意猜测的坐标。</p>
+<p>PDF：启动独立浏览器上下文，使用实际渲染后的所有幻灯片，等待字体、图片及视频首帧，然后执行浏览器 PDF 输出。画布 1600×900 px，打印缩放为 0.8，对应 13⅓×7.5 英寸、960×540pt；不叠加系统打印纸张。</p>
+<p>PPTX：按浏览器 DOM 测量背景、边线、文字、媒体区域的坐标与计算样式。1600px 映射到 13⅓ 英寸，字号按 px×0.6 转为 pt。文字以原生文本框输出，背景和边线以形状输出，表格由可编辑单元格组件构成。图片仅对各自媒体区域截取裁剪结果，再以独立图片写入；视频保存原文件与首帧封面。不会把整页扁平化为一张图。</p>
+<h2 id="检查与约束">检查与约束<a class="anchor" href="#检查与约束">#</a></h2>
+<p>服务端重新校验项目格式、媒体类型、正文／页尾的实际边界、模块真实遮挡及整套页面的内容溢出；不能仅依赖当前页前端检查。模块间12px为建议，可按空间收紧，不因未达到旧24px留白而拒绝导出。失败时返回具体原因，避免导出截断文件。</p>
+<p>默认只监听回环地址，拒绝其他主机名与跨站 POST。导出仅接收结构化项目数据，媒体必须内嵌，不接受任意网页 URL 或服务器文件路径。并发导出串行处理，每次独立浏览器上下文，结束后清理会话。</p>
+<p>PPTX 的字体替代、复杂文本分行与视频播放取决于查看软件。v0.1.3已在本机PowerPoint实际打开、渲染两校60页并读取文本行，核对标点单独换行问题；这不等于全部兼容性测试，也不能代替用户在目标环境人工审核字体、版面和视频播放。</p>
+<h2 id="固定版式与段落">固定版式与段落<a class="anchor" href="#固定版式与段落">#</a></h2>
+<p>研究现状、公式、参考文献、作者页复用原模板内容；PPTX 用不含可编辑正文与媒体的背景图片保留复杂细节，再叠加原生文字和独立媒体。普通网格模块继续提取原生对象。实际行距写入 lineSpacing 点值，段间距使用 PptxGenJS 的 paraSpaceAfter（6pt），不能误写 paraSpaceAfterPt。</p>
+<p>独立深底白字／白底深字文本块的底色输出为独立形状，文字仍为原生对象。统一最小行高与上下内边距先在浏览器中参与表格真实布局，再按最终单元格边界导出；内容较多时自然增高，不用固定行高裁字。</p>
+<h2 id="单行字段中文标点与原生列表">单行字段、中文标点与原生列表<a class="anchor" href="#单行字段中文标点与原生列表">#</a></h2>
+<p>标题统一由<code>src/title-policy.js</code>识别，包括页面、模块／分组、分项、图标题、目录及时间轴标题。共享CSS保留显式换行并禁止自动折行；HTML检查及服务端导出都对超宽标题报错，提示精简、加宽或手动按语义分行。原生PPTX对相同标题关闭自动换行，不另行猜测断句或缩小字号。</p>
+<p>脚注、来源、页码、作者姓名以及页尾总结明确关闭自动换行。封面／封底和过渡页标题按源字段的手动换行输出，并使用父容器的内部可用宽度；说明文字也使用父区域宽度。普通段落实测为单行时关闭自动换行，长段落仍保留自动排版，可在原卡片／单元格的余白内借用最多四分之一字号的宽度，不跨越模块边界。</p>
+<p>每个文本对象及富文本run明确指定zh-CN。<code>src/server/pptx-typography.mjs</code>用JSZip处理生成的幻灯片XML，显式设置中文断行及悬挂标点属性；同时消除PptxGenJS 4在多run段落中产生的重复<code>a:pPr</code>，保留第一份段落属性和全部字符格式。此步骤不改文字内容，不把正文转成图片，也不缩小字号。</p>
+<p>逐段读取<code>data-bullet</code>和<code>data-marker</code>，导出原生项目符号与悬挂缩进；不在正文里拼接符号和空格。普通段与列表可混排，列表项内部的加粗、颜色和字体保留，导出后能在PowerPoint中继续修改列表。专项检查见<code>tests/pptx-text-flow.mjs</code>。</p>
+<p>作者身份卡的全部文字字段纳入<code>MANUAL_BREAK_SELECTOR</code>，替换内容后也禁止自动折行；直接位于卡片中的居中字段按整个内部可用宽度测量，保留源字段的手动换行。参考文献文本框明确使用PptxGenJS支持的<code>valign:&#39;top&#39;</code>，而非被忽略的<code>vertAnchor</code>；生成<code>anchor=&quot;t&quot;</code>。两列顶部坐标及内边距一致，避免等高文本框内部默认居中导致单行序号与多行条目错位。专项测试还覆盖替换身份信息和多行文献。</p>
+<h2 id="表格内行内公式与路径选择">表格内行内公式与路径选择<a class="anchor" href="#表格内行内公式与路径选择">#</a></h2>
+<p>$LaTeX$单元格由同一KaTeX渲染，PPTX为每条数学内容保留一份独立图像；提取原生文字时跳过数学字形，避免容器文字与公式图像重叠。普通说明仍是原生文字对象。标题、表注、内边距均计入表格8–14pt自适应的实际高度，先完成布局再检查标题宽度，保持HTML与首次导出的判断一致。</p>
+<p>Chrome/Edge支持时先用保存位置选择框取得目标句柄，再请求生成；取消不发生成请求，生成失败不截断旧文件。不支持文件系统访问接口的浏览器使用下载，并提示如何启用每次询问保存位置。离线HTML向本机工作台传送未保存数据时校验窗口、随机令牌和回环地址，不依赖文件拖放。</p></article></main></body></html>

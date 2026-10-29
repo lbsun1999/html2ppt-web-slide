@@ -40,6 +40,16 @@
 .slide-thumb.is-selected{border-color:#277cae;background:#e5f1fa;box-shadow:0 0 0 1px #277cae inset}.slide-thumb.dragging{opacity:.45}.slide-thumb.drop-before{border-top:4px solid #005b94}.slide-thumb.drop-after{border-bottom:4px solid #005b94}.sidebar-selection-info{font-size:11px;color:#627c90;line-height:1.6;margin:8px 2px}.sidebar-clipboard{display:flex;gap:5px;margin:6px 0}.sidebar-clipboard button{flex:1;padding:7px 4px;font-size:12px}.sidebar:focus-within .sidebar-selection-info{color:#005b94}
 .sidebar{display:flex;flex-direction:column;overflow:hidden;min-height:0;padding-bottom:0}.sidebar #slides{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:3px 2px 8px}.sidebar-heading{flex-shrink:0}.sidebar-bottom{flex-shrink:0;position:relative;background:#f7f9fb;border-top:1px solid #d6e1e9;padding:8px 2px 12px;z-index:2}.sidebar-bottom .sidebar-actions{margin:6px 0}.sidebar-bottom>[data-action="delete-slide"]{width:100%;padding:7px}.sidebar-bottom .sidebar-selection-info{margin:0;line-height:1.5}
 
+/* Advanced page-level alignment and distribution. */
+.alignment-panel{position:fixed;right:calc(var(--inspector-width,250px) + 18px);top:142px;width:258px;max-height:calc(100vh - 170px);overflow:auto;z-index:180;background:#fff;border:1px solid #173c53;box-shadow:0 12px 40px #173c5330;padding:12px;color:#172f41;font-size:13px}.alignment-mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.alignment-mode-grid button{min-height:40px;padding:4px 7px;font-size:12px;line-height:1.25}.alignment-mode-grid button:last-child{grid-column:1/-1;min-height:28px}.alignment-mode-grid button.active{background:var(--primary);color:white;border-color:var(--primary)}.alignment-target{min-height:42px;padding:11px 5px 7px;font-size:13px;line-height:1.5}.alignment-tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.alignment-tool-grid.two{grid-template-columns:repeat(2,1fr);max-width:166px}.alignment-tool{padding:0!important;background:transparent!important;border:0!important;color:#172f41!important;font-size:11px!important}.alignment-tool svg{display:block;width:56px;height:56px;margin:auto;border:1px solid #7e94a3;border-radius:9px;background:#f5f7f8;fill:#bac2c7;stroke:#173c53;stroke-width:1.5}.alignment-tool svg .guide{fill:none;stroke-width:1.7}.alignment-tool svg .dash{stroke-dasharray:3 3}.alignment-tool span{display:block;margin-top:4px;white-space:nowrap}.alignment-tool:hover svg,.alignment-tool:focus-visible svg{background:var(--tint);border-color:var(--primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 18%,transparent)}.alignment-empty{margin:4px 0 8px;color:#6b7f8d}.alignment-panel-foot{display:flex;justify-content:flex-end;gap:6px;margin-top:12px}.alignment-panel-foot button{padding:4px 9px}.alignment-guide{position:absolute;z-index:90;pointer-events:auto;cursor:grab}.alignment-guide.vertical{top:0;bottom:0;width:0;border-left:3px dashed var(--primary)}.alignment-guide.horizontal{left:0;right:0;height:0;border-top:3px dashed var(--primary)}.alignment-guide:active{cursor:grabbing}.alignment-ruler{position:absolute;left:0;top:0;right:0;height:24px;z-index:89;display:flex;justify-content:space-between;padding:2px 10px;border-bottom:1px solid var(--primary);color:var(--primary);background:#fff9;font:14px Arial;pointer-events:none}.advanced-multi .module.advanced-candidate{filter:grayscale(1);opacity:.48;outline:1px dashed #73818b}.advanced-multi .module.advanced-selected{filter:none;opacity:1;outline:4px solid #2aa34a;box-shadow:0 0 0 5px #2aa34a38}.ring-group-content{position:relative;width:100%;height:100%}.ring-group-content>.ring-item{pointer-events:none}.group-module.overflowing,.group-module.layout-invalid{outline:5px solid #b81d2c!important}.advanced-align-entry button{width:100%}
+.module[style*="--part-gap"] .text-parts,.module[style*="--part-gap"] .media-parts{gap:var(--part-gap)}
+.part-title-wrap.has-part-icon{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;column-gap:12px}.part-svg-icon{position:relative;z-index:3;width:48px;height:48px;object-fit:contain;cursor:pointer}.style-band .part-title-wrap.has-part-icon{grid-template-columns:58px minmax(0,1fr);background:var(--primary);padding-left:12px}.style-band .part-title-wrap.has-part-icon .part-title-text{padding-left:0}.style-band .part-svg-icon{filter:brightness(0) invert(1)}
+.inline-math{display:inline-block;vertical-align:-.18em;white-space:nowrap}.inline-latex-source{color:#c00000;font-family:Consolas,"Times New Roman",serif;white-space:nowrap}
+.paragraph.bulleted>div[data-bullet="true"]::before{content:attr(data-marker)!important;display:block!important}
+
+/* Theme-aware advanced alignment controls. */
+.alignment-tool svg{border-color:color-mix(in srgb,var(--primary) 38%,#87939b);background:color-mix(in srgb,var(--primary) 8%,white);fill:color-mix(in srgb,var(--primary) 15%,#c9ced1);stroke:color-mix(in srgb,var(--primary) 72%,#172f41)}
+
 /* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
 .text-parts{position:relative;gap:24px;grid-auto-rows:auto}
 .text-part{position:relative;isolation:isolate;gap:14px;overflow:hidden;padding:22px 24px;min-width:0;color:var(--ink)}
@@ -1116,7 +1126,7 @@ body.export-view .toc-note:empty{display:none}
   ];
   var styleInfo = (id) => TEXT_STYLES.find((s) => s[0] === id) || TEXT_STYLES[0];
   var decorationInstance = 0;
-  function textModuleHTML(m, { esc: esc5, editable: editable2, textBody: textBody2, edit }) {
+  function textModuleHTML(m, { esc: esc6, editable: editable2, textBody: textBody2, edit }) {
     const style = styleInfo(m.style)[0], cols = Math.max(1, Math.min(m.columns || m.parts.length, m.parts.length));
     const percent = Math.max(1, Math.min(100, Number(m.headerWidth) || (["capsule", "group"].includes(style) ? 90 : 65)));
     const groupId = "decor-" + String(m.id).replace(/[^\w-]/g, "") + "-" + ++decorationInstance;
@@ -1132,7 +1142,8 @@ body.export-view .toc-note:empty{display:none}
       const tag = m.isToc && p.chapterId ? "a" : "h3", label = m.isToc && p.chapterNumber && style !== "numbered" ? p.chapterNumber + " " + p.title : p.title;
       return `<${tag} class="part-title-text ${m.isToc ? "toc-title" : ""}" data-text data-part="${i2}" data-field="title" ${textStyle(p, "title")} ${tag === "a" ? `data-jump="${p.targetIndex}" data-target-index="${p.targetIndex}" href="#slide-${p.chapterId}"` : editable2(edit, "")}>${richHTML(label, p.rich?.title)}</${tag}>`;
     };
-    const title = (p, i2, kind = style) => `<div class="part-title-wrap" data-shape>${decoration(kind)}${titleText(p, i2)}</div>`;
+    const icon = (p, i2) => p.icon?.src && !p.icon.hidden ? `<img class="part-svg-icon" data-part-icon="${i2}" data-image src="${esc6(p.icon.src)}" alt="${esc6(p.icon.name || "板块图标")}" title="${esc6(p.icon.name || "板块图标")} · 双击替换">` : "";
+    const title = (p, i2, kind = style) => `<div class="part-title-wrap ${p.icon?.src && !p.icon.hidden ? "has-part-icon" : ""}" data-shape>${decoration(kind)}${icon(p, i2)}${titleText(p, i2)}</div>`;
     function parts(innerStyle = style) {
       return m.parts.map((p, i2) => {
         const row = Math.floor(i2 / cols), col = i2 % cols, lastRow = Math.floor((m.parts.length - 1) / cols);
@@ -1140,7 +1151,7 @@ body.export-view .toc-note:empty{display:none}
         const backdrop = ["ribbon", "arrow"].includes(innerStyle) ? box(groupId + "-" + i2, 22, innerStyle === "ribbon" ? 22 : 8) : "";
         let heading = innerStyle === "note" || m.showTitle === false && !m.groupTitle ? "" : innerStyle === "numbered" ? `<div class="numbered-heading"><div class="number-tag"><svg class="number-decoration number-decoration-back" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)" opacity=".16"/></svg><svg class="number-decoration number-decoration-front" data-decoration aria-hidden="true"><rect width="100%" height="100%" fill="var(--primary)"/></svg><span data-text class="number-value">${String(m.isToc ? p.chapterNumber || i2 + 1 : (Number(m.numberStart) || 1) + i2).padStart(2, "0")}</span></div>${titleText(p, i2)}<span class="number-rule" data-shape></span></div>` : title(p, i2, innerStyle);
         const extras = innerStyle === "numbered" || m.preserveExtras ? `${p.showSubheading && p.subheading ? `<div class="part-subheading" data-text data-part="${i2}" data-field="subheading" ${textStyle(p, "subheading")} ${editable2(edit, "")}>${richHTML(p.subheading, p.rich?.subheading)}</div>` : ""}${p.showAnnotation && p.annotation ? `<div class="part-annotation" data-text data-part="${i2}" data-field="annotation" ${textStyle(p, "annotation")} ${editable2(edit, "")}>${richHTML(p.annotation, p.rich?.annotation)}</div>` : ""}` : "";
-        return `<section class="text-part" data-shape>${backdrop}${innerStyle === "note" ? '<span class="note-rule" data-shape></span>' : ""}${heading}${textBody2(p, i2, edit)}${extras}${p.takeaway ? `<div class="part-takeaway" data-text data-part="${i2}" data-field="takeaway" ${editable2(edit, "")}>${richHTML(p.takeaway, p.rich?.takeaway)}</div>` : ""}${separators}${m.isToc && p.showPageRange ? `<span class="toc-page-range" data-text>p. ${esc5(p.pageRange)}</span>` : ""}</section>`;
+        return `<section class="text-part" data-shape>${backdrop}${innerStyle === "note" ? '<span class="note-rule" data-shape></span>' : ""}${heading}${textBody2(p, i2, edit)}${extras}${p.takeaway ? `<div class="part-takeaway" data-text data-part="${i2}" data-field="takeaway" ${editable2(edit, "")}>${richHTML(p.takeaway, p.rich?.takeaway)}</div>` : ""}${separators}${m.isToc && p.showPageRange ? `<span class="toc-page-range" data-text>p. ${esc6(p.pageRange)}</span>` : ""}</section>`;
       }).join("");
     }
     const styleAttrs = `--cols:${cols};--title-width:${percent}%`;
@@ -1314,8 +1325,9 @@ body.export-view .toc-note:empty{display:none}
       for (const m of s.modules) {
         checkId(m.id);
         if (m.type === "text" && m.style === "group") m.innerStyle = "plain";
-        if (!["text", "table", "media", "shape", "formula", "timeline"].includes(m.type) || !Array.isArray(m.parts) || !m.parts.length || m.parts.length > 12) throw Error("模块类型或子区域数量无效。");
+        if (!["text", "table", "media", "shape", "formula", "timeline", "group"].includes(m.type) || !Array.isArray(m.parts) || !m.parts.length || m.parts.length > 12) throw Error("模块类型或子区域数量无效。");
         for (const k of ["x", "y", "w", "h"]) if (!Number.isFinite(m[k])) throw Error("模块坐标无效。");
+        if (m.type === "group" && (!Array.isArray(m.items) || !m.items.length || m.items.length > 24 || m.items.some((a) => !a || a.type === "group" || !["text", "table", "media", "shape", "formula", "timeline"].includes(a.type) || ["x", "y", "w", "h"].some((k) => !Number.isFinite(a[k]))))) throw Error("环形分布容器的数据无效。");
         if (m.type === "table" && (!Array.isArray(m.rows) || !m.rows.length || m.rows.length > 100 || m.rows.some((r) => !Array.isArray(r) || !r.length || r.length > 30))) throw Error("表格最多 100 行、30 列，且不能为空。");
         if (m.type === "timeline") {
           if (m.hideTimeline === void 0) m.hideTimeline = false;
@@ -1327,6 +1339,18 @@ body.export-view .toc-note:empty{display:none}
           if (a.asset && !/^data:(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm));base64,/i.test(a.asset.src || "")) throw Error("媒体格式不受支持。");
           if (a.asset?.src?.startsWith("data:image/svg+xml;base64,")) decodeSVGData(a.asset.src);
         }
+      }
+    }
+    for (const s of p.slides) for (const m of s.modules) for (const a of m.parts || []) if (a.icon?.src) {
+      if (!a.icon.src.startsWith("data:image/svg+xml;base64,")) throw Error("板块图标必须是内嵌SVG。");
+      decodeSVGData(a.icon.src);
+    }
+    for (const s of p.slides) for (const m of s.modules) if (m.type === "group") for (const child of m.items) for (const a of child.parts || []) {
+      if (a.asset && !/^data:(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm));base64,/i.test(a.asset.src || "")) throw Error("组合模块内的媒体格式不受支持。");
+      if (a.asset?.src?.startsWith("data:image/svg+xml;base64,")) decodeSVGData(a.asset.src);
+      if (a.icon?.src) {
+        if (!a.icon.src.startsWith("data:image/svg+xml;base64,")) throw Error("板块图标必须是内嵌SVG。");
+        decodeSVGData(a.icon.src);
       }
     }
     return syncSections(p);
@@ -2215,8 +2239,8 @@ body.export-view .toc-note:empty{display:none}
       const target = this.current();
       if (!target) return false;
       this.highlight();
-      const r = canvasRect(target.el, this.getCanvas()), label = target.el.innerText.trim().split("\n")[0].slice(0, 32), esc5 = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-      container.innerHTML = `<h2>当前文字块</h2><p class="hint">${esc5(label)}</p><div class="row free-text-coordinates"><label>横向 X（px）<input id="free-text-x" type="number" step="1" value="${Math.round(r.x * 100) / 100}"></label><label>纵向 Y（px）<input id="free-text-y" type="number" step="1" value="${Math.round(r.y * 100) / 100}"></label></div><label>平移步进<select id="free-text-step">${[.../* @__PURE__ */ new Set([1, 5, this.getProject().grid])].map((n) => `<option value="${n}" ${n === this.step ? "selected" : ""}>${n} px</option>`).join("")}</select></label><div class="size-grid">${[["left", "←"], ["right", "→"], ["up", "↑"], ["down", "↓"]].map(([v, t]) => `<button data-free-text-move="${v}" aria-label="文字块${{ left: "左移", right: "右移", up: "上移", down: "下移" }[v]}">${t}</button>`).join("")}</div>${target.key && this.getSlide().textPositions?.[target.key] ? '<button id="free-text-reset">恢复原位</button>' : ""}<p class="hint">光标所在块即为当前目标。输入坐标或点击箭头平移，Shift加点击为5倍步进。位置须留在正文区，避开模块、图片及其他文字；可撤销，保存HTML和导出保留。</p>`;
+      const r = canvasRect(target.el, this.getCanvas()), label = target.el.innerText.trim().split("\n")[0].slice(0, 32), esc6 = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      container.innerHTML = `<h2>当前文字块</h2><p class="hint">${esc6(label)}</p><div class="row free-text-coordinates"><label>横向 X（px）<input id="free-text-x" type="number" step="1" value="${Math.round(r.x * 100) / 100}"></label><label>纵向 Y（px）<input id="free-text-y" type="number" step="1" value="${Math.round(r.y * 100) / 100}"></label></div><label>平移步进<select id="free-text-step">${[.../* @__PURE__ */ new Set([1, 5, this.getProject().grid])].map((n) => `<option value="${n}" ${n === this.step ? "selected" : ""}>${n} px</option>`).join("")}</select></label><div class="size-grid">${[["left", "←"], ["right", "→"], ["up", "↑"], ["down", "↓"]].map(([v, t]) => `<button data-free-text-move="${v}" aria-label="文字块${{ left: "左移", right: "右移", up: "上移", down: "下移" }[v]}">${t}</button>`).join("")}</div>${target.key && this.getSlide().textPositions?.[target.key] ? '<button id="free-text-reset">恢复原位</button>' : ""}<p class="hint">光标所在块即为当前目标。输入坐标或点击箭头平移，Shift加点击为5倍步进。位置须留在正文区，避开模块、图片及其他文字；可撤销，保存HTML和导出保留。</p>`;
       return true;
     }
     move(rect, reset = false) {
@@ -2330,13 +2354,13 @@ body.export-view .toc-note:empty{display:none}
         } else {
           left = input2.slice(0, start2);
         }
-        var right2;
+        var right3;
         if (end + 15 < input2.length) {
-          right2 = input2.slice(end, end + 15) + "…";
+          right3 = input2.slice(end, end + 15) + "…";
         } else {
-          right2 = input2.slice(end);
+          right3 = input2.slice(end);
         }
-        error += left + underlined + right2;
+        error += left + underlined + right3;
       }
       var self = new Error(error);
       self.name = "ParseError";
@@ -7061,12 +7085,12 @@ body.export-view .toc-note:empty{display:none}
     }
     var depth;
     if (params.positionType === "top") {
-      var bottom2 = params.positionData;
+      var bottom3 = params.positionData;
       for (var _i6 = 0; _i6 < params.children.length; _i6++) {
         var child = params.children[_i6];
-        bottom2 -= child.type === "kern" ? child.size : child.elem.height + child.elem.depth;
+        bottom3 -= child.type === "kern" ? child.size : child.elem.height + child.elem.depth;
       }
-      depth = bottom2;
+      depth = bottom3;
     } else if (params.positionType === "bottom") {
       depth = -params.positionData;
     } else {
@@ -9480,16 +9504,16 @@ body.export-view .toc-note:empty{display:none}
     var top;
     var middle;
     var repeat;
-    var bottom2;
+    var bottom3;
     var svgLabel = "";
     var viewBoxWidth = 0;
-    top = repeat = bottom2 = delim;
+    top = repeat = bottom3 = delim;
     middle = null;
     var font = "Size1-Regular";
     if (delim === "\\uparrow") {
-      repeat = bottom2 = "⏐";
+      repeat = bottom3 = "⏐";
     } else if (delim === "\\Uparrow") {
-      repeat = bottom2 = "‖";
+      repeat = bottom3 = "‖";
     } else if (delim === "\\downarrow") {
       top = repeat = "⏐";
     } else if (delim === "\\Downarrow") {
@@ -9497,11 +9521,11 @@ body.export-view .toc-note:empty{display:none}
     } else if (delim === "\\updownarrow") {
       top = "\\uparrow";
       repeat = "⏐";
-      bottom2 = "\\downarrow";
+      bottom3 = "\\downarrow";
     } else if (delim === "\\Updownarrow") {
       top = "\\Uparrow";
       repeat = "‖";
-      bottom2 = "\\Downarrow";
+      bottom3 = "\\Downarrow";
     } else if (utils.contains(verts, delim)) {
       repeat = "∣";
       svgLabel = "vert";
@@ -9513,85 +9537,85 @@ body.export-view .toc-note:empty{display:none}
     } else if (delim === "[" || delim === "\\lbrack") {
       top = "⎡";
       repeat = "⎢";
-      bottom2 = "⎣";
+      bottom3 = "⎣";
       font = "Size4-Regular";
       svgLabel = "lbrack";
       viewBoxWidth = 667;
     } else if (delim === "]" || delim === "\\rbrack") {
       top = "⎤";
       repeat = "⎥";
-      bottom2 = "⎦";
+      bottom3 = "⎦";
       font = "Size4-Regular";
       svgLabel = "rbrack";
       viewBoxWidth = 667;
     } else if (delim === "\\lfloor" || delim === "⌊") {
       repeat = top = "⎢";
-      bottom2 = "⎣";
+      bottom3 = "⎣";
       font = "Size4-Regular";
       svgLabel = "lfloor";
       viewBoxWidth = 667;
     } else if (delim === "\\lceil" || delim === "⌈") {
       top = "⎡";
-      repeat = bottom2 = "⎢";
+      repeat = bottom3 = "⎢";
       font = "Size4-Regular";
       svgLabel = "lceil";
       viewBoxWidth = 667;
     } else if (delim === "\\rfloor" || delim === "⌋") {
       repeat = top = "⎥";
-      bottom2 = "⎦";
+      bottom3 = "⎦";
       font = "Size4-Regular";
       svgLabel = "rfloor";
       viewBoxWidth = 667;
     } else if (delim === "\\rceil" || delim === "⌉") {
       top = "⎤";
-      repeat = bottom2 = "⎥";
+      repeat = bottom3 = "⎥";
       font = "Size4-Regular";
       svgLabel = "rceil";
       viewBoxWidth = 667;
     } else if (delim === "(" || delim === "\\lparen") {
       top = "⎛";
       repeat = "⎜";
-      bottom2 = "⎝";
+      bottom3 = "⎝";
       font = "Size4-Regular";
       svgLabel = "lparen";
       viewBoxWidth = 875;
     } else if (delim === ")" || delim === "\\rparen") {
       top = "⎞";
       repeat = "⎟";
-      bottom2 = "⎠";
+      bottom3 = "⎠";
       font = "Size4-Regular";
       svgLabel = "rparen";
       viewBoxWidth = 875;
     } else if (delim === "\\{" || delim === "\\lbrace") {
       top = "⎧";
       middle = "⎨";
-      bottom2 = "⎩";
+      bottom3 = "⎩";
       repeat = "⎪";
       font = "Size4-Regular";
     } else if (delim === "\\}" || delim === "\\rbrace") {
       top = "⎫";
       middle = "⎬";
-      bottom2 = "⎭";
+      bottom3 = "⎭";
       repeat = "⎪";
       font = "Size4-Regular";
     } else if (delim === "\\lgroup" || delim === "⟮") {
       top = "⎧";
-      bottom2 = "⎩";
+      bottom3 = "⎩";
       repeat = "⎪";
       font = "Size4-Regular";
     } else if (delim === "\\rgroup" || delim === "⟯") {
       top = "⎫";
-      bottom2 = "⎭";
+      bottom3 = "⎭";
       repeat = "⎪";
       font = "Size4-Regular";
     } else if (delim === "\\lmoustache" || delim === "⎰") {
       top = "⎧";
-      bottom2 = "⎭";
+      bottom3 = "⎭";
       repeat = "⎪";
       font = "Size4-Regular";
     } else if (delim === "\\rmoustache" || delim === "⎱") {
       top = "⎫";
-      bottom2 = "⎩";
+      bottom3 = "⎩";
       repeat = "⎪";
       font = "Size4-Regular";
     }
@@ -9599,7 +9623,7 @@ body.export-view .toc-note:empty{display:none}
     var topHeightTotal = topMetrics.height + topMetrics.depth;
     var repeatMetrics = getMetrics(repeat, font, mode2);
     var repeatHeightTotal = repeatMetrics.height + repeatMetrics.depth;
-    var bottomMetrics = getMetrics(bottom2, font, mode2);
+    var bottomMetrics = getMetrics(bottom3, font, mode2);
     var bottomHeightTotal = bottomMetrics.height + bottomMetrics.depth;
     var middleHeightTotal = 0;
     var middleFactor = 1;
@@ -9638,7 +9662,7 @@ body.export-view .toc-note:empty{display:none}
         elem: wrapper
       });
     } else {
-      stack.push(makeGlyphSpan(bottom2, font, mode2));
+      stack.push(makeGlyphSpan(bottom3, font, mode2));
       stack.push(lap);
       if (middle === null) {
         var innerHeight = realHeightTotal - topHeightTotal - bottomHeightTotal + 2 * lapInEms;
@@ -10038,14 +10062,14 @@ body.export-view .toc-note:empty{display:none}
       var body = parser.parseExpression(false);
       --parser.leftrightDepth;
       parser.expect("\\right", false);
-      var right2 = assertNodeType(parser.parseFunction(), "leftright-right");
+      var right3 = assertNodeType(parser.parseFunction(), "leftright-right");
       return {
         type: "leftright",
         mode: parser.mode,
         body,
         left: delim.text,
-        right: right2.delim,
-        rightColor: right2.color
+        right: right3.delim,
+        rightColor: right3.color
       };
     },
     htmlBuilder: (group, options) => {
@@ -12597,10 +12621,10 @@ body.export-view .toc-note:empty{display:none}
     }
     var finalGroup;
     if (sup2 && sub2) {
-      var bottom2 = options.fontMetrics().bigOpSpacing5 + sub2.elem.height + sub2.elem.depth + sub2.kern + base.depth + baseShift;
+      var bottom3 = options.fontMetrics().bigOpSpacing5 + sub2.elem.height + sub2.elem.depth + sub2.kern + base.depth + baseShift;
       finalGroup = buildCommon.makeVList({
         positionType: "bottom",
-        positionData: bottom2,
+        positionData: bottom3,
         children: [{
           type: "kern",
           size: options.fontMetrics().bigOpSpacing5
@@ -14818,7 +14842,7 @@ body.export-view .toc-note:empty{display:none}
     var left = context.consumeArg().tokens;
     var middle = context.consumeArg().tokens;
     var middleDouble = context.consumeArg().tokens;
-    var right2 = context.consumeArg().tokens;
+    var right3 = context.consumeArg().tokens;
     var oldMiddle = context.macros.get("|");
     var oldMiddleDouble = context.macros.get("\\|");
     context.macros.beginGroup();
@@ -14848,7 +14872,7 @@ body.export-view .toc-note:empty{display:none}
     }
     var arg = context.consumeArg().tokens;
     var expanded = context.expandTokens([
-      ...right2,
+      ...right3,
       ...arg,
       ...left
       // reversed
@@ -16852,7 +16876,7 @@ body.export-view .toc-note:empty{display:none}
   function tablePart(title = "新分组", rows = [["主题一", "主题二"], ["说明内容", "说明内容"]]) {
     return { ...part(), title, text: "", rows, headerRows: 1, cellPaddingPt: 3, fontPt: 12, borderless: true };
   }
-  function renderTables(m, { esc: esc5, editable: editable2, edit }) {
+  function renderTables(m, { esc: esc6, editable: editable2, edit }) {
     const field2 = (owner, key2) => richHTML(owner[key2] || "", owner.rich?.[key2], false, !!owner.paragraphs?.[key2], void 0, owner.paragraphs?.[key2]);
     const render4 = (p, index2) => {
       const rows = p.rows || [], skip = /* @__PURE__ */ new Set(), merges = p.merges || [], history3 = m.profileHistory && !m.sectionedTable;
@@ -16895,12 +16919,12 @@ body.export-view .toc-note:empty{display:none}
     }
     return true;
   }
-  function tableControls(m, index2, esc5, spacing2) {
+  function tableControls(m, index2, esc6, spacing2) {
     const p = tableOwner(m, index2), count = p.rows[0]?.length || 1;
-    return `${m.sectionedTable ? sectionControls(m, index2, esc5) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label><input id="table-auto-font" type="checkbox" ${p.fixedFont !== true ? "checked" : ""}> 在8–14pt内自适应字号</label><label>表格基准字号<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc5(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
+    return `${m.sectionedTable ? sectionControls(m, index2, esc6) : ""}<h3>行与列</h3><p class="hint">当前 ${p.rows.length} 行 × ${count} 列${m.profileHistory ? "，间隔列自动生成，不计入列数" : ""}。首行是字段标题，内容可逐格编辑。</p><div class="size-grid"><button data-table-size="row:1">＋ 行</button><button data-table-size="row:-1" ${p.rows.length <= 1 ? "disabled" : ""}>－ 末行</button><button data-table-size="col:1">＋ 列</button><button data-table-size="col:-1" ${count <= 1 ? "disabled" : ""}>－ 末列</button></div><label><input id="table-auto-font" type="checkbox" ${p.fixedFont !== true ? "checked" : ""}> 在8–14pt内自适应字号</label><label>表格基准字号<select id="table-font-size">${[10, 12, 14, 16].map((n) => `<option value="${n}" ${(p.fontPt || m.fontPt || 14) === n ? "selected" : ""}>${n} pt</option>`).join("")}</select></label>${spacing2(p)}${!m.sectionedTable ? `<label><input id="band-title" type="checkbox" ${m.bandTitle ? "checked" : ""}> 深底分组标题</label><label><input id="borderless-table" type="checkbox" ${m.borderless ? "checked" : ""}> 无框线，首行主题色加粗</label><label><input id="history-table" type="checkbox" ${m.profileHistory ? "checked" : ""}> 履历表，表头下分段横线</label>` : ""}<h3>表格内容</h3><label>表格注释（可选）<textarea id="table-note" rows="2">${esc6(p.tableNote || "")}</textarea></label><button data-action="excel">替换 Excel / CSV</button><button data-action="paste-table">粘贴替换当前表格</button><label>表头行数<input id="header-rows" type="number" min="0" max="${p.rows.length}" value="${p.headerRows ?? 1}"></label><p class="hint">无框线表格左对齐，首行主题色加粗；履历正文居中。增减行列和分组后保持原有内容，仍需检查真实溢出。</p>`;
   }
-  function sectionControls(m, index2, esc5) {
-    return '<h3>无框线表格子区域</h3><p class="hint">点击分组名查看对应行列设置。箭头排序时，该组标题、内容和格式一起移动。</p><div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><button class="stage-label table-part-name" data-table-select="' + i2 + '" aria-pressed="' + (i2 === index2) + '" title="' + esc5(p.title) + '">' + esc5(p.title) + '</button><button data-table-part-move="-1" data-table-from="' + i2 + '" ' + (i2 === 0 ? "disabled" : "") + ' title="分组上移" aria-label="分组上移">↑</button><button data-table-part-move="1" data-table-from="' + i2 + '" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="分组下移" aria-label="分组下移">↓</button><button data-table-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + '</div><button data-action="table-part-add" ' + (m.parts.length >= 8 ? "disabled" : "") + ">＋ 分组</button>";
+  function sectionControls(m, index2, esc6) {
+    return '<h3>无框线表格子区域</h3><p class="hint">点击分组名查看对应行列设置。箭头排序时，该组标题、内容和格式一起移动。</p><div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><button class="stage-label table-part-name" data-table-select="' + i2 + '" aria-pressed="' + (i2 === index2) + '" title="' + esc6(p.title) + '">' + esc6(p.title) + '</button><button data-table-part-move="-1" data-table-from="' + i2 + '" ' + (i2 === 0 ? "disabled" : "") + ' title="分组上移" aria-label="分组上移">↑</button><button data-table-part-move="1" data-table-from="' + i2 + '" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="分组下移" aria-label="分组下移">↓</button><button data-table-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + '</div><button data-action="table-part-add" ' + (m.parts.length >= 8 ? "disabled" : "") + ">＋ 分组</button>";
   }
 
   // src/school-variants.js
@@ -17682,7 +17706,7 @@ body.export-view .toc-note:empty{display:none}
     }
     return s;
   }
-  function timelineHTML(m, { esc: esc5, edit }) {
+  function timelineHTML(m, { esc: esc6, edit }) {
     const n = m.parts.length;
     const field2 = (p, i2, key2) => `data-text data-part="${i2}" data-field="${key2}" ${textStyle(p, key2)} ${edit ? 'contenteditable="true" spellcheck="false"' : ""}`;
     const value = (p, key2) => richHTML(p[key2], p.rich?.[key2], false, !!p.paragraphs?.[key2]?.length, void 0, p.paragraphs?.[key2]);
@@ -17693,7 +17717,7 @@ body.export-view .toc-note:empty{display:none}
       const lineSVG = hide ? "" : `<svg class="timeline-line" data-decoration viewBox="0 0 4 100" preserveAspectRatio="none" aria-hidden="true"><path d="M2 0V100" stroke="var(--stage-color)" stroke-width="2"/></svg>`;
       const dotSVG = hide ? "" : `<svg class="timeline-dot" data-decoration viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="white" stroke="var(--stage-color)" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="var(--stage-color)"/></svg>`;
       const eventHTML = hide ? "" : `<div class="timeline-event"><div class="timeline-event-title" ${field2(p, i2, "title")}>${value(p, "title")}</div></div>`;
-      return `<section class="timeline-stage" style="--stage-color:var(--primary)"><div class="timeline-card" data-shape><div class="timeline-year" data-shape><div ${field2(p, i2, hide ? "title" : "year")}>${value(p, hide ? "title" : "year")}</div></div><div class="media-window timeline-media ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" title="双击替换照片或视频"><div class="media-crop">${p.asset ? `<${p.asset.kind === "video" ? 'video controls preload="metadata" muted playsinline' : "img"} src="${esc5(p.asset.src)}" alt="${esc5(p.title)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}>` : '<div class="timeline-placeholder" data-text>＋ 照片 / 视频<br>双击替换媒体</div>'}</div></div><div class="timeline-copy" ${field2(p, i2, "text")}>${value(p, "text")}</div></div>${eventHTML}${lineSVG}${dotSVG}</section>`;
+      return `<section class="timeline-stage" style="--stage-color:var(--primary)"><div class="timeline-card" data-shape><div class="timeline-year" data-shape><div ${field2(p, i2, hide ? "title" : "year")}>${value(p, hide ? "title" : "year")}</div></div><div class="media-window timeline-media ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" title="双击替换照片或视频"><div class="media-crop">${p.asset ? `<${p.asset.kind === "video" ? 'video controls preload="metadata" muted playsinline' : "img"} src="${esc6(p.asset.src)}" alt="${esc6(p.title)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}>` : '<div class="timeline-placeholder" data-text>＋ 照片 / 视频<br>双击替换媒体</div>'}</div></div><div class="timeline-copy" ${field2(p, i2, "text")}>${value(p, "text")}</div></div>${eventHTML}${lineSVG}${dotSVG}</section>`;
     }).join("")}</div>`;
   }
   function fitTimeline(el) {
@@ -17739,7 +17763,7 @@ body.export-view .toc-note:empty{display:none}
       m.parts = items.map(([title, body2, extra = {}]) => ({ ...part(), title, text: body2, bullet: true, ...extra }));
       return m;
     };
-    const whole = { x: 58, y: 256, w: 1484, h: 554 }, left = { x: 58, y: 256, w: 724, h: 554 }, right2 = { x: 806, y: 256, w: 736, h: 554 };
+    const whole = { x: 58, y: 256, w: 1484, h: 554 }, left = { x: 58, y: 256, w: 724, h: 554 }, right3 = { x: 806, y: 256, w: 736, h: 554 };
     const quadrants = [{ x: 58, y: 256, w: 724, h: 265 }, { x: 806, y: 256, w: 736, h: 265 }, { x: 58, y: 545, w: 724, h: 265 }, { x: 806, y: 545, w: 736, h: 265 }];
     function body(title, lead, modules, notes) {
       const s = { ...blankSlide(), title, lead, modules, notes, footer: "丽水学院 · Web Slide 使用示例", source: "操作示例 · 内容与数据仅作演示" };
@@ -17795,7 +17819,7 @@ body.export-view .toc-note:empty{display:none}
       text3("arrow", quadrants[2], [["B3 五角箭头", "适合描述推进过程或方法路径。\n箭头表达方向，不替代文字说明。\n控制装饰范围，避免压住正文内容。"]]),
       text3("numbered", quadrants[3], [["C3 序号标题", "适合有先后次序的步骤与检查。\n序号采用 20 pt Times New Roman 粗体。\n正文、子标题和补充注释分层设置。"]])
     ], "可演示双击打开样式编号列表：只悬停不会改变当前样式，点击应用才提交。B1 的白框左沿与折角右沿对齐；C3 的数字不是装饰字体。");
-    const grouped = text3("group", right2, [["先解释区域关系", "模块大标题概括这一组信息。\n内部小标题说明各自的研究任务。\n不同层级使用不同字号。"], ["再安排文字密度", "内部固定使用无底色默认分组。\n以留白和细线区分并列内容。\n必要时调整列数，不增加多余白底。"]], 1);
+    const grouped = text3("group", right3, [["先解释区域关系", "模块大标题概括这一组信息。\n内部小标题说明各自的研究任务。\n不同层级使用不同字号。"], ["再安排文字密度", "内部固定使用无底色默认分组。\n以留白和细线区分并列内容。\n必要时调整列数，不增加多余白底。"]], 1);
     grouped.groupTitle = "C2 组合分组：先总后分";
     body("组合分组与备注式说明", "同一页可以组合不同样式，但相同角色应保持相同字号、对齐方式和间距。", [
       text3("plain", quadrants[0], [["默认样式：直接、清楚", "适合正文说明与普通研究条目。\n用小标题和细线组织平行内容。\n浅色卡片是选择，不是每段都要加。"]]),
@@ -17807,7 +17831,7 @@ body.export-view .toc-note:empty{display:none}
     mediaGuide.parts[0].note = "支持 PNG、JPEG、WebP、MP4、WebM；单个媒体不超过 25 MB。";
     body("从占位区域插入图片或视频", "先保留图注所需的空间，再上传材料、选择比例并调整取景，最后复查画面与文字。", [
       mediaGuide,
-      text3("numbered", right2, [["操作路径", "双击左侧占位区域打开媒体弹窗\n选择本地图片或视频文件\n从预设或自定义宽高比中选择\n用水平、垂直取景调整画面位置\n需要时使用等比放大保留重点\n选择仅图标题或图标题加说明\n确认后复查媒体与图注的间隙\n不需要图注时取消保留图标题", { subheading: "保持原始比例，避免单向拉伸", showSubheading: true, annotation: "PDF 显示视频静态帧；PPTX 可内嵌视频。", showAnnotation: true }]])
+      text3("numbered", right3, [["操作路径", "双击左侧占位区域打开媒体弹窗\n选择本地图片或视频文件\n从预设或自定义宽高比中选择\n用水平、垂直取景调整画面位置\n需要时使用等比放大保留重点\n选择仅图标题或图标题加说明\n确认后复查媒体与图注的间隙\n不需要图注时取消保留图标题", { subheading: "保持原始比例，避免单向拉伸", showSubheading: true, annotation: "PDF 显示视频静态帧；PPTX 可内嵌视频。", showAnnotation: true }]])
     ], "实际演示可双击左侧占位符。图片和视频都使用同一个媒体弹窗；只有几何图形允许单向伸缩。视频能否播放取决于目标设备的编解码支持。");
     const logos = moduleOf("media", { x: 58, y: 256, w: 1484, h: 280 }, 2);
     if (logo) logos.parts[0].asset = { src: logo, kind: "image", ratio: 729 / 755, naturalRatio: 729 / 755, fit: "contain", ratioMode: "original", zoom: 1, cx: 50, cy: 50 };
@@ -17912,8 +17936,14 @@ body.export-view .toc-note:empty{display:none}
     return [...slide2.querySelectorAll(MANUAL_BREAK_SELECTOR)].filter((el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2).map((el) => `${el.matches(TITLE_SELECTOR) ? "标题" : "身份信息"}不允许自动换行：${el.innerText.trim().slice(0, 36)}。请精简、加宽区域或按语义手动分行。`);
   }
 
+  // src/inline-math.js
+  var esc4 = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  function inlineMathHTML(html, { source = false } = {}) {
+    return String(html).replace(/\$([^$\n]+)\$/g, (_, latex) => source ? `<span class="inline-latex-source" data-text>$${esc4(latex)}$</span>` : `<span class="inline-math" data-inline-latex="${esc4(latex)}" data-raster>${formulaHTML(latex)}</span>`);
+  }
+
   // src/render.js
-  var esc4 = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  var esc5 = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   function themeCSS(t, legacy = false) {
     return [...["primary", "secondary", "accent", "emphasis", "tint", "ink"].map((k) => `--${k}:${t[k]}`), `--muted:${alignHue(legacy ? "#526b7d" : "#617b8b", t.primary)}`, `--line:${mixColor(t.primary, "#FFFFFF", 0.8)}`, `--line-light:${mixColor(t.primary, "#FFFFFF", 0.9)}`].join(";");
   }
@@ -17922,34 +17952,36 @@ body.export-view .toc-note:empty{display:none}
     return richHTML(owner[key2] ?? fallback, owner.rich?.[key2], false, !!owner.paragraphs?.[key2]?.length, void 0, owner.paragraphs?.[key2]);
   }
   function textBody(p, i2, edit) {
-    return `<div class="paragraph ${p.chapterId ? "toc-note " : ""}${p.bullet ? "bulleted" : ""}" data-marker="${esc4(p.marker || "•")}" data-text data-part="${i2}" data-field="text" ${textStyle(p, "text")} ${editable(edit, "")}>${richHTML(p.text, p.rich?.text, p.bullet, true, p.marker, p.paragraphs?.text)}</div>`;
+    const html = richHTML(p.text, p.rich?.text, p.bullet, true, p.marker, p.paragraphs?.text), body = p.markdownMath && !edit ? inlineMathHTML(html, { source: p.inlineMathExport === "latex" }) : html;
+    return `<div class="paragraph ${p.chapterId ? "toc-note " : ""}${p.bullet ? "bulleted" : ""}" data-marker="${esc5(p.marker || "•")}" data-text data-part="${i2}" data-field="text" ${textStyle(p, "text")} ${editable(edit, "")}>${body}</div>`;
   }
   function renderModule(m, edit = false, theme) {
     if (m.type === "media" && theme) m = { ...m, parts: m.parts.map((p) => ({ ...p, asset: resolveThemeAsset(p.asset, theme) })) };
     let content = "";
     const cols = Math.min(m.columns || m.parts.length, m.parts.length) || 1;
-    if (m.type === "timeline") content = timelineHTML(m, { esc: esc4, edit });
-    if (m.type === "text") content = m.textBox ? `<div class="text-parts standalone-text ${m.boxTone === "light" ? "standalone-light" : "standalone-dark"}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0], 0, edit)}</div></div>` : textModuleHTML(m, { esc: esc4, editable, textBody, edit });
-    if (m.type === "media") content = `<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length / cols)},minmax(0,1fr))">${m.parts.map((p, i2) => `<figure class="media-part" data-shape><div class="media-window ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" data-ratio="${p.asset?.ratio || 16 / 9}">${p.asset ? `<div class="media-crop"><${p.asset.kind === "video" ? 'video controls preload="metadata"' : "img"} src="${esc4(p.asset.src)}" ${p.asset.kind === "video" ? "muted playsinline" : ""} alt="${esc4(p.caption)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}></div>` : `<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption !== false && (Boolean(p.caption?.trim()) || p.captionMode !== "title" && Boolean(p.note?.trim())) ? `<figcaption><div class="figure-title" data-text data-part="${i2}" data-field="caption" ${textStyle(p, "caption")} ${editable(edit, "")}>${field(p, "caption")}</div>${p.captionMode !== "title" && p.note?.trim() ? `<div class="figure-note" data-text data-part="${i2}" data-field="note" ${textStyle(p, "note")} ${editable(edit, "")}>${field(p, "note")}</div>` : ""}</figcaption>` : ""}</figure>`).join("")}</div>`;
-    if (m.type === "table") content = renderTables(m, { esc: esc4, editable, edit });
-    if (m.type === "formula") content = textModuleHTML(m, { esc: esc4, editable, edit, textBody: (p, i2) => {
+    if (m.type === "group") content = `<div class="ring-group-content">${m.items.map((item, i2) => renderModule(item, edit, theme).replace('class="module ', 'class="ring-item module ').replace(`data-module="${item.id}"`, `data-ring-item="${i2}"`)).join("")}</div>`;
+    if (m.type === "timeline") content = timelineHTML(m, { esc: esc5, edit });
+    if (m.type === "text") content = m.textBox ? `<div class="text-parts standalone-text ${m.boxTone === "light" ? "standalone-light" : "standalone-dark"}" style="--cols:1"><div class="text-part" data-shape>${textBody(m.parts[0], 0, edit)}</div></div>` : textModuleHTML(m, { esc: esc5, editable, textBody, edit });
+    if (m.type === "media") content = `<div class="media-parts" style="--cols:${cols};grid-template-rows:repeat(${Math.ceil(m.parts.length / cols)},minmax(0,1fr))">${m.parts.map((p, i2) => `<figure class="media-part" data-shape><div class="media-window ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" data-ratio="${p.asset?.ratio || 16 / 9}">${p.asset ? `<div class="media-crop"><${p.asset.kind === "video" ? 'video controls preload="metadata"' : "img"} src="${esc5(p.asset.src)}" ${p.asset.kind === "video" ? "muted playsinline" : ""} alt="${esc5(p.caption)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}></div>` : `<div class="media-placeholder" data-shape><span data-text>＋</span><p data-text>图片 / 视频占位区域</p><small data-text>双击上传，等比裁剪</small></div>`}</div>${p.showCaption !== false && (Boolean(p.caption?.trim()) || p.captionMode !== "title" && Boolean(p.note?.trim())) ? `<figcaption><div class="figure-title" data-text data-part="${i2}" data-field="caption" ${textStyle(p, "caption")} ${editable(edit, "")}>${field(p, "caption")}</div>${p.captionMode !== "title" && p.note?.trim() ? `<div class="figure-note" data-text data-part="${i2}" data-field="note" ${textStyle(p, "note")} ${editable(edit, "")}>${field(p, "note")}</div>` : ""}</figcaption>` : ""}</figure>`).join("")}</div>`;
+    if (m.type === "table") content = renderTables(m, { esc: esc5, editable, edit });
+    if (m.type === "formula") content = textModuleHTML(m, { esc: esc5, editable, edit, textBody: (p, i2) => {
       let math2;
       try {
         math2 = formulaHTML(p.latex);
       } catch (error) {
-        math2 = '<span class="formula-error">' + esc4(error.message) + "</span>";
+        math2 = '<span class="formula-error">' + esc5(error.message) + "</span>";
       }
       return '<div class="formula-body"><div class="formula-expression" data-formula-part="' + i2 + '" data-raster aria-label="双击修改 LaTeX" style="--math-color:' + (p.useThemeColor ?? m.mathUseThemeColor ? "var(--primary)" : "#000000") + '">' + math2 + "</div>" + textBody(p, i2, edit) + "</div>";
     } });
     if (m.type === "shape") content = `<div class="graphic-shape" data-shape style="background:var(--primary)"></div>`;
-    return `<div class="module ${m.type}-module ${m.type === "formula" && m.parts.length === 2 && cols === 1 ? "paired-formulas" : ""} ${m.isToc ? "toc-module" : ""} ${esc4(m.role || "")}" data-module="${m.id}" ${Number.isFinite(m.cardPaddingPt) ? "data-card-padding" : ""} style="${Number.isFinite(m.cardPaddingPt) ? "--card-pad:" + m.cardPaddingPt / 0.6 + "px;" : ""}left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{ text: "文字", media: "图像 / 视频", table: "表格", shape: "图形", formula: "公式", timeline: "时间轴" }[m.type]}</span></div>`;
+    return `<div class="module ${m.type}-module ${m.type === "formula" && m.parts.length === 2 && cols === 1 ? "paired-formulas" : ""} ${m.isToc ? "toc-module" : ""} ${esc5(m.role || "")}" data-module="${m.id}" ${Number.isFinite(m.cardPaddingPt) ? "data-card-padding" : ""} style="${Number.isFinite(m.cardPaddingPt) ? "--card-pad:" + m.cardPaddingPt / 0.6 + "px;" : ""}${Number.isFinite(m.partGap) ? "--part-gap:" + m.partGap + "px;" : ""}left:${m.x}px;top:${m.y}px;width:${m.w}px;height:${m.h}px"><div class="module-content">${content}</div><span class="module-badge">${{ text: "文字", media: "图像 / 视频", table: "表格", shape: "图形", formula: "公式", timeline: "时间轴", group: "环形组合" }[m.type]}</span></div>`;
   }
   function renderSlide(s, theme, index2, total, edit = false, project2 = null) {
     if (s.referenceLayout) return renderReferenceLayout(s, theme, index2, total, edit, themeCSS(theme, true), project2);
-    if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc4(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div></section>`;
-    if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc4(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text data-slide-field="${k}Label" ${editable(edit, "")}>${field(s, k + "Label", n)}</th><td data-text data-slide-field="${k}" ${textStyle(s, k)} ${editable(edit, "")}>${field(s, k)}</td></tr>`).join("")}</table></section>`;
+    if (s.kind === "transition") return `<section class="slide transition-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><div class="transition-content"><div class="transition-number" data-text>${esc5(s.section)}</div><div class="transition-rule" data-shape></div><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div></section>`;
+    if (s.kind === "cover" || s.kind === "closing") return `<section class="slide cover" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="cover-logo">${theme.wordmark ? `<img class="wordmark" data-image src="${esc5(theme.wordmark)}" alt="校徽与校名">` : `<div class="wordmark-placeholder" data-text>校徽与校名</div>`}</div><div class="cover-band" data-shape><h1 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h1><p data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</p></div><table class="cover-info">${[["presenter", "汇报人"], ["institute", "学院"], ["date", "日期"]].map(([k, n]) => `<tr><th data-text data-slide-field="${k}Label" ${editable(edit, "")}>${field(s, k + "Label", n)}</th><td data-text data-slide-field="${k}" ${textStyle(s, k)} ${editable(edit, "")}>${field(s, k)}</td></tr>`).join("")}</table></section>`;
     const content = profileCardHTML(s, edit, themeCSS(theme, true), theme) + `<div class="module-layer">${s.modules.map((m) => renderModule(m, edit, theme)).join("")}</div>`;
-    return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc4(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc4(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc4(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc4(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc4(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
+    return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc5(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc5(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc5(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc5(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc5(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
   }
   function fitMedia(el) {
     const scope = el.closest(".slide") || el, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
@@ -18000,14 +18032,14 @@ body.export-view .toc-note:empty{display:none}
     for (const part2 of el.querySelectorAll(".text-part")) {
       const cs = getComputedStyle(part2);
       if (!part2.dataset.basePadding) part2.dataset.basePadding = JSON.stringify(["Top", "Bottom", "Left", "Right"].map((k) => parseFloat(cs["padding" + k]) || 0));
-      const [top, bottom2, left, right2] = JSON.parse(part2.dataset.basePadding);
-      Object.assign(part2.style, { paddingTop: top + "px", paddingBottom: bottom2 + "px", paddingLeft: left + "px", paddingRight: right2 + "px" });
-      if (part2.closest(".style-cards,.style-unified,.style-note")) for (let cut = 2; flowHeight(part2) > part2.clientHeight + 1 && cut <= Math.max(left, right2) - 4; cut += 2) {
+      const [top, bottom3, left, right3] = JSON.parse(part2.dataset.basePadding);
+      Object.assign(part2.style, { paddingTop: top + "px", paddingBottom: bottom3 + "px", paddingLeft: left + "px", paddingRight: right3 + "px" });
+      if (part2.closest(".style-cards,.style-unified,.style-note")) for (let cut = 2; flowHeight(part2) > part2.clientHeight + 1 && cut <= Math.max(left, right3) - 4; cut += 2) {
         part2.style.paddingLeft = Math.max(part2.closest(".style-note") ? 10 : 4, left - cut) + "px";
-        part2.style.paddingRight = Math.max(4, right2 - cut) + "px";
+        part2.style.paddingRight = Math.max(4, right3 - cut) + "px";
       }
-      const excess = Math.max(0, flowHeight(part2) - part2.clientHeight), reduceBottom = Math.min(excess, Math.max(0, bottom2 - (part2.querySelector(".toc-page-range") ? 32 : 2)));
-      part2.style.paddingBottom = bottom2 - reduceBottom + "px";
+      const excess = Math.max(0, flowHeight(part2) - part2.clientHeight), reduceBottom = Math.min(excess, Math.max(0, bottom3 - (part2.querySelector(".toc-page-range") ? 32 : 2)));
+      part2.style.paddingBottom = bottom3 - reduceBottom + "px";
       part2.style.paddingTop = top - Math.min(Math.max(0, excess - reduceBottom), Math.max(0, top - 2)) + "px";
     }
     for (const part2 of el.querySelectorAll(".style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part")) {
@@ -18516,7 +18548,7 @@ body.export-view .toc-note:empty{display:none}
     return `<button data-action="choose-style" style="width:100%;margin-top:10px">样式编号与悬停预览</button>${["ribbon", "capsule", "arrow", "group"].includes(m.style) ? `<label>标题装饰长度 <span id="header-width-value">${m.headerWidth || 70}%</span></label><input id="module-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}">` : ""}${m.style === "group" ? '<p class="hint">C2 内部固定为无底色默认分组，以标题、正文及细线区分。</p>' : ""}${m.style === "numbered" ? `<label>起始序号</label><input id="number-start" type="number" min="1" max="99" value="${m.numberStart || 1}"><label><input id="show-subheading" type="checkbox" ${m.parts.some((p) => p.showSubheading) ? "checked" : ""}> 正文加粗子标题（16pt）</label><label><input id="show-annotation" type="checkbox" ${m.parts.some((p) => p.showAnnotation) ? "checked" : ""}> 补充注释（14pt）</label>` : ""}`;
   }
   function stylePickerBody(m) {
-    return `<div class="style-picker"><div class="style-list" role="group" aria-label="文本块样式编号">${TEXT_STYLES.filter(([id]) => !m.isToc || id !== "note").map(([id, code, name, description]) => `<button type="button" class="style-option" data-style-id="${id}" aria-pressed="${m.style === id}" title="${esc4(description)}"><span class="style-code">${code}</span><span>${name}</span></button>`).join("")}</div><div class="style-live-preview"><div class="style-preview-frame" id="style-preview-frame"><div class="style-preview-canvas" id="style-preview-canvas"></div></div><div id="style-preview-copy" class="style-preview-copy"></div><p class="hint">悬停编号或用键盘聚焦可预览，单击选择，点击“应用样式”才修改模块。原文字会保留。</p></div></div><div class="style-picker-options"><label>标题装饰长度 <input id="style-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}"><span id="style-header-label">${m.headerWidth || 70}%</span></label></div>`;
+    return `<div class="style-picker"><div class="style-list" role="group" aria-label="文本块样式编号">${TEXT_STYLES.filter(([id]) => !m.isToc || id !== "note").map(([id, code, name, description]) => `<button type="button" class="style-option" data-style-id="${id}" aria-pressed="${m.style === id}" title="${esc5(description)}"><span class="style-code">${code}</span><span>${name}</span></button>`).join("")}</div><div class="style-live-preview"><div class="style-preview-frame" id="style-preview-frame"><div class="style-preview-canvas" id="style-preview-canvas"></div></div><div id="style-preview-copy" class="style-preview-copy"></div><p class="hint">悬停编号或用键盘聚焦可预览，单击选择，点击“应用样式”才修改模块。原文字会保留。</p></div></div><div class="style-picker-options"><label>标题装饰长度 <input id="style-header-width" type="range" min="1" max="100" step="1" value="${m.headerWidth || 70}"><span id="style-header-label">${m.headerWidth || 70}%</span></label></div>`;
   }
   function drawStylePreview(id, theme, width = 70) {
     const frame = document.querySelector("#style-preview-frame"), canvas = document.querySelector("#style-preview-canvas");
@@ -18532,6 +18564,59 @@ body.export-view .toc-note:empty{display:none}
     canvas.style.transform = `scale(${s})`;
     const spec = styleInfo(id);
     document.querySelector("#style-preview-copy").textContent = `${spec[1]} · ${spec[2]}：${spec[3]}。标题 18pt，正文 16pt；示意文字仅用于预览。`;
+  }
+
+  // src/advanced-alignment.js
+  var right2 = (r) => r.x + r.w;
+  var bottom2 = (r) => r.y + r.h;
+  var alignmentAxis = (mode2) => mode2?.startsWith("v-") ? "x" : mode2?.startsWith("h-") ? "y" : null;
+  function alignToGuide(rect, mode2, action, guide) {
+    const r = { ...rect };
+    if (mode2 === "v-move") r.x = action === "left" ? guide : action === "center" ? guide - r.w / 2 : guide - r.w;
+    if (mode2 === "v-stretch") {
+      if (action === "left") {
+        r.w = right2(r) - guide;
+        r.x = guide;
+      }
+      if (action === "right") r.w = guide - r.x;
+    }
+    if (mode2 === "h-move") r.y = action === "top" ? guide : action === "middle" ? guide - r.h / 2 : guide - r.h;
+    if (mode2 === "h-stretch") {
+      if (action === "top") {
+        r.h = bottom2(r) - guide;
+        r.y = guide;
+      }
+      if (action === "bottom") r.h = guide - r.y;
+    }
+    return r;
+  }
+  function distributeEven(rects, axis) {
+    const key2 = axis === "x" ? "x" : "y", size = axis === "x" ? "w" : "h";
+    const sorted = rects.map((r) => ({ ...r })).sort((a, b) => a[key2] - b[key2]);
+    if (sorted.length < 3) return sorted;
+    const outerStart = sorted[0][key2], outerEnd = sorted.at(-1)[key2] + sorted.at(-1)[size];
+    const gap = (outerEnd - outerStart - sorted.reduce((n, r) => n + r[size], 0)) / (sorted.length - 1);
+    for (let i2 = 1; i2 < sorted.length - 1; i2++) sorted[i2][key2] = sorted[i2 - 1][key2] + sorted[i2 - 1][size] + gap;
+    return sorted;
+  }
+  function radialLayout(rects, { count = rects.length, radius = 180, start: start2 = -90, end = 270, center } = {}) {
+    if (!rects.length) throw Error("请至少选择一个板块。");
+    const source = rects.length === 1 ? Array.from({ length: Math.max(1, count) }, () => ({ ...rects[0] })) : rects.map((r) => ({ ...r }));
+    const c = center || { x: source.reduce((n, r) => n + r.x + r.w / 2, 0) / source.length, y: source.reduce((n, r) => n + r.y + r.h / 2, 0) / source.length };
+    const full = Math.abs(end - start2) >= 359.999;
+    return source.map((r, i2) => {
+      const denominator = full ? source.length : Math.max(1, source.length - 1), angle = (start2 + (end - start2) * i2 / denominator) * Math.PI / 180;
+      return { ...r, x: c.x + Math.cos(angle) * radius - r.w / 2, y: c.y + Math.sin(angle) * radius - r.h / 2 };
+    });
+  }
+  function groupBounds(items, padding = 0) {
+    const x = Math.min(...items.map((r) => r.x)) - padding, y = Math.min(...items.map((r) => r.y)) - padding;
+    const rr = Math.max(...items.map((r) => right2(r))) + padding, bb = Math.max(...items.map((r) => bottom2(r))) + padding;
+    return { x, y, w: rr - x, h: bb - y };
+  }
+  function makeRadialGroup(items, id) {
+    const box = groupBounds(items);
+    return { id, type: "group", style: "plain", ...box, parts: [{ title: "环形分布", text: "", bullet: false }], columns: 1, items: items.map((item) => ({ ...item, x: item.x - box.x, y: item.y - box.y })), radial: true };
   }
 
   // src/app.js
@@ -18577,6 +18662,7 @@ body.export-view .toc-note:empty{display:none}
   var spaceCallback = null;
   var editingTarget = null;
   var pendingTextDelete = null;
+  var advanced = { mode: null, guideX: SAFE.x + SAFE.w / 2, guideY: SAFE.y + SAFE.h / 2, ids: /* @__PURE__ */ new Set(), ruler: false };
   function pageBounds() {
     return slideBounds(slide());
   }
@@ -18594,7 +18680,7 @@ body.export-view .toc-note:empty{display:none}
     el.querySelector('option[value="part"]').disabled = !m || editingTarget?.part === null || m.parts.length <= 1;
   }
   function childControls(m) {
-    return '<div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><span class="stage-label" title="' + esc4(p.title || p.caption || "子区域") + '">' + (i2 + 1) + " · " + esc4(p.title || p.caption || "子区域") + '</span><button data-child-move="' + i2 + '" data-direction="-1" ' + (i2 === 0 ? "disabled" : "") + ' title="子区域上移" aria-label="子区域上移">↑</button><button data-child-move="' + i2 + '" data-direction="1" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="子区域下移" aria-label="子区域下移">↓</button><button data-child-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + "</div>";
+    return '<div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><span class="stage-label" title="' + esc5(p.title || p.caption || "子区域") + '">' + (i2 + 1) + " · " + esc5(p.title || p.caption || "子区域") + '</span><button data-child-move="' + i2 + '" data-direction="-1" ' + (i2 === 0 ? "disabled" : "") + ' title="子区域上移" aria-label="子区域上移">↑</button><button data-child-move="' + i2 + '" data-direction="1" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="子区域下移" aria-label="子区域下移">↓</button><button data-child-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + "</div>";
   }
   function childIndex(m) {
     return Math.min(childFocus.get(m.id) ?? m.parts.length - 1, m.parts.length - 1);
@@ -18615,7 +18701,7 @@ body.export-view .toc-note:empty{display:none}
     return plan.filter((m) => !m.fixed);
   }
   function moduleList() {
-    return '<h3>本页模块</h3><div class="module-card-list">' + slide().modules.map((m) => '<button data-select-module="' + m.id + '">' + esc4(m.groupTitle || m.tableTitle || m.parts[0]?.title || ({ text: "文字", table: "表格", media: "图像／视频" }[m.type] || m.type)) + "<small>" + esc4(m.sectionedTable ? m.parts.length + " 个表格子区域" : m.type === "table" ? m.profileHistory ? "履历横线表" : "数据表" : m.parts.length + " 个子区域") + "</small></button>").join("") + "</div>";
+    return '<h3>本页模块</h3><div class="module-card-list">' + slide().modules.map((m) => '<button data-select-module="' + m.id + '">' + esc5(m.groupTitle || m.tableTitle || m.parts[0]?.title || ({ text: "文字", table: "表格", media: "图像／视频" }[m.type] || m.type)) + "<small>" + esc5(m.sectionedTable ? m.parts.length + " 个表格子区域" : m.type === "table" ? m.profileHistory ? "履历横线表" : "数据表" : m.parts.length + " 个子区域") + "</small></button>").join("") + "</div>";
   }
   function chooseSpace(type, callback) {
     if (slide().kind !== "body" || slide().referenceLayout) {
@@ -18686,6 +18772,10 @@ body.export-view .toc-note:empty{display:none}
         rect = anchoredResize(current, dx, dy, anchor);
         if ((dx < 0 || dy < 0) && !testFit(current, rect)) break;
       } else rect = { x: current.x + (operation === "right" ? d : operation === "left" ? -d : 0), y: current.y + (operation === "down" ? d : operation === "up" ? -d : 0), w: current.w, h: current.h };
+      if (current.type === "group" && kind === "resize") {
+        const sx = rect.w / current.w, sy = rect.h / current.h;
+        rect.items = current.items.map((item) => ({ ...item, x: item.x * sx, y: item.y * sy, w: item.w * sx, h: item.h * sy }));
+      }
       const plan = planPageChange(current.id, rect, d);
       if (!plan) break;
       if (!applied && record) savePoint();
@@ -18820,7 +18910,7 @@ body.export-view .toc-note:empty{display:none}
   }
   function tocAddDialog() {
     const hidden = documentSections(project, { includeAppendix: !!slide().tocIncludeAppendix }).filter((ch2) => slide().tocExcluded?.includes(ch2.id));
-    newDialog("toc-add-dialog", "添加目录子区域", `<label>选择目录条目<select id="toc-add-choice">${hidden.map((ch2) => `<option value="${ch2.id}">恢复：${esc4(ch2.number + " " + ch2.title)}</option>`).join("")}<option value="custom">自定义目录条目</option></select></label><p class="hint">删除自动目录条目不会删除实际章节；恢复后标题与页码继续自动更新。自定义条目可直接编辑标题与说明。</p>`);
+    newDialog("toc-add-dialog", "添加目录子区域", `<label>选择目录条目<select id="toc-add-choice">${hidden.map((ch2) => `<option value="${ch2.id}">恢复：${esc5(ch2.number + " " + ch2.title)}</option>`).join("")}<option value="custom">自定义目录条目</option></select></label><p class="hint">删除自动目录条目不会删除实际章节；恢复后标题与页码继续自动更新。自定义条目可直接编辑标题与说明。</p>`);
   }
   function toast(t, error = false) {
     const el = $("#toast");
@@ -18928,16 +19018,22 @@ body.export-view .toc-note:empty{display:none}
       updateSidebar();
       formatter.refresh();
     } });
-    const bottom2 = document.createElement("div");
-    bottom2.className = "sidebar-bottom";
-    bottom2.innerHTML = '<p id="page-selection-info" class="sidebar-selection-info"></p><div class="sidebar-clipboard"><button data-action="copy-pages" title="Ctrl+C 复制页">复制</button><button data-action="paste-pages" title="Ctrl+V 粘贴页">粘贴</button></div>';
-    bottom2.append($('[data-action="delete-slide"]'));
-    $(".sidebar").append(bottom2);
+    const bottom3 = document.createElement("div");
+    bottom3.className = "sidebar-bottom";
+    bottom3.innerHTML = '<p id="page-selection-info" class="sidebar-selection-info"></p><div class="sidebar-clipboard"><button data-action="copy-pages" title="Ctrl+C 复制页">复制</button><button data-action="paste-pages" title="Ctrl+V 粘贴页">粘贴</button></div>';
+    bottom3.append($('[data-action="delete-slide"]'));
+    $(".sidebar").append(bottom3);
     pageList = new SidebarPages({ getProject: () => project, getIndex: () => index, activate: (n) => go(n), savePoint, render: render3, persist, toast, confirmDelete: (n) => newDialog("delete-slide-dialog", "删除所选页面", `<p>确认删除选中的 ${n} 页？可通过撤销恢复。</p>`, "删除") });
     initInspectorResizer();
+    new MutationObserver(() => {
+      const stats = $$(".stat", $("#inspector"));
+      if (stats.length > 1) stats.slice(1).forEach((el) => el.classList.replace("stat", "icon-status"));
+    }).observe($("#inspector"), { childList: true, subtree: true });
     document.addEventListener("click", click);
     document.addEventListener("input", input);
+    document.addEventListener("change", alignmentChange, true);
     document.addEventListener("change", change);
+    document.addEventListener("dblclick", iconDblclick, true);
     document.addEventListener("dblclick", dblclick);
     document.addEventListener("focusout", (e) => {
       const field2 = e.target.closest?.('[data-row][contenteditable="true"]');
@@ -19027,7 +19123,7 @@ body.export-view .toc-note:empty{display:none}
     viewer.fit();
   }
   function updateSidebar() {
-    $("#slides").innerHTML = project.slides.map((s, i2) => `<button class="slide-thumb ${i2 === index ? "current" : ""}" data-page="${i2}" aria-label="第 ${i2 + 1} 页 ${esc4(s.title)}"><div class="thumb-preview">${renderSlide(s, project.theme, i2, project.slides.length, false, project)}</div><span class="thumb-caption"><b>${String(i2 + 1).padStart(2, "0")}</b>${esc4(s.title.split("\n")[0])}</span></button>`).join("");
+    $("#slides").innerHTML = project.slides.map((s, i2) => `<button class="slide-thumb ${i2 === index ? "current" : ""}" data-page="${i2}" aria-label="第 ${i2 + 1} 页 ${esc5(s.title)}"><div class="thumb-preview">${renderSlide(s, project.theme, i2, project.slides.length, false, project)}</div><span class="thumb-caption"><b>${String(i2 + 1).padStart(2, "0")}</b>${esc5(s.title.split("\n")[0])}</span></button>`).join("");
     $$(".slide-thumb .module").forEach(fitTable);
     pageList?.sync();
     viewer.fit();
@@ -19056,10 +19152,150 @@ body.export-view .toc-note:empty{display:none}
     $("#notes-toggle").classList.toggle("active", notesVisible);
     if (notesVisible) viewer.fit();
     presenter?.sync();
+    mountAdvancedAlignment();
     check();
     if (sidebar) updateSidebar();
     else $$(".slide-thumb").forEach((b) => b.classList.toggle("current", Number(b.dataset.page) === index));
     inspector();
+    mountInlineMathControl();
+  }
+  function mountInlineMathControl() {
+    const stats = $$(".stat", $("#inspector"));
+    if (stats.length > 1) stats.slice(1).forEach((el) => el.classList.replace("stat", "icon-status"));
+    const m = selectedModule();
+    if (m?.type !== "text" || m.textBox) return;
+    const i2 = childIndex(m), p = m.parts[i2], section = document.createElement("section");
+    section.className = "inline-math-control";
+    section.innerHTML = '<h3>行内公式</h3><label><input id="part-markdown-math" type="checkbox" ' + (p.markdownMath ? "checked" : "") + '> Markdown 格式（使用 $...$）</label><p class="hint">编辑文字时保留 LaTeX 源码；预览、放映和 PDF 中渲染为标准公式。</p>';
+    $("#inspector").insertBefore(section, $(".advanced-align-entry", $("#inspector")));
+  }
+  function alignmentIcon(kind) {
+    const line = '<path d="M8 6v36" class="guide"/>', hline = '<path d="M6 8h36" class="guide"/>';
+    const icons = {
+      left: `${line}<rect x="11" y="11" width="20" height="8"/><rect x="11" y="28" width="28" height="8"/>`,
+      center: `<path d="M24 6v36" class="guide"/><rect x="14" y="11" width="20" height="8"/><rect x="10" y="28" width="28" height="8"/>`,
+      right: `<path d="M40 6v36" class="guide"/><rect x="17" y="11" width="20" height="8"/><rect x="9" y="28" width="28" height="8"/>`,
+      top: `${hline}<rect x="11" y="11" width="8" height="20"/><rect x="28" y="11" width="8" height="28"/>`,
+      middle: `<path d="M6 24h36" class="guide"/><rect x="11" y="14" width="8" height="20"/><rect x="28" y="10" width="8" height="28"/>`,
+      bottom: `<path d="M6 40h36" class="guide"/><rect x="11" y="17" width="8" height="20"/><rect x="28" y="9" width="8" height="28"/>`,
+      "stretch-left": `${line}<path d="M31 13H12m0 0 5-4m-5 4 5 4M37 34H12m0 0 5-4m-5 4 5 4"/>`,
+      "stretch-right": `<path d="M40 6v36" class="guide"/><path d="M17 13h19m0 0-5-4m5 4-5 4M11 34h25m0 0-5-4m5 4-5 4"/>`,
+      "stretch-top": `${hline}<path d="M14 31V12m0 0-4 5m4-5 4 5M34 37V12m0 0-4 5m4-5 4 5"/>`,
+      "stretch-bottom": `<path d="M6 40h36" class="guide"/><path d="M14 17v19m0 0-4-5m4 5 4-5M34 11v25m0 0-4-5m4 5 4-5"/>`,
+      "distribute-y": '<path d="M6 9h36M6 39h36" class="guide"/><rect x="14" y="13" width="20" height="7"/><rect x="10" y="26" width="28" height="7"/>',
+      "distribute-x": '<path d="M9 6v36M39 6v36" class="guide"/><rect x="13" y="14" width="7" height="20"/><rect x="26" y="10" width="7" height="28"/>',
+      radial: '<circle cx="24" cy="24" r="16" class="guide dash"/><circle cx="24" cy="8" r="3"/><circle cx="38" cy="18" r="3"/><circle cx="33" cy="36" r="3"/><circle cx="15" cy="36" r="3"/><circle cx="10" cy="18" r="3"/>'
+    };
+    return `<svg viewBox="0 0 48 48" aria-hidden="true">${icons[kind] || ""}</svg>`;
+  }
+  function alignmentTool({ label, icon, attr }) {
+    return `<button class="alignment-tool" ${attr} aria-label="${label}" title="${label}">${alignmentIcon(icon)}<span>${label}</span></button>`;
+  }
+  function advancedPanel() {
+    const active = advanced.mode || "", selectedName = selectedModule()?.parts?.[childIndex(selectedModule())]?.title || selectedModule()?.groupTitle || "请选择板块";
+    $("#alignment-panel")?.remove();
+    const panel = document.createElement("section");
+    panel.id = "alignment-panel";
+    panel.className = "alignment-panel";
+    panel.style.cssText = themeCSS(project.theme);
+    const modes = [["v-move", "纵向参考线平移"], ["h-move", "横向参考线平移"], ["v-stretch", "纵向参考线拉伸"], ["h-stretch", "横向参考线拉伸"], ["multi", "多选开关"]];
+    let actions = "";
+    if (active === "v-move") actions = [["左对齐", "left", 'data-align-action="left"'], ["水平居中", "center", 'data-align-action="center"'], ["右对齐", "right", 'data-align-action="right"']].map(([label, icon, attr]) => alignmentTool({ label, icon, attr })).join("");
+    else if (active === "h-move") actions = [["上贴边", "top", 'data-align-action="top"'], ["垂直居中", "middle", 'data-align-action="middle"'], ["下贴边", "bottom", 'data-align-action="bottom"']].map(([label, icon, attr]) => alignmentTool({ label, icon, attr })).join("");
+    else if (active === "v-stretch") actions = [["向左拉伸", "stretch-left", 'data-align-action="left"'], ["向右拉伸", "stretch-right", 'data-align-action="right"']].map(([label, icon, attr]) => alignmentTool({ label, icon, attr })).join("");
+    else if (active === "h-stretch") actions = [["向上拉伸", "stretch-top", 'data-align-action="top"'], ["向下拉伸", "stretch-bottom", 'data-align-action="bottom"']].map(([label, icon, attr]) => alignmentTool({ label, icon, attr })).join("");
+    else if (active === "multi") actions = [["垂直等距", "distribute-y", 'data-align-distribute="y"'], ["环形分布", "radial", 'data-action="radial-options"'], ["水平等距", "distribute-x", 'data-align-distribute="x"']].map(([label, icon, attr]) => alignmentTool({ label, icon, attr })).join("");
+    panel.innerHTML = `<div class="alignment-mode-grid">${modes.map(([value, label]) => `<button data-align-mode="${value}" class="${active === value ? "active" : ""}">${label}</button>`).join("")}</div><div class="alignment-target">${active === "multi" ? `已选 ${advanced.ids.size} 个板块；点击画布增减选择` : `${esc5(selectedName)}；参考线可在画布拖动`}</div>${actions ? `<div class="alignment-tool-grid ${actions.includes("向左拉伸") || actions.includes("向上拉伸") ? "two" : ""}">${actions}</div>` : '<p class="alignment-empty">选择上方一种模式后开始操作。</p>'}<div class="alignment-panel-foot">${active === "multi" ? '<button data-action="advanced-clear-selection">清空</button>' : ""}<button data-action="advanced-close">退出</button></div>`;
+    document.body.append(panel);
+  }
+  function mountAdvancedAlignment() {
+    const canvas = $("#canvas"), layer = canvas && $(".slide", canvas);
+    if (!layer) return;
+    layer.classList.toggle("advanced-multi", advanced.mode === "multi");
+    $$(".module", layer).forEach((el) => {
+      const model = slide().modules.find((m) => m.id === el.dataset.module), active = advanced.ids.has(el.dataset.module), invalid = model && (!inside(model, pageBounds()) || layoutItems().some((n) => n.id !== model.id && intersects(model, n)));
+      el.classList.toggle("advanced-candidate", advanced.mode === "multi");
+      el.classList.toggle("advanced-selected", active);
+      el.classList.toggle("layout-invalid", !!invalid);
+    });
+    if (advanced.ruler) {
+      const ruler = document.createElement("div");
+      ruler.className = "alignment-ruler";
+      ruler.innerHTML = "<span>0</span><span>400</span><span>800</span><span>1200</span><span>1600</span>";
+      layer.append(ruler);
+    }
+    const axis = alignmentAxis(advanced.mode);
+    if (!axis) return;
+    const guide = document.createElement("div");
+    guide.className = "alignment-guide " + (axis === "x" ? "vertical" : "horizontal");
+    guide.style[axis === "x" ? "left" : "top"] = (axis === "x" ? advanced.guideX : advanced.guideY) + "px";
+    layer.append(guide);
+    guide.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      guide.setPointerCapture(e.pointerId);
+      const box = layer.getBoundingClientRect(), s = box.width / 1600;
+      const move = (ev) => {
+        let value = (axis === "x" ? ev.clientX - box.left : ev.clientY - box.top) / s;
+        const bounds = pageBounds(), min = axis === "x" ? bounds.x : bounds.y, max = min + (axis === "x" ? bounds.w : bounds.h);
+        value = Math.max(min, Math.min(max, ev.shiftKey ? snap(value, project.grid, min) : value));
+        if (axis === "x") advanced.guideX = value;
+        else advanced.guideY = value;
+        guide.style[axis === "x" ? "left" : "top"] = value + "px";
+        const input2 = $("#alignment-guide-value");
+        if (input2) input2.value = Math.round(value);
+      };
+      guide.addEventListener("pointermove", move);
+      guide.addEventListener("pointerup", () => {
+        persist();
+      }, { once: true });
+    });
+  }
+  function applyGuideAction(action) {
+    const m = selectedModule();
+    if (!m) throw Error("请先选中一个板块。");
+    const axis = alignmentAxis(advanced.mode), guide = axis === "x" ? advanced.guideX : advanced.guideY, next = alignToGuide(m, advanced.mode, action, guide);
+    if (next.w < project.grid * 2 || next.h < project.grid * 2 || !inside(next, pageBounds()) || layoutItems().some((n) => n.id !== m.id && intersects(next, n))) throw Error("该操作会越出安全区、遮挡其他内容或使板块过窄。");
+    savePoint();
+    Object.assign(m, next);
+    render3();
+    persist();
+  }
+  function distributeSelection(axis) {
+    const chosen = slide().modules.filter((m) => advanced.ids.has(m.id));
+    if (chosen.length < 2) throw Error("至少选择两个板块。");
+    const key2 = axis === "x" ? "width" : "height", start2 = axis === "x" ? "left" : "top", end = axis === "x" ? "right" : "bottom", units = [];
+    for (const m of chosen) {
+      const root = $(`[data-module="${m.id}"]`, $("#canvas")), parts = root ? $$(":scope .text-part,:scope .media-part,:scope .timeline-stage,:scope .formula-card", root).filter((el) => el.closest("[data-module]") === root) : [];
+      (parts.length ? parts : [root]).filter(Boolean).forEach((el) => units.push(el.getBoundingClientRect()));
+    }
+    const outerStart = Math.min(...units.map((r) => r[start2])), outerEnd = Math.max(...units.map((r) => r[end])), unitSum = units.reduce((n, r) => n + r[key2], 0), partGap = units.length > 1 ? Math.max(0, (outerEnd - outerStart - unitSum) / (units.length - 1) / scale) : 0;
+    const next = distributeEven(chosen, axis), others = slide().modules.filter((m) => !advanced.ids.has(m.id));
+    if (next.some((m) => !inside(m, pageBounds()) || others.some((n) => intersects(m, n))) || next.some((m, i2) => next.slice(i2 + 1).some((n) => intersects(m, n)))) throw Error("等距分布后会越界或遮挡，请先缩小板块。");
+    savePoint();
+    for (const r of next) {
+      const target = slide().modules.find((m) => m.id === r.id);
+      Object.assign(target, { x: r.x, y: r.y });
+      if (target.parts.length > 1) target.partGap = partGap;
+    }
+    render3();
+    persist();
+    toast(units.length > chosen.length ? "已展开多子区域参与计算，固定最外边界并平均分配间隙。" : chosen.length === 2 ? "两块均为单一区域，最外边界固定后无需移动。" : "已固定最外侧边界并平均分配板块间隙。");
+  }
+  function uploadPartIcon(m, i2) {
+    const input2 = document.createElement("input");
+    input2.type = "file";
+    input2.accept = "image/svg+xml";
+    input2.onchange = async () => {
+      const f = input2.files[0];
+      if (!f) return;
+      if (f.size > 1024 * 1024) throw Error("SVG 图标不得超过 1 MB。");
+      const src = svgDataURL(await f.text());
+      savePoint();
+      m.parts[i2].icon = { src, name: f.name.replace(/\.svg$/i, ""), hidden: false };
+      render3();
+      persist();
+    };
+    input2.click();
   }
   function resizeCanvas() {
     viewer?.fit();
@@ -19126,10 +19362,19 @@ body.export-view .toc-note:empty{display:none}
     if (mode === "text") formatter?.mountAlignment($("#inspector"));
     const m = selectedModule();
     if (m && ["formula", "table"].includes(m.type)) {
-      const section = document.createElement("section");
-      section.innerHTML = '<h3>公式颜色</h3><label><input id="symbol-theme-color" type="checkbox" ' + (m.mathUseThemeColor ? "checked" : "") + '> 使用主题色（取消为纯黑）</label><p class="hint">作用于当前模块所有公式。双击公式或表格中的符号，可单独编辑 LaTeX 与颜色。</p><label>承载卡片样式<select id="formula-card-style">' + [["plain", "默认 · 白底"], ["unified", "A1 · 一体浅底"], ["cards", "A2 · 分立浅底"], ["band", "A3 · 深底标题"]].map(([v, n]) => '<option value="' + v + '" ' + ((m.cardStyle || m.style || "plain") === v ? "selected" : "") + ">" + n + "</option>").join("") + "</select></label>";
-      $("#inspector").prepend(section);
+      const section2 = document.createElement("section");
+      section2.innerHTML = '<h3>公式颜色</h3><label><input id="symbol-theme-color" type="checkbox" ' + (m.mathUseThemeColor ? "checked" : "") + '> 使用主题色（取消为纯黑）</label><p class="hint">作用于当前模块所有公式。双击公式或表格中的符号，可单独编辑 LaTeX 与颜色。</p><label>承载卡片样式<select id="formula-card-style">' + [["plain", "默认 · 白底"], ["unified", "A1 · 一体浅底"], ["cards", "A2 · 分立浅底"], ["band", "A3 · 深底标题"]].map(([v, n]) => '<option value="' + v + '" ' + ((m.cardStyle || m.style || "plain") === v ? "selected" : "") + ">" + n + "</option>").join("") + "</select></label>";
+      $("#inspector").prepend(section2);
     }
+    if (m?.type === "text" && !m.textBox) {
+      const i2 = childIndex(m), p = m.parts[i2], icons = document.createElement("section");
+      icons.innerHTML = '<h3>子区域 SVG 图标</h3><div class="stat">当前：' + esc5(p.title || "子区域 " + (i2 + 1)) + "<br>图标：" + esc5(p.icon?.name || "未设置") + '</div><button data-action="part-icon-upload">上传／替换 SVG</button><label><input id="part-icon-hidden" type="checkbox" ' + (p.icon?.hidden ? "checked" : "") + " " + (!p.icon?.src ? "disabled" : "") + '> 隐藏当前图标并自动回流</label><button data-action="hide-all-part-icons">一键隐藏本页全部图标</button><p class="hint">自定义图标属于可选扩展；请在用户明确同意后由 AI 生成。双击画布中的图标也可等尺寸替换。</p>';
+      $("#inspector").append(icons);
+    }
+    const section = document.createElement("section");
+    section.className = "advanced-align-entry";
+    section.innerHTML = '<h3>页面级排版</h3><button data-action="advanced-align">高级对齐与分布</button><p class="hint">参考线平移／拉伸、多个板块等距分布和环形排布。</p>';
+    $("#inspector").append(section);
   }
   function inspectorBody() {
     if (freeText?.inspector($("#inspector"))) return;
@@ -19140,7 +19385,7 @@ body.export-view .toc-note:empty{display:none}
     }
     const anchor = $("#resize-anchor")?.value || "tl";
     const options = [["w+", project.grid, 0, "加宽 →"], ["w-", -project.grid, 0, "收窄 ←"], ["h+", 0, project.grid, "增高 ↓"], ["h-", 0, -project.grid, "降低 ↑"]];
-    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc4(moduleName(m))}"></label>` : ""}<label>固定锚点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"], ["center", "中心"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc4(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc4(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc4(p.year)} ${esc4(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc4, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
+    $("#inspector").innerHTML = `<h2>${{ text: "文字模块", table: "表格模块", media: "图像 / 视频模块", shape: "图形模块", formula: "公式模块", timeline: "时间轴模块" }[m.type]}</h2><div class="stat">位置 ${Math.round(m.x)}, ${Math.round(m.y)} px<br>尺寸 ${Math.round(m.w)} × ${Math.round(m.h)} px</div>${["text", "table"].includes(m.type) && !m.isToc && !m.textBox ? `<label><input id="module-title-show" type="checkbox" ${m.showTitle !== false ? "checked" : ""}> 显示模块名称</label><label>模块名称（可选）<input id="module-name" value="${esc5(moduleName(m))}"></label>` : ""}<label>固定锚点</label><select id="resize-anchor">${[["tl", "左上角"], ["tr", "右上角"], ["bl", "左下角"], ["br", "右下角"], ["center", "中心"]].map(([v, t]) => `<option value="${v}" ${v === anchor ? "selected" : ""}>${t}</option>`).join("")}</select><h3>按网格调整尺寸</h3><label>单次步进<select id="adjust-multiplier">${[1, 2, 5].map((n) => `<option value="${n}" ${adjustMultiplier === n ? "selected" : ""}>${n} 格 · ${n * project.grid} px</option>`).join("")}</select></label><div class="size-grid">${options.map(([k, x, y, t]) => `<button data-resize="${k}" ${canResize(m, x, y, anchor) ? "" : "disabled"}>${t}</button>`).join("")}</div><p class="hint">长按按钮连续调整；Shift＋单击调整 5 格。松开即停，一次长按可整体撤销。灰色表示再调整会越界、遮挡或导致内容溢出。相邻模块可容纳时会自动避让。</p><h3>按网格移动</h3><div class="size-grid">${[["left", "← 左"], ["right", "右 →"], ["up", "↑ 上"], ["down", "下 ↓"]].map(([k, t]) => `<button data-move="${k}">${t}</button>`).join("")}</div>${m.textBox ? `<label>独立文本块配色<select id="text-box-tone"><option value="dark" ${m.boxTone !== "light" ? "selected" : ""}>深底白字</option><option value="light" ${m.boxTone === "light" ? "selected" : ""}>白底深字</option></select></label>` : ""}${m.type === "text" && !m.textBox ? `<label>文本块样式</label><select id="module-style">${STYLES.filter(([v]) => !m.isToc || v !== "note").map(([v, n, t]) => `<option value="${v}" ${m.style === v ? "selected" : ""}>${n}　${t}</option>`).join("")}</select>${styleControls(m)}${["unified", "cards", "band", "note"].includes(m.style) ? `<label>卡片内边距（pt；留空自动）<input id="card-padding" type="number" min="1" max="24" step="1" placeholder="自动" value="${m.cardPaddingPt ?? ""}"></label><p class="hint">允许紧凑留白，只按实际截断和遮挡提示；不会缩小字号。</p>` : ""}<label>列表前导符</label><select id="bullet-marker"><option value="">普通段落</option>${["•", "–", "▪", "▸"].map((c) => `<option value="${c}" ${m.parts[0].bullet && m.parts[0].marker === c ? "selected" : ""}>${c}　无序段落</option>`).join("")}</select><label>自定义前导符（最多两个字符）</label><input id="bullet-custom" maxlength="2" value="${esc5(m.parts[0].bullet ? m.parts[0].marker : "")}" placeholder="例如 ✓、○、①">` : ""}${["text", "media", "formula"].includes(m.type) && !m.textBox ? `<h3>子区域</h3>${m.isToc ? `<p class="hint">自动章节保持标题和页码同步；可删除目录条目、恢复已隐藏章节或添加自定义条目。</p><label><input id="toc-appendix" type="checkbox" ${slide().tocIncludeAppendix ? "checked" : ""}> 目录包含附录（默认不含）</label>${m.parts.map((p, i2) => `<div class="field-line"><span style="flex:1">${esc5(p.title)}</span><button data-toc-remove="${i2}" ${m.parts.length <= 1 ? "disabled" : ""}>删除</button></div>`).join("")}<label><input id="toc-page-ranges" type="checkbox" ${m.showPageRanges !== false ? "checked" : ""}> 右下角显示页码范围</label>` : ""}${m.isToc ? "" : childControls(m)}<label>列数</label><select id="module-columns">${Array.from({ length: m.parts.length }, (_, i2) => `<option value="${i2 + 1}" ${(m.columns || m.parts.length) === i2 + 1 ? "selected" : ""}>${i2 + 1} 列</option>`).join("")}</select><div class="size-grid" style="margin-top:12px"><button data-action="add-part" ${m.parts.length >= 12 ? "disabled" : ""}>＋ 子区域</button></div>` : ""}${m.type === "timeline" ? `<label><input id="hide-timeline" type="checkbox" ${m.hideTimeline ? "checked" : ""}> 隐藏时间轴装饰（退化为并列图文卡片）</label><h3>卡片（1–6个）</h3><p class="hint">卡片宽度与统一媒体高度随数量调整。文字模式可改标题和说明；双击照片可换成图片或视频。建议2–5张，内容过多请拆页。</p><div class="timeline-stage-controls">${m.parts.map((p, i2) => `<div class="field-line"><span class="stage-label">${esc5(p.year)} ${esc5(p.title)}</span><button data-stage-move="${i2}" data-direction="-1" ${i2 === 0 ? "disabled" : ""} title="前移">↑</button><button data-stage-move="${i2}" data-direction="1" ${i2 === m.parts.length - 1 ? "disabled" : ""} title="后移">↓</button><button data-stage-remove="${i2}" ${m.parts.length === 1 ? "disabled" : ""}>删除</button></div>`).join("")}</div><button data-action="add-part" ${m.parts.length >= 6 ? "disabled" : ""}>＋ 添加卡片</button>` : ""}${m.type === "table" ? tableControls(m, tablePartIndex(m), esc5, (p) => tableSpacingControls(p)) : ""}<hr><button data-action="mode-text">完成模块编辑 → 编辑文字</button>`;
   }
   function testFit(m, rect) {
     if (!["text", "media", "table", "timeline"].includes(m.type)) return true;
@@ -19264,10 +19509,10 @@ body.export-view .toc-note:empty{display:none}
     }
   }
   async function themeDialog() {
-    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc4(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。可选色留空将由主题色派生。</p>`);
+    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc5(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。可选色留空将由主题色派生。</p>`);
   }
   function pageSettings() {
-    newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc4(slide().title)}</textarea></label><label>章节归属<select id="page-chapter-mode"><option value="auto" ${slide().chapterMode !== "manual" ? "selected" : ""}>自动继承最近过渡页</option><option value="manual" ${slide().chapterMode === "manual" ? "selected" : ""}>自定义章节／无过渡页附录</option></select></label><div class="row"><label>章节号／附录标签<input id="page-section" value="${esc4(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc4(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc4(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc4(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc4(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>本页备注（仅演讲者可见）<textarea id="page-notes" rows="5" placeholder="写下讲解要点、过渡提示或补充数据…">${esc4(slide().notes || "")}</textarea></label><p class="hint">保存后，点击顶部“页面备注”即自动载入；与备注面板共用同一份内容。</p><label>脚注来源文字<input id="page-source" value="${esc4(slide().source)}"></label><label>来源链接（http / https 或 #slide-页面ID）<input id="page-url" value="${esc4(slide().sourceUrl)}"></label>`);
+    newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc5(slide().title)}</textarea></label><label>章节归属<select id="page-chapter-mode"><option value="auto" ${slide().chapterMode !== "manual" ? "selected" : ""}>自动继承最近过渡页</option><option value="manual" ${slide().chapterMode === "manual" ? "selected" : ""}>自定义章节／无过渡页附录</option></select></label><div class="row"><label>章节号／附录标签<input id="page-section" value="${esc5(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc5(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc5(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc5(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc5(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>本页备注（仅演讲者可见）<textarea id="page-notes" rows="5" placeholder="写下讲解要点、过渡提示或补充数据…">${esc5(slide().notes || "")}</textarea></label><p class="hint">保存后，点击顶部“页面备注”即自动载入；与备注面板共用同一份内容。</p><label>脚注来源文字<input id="page-source" value="${esc5(slide().source)}"></label><label>来源链接（http / https 或 #slide-页面ID）<input id="page-url" value="${esc5(slide().sourceUrl)}"></label>`);
   }
   async function mediaDialog(m, i2) {
     mediaTarget = { id: m.id, i: i2 };
@@ -19302,7 +19547,7 @@ body.export-view .toc-note:empty{display:none}
     try {
       r = mediaRatio();
     } catch (error) {
-      box.innerHTML = '<p class="hint">' + esc4(error.message) + "</p>";
+      box.innerHTML = '<p class="hint">' + esc5(error.message) + "</p>";
       return;
     }
     if (!currentAsset) {
@@ -19317,6 +19562,35 @@ body.export-view .toc-note:empty{display:none}
   }
   async function click(e) {
     try {
+      const alignMode = e.target.closest("[data-align-mode]");
+      if (alignMode) {
+        advanced.mode = advanced.mode === alignMode.dataset.alignMode ? null : alignMode.dataset.alignMode;
+        if (advanced.mode !== "multi") advanced.ids.clear();
+        advancedPanel();
+        render3({ sidebar: false });
+        return;
+      }
+      const alignAction = e.target.closest("[data-align-action]");
+      if (alignAction) {
+        applyGuideAction(alignAction.dataset.alignAction);
+        return;
+      }
+      const distribute = e.target.closest("[data-align-distribute]");
+      if (distribute) {
+        distributeSelection(distribute.dataset.alignDistribute);
+        return;
+      }
+      if (advanced.mode === "multi") {
+        const candidate = e.target.closest("#canvas [data-module]");
+        if (candidate) {
+          const id = candidate.dataset.module;
+          if (advanced.ids.has(id)) advanced.ids.delete(id);
+          else advanced.ids.add(id);
+          render3({ sidebar: false });
+          advancedPanel();
+          return;
+        }
+      }
       const childMove = e.target.closest("[data-child-move]");
       if (childMove && !childMove.disabled) {
         const m = selectedModule(), i2 = Number(childMove.dataset.childMove), j = i2 + Number(childMove.dataset.direction);
@@ -19331,7 +19605,7 @@ body.export-view .toc-note:empty{display:none}
       if (childRemove && !childRemove.disabled) {
         const m = selectedModule(), i2 = Number(childRemove.dataset.childRemove);
         childFocus.set(m.id, i2);
-        newDialog("remove-part-dialog", "删除当前子区域", "<p>删除“" + esc4(m.parts[i2].title || m.parts[i2].caption || "当前子区域") + "”及其中内容？可以撤销恢复。</p>", "确认删除");
+        newDialog("remove-part-dialog", "删除当前子区域", "<p>删除“" + esc5(m.parts[i2].title || m.parts[i2].caption || "当前子区域") + "”及其中内容？可以撤销恢复。</p>", "确认删除");
         return;
       }
       const region = e.target.closest("[data-free-area]");
@@ -19450,6 +19724,53 @@ body.export-view .toc-note:empty{display:none}
         return;
       }
       switch (action) {
+        case "part-icon-upload": {
+          const m = selectedModule();
+          uploadPartIcon(m, childIndex(m));
+          break;
+        }
+        case "hide-all-part-icons":
+          savePoint();
+          for (const m of slide().modules) for (const p of m.parts || []) if (p.icon) p.icon.hidden = true;
+          render3();
+          persist();
+          break;
+        case "advanced-align":
+          advancedPanel();
+          break;
+        case "advanced-close":
+          advanced.mode = null;
+          advanced.ids.clear();
+          $("#alignment-panel")?.remove();
+          render3({ sidebar: false });
+          break;
+        case "advanced-clear-selection":
+          advanced.ids.clear();
+          render3({ sidebar: false });
+          advancedPanel();
+          break;
+        case "radial-options": {
+          if (!advanced.ids.size) throw Error("请先选择至少一个板块。");
+          newDialog("radial-dialog", "环形分布", `<label>单项复制数量（多选时忽略）<input id="radial-count" type="number" min="2" max="12" value="4"></label><label>半径（px）<input id="radial-radius" type="number" min="40" max="700" value="180"></label><div class="row"><label>起始角度<input id="radial-start" type="number" min="-360" max="360" value="-90"></label><label>结束角度<input id="radial-end" type="number" min="-360" max="720" value="270"></label></div><p class="hint">圆心取当前选择的几何中心；确认后生成一个可整体移动和缩放的组合模块。越出安全区时保留结果并以红框提示。</p>`, "生成组合");
+          break;
+        }
+        case "radial-dialog-apply": {
+          const chosen = slide().modules.filter((m) => advanced.ids.has(m.id));
+          if (!chosen.length) throw Error("所选板块已不存在。");
+          const laid = radialLayout(chosen, { count: Number($("#radial-count").value), radius: Number($("#radial-radius").value), start: Number($("#radial-start").value), end: Number($("#radial-end").value) });
+          const group = makeRadialGroup(laid, uid());
+          savePoint();
+          slide().modules = slide().modules.filter((m) => !advanced.ids.has(m.id));
+          slide().modules.push(group);
+          advanced.ids.clear();
+          advanced.mode = null;
+          selected = group.id;
+          closeDialog();
+          $("#alignment-panel")?.remove();
+          render3();
+          persist();
+          break;
+        }
         case "copy-pages":
           await pageList.copy();
           break;
@@ -19517,7 +19838,7 @@ body.export-view .toc-note:empty{display:none}
           break;
         }
         case "rename":
-          newDialog("rename-dialog", "文件名称", `<label>名称<input id="document-name-input" value="${esc4(project.title)}"></label><p class="hint">保存时自动添加 .html，PDF / PPTX 使用相同名称。</p>`);
+          newDialog("rename-dialog", "文件名称", `<label>名称<input id="document-name-input" value="${esc5(project.title)}"></label><p class="hint">保存时自动添加 .html，PDF / PPTX 使用相同名称。</p>`);
           break;
         case "rename-dialog-apply": {
           const name = filename($("#document-name-input").value);
@@ -19545,9 +19866,18 @@ body.export-view .toc-note:empty{display:none}
           await saveHTML();
           break;
         case "export-pdf":
-        case "export-pptx":
-          await exportFile(action.split("-")[1], button);
+          await exportFile("pdf", button, "image");
           break;
+        case "export-pptx":
+          if (project.slides.some((s) => s.modules.some((m) => m.parts?.some((p) => p.markdownMath)))) newDialog("pptx-export-dialog", "PPTX 行内公式导出方式", '<label><input type="radio" name="inline-math-export" value="image" checked> 纯图像公式（显示最稳定）</label><label><input type="radio" name="inline-math-export" value="latex"> LaTeX 源码（在 PPTX 中以红字保留，便于人工重建）</label><p class="hint">此选项只影响 Markdown 文段中的 $...$ 行内公式；独立公式模块仍按原机制导出。PDF 始终使用纯图像公式。</p>', "导出 PPTX");
+          else await exportFile("pptx", button, "image");
+          break;
+        case "pptx-export-dialog-apply": {
+          const mathMode = $('input[name="inline-math-export"]:checked').value, trigger = $('[data-action="export-pptx"]');
+          closeDialog();
+          await exportFile("pptx", trigger, mathMode);
+          break;
+        }
         case "choose-style":
           openStyleDialog(selectedModule());
           break;
@@ -19909,6 +20239,59 @@ body.export-view .toc-note:empty{display:none}
     persist();
     return true;
   }
+  function alignmentChange(e) {
+    const el = e.target;
+    if (el.id === "part-markdown-math") {
+      e.stopImmediatePropagation();
+      const m = selectedModule();
+      if (!m) return;
+      savePoint();
+      m.parts[childIndex(m)].markdownMath = el.checked;
+      render3();
+      persist();
+      return;
+    }
+    if (el.id === "part-icon-hidden") {
+      e.stopImmediatePropagation();
+      const m = selectedModule();
+      if (!m) return;
+      savePoint();
+      m.parts[childIndex(m)].icon.hidden = el.checked;
+      render3();
+      persist();
+      return;
+    }
+    if (el.id === "alignment-ruler") {
+      e.stopImmediatePropagation();
+      advanced.ruler = el.checked;
+      render3({ sidebar: false });
+      advancedPanel();
+      return;
+    }
+    if (el.id === "alignment-guide-value") {
+      e.stopImmediatePropagation();
+      const axis = alignmentAxis(advanced.mode), bounds = pageBounds(), value = Number(el.value), min = axis === "x" ? bounds.x : bounds.y, max = min + (axis === "x" ? bounds.w : bounds.h);
+      if (!Number.isFinite(value) || value < min || value > max) {
+        toast("参考线位置必须在正文安全区内。", true);
+        return;
+      }
+      if (axis === "x") advanced.guideX = value;
+      else advanced.guideY = value;
+      render3({ sidebar: false });
+      advancedPanel();
+    }
+  }
+  function iconDblclick(e) {
+    const icon = e.target.closest?.("[data-part-icon]");
+    if (!icon || present) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const root = icon.closest("[data-module]"), m = slide().modules.find((m2) => m2.id === root?.dataset.module), i2 = Number(icon.dataset.partIcon);
+    if (!m || !Number.isInteger(i2)) return;
+    selected = m.id;
+    childFocus.set(m.id, i2);
+    uploadPartIcon(m, i2);
+  }
   async function change(e) {
     const mediaApply = e.target.id === "media-file" ? $('[data-action="media-dialog-apply"]') : null;
     if (mediaApply) mediaApply.disabled = true;
@@ -19978,7 +20361,7 @@ body.export-view .toc-note:empty{display:none}
         }
         pendingTextDelete = { ...target, scope };
         const isPart = scope === "part" && target.part !== null && owner.parts.length > 1, label = isPart ? owner.parts[target.part].title || "当前子区域" : moduleName(owner) || "整个模块";
-        newDialog("delete-edit-text-dialog", isPart ? "删除当前子区域" : "删除整个模块", "<p>确认删除“" + esc4(label) + "”及其中内容？可使用撤销恢复。</p>", "确认删除");
+        newDialog("delete-edit-text-dialog", isPart ? "删除当前子区域" : "删除整个模块", "<p>确认删除“" + esc5(label) + "”及其中内容？可使用撤销恢复。</p>", "确认删除");
         return;
       }
       if (el.id === "module-title-show") {
@@ -20310,7 +20693,7 @@ body.export-view .toc-note:empty{display:none}
         if (!res.ok) throw Error(body.error);
         sheets = body.sheets;
       }
-      newDialog("excel-dialog", "选择工作表", `<label>工作表<select id="excel-sheet">${sheets.map((s, i2) => `<option value="${i2}">${esc4(s.name)}（${s.rows.length} 行）</option>`).join("")}</select></label><p class="hint">导入单元格值及合并区域，统一采用当前主题；公式使用 Excel 已保存的计算结果，不在浏览器重新计算。</p>`, "导入");
+      newDialog("excel-dialog", "选择工作表", `<label>工作表<select id="excel-sheet">${sheets.map((s, i2) => `<option value="${i2}">${esc5(s.name)}（${s.rows.length} 行）</option>`).join("")}</select></label><p class="hint">导入单元格值及合并区域，统一采用当前主题；公式使用 Excel 已保存的计算结果，不在浏览器重新计算。</p>`, "导入");
     } catch (error) {
       toast(error.message, true);
     }
@@ -20388,9 +20771,11 @@ body.export-view .toc-note:empty{display:none}
       savingHTML = false;
     }
   }
-  async function exportFile(kind, button) {
+  async function exportFile(kind, button, inlineMathMode = "image") {
+    const payload = clone(project);
+    for (const s of payload.slides) for (const m of s.modules) for (const p of m.parts || []) if (p.markdownMath) p.inlineMathExport = kind === "pdf" ? "image" : inlineMathMode;
     if (location.protocol === "file:") {
-      openLocalExport(kind, { getProject: () => clone(project) });
+      openLocalExport(kind, { getProject: () => payload });
       return;
     }
     if (check().length) throw Error("当前页存在溢出，请先删改或调整模块，再导出。");
@@ -20403,7 +20788,7 @@ body.export-view .toc-note:empty{display:none}
     const original = button.textContent;
     button.textContent = "正在导出…";
     try {
-      const res = await fetch("/api/export/" + kind, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(project) });
+      const res = await fetch("/api/export/" + kind, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) {
         const data = await res.json();
         throw Error(data.error);
@@ -20519,7 +20904,7 @@ body.export-view .toc-note:empty{display:none}
   function openFormulaEditor(target, latex) {
     formulaTarget = target;
     const m = slide().modules.find((m2) => m2.id === target.id), owner = m && tableOwner(m, target.part || 0), useTheme = target.cell ? owner.cellMathColors?.[target.r + "," + target.c + "," + target.i] ?? m.mathUseThemeColor : m?.parts[target.i]?.useThemeColor ?? m?.mathUseThemeColor ?? (target.symbol && slide().symbolUseThemeColor !== false);
-    newDialog("formula-dialog", target.symbol ? "编辑符号（LaTeX）" : "编辑公式", `<label class="formula-color-choice"><input id="formula-use-theme" type="checkbox" ${useTheme ? "checked" : ""}> 使用主题色（取消为纯黑）</label><label for="formula-latex">LaTeX 源码</label><textarea id="formula-latex" rows="6" spellcheck="false" aria-describedby="formula-help formula-validation">${esc4(latex)}</textarea><div class="formula-editor-actions"><button type="button" data-action="copy-formula">复制 LaTeX</button><span id="formula-help" class="hint">可直接复制或修改源码，无需外层 $。</span></div><p id="formula-validation" class="formula-validation" role="alert" hidden></p><div id="formula-preview" class="formula-editor-preview" aria-label="公式预览"></div><p class="hint">修改后点击“确定”。语法错误时保留输入，请修正后重新确认；取消则保留原公式。</p>`, "确定");
+    newDialog("formula-dialog", target.symbol ? "编辑符号（LaTeX）" : "编辑公式", `<label class="formula-color-choice"><input id="formula-use-theme" type="checkbox" ${useTheme ? "checked" : ""}> 使用主题色（取消为纯黑）</label><label for="formula-latex">LaTeX 源码</label><textarea id="formula-latex" rows="6" spellcheck="false" aria-describedby="formula-help formula-validation">${esc5(latex)}</textarea><div class="formula-editor-actions"><button type="button" data-action="copy-formula">复制 LaTeX</button><span id="formula-help" class="hint">可直接复制或修改源码，无需外层 $。</span></div><p id="formula-validation" class="formula-validation" role="alert" hidden></p><div id="formula-preview" class="formula-editor-preview" aria-label="公式预览"></div><p class="hint">修改后点击“确定”。语法错误时保留输入，请修正后重新确认；取消则保留原公式。</p>`, "确定");
     previewFormula();
   }
   function previewFormula(focus = false) {

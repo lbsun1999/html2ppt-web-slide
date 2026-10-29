@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>模板扩展说明 · Web Slide</title><link rel="stylesheet" href="docs.css"></head><body><header class="top"><a href="../../index.html">Web Slide</a><span>›</span><strong>模板扩展说明</strong></header><main class="layout"><nav class="side"><strong>文档导航</strong><a href="README.html">完整使用说明</a><a href="SKILL.html">AI 协作规范</a><a href="templates-README.html">模板扩展说明</a><a href="reference-README.html">参考示例库</a><a href="AI制作与迭代流程.html">AI制作与迭代流程</a><a href="AI接口与排版规则.html">AI接口与排版规则</a><a href="启动与导出排障.html">启动与导出排障</a><a href="大纲示例.html">大纲示例</a><a href="导出实现说明.html">导出实现说明</a><a href="文本块组件说明.html">文本块组件说明</a><a href="板块对齐与附加功能需求.html">板块对齐与附加功能需求</a><a href="版式细则与错误复盘.html">版式细则与错误复盘</a><a href="项目结构与清理记录.html">项目结构与清理记录</a><a href="验收记录.html">验收记录</a><hr><a class="l1" href="#模板包目录">模板包目录</a><a class="l2" href="#增量添加模板">增量添加模板</a></nav><article class="doc"><h1 id="模板包目录">模板包目录<a class="anchor" href="#模板包目录">#</a></h1>
+<p><code>templates/</code>只保存可直接使用的模板包；编辑器、导出器和公共组件仍由项目根目录的<code>src/</code>、样式与<code>server.mjs</code>统一维护。</p>
+<p>当前的<code>template-1/</code>是一套共同版式族，包含三种身份／主题变体：</p>
+<div class="table-scroll"><table><thead><tr><th>模板包</th><th>用途</th></tr></thead><tbody><tr><td><a href="../../templates/template-1/ustb-blue">ustb-blue</a></td><td>北京科技大学科研汇报，科技蓝主题</td></tr><tr><td><a href="../../templates/template-1/ustb-red">ustb-red</a></td><td>北京科技大学党政汇报，钢铁红主题</td></tr><tr><td><a href="../../templates/template-1/lishui-cyan">lishui-cyan</a></td><td>丽水学院示例，单一青色主题</td></tr></tbody></table></div>
+<p>每个模板包均采用相同的最小结构：</p>
+<pre data-lang="text"><code>my-template/
+├─ template.html       # 内嵌运行时与project-data，可直接双击或拖入工作台
+├─ template.json       # 供人和自动化工具识别的说明性清单
+├─ README.md           # 主题、素材和使用说明
+├─ assets/             # 本模板自带的校徽、照片、来源记录等源素材
+└─ output/             # 与该模板对应的PDF/PPTX快照（可选）</code></pre>
+<h2 id="增量添加模板">增量添加模板<a class="anchor" href="#增量添加模板">#</a></h2>
+<ol>
+<li>复制最接近的模板包目录，换一个不会冲突的英文短名。</li>
+<li>在复制出的<code>template.html</code>中通过工作台修改主题、学校信息、页面和模块，保存回该文件。</li>
+<li>只替换新目录自己的<code>assets/</code>，同步填写来源；不要改<code>src/</code>来登记学校名称。</li>
+<li>更新<code>template.json</code>与本包README。导出物放在本包<code>output/</code>。</li>
+<li>直接双击新的<code>template.html</code>，或在本地工作台选择／拖入它。HTML已经内嵌公共运行时，不要求核心代码认识这个模板ID。</li>
+</ol>
+<p>只有新增通用编辑能力、数据结构或新模块类型时才修改核心代码。单纯新增学校、配色、文稿或素材不应复制一套编辑器，也不应建立长期功能分支。</p>
+<p>模板包及其素材仍受根目录<a href="../../LICENSE">LICENSE</a>约束；学校标识与第三方图片还受各自权利人的权利限制。</p></article></main></body></html>
