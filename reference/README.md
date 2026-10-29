@@ -4,9 +4,9 @@
 
 | 示例文件 | 页数 | 截图方式 | 主要用途 |
 | --- | ---: | --- | --- |
-| [example-project.html](example-project.html) | 6 | 每行2页，选中第2页文字模块 | 科研汇报结构与模块分工 |
-| [text-styles-example.html](text-styles-example.html) | 10 | 每行3页，选中第5页B1模块 | 比较默认、A／B／C文字样式 |
-| [navigation.html](navigation.html) | 12 | 每行3页，选中第10页时间轴 | 目录、章节、时间轴与高级对齐练习 |
+| `example-project.html` | 6 | 每行2页，选中第2页文字模块 | 科研汇报结构与模块分工 |
+| `text-styles-example.html` | 10 | 每行3页，选中第5页B1模块 | 比较默认、A／B／C文字样式 |
+| `navigation.html` | 12 | 每行3页，选中第10页时间轴 | 目录、章节、时间轴与高级对齐练习 |
 
 前两份保留已确认的参考内容。navigation在通用时间轴后加入高级对齐练习，结束页顺延至第12页。两校正式文稿及完整功能说明见[项目README](../README.md)。
 
@@ -16,7 +16,7 @@
 
 ![六页科研汇报的完整工作台，右侧显示第2页文字模块设置](images/example-project.png)
 
-[打开example-project](example-project.html) · [原尺寸截图](images/example-project.png)
+本地打开 `example-project.html` · [原尺寸截图](images/example-project.png)
 
 - 六页依次呈现封面、问题背景、方法框架、结果表、图像证据和结束页，可对照各页的信息职责。
 - 第2页展示模块尺寸、位置、样式及子区域设置，区分“改内容”和“改模块”。
@@ -26,7 +26,7 @@
 
 ![十页文字样式的多页工作台，右侧选中第5页B1模块](images/text-styles-example.png)
 
-[打开text-styles-example](text-styles-example.html) · [原尺寸截图](images/text-styles-example.png)
+本地打开 `text-styles-example.html` · [原尺寸截图](images/text-styles-example.png)
 
 | 页码 | 样式 | 重点 |
 | --- | --- | --- |
@@ -40,7 +40,7 @@ C2内部仅用无底色默认分组。C3适合多个有次序的子区域；普�
 
 ![十二页导航示例的多页工作台，第10页为媒体占位的通用时间轴](images/navigation.png)
 
-[打开navigation](navigation.html) · [完整工作台原图](images/navigation.png)
+本地打开 `navigation.html` · [完整工作台原图](images/navigation.png)
 
 目录位于第2页，第3、5、7页是章节过渡。第10页为时间轴，第11页为高级对齐练习，第12页结束。目录从过渡页推导标题、序号及页码范围；移动页面后重新同步，不手工维护页码。
 
@@ -57,7 +57,7 @@ C2内部仅用无底色默认分组。C3适合多个有次序的子区域；普�
 
 ## 高级对齐：在练习页直接动手
 
-[打开navigation并选择第11页](navigation.html)。“高级对齐与分布练习”有意保留错位、不同尺寸和一个多子区域板块。进入“编辑模块”，选择任一板块并打开“高级对齐与分布”，即可体验：
+本地打开 `navigation.html` 并选择第11页。“高级对齐与分布练习”有意保留错位、不同尺寸和一个多子区域板块。进入“编辑模块”，选择任一板块并打开“高级对齐与分布”，即可体验：
 
 ![第11页高级对齐练习，右上角显示跟随主题色的模式选项卡与图形按钮](images/advanced-alignment.png)
 

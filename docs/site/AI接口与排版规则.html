@@ -22,7 +22,7 @@ m.parts[0].text = &#39;说明代表工作、证据与贡献，并交代适用范
 m.parts[0].asset = {kind:&#39;image&#39;,src:imageDataUrl,fit:&#39;cover&#39;,zoom:1,cx:50,cy:50};
 slide.modules = [m];</code></pre>
 <p>渲染按数量均分卡片，统一实际媒体高度，按段落占用压缩媒体高度，最低72px；不缩文字字号。默认年份24pt、段落14pt、箭头短名18pt。图文连续浅底、图片上下16px间距、圆心与卡片左沿对齐，连接线直达年份块顶端，箭头超出内容两端各32px。长首句需要相应下移模块，逐页检查真实间隙。内容无法容纳时报溢出，不能裁掉说明、覆盖页脚或通过缩字硬塞。</p>
-<p>已有<code>history</code>快照可用<code>modularizeHistory(slide,assets)</code>一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；<a href="../../reference/navigation.html">reference/navigation.html</a>第10页是可直接操作的例子。迁移后使用标准<code>modules[].parts</code>迭代，不再修改<code>legacy_*</code>。</p>
+<p>已有<code>history</code>快照可用<code>modularizeHistory(slide,assets)</code>一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 <code>reference/navigation.html</code>，第10页是可直接操作的例子，具体位置见<a href="reference-README.html">参考示例库说明</a>。迁移后使用标准<code>modules[].parts</code>迭代，不再修改<code>legacy_*</code>。</p>
 <h2 id="媒体表格与格式编辑">媒体、表格与格式编辑<a class="anchor" href="#媒体表格与格式编辑">#</a></h2>
 <p>媒体子区域含 <code>asset:{src,kind,ratio,naturalRatio,fit,zoom,cx,cy}</code> 与 <code>caption,note,showCaption</code>。同排画面实际等高、图注底沿对齐；无图注设置 <code>showCaption:false</code>，不预留图注高度。表格用 <code>rows,headerRows,merges</code>，数字单元格左右各至少半字符间距。</p>
 <p><code>tableNote</code> 默认为空，按表格的实际需要填写；支持直接编辑与删除，不把指标箭头说明追加给所有表格。场景族表设置 <code>scenarioGroups:true</code>，第一列右侧及场景之间保留分隔线。<code>rowHeaders:true</code>只赋予首列行标题语义，不赋予深色底；深底只属于顶部表头行。成熟计划页优先使用summary快照。</p>

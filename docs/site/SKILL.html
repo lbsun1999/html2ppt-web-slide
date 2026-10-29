@@ -31,9 +31,9 @@
 <p>现成HTML的浏览、编辑和放映不要求Node.js。本地生成、Excel导入及PDF/PPTX导出需要Node.js 20.10+、npm依赖和Chrome/Edge，按README启动服务。分享整套技能须保留源码、脚本、样式和素材，不能只发SKILL.md。Python仅供部分维护检查与拼图工具使用；当前公式编辑不要求安装TeX。</p>
 <p>继续修改以用户最新保存的HTML为起点，保留未改内容与人工设置；功能沿用本包共享运行时。具体的数据保留和文件写回规则见下文“生成、保存与功能保留”。</p>
 <ul>
-<li><a href="../../templates/template-1/ustb-blue/template.html">北科科技蓝</a>：30页，科研汇报默认起点，包含公式、研究现状、伪代码、主图、双图、总结及附录。</li>
-<li><a href="../../templates/template-1/ustb-red/template.html">北科钢铁红</a>：30页，适合党政汇报。</li>
-<li><a href="../../templates/template-1/lishui-cyan/template.html">丽院主题青</a>：30页，验证同一版式族可只替换身份、单色主题和学校素材。</li>
+<li><strong>北科科技蓝</strong>：本地打开 <code>templates/template-1/ustb-blue/template.html</code>；30页，科研汇报默认起点，包含公式、研究现状、伪代码、主图、双图、总结及附录。说明见<a href="template-ustb-blue.html">北科科技蓝模板</a>。</li>
+<li><strong>北科钢铁红</strong>：本地打开 <code>templates/template-1/ustb-red/template.html</code>；30页，适合党政汇报。说明见<a href="template-ustb-red.html">北科钢铁红模板</a>。</li>
+<li><strong>丽院主题青</strong>：本地打开 <code>templates/template-1/lishui-cyan/template.html</code>；30页，验证同一版式族可只替换身份、单色主题和学校素材。说明见<a href="template-lishui-cyan.html">丽水学院主题青模板</a>。</li>
 </ul>
 <p>三套内置成稿位于<code>templates/template-1/</code>的独立模板包，公共编辑、放映和导出能力仍由同一运行时维护。丽水通过 <code>src/school-variants.js</code> 从共同底稿转换身份与主题，但转换结果也保存为独立模板包。新增学校或视觉主题时复制最接近的包，修改其<code>template.html</code>、<code>template.json</code>、README和<code>assets/</code>；单纯增加模板不得要求修改核心代码或复制一套编辑器。图片必须替换为对应材料，校史配图不代表对应年份时应说明。</p>
 <p>人工已确认的三份参考示例与截图保留在 <a href="reference-README.html">reference/README.md</a>。截图应先切换到多页视图，再截完整工作台，保留工具栏、侧栏、当前页与设置区，并注明实际页数和比较重点；只有一页的示例如实说明。先参考这些布局和交互，再修改正式文稿。HTML是不可随生成脚本覆盖的快照，不应因为升级运行时而重做其中内容；预览图可以重新生成。</p>
@@ -139,7 +139,7 @@
 <li>作者页保留身份、教育与工作经历、主要任职／项目／奖项、研究方向及粗体大数字成果占位。经历表 1/3/5 列写内容，2/4 列约半个字符宽且无线；浅底表头与正文用三段横线分开，正文居中，并与旁边任职说明保持字号一致。不生成真实个人经历或成果数字。</li>
 </ul>
 <h3 id="研究现状实验表与图像证据">研究现状、实验表与图像证据<a class="anchor" href="#研究现状实验表与图像证据">#</a></h3>
-<p>研究现状优先使用原生<code>timeline</code>时间轴模块，参见<a href="../../reference/navigation.html">通用导航与时间轴示例第10页</a>及<a href="../images/timeline-controls.png">带控件的实际截图</a>。第8页已使用此模块，不再依赖固定四列快照。每阶段用<code>year</code>写年份、<code>title</code>写事件短名、<code>text</code>写介绍，<code>asset</code>存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。</p>
+<p>研究现状优先使用原生<code>timeline</code>时间轴模块。本地打开 <code>reference/navigation.html</code> 后查看第10页，页面说明见<a href="reference-README.html">参考示例库</a>，控件效果见<a href="../images/timeline-controls.png">实际截图</a>。第8页已使用此模块，不再依赖固定四列快照。每阶段用<code>year</code>写年份、<code>title</code>写事件短名、<code>text</code>写介绍，<code>asset</code>存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。</p>
 <p>时间轴保留24pt年份、14pt说明，18pt阶段短名放在底部浅色大箭头，不上下重复。年份深色底、圆点、线段和短名统一使用当前主题色，不按阶段轮换深浅颜色；卡片与箭头保留浅底。增减和重排阶段不会改变配色规则。卡片等宽并随数量重算；同排媒体采用统一实际高度、等比裁剪，随卡片宽度与说明占用调整，不单向拉伸，不把文字缩小来强塞。照片／视频双击替换，可调缩放与取景。图文共用连续浅底，图片上下间隙一致；线段沿卡片左边从箭头圆心延伸到年份色块顶端，圆点完整落在箭头内，箭头两端比内容宽32px。真实文字仍放不下时提示扩区、凝练或拆页，不遮挡箭头、页脚。真实研究中改为代表工作、贡献及局限，不能把学校历史示例当成领域研究现状。</p>
 <p>多场景结果表用“算法列＋场景族＋各族相同顺序的子指标”。<code>xx.xx ± xx.xx</code>仅表示均值±标准差的格式占位，核对重复次数，不混同标准误或置信区间。数值单元格左右各至少0.5em；按真实算法名分配首列，不让首列空而数字挤。算法列右侧与场景族边界均划界，不能将竖线误放到组内。</p>
 <p>表格总体8–14pt；密集结果表优先12/11/10pt试排，左右半字符边距不能随缩字被压掉。仍放不下时拆场景、指标或页面。普通计划表保持自然高度，不套密集结果表的撑满规则。实验口径与符号说明无浅底时，使用对称栏宽、共同顶线和充分间隙，不贴成一团；表注按本表需要填写并允许删除。</p>

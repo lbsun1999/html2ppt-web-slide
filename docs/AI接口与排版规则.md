@@ -43,7 +43,7 @@ slide.modules = [m];
 
 渲染按数量均分卡片，统一实际媒体高度，按段落占用压缩媒体高度，最低72px；不缩文字字号。默认年份24pt、段落14pt、箭头短名18pt。图文连续浅底、图片上下16px间距、圆心与卡片左沿对齐，连接线直达年份块顶端，箭头超出内容两端各32px。长首句需要相应下移模块，逐页检查真实间隙。内容无法容纳时报溢出，不能裁掉说明、覆盖页脚或通过缩字硬塞。
 
-已有`history`快照可用`modularizeHistory(slide,assets)`一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；[reference/navigation.html](../reference/navigation.html)第10页是可直接操作的例子。迁移后使用标准`modules[].parts`迭代，不再修改`legacy_*`。
+已有`history`快照可用`modularizeHistory(slide,assets)`一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 `reference/navigation.html`，第10页是可直接操作的例子，具体位置见[参考示例库说明](../reference/README.md)。迁移后使用标准`modules[].parts`迭代，不再修改`legacy_*`。
 
 ## 媒体、表格与格式编辑
 

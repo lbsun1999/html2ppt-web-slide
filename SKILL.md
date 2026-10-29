@@ -50,9 +50,9 @@ description: 使用配套 Web Slide 母版，将论文、实验记录、图表�
 
 继续修改以用户最新保存的HTML为起点，保留未改内容与人工设置；功能沿用本包共享运行时。具体的数据保留和文件写回规则见下文“生成、保存与功能保留”。
 
-- [北科科技蓝](templates/template-1/ustb-blue/template.html)：30页，科研汇报默认起点，包含公式、研究现状、伪代码、主图、双图、总结及附录。
-- [北科钢铁红](templates/template-1/ustb-red/template.html)：30页，适合党政汇报。
-- [丽院主题青](templates/template-1/lishui-cyan/template.html)：30页，验证同一版式族可只替换身份、单色主题和学校素材。
+- **北科科技蓝**：本地打开 `templates/template-1/ustb-blue/template.html`；30页，科研汇报默认起点，包含公式、研究现状、伪代码、主图、双图、总结及附录。说明见[北科科技蓝模板](templates/template-1/ustb-blue/README.md)。
+- **北科钢铁红**：本地打开 `templates/template-1/ustb-red/template.html`；30页，适合党政汇报。说明见[北科钢铁红模板](templates/template-1/ustb-red/README.md)。
+- **丽院主题青**：本地打开 `templates/template-1/lishui-cyan/template.html`；30页，验证同一版式族可只替换身份、单色主题和学校素材。说明见[丽水学院主题青模板](templates/template-1/lishui-cyan/README.md)。
 
 三套内置成稿位于`templates/template-1/`的独立模板包，公共编辑、放映和导出能力仍由同一运行时维护。丽水通过 `src/school-variants.js` 从共同底稿转换身份与主题，但转换结果也保存为独立模板包。新增学校或视觉主题时复制最接近的包，修改其`template.html`、`template.json`、README和`assets/`；单纯增加模板不得要求修改核心代码或复制一套编辑器。图片必须替换为对应材料，校史配图不代表对应年份时应说明。
 
@@ -247,7 +247,7 @@ A类与C1卡片不要被默认内边距锁死。`cardPaddingPt`可设1–24pt，
 
 ### 研究现状、实验表与图像证据
 
-研究现状优先使用原生`timeline`时间轴模块，参见[通用导航与时间轴示例第10页](reference/navigation.html)及[带控件的实际截图](docs/images/timeline-controls.png)。第8页已使用此模块，不再依赖固定四列快照。每阶段用`year`写年份、`title`写事件短名、`text`写介绍，`asset`存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。
+研究现状优先使用原生`timeline`时间轴模块。本地打开 `reference/navigation.html` 后查看第10页，页面说明见[参考示例库](reference/README.md)，控件效果见[实际截图](docs/images/timeline-controls.png)。第8页已使用此模块，不再依赖固定四列快照。每阶段用`year`写年份、`title`写事件短名、`text`写介绍，`asset`存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。
 
 时间轴保留24pt年份、14pt说明，18pt阶段短名放在底部浅色大箭头，不上下重复。年份深色底、圆点、线段和短名统一使用当前主题色，不按阶段轮换深浅颜色；卡片与箭头保留浅底。增减和重排阶段不会改变配色规则。卡片等宽并随数量重算；同排媒体采用统一实际高度、等比裁剪，随卡片宽度与说明占用调整，不单向拉伸，不把文字缩小来强塞。照片／视频双击替换，可调缩放与取景。图文共用连续浅底，图片上下间隙一致；线段沿卡片左边从箭头圆心延伸到年份色块顶端，圆点完整落在箭头内，箭头两端比内容宽32px。真实文字仍放不下时提示扩区、凝练或拆页，不遮挡箭头、页脚。真实研究中改为代表工作、贡献及局限，不能把学校历史示例当成领域研究现状。
 
