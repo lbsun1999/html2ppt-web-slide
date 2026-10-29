@@ -45,14 +45,17 @@ try{
  await page.locator('#outline-text.tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-copy-text').innerText(),/# Web Slide 交互教学/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'only the current control remains highlighted');
- const imported='# 项目研究进展\n\n## 01 基础设置\n### 页面信息与备注练习\n### 空白正文与卡片排版\n### 文字层级与列表练习\n\n## 02 内容模块\n### 表格练习\n### 公式练习\n### 图片与视频练习\n### 时间轴与图文练习\n\n## 03 排版与交付\n### 高级对齐练习\n### 环形文字排版练习\n### 备注、放映与导出练习';
+ const imported='# 项目研究进展\n\n## 基础设置\n### 页面信息与备注练习\n### 空白正文与卡片排版\n### 文字层级与列表练习\n\n## 内容模块\n### 表格练习\n### 公式练习\n### 图片与视频练习\n### 时间轴与图文练习\n\n## 排版与交付\n### 高级对齐练习\n### 环形文字排版练习\n### 备注、放映与导出练习';
  await page.locator('#outline-file').setInputFiles({name:'教学大纲.md',mimeType:'text/markdown',buffer:Buffer.from(imported)});
  await page.waitForFunction(value=>document.querySelector('#outline-text')?.value===value,imported);
  await page.locator('#outline-mode.tutorial-target').waitFor();
  await page.locator('#outline-mode').selectOption('current');
  await page.locator('#outline-apply').click();
+ const tocText=await page.evaluate(()=>{const project=window.slideStudio.getProject(),toc=project.slides.find(slide=>slide.kind==='toc');return toc?.modules.flatMap(module=>module.parts||[]).map(part=>`${part.chapterNumber||''} ${part.title||''}`).join('\n')||'';});
+ assert.match(tocText,/01 基础设置/);assert.doesNotMatch(tocText,/01\s+01\s+基础设置/,'chapter number is generated once');
  await page.locator('.slide-thumb.tutorial-target').filter({hasText:'页面信息与备注练习'}).waitFor();
  await page.locator('.slide-thumb.tutorial-target').filter({hasText:'页面信息与备注练习'}).click();
+ assert.match(await page.locator('.slide-thumb.current .thumb-caption').innerText(),/页面信息与备注练习/,'one click opens the exact practice page instead of a TOC preview match');
  await page.locator('[data-action="page-settings"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/3\.2/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'group automation clears stale highlights');

@@ -1,19 +1,19 @@
 const OUTLINE=`# Web Slide 交互教学
 
-## 01 基础设置
+## 基础设置
 
 ### 页面信息与备注练习
 ### 空白正文与卡片排版
 ### 文字层级与列表练习
 
-## 02 内容模块
+## 内容模块
 
 ### 表格练习
 ### 公式练习
 ### 图片与视频练习
 ### 时间轴与图文练习
 
-## 03 排版与交付
+## 排版与交付
 
 ### 高级对齐练习
 ### 环形文字排版练习
@@ -136,7 +136,7 @@ export function startTutorial({onSkipTheme}={}){
   minorRuler.hidden=meta.name==='开始';
  };
  const clear=()=>{clearTimeout(waitTimer);for(const dispose of cleanups.splice(0))dispose();document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target=null;};
- const find=(selector,contains)=>{if(!selector)return null;const items=[...document.querySelectorAll(selector)];return contains?items.find(node=>(node.textContent||node.getAttribute('aria-label')||'').includes(contains)):items[0];};
+ const find=(selector,contains)=>{if(!selector)return null;const items=[...document.querySelectorAll(selector)];if(!contains)return items[0];return items.find(node=>{const label=node.matches?.('.slide-thumb')?(node.getAttribute('aria-label')||node.querySelector('.thumb-caption')?.textContent||''):(node.getAttribute('aria-label')||node.textContent||'');return label.includes(contains);});};
  const leaveModal=()=>{const modal=root.closest('dialog');root.classList.remove('tutorial-modal');if(modal){document.body.append(root);modal.close();}};
  const go=(nextIndex,{closeModal=false,reward=false}={})=>{if(closeModal)leaveModal();clear();index=Math.max(0,Math.min(steps.length-1,nextIndex));playCue();if(reward)burst();setTimeout(show,120);};
  const waitFor=selector=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{const node=document.querySelector(selector);if(node)return resolve(node);if(++tries>40)return reject(Error('教学控件未出现'));setTimeout(check,100);};check();});
