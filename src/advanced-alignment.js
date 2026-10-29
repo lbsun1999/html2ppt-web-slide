@@ -42,7 +42,47 @@ export function groupBounds(items,padding=0){
  return {x,y,w:rr-x,h:bb-y};
 }
 
-export function makeRadialGroup(items,id){
+export function radialCenter(items){
+ if(!items.length)throw Error('请至少选择一个板块。');
+ return {x:items.reduce((n,r)=>n+r.x+r.w/2,0)/items.length,y:items.reduce((n,r)=>n+r.y+r.h/2,0)/items.length};
+}
+
+function inferredCircleCenter(items){
+ const points=items.map(r=>({x:r.x+r.w/2,y:r.y+r.h/2}));
+ if(points.length<3)return radialCenter(items);
+ const a=points[0],b=points[Math.floor((points.length-1)/2)],c=points.at(-1);
+ const d=2*(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));
+ if(Math.abs(d)<1e-6)return radialCenter(items);
+ return {
+  x:((a.x*a.x+a.y*a.y)*(b.y-c.y)+(b.x*b.x+b.y*b.y)*(c.y-a.y)+(c.x*c.x+c.y*c.y)*(a.y-b.y))/d,
+  y:((a.x*a.x+a.y*a.y)*(c.x-b.x)+(b.x*b.x+b.y*b.y)*(a.x-c.x)+(c.x*c.x+c.y*c.y)*(b.x-a.x))/d
+ };
+}
+
+function inferredAngles(items,center){
+ const angles=items.map(r=>Math.atan2(r.y+r.h/2-center.y,r.x+r.w/2-center.x)*180/Math.PI);
+ for(let i=1;i<angles.length;i++){
+  while(angles[i]-angles[i-1]>180)angles[i]-=360;
+  while(angles[i]-angles[i-1]<-180)angles[i]+=360;
+ }
+ if(angles.length>2){
+  const steps=angles.slice(1).map((value,i)=>value-angles[i]),step=steps.reduce((n,value)=>n+value,0)/steps.length;
+  if(Math.abs(Math.abs(step)*angles.length-360)<2)angles[angles.length-1]=angles[0]+Math.sign(step||1)*360;
+ }
+ return {start:angles[0]??-90,end:angles.at(-1)??270};
+}
+
+export function radialGroupEdit(group){
+ if(group?.type!=='group'||!group.radial||!Array.isArray(group.items)||!group.items.length)throw Error('所选内容不是可编辑的环形组合。');
+ const items=group.items.map(item=>({...item,x:group.x+item.x,y:group.y+item.y}));
+ const stored=group.radialOptions||{},center=Number.isFinite(stored.centerX)&&Number.isFinite(stored.centerY)?{x:group.x+stored.centerX,y:group.y+stored.centerY}:inferredCircleCenter(items);
+ const inferred=inferredAngles(items,center),radius=items.reduce((n,r)=>n+Math.hypot(r.x+r.w/2-center.x,r.y+r.h/2-center.y),0)/items.length;
+ return {items,options:{count:items.length,radius:Number.isFinite(radius)&&radius>0?radius:(stored.radius||180),start:Number.isFinite(stored.start)?stored.start:inferred.start,end:Number.isFinite(stored.end)?stored.end:inferred.end,center}};
+}
+
+export function makeRadialGroup(items,id,options={}){
  const box=groupBounds(items);
- return {id,type:'group',style:'plain',...box,parts:[{title:'环形分布',text:'',bullet:false}],columns:1,items:items.map(item=>({...item,x:item.x-box.x,y:item.y-box.y})),radial:true};
+ const center=options.center||radialCenter(items),used=new Set(),start=Number(options.start),end=Number(options.end);
+ const children=items.map((item,i)=>{let childId=item.id;if(!childId||used.has(childId))childId=`${id}-item-${i+1}`;used.add(childId);return {...item,id:childId,x:item.x-box.x,y:item.y-box.y};});
+ return {id,type:'group',style:'plain',...box,parts:[{title:'环形分布',text:'',bullet:false}],columns:1,items:children,radial:true,radialOptions:{count:children.length,radius:Number(options.radius)||180,start:Number.isFinite(start)?start:-90,end:Number.isFinite(end)?end:270,centerX:center.x-box.x,centerY:center.y-box.y}};
 }

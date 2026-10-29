@@ -11,10 +11,18 @@ try{
  await page.locator('a[href*="ustb-blue"]').click();
  await page.waitForFunction(()=>window.slideStudio);
  await page.locator('.tutorial-guide').waitFor();
- assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),9,'major ruler exposes every tutorial section');
+ assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),12,'major ruler combines reference and multi-select alignment while keeping radial distribution independent');
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),0,'welcome does not mark a section as active');
  assert.match(await page.locator('.tutorial-guide').innerText(),/欢迎进入交互训练场/);
  await page.getByRole('button',{name:'我已阅读，继续'}).click();
+ await page.locator('[data-action="theme"].tutorial-target').waitFor();
+ assert.equal(await page.getByRole('button',{name:'上一步'}).isHidden(),true,'the first step of a new tutorial section cannot return to the preceding section');
+ await page.locator('[data-action="theme"]').click();
+ await page.locator('#theme-secondary.tutorial-target').waitFor();
+ assert.equal(await page.getByRole('button',{name:'上一步'}).isVisible(),true,'later steps can return within the current tutorial section');
+ await page.getByRole('button',{name:'上一步'}).click();
+ await page.waitForFunction(()=>document.querySelector('.tutorial-guide h2')?.textContent.includes('从蓝色主模板开始换肤'));
+ assert.equal(await page.getByRole('button',{name:'上一步'}).isHidden(),true,'returning to the section start hides the previous-step control');
  await page.locator('[data-action="theme"].tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-progress-label').innerText(),/1\.1/);
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),1);
@@ -49,7 +57,7 @@ try{
  await page.locator('#outline-text.tutorial-target').waitFor();
  assert.match(await page.locator('.tutorial-copy-text').innerText(),/# Web Slide 交互教学/);
  assert.equal(await page.locator('.tutorial-target').count(),1,'only the current control remains highlighted');
- const imported='# 项目研究进展\n\n## 基础设置\n### 页面信息与备注练习\n### 空白正文与卡片排版\n### 文字层级与列表练习\n\n## 内容模块\n### 表格练习\n### 公式练习\n### 图片与视频练习\n### 时间轴与图文练习\n\n## 排版与交付\n### 高级对齐练习\n### 环形文字排版练习\n### 备注、放映与导出练习';
+ const imported='# 项目研究进展\n\n## 基础设置\n### 页面信息与备注练习\n### 空白正文与卡片排版\n\n## 内容模块\n### 表格练习\n### 公式练习\n### 图片与视频练习\n### 时间轴与图文练习\n\n## 排版与交付\n### 高级对齐练习\n### 环形文字排版练习\n### 备注、放映与导出练习';
  await page.locator('#outline-file').setInputFiles({name:'教学大纲.md',mimeType:'text/markdown',buffer:Buffer.from(imported)});
  await page.waitForFunction(value=>document.querySelector('#outline-text')?.value===value,imported);
  await page.locator('#outline-mode.tutorial-target').waitFor();

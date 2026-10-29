@@ -8,10 +8,9 @@ export function createTutorialProject(master){
  const toc=makePage('toc');toc.title='教学单元';toc.lead='每页练习一类操作：先确定页面，再布置模块，最后填写内容。';
  const pageInfo=body('页面信息与备注练习','先填写当前页标题、页首句、来源和备注，再学习显示与隐藏备注。',[], '在页面设置中填写备注，应用后点击顶部“页面备注”显示底部停靠区。');
  const blank=body('空白正文与卡片排版','本页正文区保持空白：先插入卡片，再调整尺寸、位置、间距与留白。',[], '练习顺序：插入文字模块 → 调整尺寸 → 按网格移动 → 增加子区域 → 编辑文字。');
- const words=body('文字层级与列表练习','在同一模块中分别练习标题、正文、列表、局部字号、粗细、颜色、行距和段后距。',[text('cards',{...SAFE},'层级练习','第一行作为分项标题。\n第二至四行可转换为无序列表。\n选择局部文字修改字号和颜色。\n检查末行孤字与段间距。')],'只修改选中文字；Shift 可多选文字块统一调整。');
  const demoRect={x:58,y:286,w:700,h:480};
- const table=moduleOf('table',demoRect);table.rows=[['项目','设置值','检查结果'],['表头样式','主题色深底','待检查'],['字号与行距','10／12／14／16 pt','待检查'],['单元格边距','至少半个字符','待检查']];
- const tablePage=body('表格练习','左侧保留规范示范，右侧空白区用于亲手插入表格，再练习行列、字号、单元格高度和批量替换。',[table],'首行才是表头，不要把第一列误设为深色；练习表格可与示范表格横向对齐。');
+ const table=moduleOf('table',{x:58,y:286,w:1484,h:430});table.rows=[['方法','准确率 / % ↑','RMSE ↓','耗时 / ms ↓'],['基线方法','84.6','0.218','42.3'],['改进方法 A','87.9','0.193','39.8'],['改进方法 B','89.4','0.181','37.5'],['本文方法','91.2','0.164','35.7']];table.tableTitle='实验结果与方法比较';
+ const tablePage=body('表格练习','本页已经放好一张可编辑表格：选中它后直接练习导入、批量改值、行列、字号、行高和样式。',[table],'首行才是表头，不要把第一列误设为深色；离线 HTML 可以直接读取 XLSX／CSV，也可用 Tab 和回车批量替换。');
  const formula=moduleOf('formula',demoRect,1);formula.style='band';formula.parts[0].title='目标函数示范';
  const formulaPage=body('公式练习','左侧公式展示标题、LaTeX 与解释的组合；右侧插入含两个子区域的公式模块并修改内容。',[formula],'建议选择2个子区域，分别承载目标函数与参数更新；LaTeX 语法错误时不会覆盖原公式。');
  const media=moduleOf('media',demoRect,1);media.parts[0].caption='图 1　双击替换练习图片';
@@ -23,11 +22,12 @@ export function createTutorialProject(master){
   text('cards',{x:585,y:330,w:430,h:230},'板块 B','练习边缘对齐。'),
   text('cards',{x:1112,y:270,w:430,h:230},'板块 C','练习等距分布。')
  ];
- const alignPage=body('高级对齐练习','选择多个板块，练习参考线、左中右对齐、垂直对齐、等距与环形分布。',alignModules,'先调整单个板块尺寸，再做多选对齐；对齐后仍需检查安全区与文字溢出。');
- const ringPage=body('环形文字排版练习','先插入多个独立文字块，再使用多选与环形分布；环形排版适合并列概念，不适合长段正文。',[],'建议插入6个白底深字的独立文字块，统一尺寸后多选，设置中心、半径与起始角度。');
+ const alignPage=body('高级对齐练习','先对板块 A 做左／上平移与右／下拉伸，再直接切换多选模式完成三板块等距。',alignModules,'参考线与多选等距属于同一个高级对齐大项；环形分布另起一项并重新打开插件。');
+ const ringSeed=moduleOf('text',{x:640,y:470,w:320,h:72},1);ringSeed.textBox=true;ringSeed.boxTone='light';ringSeed.parts[0].title='';ringSeed.parts[0].text='研究目标';
+ const ringPage=body('环形文字排版练习','选择中央的一行文字，复制为4份并在-45°至45°的小扇形内排布，确保组合完整落在正文安全区。',[ringSeed],'本页使用单一文字块演示“单项复制数量”：4份、半径180 px、起始-45°、结束45°。');
  const presentPage=body('备注、放映与导出练习','显示当前页备注，比较演讲者视图与全屏放映，最后保存 HTML 并检查 PDF／PPTX。',[text('band',{...SAFE},'完成前检查','页面备注随当前页切换。\n演讲者视图适合双屏。\n全屏放映适合单屏专注画面。\n导出后仍需人工复核字体与断行。')],'本页备注用于验证停靠区、双窗口同步和导出保留。');
  const closing={...makePage('closing'),title:'教学完成',lead:'保存练习副本，回到正式模板开始制作自己的汇报',presenter:'Web Slide',institute:'北京科技大学 · 交互教学',date:'完成后可重复练习'};
- const project={version:1,title:'北京科技大学_WebSlide交互教学',theme:clone(master.theme),grid:20,slides:[cover,toc,pageInfo,blank,words,tablePage,formulaPage,mediaPage,timelinePage,alignPage,ringPage,presentPage,closing]};
+ const project={version:1,title:'北京科技大学_WebSlide交互教学',theme:clone(master.theme),grid:20,slides:[cover,toc,pageInfo,blank,tablePage,formulaPage,mediaPage,alignPage,ringPage,timelinePage,presentPage,closing]};
  project.theme.name='北京科技大学';project.theme.presets=clone(master.theme.presets||{});
  return syncSections(project);
 }

@@ -46,7 +46,7 @@ export class SlideViewer{
   if(this.present&&!this.overview)this.transform();
  }
  setView(mode,columns=this.columns){if(!['single','scroll','grid'].includes(mode))return;this.mode=mode;this.columns=Math.max(1,Math.min(6,Number(columns)||2));this.onRender();this.scrollTo(this.getIndex(),false);}
- scrollTo(index,smooth=true){if(this.present||this.mode==='single')return;this.programmaticScrollUntil=Date.now()+(smooth?900:80);this.root.querySelector(`[data-view-page="${index}"]`)?.scrollIntoView({block:'start',behavior:smooth?'smooth':'instant'});}
+ scrollTo(index,smooth=true){if(this.present||this.mode==='single')return;this.programmaticScrollUntil=Date.now()+(smooth?900:80);this.root.querySelector(`[data-view-page="${index}"]`)?.scrollIntoView({block:'start',behavior:smooth?'smooth':'instant'});if(!smooth&&this.mode==='scroll'){clearTimeout(this.afterProgrammaticScrollTimer);this.afterProgrammaticScrollTimer=this.window.setTimeout(()=>{this.afterProgrammaticScrollTimer=null;this.scrolled();},110);}}
  async start(index=this.getIndex()){
   if(this.exitPromise)await this.exitPromise;
   this.lastDrag=0;

@@ -77,6 +77,8 @@ slide.modules = [m];
 
 表格`rows`中的`$LaTeX$`渲染为可双击的行内数学内容；编辑器读取时还原源码，不保存KaTeX内部字形。`mathUseThemeColor`为模块默认，公式子区域`useThemeColor`及表格`cellMathColors['行,列,公式序号']`可覆盖。LaTeX弹窗可选主题色／纯黑。统一切换模块颜色时清除这些覆盖。旧`referenceLayout:'formula'`在验证载入时迁移为真实模块，保留页ID、用户解释文字和已编辑LaTeX，清除已迁入模块的旧自由文字占位。头像覆盖仍为`referencePortrait`。
 
+普通说明文字中的`$LaTeX$`由项目根字段`inlineMathMode`统一控制：`source`显示源码，`render`预览行内公式。工作台顶部“MD”开关修改该字段并随HTML保存；文字编辑状态临时显示源码，导出状态强制渲染。旧文档若存在子区域级`markdownMath`，载入时迁移为文档级`render`，新文档默认`source`。不能再为每个子区域生成一套重复开关。
+
 公式容器清除 KaTeX 默认展示段的外边距，解释文字保持正常流，不用绝对定位压入公式区域。提交前检查公式和解释的实际高度；超过当前版式时保留编辑框、提示精简或拆行，原公式保持不变。
 
 ## 章节与交付

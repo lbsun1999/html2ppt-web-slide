@@ -13,11 +13,11 @@
       "height": 1528
     },
     "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "f36a89e93d52a9806bb82fea9920086527e1b54ec1d52c8298eb7cc1a894e72c"
+    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
   },
   {
     "file": "navigation.html",
-    "sha256": "80c9b1f48eb96359b4b3fe8d5bfc6e088e3e0cc07294a0387dabcda48ec57e21",
+    "sha256": "747d713eb5d0a9323d599545a40e1e4c2c75b3d619a0995497d65713f4e39078",
     "preview": "images/navigation.png",
     "view": "grid",
     "columns": 3,
@@ -29,7 +29,7 @@
       "height": 1435
     },
     "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "f36a89e93d52a9806bb82fea9920086527e1b54ec1d52c8298eb7cc1a894e72c"
+    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
   },
   {
     "file": "text-styles-example.html",
@@ -45,6 +45,6 @@
       "height": 1435
     },
     "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "f36a89e93d52a9806bb82fea9920086527e1b54ec1d52c8298eb7cc1a894e72c"
+    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
   }
 ]
