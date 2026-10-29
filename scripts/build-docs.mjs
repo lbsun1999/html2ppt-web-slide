@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),out=path.join(root,'docs/site');
 const sources=[
- ['README.md','README.html','完整使用说明'],['SKILL.md','SKILL.html','AI 协作规范'],
+ ['README.md','README.html','完整使用说明'],['SKILL.md','SKILL.html','AI 协作规范'],['CHANGELOG.md','CHANGELOG.html','版本记录'],
  ['templates/README.md','templates-README.html','模板扩展说明'],['reference/README.md','reference-README.html','参考示例库']
 ];
 for(const name of await fs.readdir(path.join(root,'docs')))if(name.endsWith('.md'))sources.push(['docs/'+name,name.replace(/\.md$/,'.html'),name.replace(/\.md$/,'')]);

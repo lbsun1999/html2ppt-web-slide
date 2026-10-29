@@ -1,6 +1,6 @@
 {
   "name": "html2ppt-web-slide",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "本地科研幻灯片模块编辑器，HTML / PDF / 可编辑 PPTX",

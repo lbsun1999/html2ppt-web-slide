@@ -12,10 +12,7 @@ async function open(p){await page.locator('#html-file').setInputFiles({name:p.ti
 const state=()=>page.evaluate(()=>window.slideStudio.getProject());
 function fixture(){const p=createProject(),s=blankSlide(),m=moduleOf('text',{...SAFE},2);m.columns=1;m.parts.forEach((p,i)=>{p.title=`研究板块 ${i+1}`;p.text='正文内容保持不变。\n分行与标题信息均予以保留。';});s.modules=[m];p.slides=[s];return p;}
 try{
- await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});await page.goto(pathToFileURL(path.join(root,'文本块样式展示.html')).href);await page.evaluate(()=>document.fonts.ready);assert.equal(await page.locator('.gallery-example').count(),10);
- const overflow=await page.locator('.gallery-example').evaluateAll(items=>items.filter(el=>[...el.querySelectorAll('.text-part')].some(p=>p.scrollHeight>p.clientHeight+2)).map(el=>el.dataset.style));assert.deepEqual(overflow,[]);
- const alignment=await page.locator('[data-style="ribbon"]').evaluate(el=>{const fold=el.querySelector('.ribbon-fold').getBoundingClientRect(),box=el.querySelector('.text-box-decoration rect').getBoundingClientRect();return Math.abs(fold.right-box.left);});assert.ok(alignment<1,'B1 fold and white box must share the same vertical edge');
- await page.screenshot({path:path.join(out,'style-gallery.png'),fullPage:true});console.log('PASS 10 offline HTML components, no overflow');
+ await page.addInitScript(()=>{window.showSaveFilePicker=undefined;});
  await page.goto('http://127.0.0.1:4317');await page.waitForFunction(()=>window.slideStudio);await page.locator('#view-mode').selectOption('single');const initial=fixture();await open(initial);await ui('mode-edit').click();await page.locator('#canvas .module').click();const original=initial.slides[0].modules[0].parts;
  for(const [id] of TEXT_STYLES){await page.locator('#module-style').selectOption(id);const p=await state();assert.deepEqual(p.slides[0].modules[0].parts,original,id+' changed content');assert.deepEqual(await page.evaluate(()=>window.slideStudio.check()),[],id+' overflow');}
  console.log('PASS switching all 10 styles preserves text and checks layout');

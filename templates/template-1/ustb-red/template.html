@@ -49,6 +49,7 @@
 
 /* Theme-aware advanced alignment controls. */
 .alignment-tool svg{border-color:color-mix(in srgb,var(--primary) 38%,#87939b);background:color-mix(in srgb,var(--primary) 8%,white);fill:color-mix(in srgb,var(--primary) 15%,#c9ced1);stroke:color-mix(in srgb,var(--primary) 72%,#172f41)}
+.tutorial-guide{position:fixed;right:24px;bottom:24px;z-index:10020;width:min(430px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;padding:22px;background:#fff;border:1px solid color-mix(in srgb,var(--primary) 28%,#dce5eb);border-radius:14px;box-shadow:0 24px 80px #102d4155;color:#15384d}.tutorial-guide h2{margin:8px 0 10px;font-size:22px;color:var(--primary)}.tutorial-guide p{margin:0 0 14px;line-height:1.7}.tutorial-progress{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--primary)}.tutorial-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.tutorial-exit{margin-right:auto}.tutorial-notice{display:grid;gap:6px;padding:12px 14px;background:color-mix(in srgb,var(--primary) 7%,#fff);border-left:4px solid var(--primary);line-height:1.6}.tutorial-notice strong{color:var(--primary)}.tutorial-copy-text{max-height:190px;overflow:auto;margin:8px 0;padding:12px;white-space:pre-wrap;background:#f4f6f7;border:1px solid #dbe3e8;border-radius:7px;font:13px/1.6 Consolas,monospace}.tutorial-target{position:relative!important;z-index:10010!important;outline:4px solid #f1b82d!important;outline-offset:4px!important;animation:tutorial-pulse .8s ease-in-out infinite alternate}.tutorial-reward{position:fixed;left:50%;top:42%;z-index:10040;transform:translate(-50%,-50%);display:grid;place-items:center;min-width:190px;padding:22px 34px;color:#fff;background:var(--primary);border-radius:14px;box-shadow:0 20px 70px #102d4166;animation:tutorial-pop .9s both;pointer-events:none}.tutorial-reward strong{font-size:25px}.tutorial-reward span{font-size:13px}.tutorial-reward i{position:absolute;width:9px;height:16px;animation:tutorial-confetti .8s ease-out both}@keyframes tutorial-pulse{to{box-shadow:0 0 0 10px #f1b82d33}}@keyframes tutorial-pop{0%{opacity:0;transform:translate(-50%,-40%) scale(.7)}20%,75%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(.9)}}@keyframes tutorial-confetti{to{transform:translate(var(--x),130px) rotate(var(--r));opacity:0}}@media(max-width:700px){.tutorial-guide{right:16px;bottom:16px}}
 
 /* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
 .text-parts{position:relative;gap:24px;grid-auto-rows:auto}
@@ -630,13 +631,13 @@ body.export-view .toc-note:empty{display:none}
         }
       }, true);
     }
-    key(el) {
-      const m = el.closest("[data-module]");
-      return JSON.stringify([m?.dataset.module || "", ...["part", "field", "tablePart", "row", "col", "slideField", "moduleField"].map((k) => el.dataset[k] ?? "")]);
+    key(el2) {
+      const m = el2.closest("[data-module]");
+      return JSON.stringify([m?.dataset.module || "", ...["part", "field", "tablePart", "row", "col", "slideField", "moduleField"].map((k) => el2.dataset[k] ?? "")]);
     }
     fields() {
       if (this.getMode() !== "text" || this.slideId !== this.getSlideId()) return [];
-      return [...document.querySelectorAll('#canvas [data-text][contenteditable="true"]')].filter((el) => this.keys.has(this.key(el)));
+      return [...document.querySelectorAll('#canvas [data-text][contenteditable="true"]')].filter((el2) => this.keys.has(this.key(el2)));
     }
     batch() {
       return this.multi ? this.fields() : [];
@@ -645,8 +646,8 @@ body.export-view .toc-note:empty{display:none}
       if (e.button !== 0 || this.getMode() !== "text" || document.querySelector("dialog[open]")) return;
       const canvas = e.target.closest("#canvas");
       if (!canvas) return;
-      const el = e.target.closest('[data-text][contenteditable="true"]');
-      if (!el) {
+      const el2 = e.target.closest('[data-text][contenteditable="true"]');
+      if (!el2) {
         if (!e.shiftKey) this.clear();
         return;
       }
@@ -655,7 +656,7 @@ body.export-view .toc-note:empty{display:none}
         this.multi = false;
       }
       this.slideId = this.getSlideId();
-      const key2 = this.key(el);
+      const key2 = this.key(el2);
       if (e.shiftKey && this.keys.size && (this.multi || !this.keys.has(key2))) {
         e.preventDefault();
         e.stopPropagation();
@@ -672,8 +673,8 @@ body.export-view .toc-note:empty{display:none}
     }
     refresh() {
       const fields = this.fields(), selected2 = new Set(fields);
-      document.querySelectorAll(".text-block-selected").forEach((el) => el.classList.remove("text-block-selected"));
-      if (this.multi) for (const el of selected2) el.classList.add("text-block-selected");
+      document.querySelectorAll(".text-block-selected").forEach((el2) => el2.classList.remove("text-block-selected"));
+      if (this.multi) for (const el2 of selected2) el2.classList.add("text-block-selected");
       const label = document.querySelector("#format-selection-count");
       if (label) {
         label.hidden = !this.multi;
@@ -759,7 +760,7 @@ body.export-view .toc-note:empty{display:none}
     const v = Number(owner.lineSpacing?.[key2]), size = owner.fontSizes?.[key2], css = [Number.isFinite(v) && v >= 0.5 && v <= 5 ? `line-height:${v}` : "", [10, 12, 14, 16].includes(size) ? `font-size:${size / 0.6}px` : ""].filter(Boolean).join(";");
     return css ? `style="${css}"` : "";
   }
-  function readRich(el) {
+  function readRich(el2) {
     const runs = [];
     function add(text3, format) {
       if (!text3) return;
@@ -798,13 +799,13 @@ body.export-view .toc-note:empty{display:none}
           next.color = rgb ? "#" + rgb.slice(1).map((n) => Number(n).toString(16).padStart(2, "0")).join("") : color;
         }
       }
-      const block = ["DIV", "P", "LI"].includes(node.tagName) && node !== el;
+      const block = ["DIV", "P", "LI"].includes(node.tagName) && node !== el2;
       if (block && runs.length && !runs.at(-1).text.endsWith("\n")) add("\n", format);
       for (const child of node.childNodes) visit(child, next);
       if (block && node.nextSibling && !runs.at(-1)?.text.endsWith("\n")) add("\n", format);
     }
-    for (const node of el.childNodes) visit(node);
-    const paragraphs = [...el.children].filter((n) => ["DIV", "P", "LI"].includes(n.tagName)).map((n) => ({ bullet: n.dataset.bullet !== void 0 ? n.dataset.bullet === "true" : el.classList.contains("bulleted"), marker: n.dataset.marker || el.dataset.marker || "•", ...n.style.marginBottom ? { after: parseFloat(n.style.marginBottom) * 0.6 } : {}, ...ALIGNMENTS.some(([a]) => a === n.style.textAlign) ? { align: n.style.textAlign } : {} }));
+    for (const node of el2.childNodes) visit(node);
+    const paragraphs = [...el2.children].filter((n) => ["DIV", "P", "LI"].includes(n.tagName)).map((n) => ({ bullet: n.dataset.bullet !== void 0 ? n.dataset.bullet === "true" : el2.classList.contains("bulleted"), marker: n.dataset.marker || el2.dataset.marker || "•", ...n.style.marginBottom ? { after: parseFloat(n.style.marginBottom) * 0.6 } : {}, ...ALIGNMENTS.some(([a]) => a === n.style.textAlign) ? { align: n.style.textAlign } : {} }));
     return { text: runs.map((r) => r.text).join(""), runs, paragraphs };
   }
   var TextFormatting = class {
@@ -856,11 +857,11 @@ body.export-view .toc-note:empty{display:none}
       if (this.toolbarActive && document.activeElement?.closest("#text-formatbar,[data-text-alignment]")) return;
       const selection = getSelection();
       if (!selection.rangeCount) return;
-      const node = selection.anchorNode, el = (node?.nodeType === 1 ? node : node?.parentElement)?.closest("[data-text][contenteditable]");
-      if (!el || !el.closest("#canvas")) return;
+      const node = selection.anchorNode, el2 = (node?.nodeType === 1 ? node : node?.parentElement)?.closest("[data-text][contenteditable]");
+      if (!el2 || !el2.closest("#canvas")) return;
       const range = selection.getRangeAt(0);
-      if (!el.contains(range.endContainer)) return;
-      this.field = el;
+      if (!el2.contains(range.endContainer)) return;
+      this.field = el2;
       this.range = range.cloneRange();
       this.refresh();
     }
@@ -2109,15 +2110,15 @@ body.export-view .toc-note:empty{display:none}
 
   // src/free-text-position.js
   var locked = ".slide-header,.slide-footer,.section-line,.slide-summary,.profile-identity,table,.cover-band,.cover-info,.transition-content";
-  function freeField(el, s) {
-    const field2 = el?.closest("[data-text][data-slide-field]");
+  function freeField(el2, s) {
+    const field2 = el2?.closest("[data-text][data-slide-field]");
     return s.kind === "body" && field2 && !field2.closest("[data-module]," + locked) ? field2 : null;
   }
   function applyTextPositions(root, s) {
-    for (const el of root.querySelectorAll("[data-slide-field]")) {
-      if (!freeField(el, s)) continue;
-      const p = s.textPositions?.[el.dataset.slideField];
-      if (p) el.style.translate = `${p.dx}px ${p.dy}px`;
+    for (const el2 of root.querySelectorAll("[data-slide-field]")) {
+      if (!freeField(el2, s)) continue;
+      const p = s.textPositions?.[el2.dataset.slideField];
+      if (p) el2.style.translate = `${p.dx}px ${p.dy}px`;
     }
   }
   function positionedMarkup(markup, s) {
@@ -2127,8 +2128,8 @@ body.export-view .toc-note:empty{display:none}
     applyTextPositions(t.content, s);
     return t.innerHTML;
   }
-  function canvasRect(el, canvas) {
-    const base = canvas.getBoundingClientRect(), r = el.getBoundingClientRect(), scale2 = base.width / 1600 || 1;
+  function canvasRect(el2, canvas) {
+    const base = canvas.getBoundingClientRect(), r = el2.getBoundingClientRect(), scale2 = base.width / 1600 || 1;
     return Object.fromEntries(Object.entries({ x: (r.left - base.left) / scale2, y: (r.top - base.top) / scale2, w: r.width / scale2, h: r.height / scale2 }).map(([k, v]) => [k, Math.round(v * 100) / 100]));
   }
   function freeBounds(canvas, s) {
@@ -2139,33 +2140,33 @@ body.export-view .toc-note:empty{display:none}
     const b = slideBounds(s);
     return { ...b, y: 192, h: b.y + b.h - 192 };
   }
-  function obstacles(canvas, s, el, moduleId) {
+  function obstacles(canvas, s, el2, moduleId) {
     const boxes = occupiedItems(s).filter((m) => m.id !== moduleId && !m.freeText).map((m) => ({ ...m }));
     for (const node of canvas.querySelectorAll("[data-text],table,[data-image],[data-raster],.math-expression,.math-symbol,.equation-number,.formula-card,.symbol-note")) {
-      if (node === el || node.contains(el) || el.contains(node) || node.closest("[data-module]")?.dataset.module === moduleId) continue;
+      if (node === el2 || node.contains(el2) || el2.contains(node) || node.closest("[data-module]")?.dataset.module === moduleId) continue;
       const r = canvasRect(node, canvas);
       if (r.w > 0 && r.h > 0) boxes.push(r);
     }
     return boxes;
   }
-  function positionError(canvas, s, el, rect, moduleId = null) {
+  function positionError(canvas, s, el2, rect, moduleId = null) {
     if (["x", "y", "w", "h"].some((k) => !Number.isFinite(rect[k])) || rect.w <= 0 || rect.h <= 0) return "请先填写文字，再调整位置。";
     const b = moduleId ? slideBounds(s) : freeBounds(canvas, s);
     if (rect.x < b.x - 0.1 || rect.y < b.y - 0.1 || rect.x + rect.w > b.x + b.w + 0.1 || rect.y + rect.h > b.y + b.h + 0.1) return "文字块只能放在正文安全区内。";
-    if (obstacles(canvas, s, el, moduleId).some((r) => intersects(rect, r))) return "此位置会进入模块或遮挡其他内容，请换一个位置。";
+    if (obstacles(canvas, s, el2, moduleId).some((r) => intersects(rect, r))) return "此位置会进入模块或遮挡其他内容，请换一个位置。";
     return "";
   }
   function auditTextPositions(canvas, s) {
     const errors = [], cards = /* @__PURE__ */ new Set();
     for (const key2 of Object.keys(s.textPositions || {})) {
-      const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
-      if (!el) {
+      const el2 = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
+      if (!el2) {
         errors.push("此字段不支持正文文字平移：" + key2);
         continue;
       }
-      const error = positionError(canvas, s, el, canvasRect(el, canvas));
+      const error = positionError(canvas, s, el2, canvasRect(el2, canvas));
       if (error) errors.push(error);
-      const card = el.closest(".formula-card");
+      const card = el2.closest(".formula-card");
       if (card) cards.add(card);
     }
     for (const card of cards) for (const math2 of card.querySelectorAll(".math-expression")) {
@@ -2206,8 +2207,8 @@ body.export-view .toc-note:empty{display:none}
         this.move({ ...r, x: r.x + (direction === "right" ? d : direction === "left" ? -d : 0), y: r.y + (direction === "down" ? d : direction === "up" ? -d : 0) });
       });
     }
-    focus(el) {
-      const s = this.getSlide(), owner = el.closest("[data-module]"), m = s.modules.find((m2) => m2.id === owner?.dataset.module), field2 = freeField(el, s);
+    focus(el2) {
+      const s = this.getSlide(), owner = el2.closest("[data-module]"), m = s.modules.find((m2) => m2.id === owner?.dataset.module), field2 = freeField(el2, s);
       this.target = m?.textBox ? { slideId: s.id, moduleId: m.id } : field2 ? { slideId: s.id, key: field2.dataset.slideField } : null;
       this.highlight();
     }
@@ -2215,19 +2216,19 @@ body.export-view .toc-note:empty{display:none}
       const s = this.getSlide(), canvas = this.getCanvas(), t = this.target;
       if (!t || t.slideId !== s.id || this.getMode() !== "text" || !canvas || this.isMulti()) return null;
       if (t.moduleId) {
-        const m = s.modules.find((m2) => m2.id === t.moduleId), el2 = [...canvas.querySelectorAll("[data-module]")].find((n) => n.dataset.module === t.moduleId);
-        return m?.textBox && el2 ? { el: el2, m, moduleId: m.id } : null;
+        const m = s.modules.find((m2) => m2.id === t.moduleId), el3 = [...canvas.querySelectorAll("[data-module]")].find((n) => n.dataset.module === t.moduleId);
+        return m?.textBox && el3 ? { el: el3, m, moduleId: m.id } : null;
       }
-      const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === t.key && freeField(n, s));
-      return el ? { el, key: t.key } : null;
+      const el2 = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === t.key && freeField(n, s));
+      return el2 ? { el: el2, key: t.key } : null;
     }
     sync() {
       const s = this.getSlide(), canvas = this.getCanvas();
       if (!canvas) return;
       if (this.target && (this.getMode() !== "text" || this.target.slideId !== s.id)) this.target = null;
       for (const [key2, p] of Object.entries(s.textPositions || {})) {
-        const el = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
-        if (el) Object.assign(p, canvasRect(el, canvas));
+        const el2 = [...canvas.querySelectorAll("[data-slide-field]")].find((n) => n.dataset.slideField === key2 && freeField(n, s));
+        if (el2) Object.assign(p, canvasRect(el2, canvas));
       }
       this.highlight();
     }
@@ -17322,24 +17323,24 @@ body.export-view .toc-note:empty{display:none}
       t.innerHTML = source.html;
       cache.set(s.referenceLayout, t.content.firstElementChild);
     }
-    const el = cache.get(s.referenceLayout).cloneNode(true);
-    el.dataset.slide = s.id;
-    el.setAttribute("style", themeStyle);
-    if (s.referenceLayout === "profile") addProfilePhone(el);
-    for (const table2 of el.querySelectorAll("table")) {
+    const el2 = cache.get(s.referenceLayout).cloneNode(true);
+    el2.dataset.slide = s.id;
+    el2.setAttribute("style", themeStyle);
+    if (s.referenceLayout === "profile") addProfilePhone(el2);
+    for (const table2 of el2.querySelectorAll("table")) {
       if (Number(s.referenceRowHeightPt) > 0) for (const row of table2.rows) row.style.height = Math.min(120, Number(s.referenceRowHeightPt)) / 0.6 + "px";
       if (Number.isFinite(s.referenceCellPaddingPt)) for (const cell of table2.querySelectorAll("th,td")) {
         if (cell.classList.contains("profile-spacer")) continue;
         cell.style.paddingTop = cell.style.paddingBottom = Math.max(0, Math.min(18, s.referenceCellPaddingPt)) / 0.6 + "px";
       }
     }
-    for (const p of el.querySelectorAll("p[data-slide-field]")) {
+    for (const p of el2.querySelectorAll("p[data-slide-field]")) {
       const div = document.createElement("div");
       for (const a of p.attributes) div.setAttribute(a.name, a.value);
       div.append(...p.childNodes);
       p.replaceWith(div);
     }
-    for (const node of el.querySelectorAll("[data-slide-field]")) {
+    for (const node of el2.querySelectorAll("[data-slide-field]")) {
       const key2 = node.dataset.slideField;
       if (s[key2] !== void 0 && (s[key2] !== source.fields[key2] || s.rich?.[key2])) node.innerHTML = richHTML(s[key2], s.rich?.[key2], false, !!s.paragraphs?.[key2], void 0, s.paragraphs?.[key2]);
       if (edit) {
@@ -17349,17 +17350,17 @@ body.export-view .toc-note:empty{display:none}
       const style = textStyle(s, key2).match(/style="([^"]*)"/)?.[1];
       if (style) node.style.cssText += ";" + style;
     }
-    const logo = el.querySelector(".slide-logo");
+    const logo = el2.querySelector(".slide-logo");
     if (logo && theme.logo) logo.src = theme.logo;
-    if (s.referenceImages) el.querySelectorAll(".history-image").forEach((image, i2) => {
+    if (s.referenceImages) el2.querySelectorAll(".history-image").forEach((image, i2) => {
       if (s.referenceImages[i2]) image.src = s.referenceImages[i2];
     });
     if (theme.monochrome) {
-      el.dataset.monochrome = "";
-      el.querySelectorAll('[style*="--stage-color"]').forEach((node) => node.style.setProperty("--stage-color", theme.primary));
+      el2.dataset.monochrome = "";
+      el2.querySelectorAll('[style*="--stage-color"]').forEach((node) => node.style.setProperty("--stage-color", theme.primary));
     }
     if (s.referenceLayout === "history" && s.source) {
-      const node = el.querySelector(".footer-source");
+      const node = el2.querySelector(".footer-source");
       if (node) {
         node.dataset.text = "";
         node.dataset.slideField = "source";
@@ -17367,14 +17368,14 @@ body.export-view .toc-note:empty{display:none}
         if (edit) node.contentEditable = "true";
       }
     }
-    el.querySelectorAll(".math-expression[data-tex]").forEach((node, i2) => {
+    el2.querySelectorAll(".math-expression[data-tex]").forEach((node, i2) => {
       node.dataset.referenceFormula = i2;
       if (s.referenceLatex?.[i2]) {
         node.innerHTML = formulaHTML(s.referenceLatex[i2]);
         node.dataset.raster = "";
       }
     });
-    const symbols2 = el.querySelector("dl.symbols");
+    const symbols2 = el2.querySelector("dl.symbols");
     if (symbols2) {
       const table2 = document.createElement("table");
       table2.className = "symbols symbol-table";
@@ -17397,32 +17398,32 @@ body.export-view .toc-note:empty{display:none}
       table2.append(body);
       symbols2.replaceWith(table2);
     }
-    const symbolTable = el.querySelector(".symbol-table");
+    const symbolTable = el2.querySelector(".symbol-table");
     if (symbolTable) symbolTable.style.setProperty("--symbol-color", symbolColor);
-    for (const image of el.querySelectorAll(".formula-image")) image.src = themedMathImage(image.getAttribute("src"), image.closest("[data-reference-symbol]") ? symbolColor : theme.ink);
-    const portrait = el.querySelector(".profile-portrait");
+    for (const image of el2.querySelectorAll(".formula-image")) image.src = themedMathImage(image.getAttribute("src"), image.closest("[data-reference-symbol]") ? symbolColor : theme.ink);
+    const portrait = el2.querySelector(".profile-portrait");
     if (portrait) {
       portrait.dataset.referencePortrait = "";
       const image = portrait.matches("img") ? portrait : portrait.querySelector("img");
       if (image) image.src = themedPortrait(s.referencePortrait || image.getAttribute("src"), theme);
     }
-    el.querySelectorAll(".page-number").forEach((n) => n.textContent = String(index2 + 1).padStart(2, "0"));
-    el.querySelectorAll(".page-total").forEach((n) => n.textContent = total);
-    const pagination = el.querySelector(".footer-pagination");
+    el2.querySelectorAll(".page-number").forEach((n) => n.textContent = String(index2 + 1).padStart(2, "0"));
+    el2.querySelectorAll(".page-total").forEach((n) => n.textContent = total);
+    const pagination = el2.querySelector(".footer-pagination");
     if (pagination) pagination.dataset.text = "";
-    const sourceField = el.querySelector('[data-slide-field="source"]');
+    const sourceField = el2.querySelector('[data-slide-field="source"]');
     if (sourceField && s.sourceUrl && /^(https?:\/\/|#slide-)/.test(s.sourceUrl)) {
       const a = document.createElement("a");
       a.href = s.sourceUrl;
       a.append(...sourceField.childNodes);
       sourceField.append(a);
     }
-    for (const anchor of el.querySelectorAll('a[href^="#p"]')) {
+    for (const anchor of el2.querySelectorAll('a[href^="#p"]')) {
       const target = project2?.slides.find((slide2) => slide2.referenceLayout === "references");
       if (target) anchor.href = "#slide-" + target.id;
     }
-    applyTextPositions(el, s);
-    return el.outerHTML;
+    applyTextPositions(el2, s);
+    return el2.outerHTML;
   }
 
   // src/page-presets.js
@@ -17720,8 +17721,8 @@ body.export-view .toc-note:empty{display:none}
       return `<section class="timeline-stage" style="--stage-color:var(--primary)"><div class="timeline-card" data-shape><div class="timeline-year" data-shape><div ${field2(p, i2, hide ? "title" : "year")}>${value(p, hide ? "title" : "year")}</div></div><div class="media-window timeline-media ${p.asset ? "has-asset" : ""}" data-media-part="${i2}" title="双击替换照片或视频"><div class="media-crop">${p.asset ? `<${p.asset.kind === "video" ? 'video controls preload="metadata" muted playsinline' : "img"} src="${esc6(p.asset.src)}" alt="${esc6(p.title)}" style="object-fit:${p.asset.fit || "cover"};object-position:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%;transform:scale(${p.asset.zoom || 1});transform-origin:${p.asset.cx ?? 50}% ${p.asset.cy ?? 50}%"></${p.asset.kind === "video" ? "video" : "img"}>` : '<div class="timeline-placeholder" data-text>＋ 照片 / 视频<br>双击替换媒体</div>'}</div></div><div class="timeline-copy" ${field2(p, i2, "text")}>${value(p, "text")}</div></div>${eventHTML}${lineSVG}${dotSVG}</section>`;
     }).join("")}</div>`;
   }
-  function fitTimeline(el) {
-    const grid = el.querySelector(".timeline-grid");
+  function fitTimeline(el2) {
+    const grid = el2.querySelector(".timeline-grid");
     if (!grid) return;
     const stages = [...grid.querySelectorAll(".timeline-stage")], width = grid.clientWidth, n = stages.length;
     const hide = grid.classList.contains("hide-timeline");
@@ -17737,17 +17738,17 @@ body.export-view .toc-note:empty{display:none}
     const available = grid.clientHeight - bottomGap - yearHeight - 32 - textHeight;
     grid.style.setProperty("--timeline-media-height", Math.max(72, Math.min(preferred, available)) + "px");
   }
-  function timelineHeight(el) {
-    const grid = el.querySelector(".timeline-grid");
+  function timelineHeight(el2) {
+    const grid = el2.querySelector(".timeline-grid");
     if (!grid) return 0;
     const hide = grid.classList.contains("hide-timeline");
     const bottomGap = hide ? 32 : 78;
     return Math.max(...[...grid.querySelectorAll(".timeline-stage")].map((s) => s.querySelector(".timeline-year").offsetHeight + copyHeight(s.querySelector(".timeline-copy")) + 72 + 32 + bottomGap));
   }
-  function copyHeight(el) {
+  function copyHeight(el2) {
     const range = document.createRange();
-    range.selectNodeContents(el);
-    const scale2 = el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1;
+    range.selectNodeContents(el2);
+    const scale2 = el2.getBoundingClientRect().width / (el2.offsetWidth || 1) || 1;
     return range.getBoundingClientRect().height / scale2 + 15;
   }
 
@@ -17900,6 +17901,220 @@ body.export-view .toc-note:empty{display:none}
     return options.school === "lishui" ? applyLishuiVariant(p, options) : p;
   }
 
+  // src/tutorial.js
+  var OUTLINE = `# 智能 Slide 入门练习
+
+## 01 问题背景与目标
+
+### 研究背景与问题定义
+### 目标与技术路线
+
+## 02 方法与结果
+
+### 核心方法
+### 实验结果与讨论
+
+## 附录
+
+### 参考文献
+### 作者简介`;
+  var steps = [
+    { group: "开始", title: "欢迎进入交互训练场", text: "这不是视频教程：接下来请直接操作真实工作台。完成一个动作，系统才会带你进入下一步。", notice: "教学统一使用北科科技蓝主模板。红色主题和其他学校版本由同一主模板增量换肤，不重复建设教学。" },
+    { group: "主题换肤", title: "从蓝色主模板开始换肤", text: "点击“主题与标志”。接下来把科技蓝主模板改成钢铁红，同时保持页面结构和编辑能力不变。", target: '[data-action="theme"]', event: "click" },
+    { title: "先清空第二主题色", text: "第二主题色是可选项。请删除原值，让它在应用时自动跟随新的主色，避免旧蓝色残留。", target: "#theme-secondary", input: "#theme-secondary", allowEmpty: true },
+    { title: "清空装饰色", text: "装饰色也是可选项。没有独立配色需求时，让它从主色派生最稳定。", target: "#theme-accent", input: "#theme-accent", allowEmpty: true },
+    { title: "清空可选强调色", text: "删除原强调色。以后确有警示、对比或品牌规范时，再单独填写。", target: "#theme-emphasis", input: "#theme-emphasis", allowEmpty: true },
+    { title: "设置钢铁红主题色", text: "复制并填写主题色。主题色负责标题、深色卡片、线条和强调关系。", target: "#theme-primary", input: "#theme-primary", copy: "#A31418" },
+    { title: "设置配套浅底", text: "继续填写卡片浅底。换主题不能只改深色，浅色卡片也必须联动。", target: "#theme-tint", input: "#theme-tint", copy: "#FCF1EE" },
+    { title: "正文保持纯黑", text: "把正文颜色设为纯黑，避免灰字继续带有原科技蓝色相。", target: "#theme-ink", input: "#theme-ink", copy: "#000000" },
+    { title: "上传红色独立校徽", text: "点击文件框，选择当前模板 assets 文件夹里的 red-logo-solo.svg。使用 SVG 才能在放映和放大时保持清晰。", target: "#theme-logo", event: "change", notice: "文件位置：templates/template-1/ustb-blue/assets/red-logo-solo.svg" },
+    { title: "上传红色校名组合标志", text: "继续选择 logo-full-steel-red.svg。封面和需要校名组合标识的页面会使用它。", target: "#theme-wordmark", event: "change", notice: "文件位置：templates/template-1/ustb-blue/assets/logo-full-steel-red.svg" },
+    { title: "应用新的主题", text: "点击确定。工作台会用同一套模块结构重绘为钢铁红；校徽和组合标志也可在这个弹窗上传 SVG。", target: '[data-action="theme-dialog-apply"]', event: "click" },
+    { group: "大纲教学", title: "先建立文档骨架", text: "点击顶部“文档大纲”。建议先和 AI 确认章节与每页标题，再开始填充正文。", target: '[data-action="outline"]', event: "click" },
+    { title: "粘贴练习大纲", text: "复制下面的示例，粘贴到大纲编辑框。# 是总标题，## 是章节，### 是页面。", target: "#outline-text", input: "#outline-text", copy: OUTLINE },
+    { title: "选择应用方式", text: "“更新当前文稿”尽量保留已有正文、图表和格式；“另建文稿”生成一份正文干净、只含标题与备注提示的新文件。", target: "#outline-mode", notice: "第一次练习建议选择“另建文稿”；修改已完成的汇报时选择“更新当前文稿”。" },
+    { title: "目录开关", text: "勾选后根据章节顺序自动生成目录，章节名与页码范围随页面变化更新。", target: "#outline-toc", notice: "目录条目之后仍可单独隐藏、恢复或补充说明；附录默认不进入目录。" },
+    { title: "章节过渡页", text: "勾选后，每个普通章节前生成过渡页；正文左上角的章节标签也由过渡页继承。", target: "#outline-transitions", notice: "没有过渡页的短汇报也可以关闭；附录通常不生成过渡页。" },
+    { title: "最后一章作为附录", text: "当末章是参考文献、作者简介或补充材料时勾选。系统会使用“附录”标签，并默认从目录排除。", target: "#outline-appendix", notice: "章节标题不必手写“附录”二字，勾选项负责语义与目录规则。" },
+    { title: "结束页开关", text: "勾选后保留或生成结束页。封面、过渡页和结束页不显示页脚及页码。", target: "#outline-closing", notice: "正式答辩通常保留；内部短会可按需要关闭。" },
+    { title: "应用大纲", text: "点击“应用大纲”或“按大纲另建文稿”。本练习允许你保留当前内容，也可以生成一份干净结构。", target: "#outline-apply", event: "click" },
+    { group: "页面设置", title: "打开页面设置", text: "在右侧“当前页设置”中打开标题、页首句、页尾总结、脚注与备注。若当前不是正文页，也可以先在左侧切换一页。", target: '[data-action="page-settings"]', event: "click" },
+    { title: "写一条演讲备注", text: "把下面提示复制到“本页备注”。备注不会出现在画面或导出页中，但会在演讲者视图自动跟随。", target: "#page-notes", input: "#page-notes", copy: "本页先交代研究问题，再说明证据来源；结尾用一句话过渡到下一页。" },
+    { title: "保存页面设置", text: "点击确定，让标题、脚注与备注写回当前页。", target: '[data-action="page-dialog-apply"]', event: "click" },
+    { title: "切换到正文练习页", text: "请在左侧缩略图中选择一张普通正文页。后面的模块、图文和对齐练习都在正文安全区内完成。", target: '.slide-thumb[data-page="3"]', event: "click" },
+    { group: "模块与内容", title: "学习模块编辑", text: "点击“编辑模块”，再点击画布中的任意模块。右侧可以调整样式、子区域、尺寸与位置。", target: '[data-action="mode-edit"]', event: "click" },
+    { title: "选中一个真实模块", text: "请点击画布里的任意模块。选中后会出现轮廓和右侧属性。", target: "#canvas .module", event: "click" },
+    { title: "多子区域不是固定截图", text: "右侧“＋ 子区域”会在当前模块内新增一项；每项都能单独编辑、排序或删除。请新增一个练习子区域，之后可用撤销恢复。", target: '[data-action="add-part"]', event: "click" },
+    { title: "网格就是吸附开关", text: "勾选网格后，拖动与参考线自动吸附；关闭网格则自由移动。请切换一次网格。", target: "#grid-visible", event: "change" },
+    { title: "文字可逐段精调", text: "点击“编辑文字”，随后可选中文字调整字号、粗细、颜色、行距、段后距和对齐。Shift 可多选文字块。", target: '[data-action="mode-text"]', event: "click" },
+    { title: "插入表格、公式与图文模块", text: "顶部“＋”统一收纳文字、表格、图片／视频和更多模块。表格支持粘贴或导入；公式保留 LaTeX；图像支持 SVG、裁剪和图注。", target: "#insert-menu", notice: "插入前先找连续空白区；有多个空白区时由用户选择。表格、公式和图片都是真实模块，插入后仍可移动、缩放、增减子区域。" },
+    { title: "图文混排与图片替换", text: "媒体模块可包含多个等高子区域。双击图片或占位符即可上传 PNG、JPEG、WebP、SVG 或视频，并调整比例、缩放、取景和图注。", target: "#canvas", notice: "没有图注时不保留多余图注高度；并列图片保持实际等高。图片只是占位符时，也应明确可双击替换。" },
+    { title: "同一区域也可放多个模块", text: "先用“圈定范围”划出空白区域，再从“＋”插入独立模块；模块之间不能遮挡，边缘与间距应有明确关系。", target: '[data-action="draw"]', notice: "模块数量不是越多越好。一个文字板块一般不超过4点；超过时先凝练、拆分或换版式。" },
+    { group: "高级对齐", title: "进入高级对齐", text: "重新选中一个模块后，点击右侧“高级对齐与分布”。参考线可平移或单边拉伸，多选模式可做等距与环形分布。", target: '[data-action="advanced-align"]', event: "click" },
+    { title: "多选、等距与环形分布", text: "点击“多选开关”，再在画布中选择多个模块。可固定最外边界后平均间隙，也可把文本块组成可整体移动的环形组。", target: '[data-align-mode="multi"]', event: "click" },
+    { title: "高级排版的边界", text: "纵／横参考线负责对齐或拉伸；垂直／水平等距会展开多子区域参与计算；环形分布可设置数量、半径与角度。", target: "#alignment-panel", notice: "对齐只改变几何关系，不替代内容判断。必须复查安全区、遮挡、模块边缘、留白和阅读顺序；越界结果不能直接导出。" },
+    { group: "时间轴与图文", title: "时间轴也能变成图文卡片", text: "请在左侧打开“研究现状分析”页。时间轴本质上是可增减、排序的图文子区域，不是固定图片。", target: ".slide-thumb", targetText: "研究现状分析", event: "click" },
+    { title: "重新进入模块编辑", text: "点击“编辑模块”，准备选中时间轴本身，而不是修改卡片里的文字。", target: '[data-action="mode-edit"]', event: "click" },
+    { title: "选中时间轴模块", text: "点击时间轴中的任意卡片，右侧会显示阶段排序、删除、添加以及“隐藏时间轴装饰”。", target: "#canvas .timeline-grid", event: "click" },
+    { title: "切换为普通并列图文", text: "勾选“隐藏时间轴装饰”，年份、连线、圆点和箭头会隐藏，同一组内容立即退化为普通并列图文卡片；再次取消即可恢复。请切换一次。", target: "#hide-timeline", event: "change" },
+    { group: "备注与放映", title: "页面备注与双窗口放映", text: "请点击“页面备注”查看刚才的内容。演讲者视图适合双屏：观众窗口只显示画面，工作台保留备注并同步翻页。", target: '[data-action="notes"]', event: "click" },
+    { title: "三种浏览与两种正式放映", text: "视图菜单提供单页、单列滚动和多页滚动；正式演示可选“演讲者视图”或“全屏放映”。", target: "#view-mode", notice: "双屏优先演讲者视图：独立观众窗口可拖到投影屏，工作台保留备注并同步翻页。单屏专注画面时用全屏放映；双击进入总览，Ctrl＋滚轮缩放，放大后左键拖动，Esc先复位再退出。" },
+    { title: "保存与导出须知", text: "保存 HTML 优先覆盖当前文件，“另存为”保留副本。PDF/PPTX 导出需运行本地服务；PPTX 已尽量贴近 HTML，但仍须人工复核字体、标点断行与引用。", notice: "“演讲者视图”和“全屏放映”是两种并列方式。教学不会替你启动窗口或导出文件，避免打断当前练习。" },
+    { title: "训练完成", text: "你已经走完模板、大纲、页面、模块、文字、备注与导出的完整路径。接下来可继续编辑，也可退出教学回到正常工作台。", finish: true }
+  ];
+  function el(tag, cls, text3) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text3 !== void 0) node.textContent = text3;
+    return node;
+  }
+  function burst() {
+    const box = el("div", "tutorial-reward");
+    box.innerHTML = "<strong>✓ 完成</strong><span>操作已掌握</span>";
+    document.body.append(box);
+    for (let i2 = 0; i2 < 18; i2++) {
+      const p = el("i");
+      p.style.setProperty("--x", `${(Math.random() - 0.5) * 260}px`);
+      p.style.setProperty("--r", `${Math.random() * 540}deg`);
+      p.style.background = ["#f1b82d", "#2ba3c0", "#a31418", "#005b94"][i2 % 4];
+      box.append(p);
+    }
+    setTimeout(() => box.remove(), 950);
+  }
+  function startTutorial({ onSkipTheme } = {}) {
+    if (new URLSearchParams(location.search).get("tutorial") !== "1") return;
+    let index2 = 0, target = null, cleanup = () => {
+    };
+    const root = el("section", "tutorial-guide");
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-live", "polite");
+    const progress = el("div", "tutorial-progress"), title = el("h2"), text3 = el("p"), copyBox = el("div", "tutorial-copy"), actions = el("div", "tutorial-actions");
+    const exit = el("button", "tutorial-exit", "退出教学"), skip = el("button", "", "跳过本项"), next = el("button", "primary", "我已阅读，继续");
+    actions.append(exit, skip, next);
+    root.append(progress, title, text3, copyBox, actions);
+    document.body.append(root);
+    const groupOf = (i2) => {
+      for (let n = i2; n >= 0; n--) if (steps[n].group) return steps[n].group;
+      return "入门";
+    };
+    const clear = () => {
+      cleanup();
+      cleanup = () => {
+      };
+      target?.classList.remove("tutorial-target");
+      target = null;
+    };
+    const find = (selector, contains3) => {
+      if (!selector) return null;
+      const items = [...document.querySelectorAll(selector)];
+      return contains3 ? items.find((node) => (node.textContent || node.getAttribute("aria-label") || "").includes(contains3)) : items[0];
+    };
+    const show = () => {
+      clear();
+      const step = steps[index2], group = groupOf(index2);
+      progress.textContent = `${group} · ${index2 + 1} / ${steps.length}`;
+      title.textContent = step.title;
+      text3.textContent = step.text;
+      copyBox.replaceChildren();
+      skip.hidden = step.finish || group === "开始";
+      skip.textContent = "跳过本项";
+      next.hidden = !!step.event;
+      next.textContent = step.finish ? "完成并退出" : step.input ? "完成填写，继续" : "我已阅读，继续";
+      if (step.notice) {
+        const n = el("aside", "tutorial-notice");
+        n.innerHTML = "<strong>必读告示</strong><span></span>";
+        n.querySelector("span").textContent = step.notice;
+        copyBox.append(n);
+      }
+      if (step.copy) {
+        const pre = el("pre", "tutorial-copy-text", step.copy), button = el("button", "", "复制练习内容");
+        button.type = "button";
+        button.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(step.copy);
+            button.textContent = "已复制 ✓";
+          } catch {
+            pre.focus();
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            getSelection().removeAllRanges();
+            getSelection().addRange(range);
+            button.textContent = "已选中，请按 Ctrl+C";
+          }
+        };
+        copyBox.append(pre, button);
+      }
+      const bind = () => {
+        target = find(step.target, step.targetText);
+        if (!target) {
+          setTimeout(bind, 180);
+          return;
+        }
+        const modal = target.closest("dialog[open]");
+        if (modal && !modal.contains(root)) modal.append(root);
+        else if (!modal && !document.body.contains(root)) document.body.append(root);
+        target.classList.add("tutorial-target");
+        target.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+        if (step.event) {
+          const done = () => advance();
+          target.addEventListener(step.event, done, { once: true });
+          cleanup = () => target?.removeEventListener(step.event, done);
+        }
+        if (step.input) {
+          const input2 = find(step.input);
+          const done = () => {
+            if (step.allowEmpty || input2.value.trim()) advance();
+          };
+          input2.addEventListener("change", done, { once: true });
+          input2.addEventListener("paste", () => setTimeout(done, 30), { once: true });
+          cleanup = () => {
+            input2.removeEventListener("change", done);
+          };
+        }
+      };
+      bind();
+    };
+    const advance = () => {
+      if (root.closest("dialog")) document.body.append(root);
+      clear();
+      burst();
+      if (index2 >= steps.length - 1) {
+        root.remove();
+        history.replaceState(null, "", location.pathname + location.hash);
+        return;
+      }
+      index2++;
+      setTimeout(show, 280);
+    };
+    next.onclick = advance;
+    skip.onclick = () => {
+      const current = groupOf(index2);
+      let nextIndex = index2 + 1;
+      while (nextIndex < steps.length && groupOf(nextIndex) === current) nextIndex++;
+      if (nextIndex >= steps.length) nextIndex = steps.length - 1;
+      const modal = root.closest("dialog");
+      if (modal) {
+        document.body.append(root);
+        modal.close();
+      }
+      if (current === "主题换肤") onSkipTheme?.();
+      clear();
+      index2 = nextIndex;
+      show();
+    };
+    exit.onclick = () => {
+      const modal = root.closest("dialog");
+      if (modal) {
+        document.body.append(root);
+        modal.close();
+      }
+      clear();
+      root.remove();
+      history.replaceState(null, "", location.pathname + location.hash);
+    };
+    show();
+  }
+
   // src/profile-card.js
   var identity;
   function profileCardHTML(s, edit, themeStyle, theme) {
@@ -17909,9 +18124,9 @@ body.export-view .toc-note:empty{display:none}
       t.innerHTML = reference_layouts_default.profile.html;
       identity = t.content.querySelector(".profile-identity");
     }
-    const el = identity.cloneNode(true);
-    addProfilePhone(el);
-    for (const n of el.querySelectorAll("[data-slide-field]")) {
+    const el2 = identity.cloneNode(true);
+    addProfilePhone(el2);
+    for (const n of el2.querySelectorAll("[data-slide-field]")) {
       const key2 = n.dataset.slideField;
       if (s[key2] !== void 0) n.innerHTML = richHTML(s[key2], s.rich?.[key2], false, !!s.paragraphs?.[key2], void 0, s.paragraphs?.[key2]);
       if (edit) {
@@ -17921,11 +18136,11 @@ body.export-view .toc-note:empty{display:none}
       const style = textStyle(s, key2).match(/style="([^"]*)"/)?.[1];
       if (style) n.style.cssText += ";" + style;
     }
-    const photo = el.querySelector(".profile-portrait");
+    const photo = el2.querySelector(".profile-portrait");
     photo.dataset.referencePortrait = "";
     photo.src = themedPortrait(s.referencePortrait || photo.getAttribute("src"), theme);
     const r = s.profileIdentity;
-    return `<div class="profile-fixed legacy-page" data-fixed-region="profile" style="${themeStyle};position:absolute;left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px">${el.outerHTML}</div>`;
+    return `<div class="profile-fixed legacy-page" data-fixed-region="profile" style="${themeStyle};position:absolute;left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px">${el2.outerHTML}</div>`;
   }
 
   // src/title-policy.js
@@ -17933,7 +18148,7 @@ body.export-view .toc-note:empty{display:none}
   var MANUAL_BREAK_SELECTOR = TITLE_SELECTOR + ",.profile-identity [data-text]";
   var titleCSS = MANUAL_BREAK_SELECTOR.split(",").map((s) => ".slide " + s).join(",") + "{white-space:pre!important;overflow-wrap:normal!important;word-break:normal!important}\n.cover-band h1,.profile-identity [data-text]{max-width:100%;min-width:0}";
   function titleErrors(slide2) {
-    return [...slide2.querySelectorAll(MANUAL_BREAK_SELECTOR)].filter((el) => el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2).map((el) => `${el.matches(TITLE_SELECTOR) ? "标题" : "身份信息"}不允许自动换行：${el.innerText.trim().slice(0, 36)}。请精简、加宽区域或按语义手动分行。`);
+    return [...slide2.querySelectorAll(MANUAL_BREAK_SELECTOR)].filter((el2) => el2.clientWidth > 0 && el2.scrollWidth > el2.clientWidth + 2).map((el2) => `${el2.matches(TITLE_SELECTOR) ? "标题" : "身份信息"}不允许自动换行：${el2.innerText.trim().slice(0, 36)}。请精简、加宽区域或按语义手动分行。`);
   }
 
   // src/inline-math.js
@@ -17983,8 +18198,8 @@ body.export-view .toc-note:empty{display:none}
     const content = profileCardHTML(s, edit, themeCSS(theme, true), theme) + `<div class="module-layer">${s.modules.map((m) => renderModule(m, edit, theme)).join("")}</div>`;
     return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc5(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc5(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc5(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc5(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc5(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
   }
-  function fitMedia(el) {
-    const scope = el.closest(".slide") || el, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
+  function fitMedia(el2) {
+    const scope = el2.closest(".slide") || el2, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
     const windows = [...scope.querySelectorAll(".media-window:not(.timeline-media)")];
     for (const window2 of windows) {
       window2.closest("figure").style.height = "100%";
@@ -18027,9 +18242,9 @@ body.export-view .toc-note:empty{display:none}
       }
     }
   }
-  function fitTable(el) {
-    fitTimeline(el);
-    for (const part2 of el.querySelectorAll(".text-part")) {
+  function fitTable(el2) {
+    fitTimeline(el2);
+    for (const part2 of el2.querySelectorAll(".text-part")) {
       const cs = getComputedStyle(part2);
       if (!part2.dataset.basePadding) part2.dataset.basePadding = JSON.stringify(["Top", "Bottom", "Left", "Right"].map((k) => parseFloat(cs["padding" + k]) || 0));
       const [top, bottom3, left, right3] = JSON.parse(part2.dataset.basePadding);
@@ -18042,7 +18257,7 @@ body.export-view .toc-note:empty{display:none}
       part2.style.paddingBottom = bottom3 - reduceBottom + "px";
       part2.style.paddingTop = top - Math.min(Math.max(0, excess - reduceBottom), Math.max(0, top - 2)) + "px";
     }
-    for (const part2 of el.querySelectorAll(".style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part")) {
+    for (const part2 of el2.querySelectorAll(".style-ribbon .text-part,.style-capsule .text-part,.style-arrow .text-part")) {
       const wrap = part2.querySelector(".part-title-wrap"), title = wrap?.querySelector(".part-title-text");
       if (!title) continue;
       const ps = getComputedStyle(part2), ts = getComputedStyle(title), canvas = document.createElement("canvas").getContext("2d");
@@ -18050,8 +18265,8 @@ body.export-view .toc-note:empty{display:none}
       const available = Math.max(0, part2.clientWidth - parseFloat(ps.paddingLeft) - parseFloat(ps.paddingRight)), natural = Math.max(...title.textContent.split("\n").map((line) => canvas.measureText(line).width)) + parseFloat(ts.paddingLeft) + parseFloat(ts.paddingRight) + 2, preferred = (parseFloat(getComputedStyle(wrap).getPropertyValue("--title-width")) || 65) / 100 * available;
       wrap.style.width = Math.min(available, Math.max(preferred, natural)) + "px";
     }
-    fitMedia(el);
-    for (const table2 of el.querySelectorAll(".data-table")) {
+    fitMedia(el2);
+    for (const table2 of el2.querySelectorAll(".data-table")) {
       const wrap = table2.closest(".table-wrap"), base = table2.hasAttribute("data-fixed-font") ? Number(table2.dataset.baseFont) || 14 : Math.min(14, Number(table2.dataset.baseFont) || 14);
       for (const pt of table2.hasAttribute("data-fixed-font") ? [base] : [base, ...[14, 12, 11, 10, 8].filter((n) => n < base)]) {
         table2.style.fontSize = pt / 0.6 + "px";
@@ -18069,22 +18284,22 @@ body.export-view .toc-note:empty{display:none}
     const gap = parseFloat(style.rowGap) || 0;
     return children.reduce((sum, child) => sum + child.getBoundingClientRect().height / scale2 + (parseFloat(getComputedStyle(child).marginTop) || 0) + (parseFloat(getComputedStyle(child).marginBottom) || 0), 0) + Math.max(0, children.length - 1) * gap + (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0) + (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
   }
-  function measuredHeight(el, m) {
-    if (m.type === "timeline") return timelineHeight(el);
+  function measuredHeight(el2, m) {
+    if (m.type === "timeline") return timelineHeight(el2);
     if (m.type === "table") {
-      const wrap = el.querySelector(".table-wrap");
+      const wrap = el2.querySelector(".table-wrap");
       return [...wrap.querySelectorAll(".table-section")].reduce((n, p) => n + flowHeight(p), 0) + Math.max(0, wrap.children.length - 1) * (parseFloat(getComputedStyle(wrap).rowGap) || 0);
     }
     if (m.type === "text") {
-      const grid = el.querySelector(".text-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, parts = [...grid.querySelectorAll(".text-part")];
+      const grid = el2.querySelector(".text-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, parts = [...grid.querySelectorAll(".text-part")];
       let height = 0;
       for (let row = 0; row < Math.ceil(parts.length / cols); row++) height += Math.max(...parts.slice(row * cols, (row + 1) * cols).map(flowHeight));
-      const gap = parseFloat(getComputedStyle(grid).rowGap) || 0, shell = el.querySelector(".text-group-shell");
-      const extra = shell ? (el.querySelector(".module-content").getBoundingClientRect().height - grid.getBoundingClientRect().height) / (el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1) : 0;
+      const gap = parseFloat(getComputedStyle(grid).rowGap) || 0, shell = el2.querySelector(".text-group-shell");
+      const extra = shell ? (el2.querySelector(".module-content").getBoundingClientRect().height - grid.getBoundingClientRect().height) / (el2.getBoundingClientRect().width / (el2.offsetWidth || 1) || 1) : 0;
       return height + Math.max(0, Math.ceil(parts.length / cols) - 1) * gap + Math.max(0, extra);
     }
     if (m.type === "media") {
-      const grid = el.querySelector(".media-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, figures = [...el.querySelectorAll("figure")];
+      const grid = el2.querySelector(".media-parts"), cols = Number(getComputedStyle(grid).getPropertyValue("--cols")) || 1, figures = [...el2.querySelectorAll("figure")];
       let height = 0;
       const needed = (f) => {
         const style = getComputedStyle(f), scale2 = f.getBoundingClientRect().width / (f.offsetWidth || 1) || 1, caption = f.querySelector("figcaption");
@@ -18138,15 +18353,15 @@ body.export-view .toc-note:empty{display:none}
     if (summary && summary.scrollHeight > summary.clientHeight + 2) errors.push("页尾总结过长，请精简为一行。");
     for (const m of model.modules) {
       if (model.summary && m.y + m.h > 750 + 0.1) errors.push("模块进入页尾总结区域，请缩小或上移。");
-      const el = slideEl.querySelector(`[data-module="${m.id}"]`);
-      if (!el) continue;
-      fitTable(el);
-      const target = m.type === "table" ? el.querySelector(".table-wrap") : el.querySelector(".module-content");
-      const clippedPart = m.type === "text" && [...el.querySelectorAll(".text-part")].some((part2) => flowHeight(part2) > part2.getBoundingClientRect().height / (el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1) + 2);
-      const formulaBad = m.type === "formula" && [...el.querySelectorAll(".text-part")].some((c) => c.scrollHeight > c.clientHeight + 2 || c.querySelector(".formula-body").scrollHeight > c.querySelector(".formula-body").clientHeight + 2 || flowHeight(c) > c.getBoundingClientRect().height / (el.getBoundingClientRect().width / (el.offsetWidth || 1) || 1) + 2 || c.querySelector(".formula-expression").scrollWidth > c.querySelector(".formula-expression").clientWidth + 2 || c.querySelector(".formula-error"));
-      const horizontalText = m.type === "text" && [...el.querySelectorAll(".part-title-text,.paragraph")].some((n) => n.scrollWidth > n.clientWidth + 2);
-      const overflow = horizontalText || formulaBad || target.scrollHeight > target.clientHeight + 2 || target.scrollWidth > target.clientWidth + 2 || measuredHeight(el, m) > m.h + 2 || clippedPart;
-      el.classList.toggle("overflowing", overflow);
+      const el2 = slideEl.querySelector(`[data-module="${m.id}"]`);
+      if (!el2) continue;
+      fitTable(el2);
+      const target = m.type === "table" ? el2.querySelector(".table-wrap") : el2.querySelector(".module-content");
+      const clippedPart = m.type === "text" && [...el2.querySelectorAll(".text-part")].some((part2) => flowHeight(part2) > part2.getBoundingClientRect().height / (el2.getBoundingClientRect().width / (el2.offsetWidth || 1) || 1) + 2);
+      const formulaBad = m.type === "formula" && [...el2.querySelectorAll(".text-part")].some((c) => c.scrollHeight > c.clientHeight + 2 || c.querySelector(".formula-body").scrollHeight > c.querySelector(".formula-body").clientHeight + 2 || flowHeight(c) > c.getBoundingClientRect().height / (el2.getBoundingClientRect().width / (el2.offsetWidth || 1) || 1) + 2 || c.querySelector(".formula-expression").scrollWidth > c.querySelector(".formula-expression").clientWidth + 2 || c.querySelector(".formula-error"));
+      const horizontalText = m.type === "text" && [...el2.querySelectorAll(".part-title-text,.paragraph")].some((n) => n.scrollWidth > n.clientWidth + 2);
+      const overflow = horizontalText || formulaBad || target.scrollHeight > target.clientHeight + 2 || target.scrollWidth > target.clientWidth + 2 || measuredHeight(el2, m) > m.h + 2 || clippedPart;
+      el2.classList.toggle("overflowing", overflow);
       if (overflow) errors.push(`${m.id}：内容溢出，请删改或扩大模块。`);
     }
     return errors;
@@ -18297,10 +18512,10 @@ body.export-view .toc-note:empty{display:none}
       if (index2 < 0 || index2 >= this.getProject().slides.length) return;
       if (this.present && this.overview) {
         this.onIndex(index2);
-        this.root.querySelectorAll(".view-page").forEach((el) => {
-          const active = Number(el.dataset.viewPage) === index2;
-          el.classList.toggle("is-current", active);
-          const frame = el.querySelector(".canvas-frame");
+        this.root.querySelectorAll(".view-page").forEach((el2) => {
+          const active = Number(el2.dataset.viewPage) === index2;
+          el2.classList.toggle("is-current", active);
+          const frame = el2.querySelector(".canvas-frame");
           if (active) frame.id = "canvas";
           else frame.removeAttribute("id");
         });
@@ -18673,11 +18888,11 @@ body.export-view .toc-note:empty{display:none}
     return m.type === "table" ? m.sectionedTable ? m.parts[tablePartIndex(m)]?.title || "" : m.tableTitle || "" : m.groupTitle || (m.parts.length === 1 ? m.parts[0].title : "");
   }
   function syncTextDelete() {
-    const el = $("#delete-edit-scope");
-    if (!el) return;
+    const el2 = $("#delete-edit-scope");
+    if (!el2) return;
     const m = slide().modules.find((m2) => m2.id === editingTarget?.moduleId);
-    el.disabled = !m || editingTarget?.slideId !== slide().id || (textBlocks?.batch().length || 0) > 1;
-    el.querySelector('option[value="part"]').disabled = !m || editingTarget?.part === null || m.parts.length <= 1;
+    el2.disabled = !m || editingTarget?.slideId !== slide().id || (textBlocks?.batch().length || 0) > 1;
+    el2.querySelector('option[value="part"]').disabled = !m || editingTarget?.part === null || m.parts.length <= 1;
   }
   function childControls(m) {
     return '<div class="timeline-stage-controls">' + m.parts.map((p, i2) => '<div class="field-line"><span class="stage-label" title="' + esc5(p.title || p.caption || "子区域") + '">' + (i2 + 1) + " · " + esc5(p.title || p.caption || "子区域") + '</span><button data-child-move="' + i2 + '" data-direction="-1" ' + (i2 === 0 ? "disabled" : "") + ' title="子区域上移" aria-label="子区域上移">↑</button><button data-child-move="' + i2 + '" data-direction="1" ' + (i2 === m.parts.length - 1 ? "disabled" : "") + ' title="子区域下移" aria-label="子区域下移">↓</button><button data-child-remove="' + i2 + '" ' + (m.parts.length <= 1 ? "disabled" : "") + ">删除</button></div>").join("") + "</div>";
@@ -18819,27 +19034,27 @@ body.export-view .toc-note:empty{display:none}
   var slide = () => project.slides[index];
   var selectedModule = () => slide().modules.find((m) => m.id === selected);
   var hex = /^#[\da-f]{6}$/i;
-  function updateTextElement(el, lineSpacing = null, colorChoice = null, options = {}) {
-    const moduleEl = el.closest("[data-module]"), m = moduleEl ? slide().modules.find((n) => n.id === moduleEl.dataset.module) : null;
+  function updateTextElement(el2, lineSpacing = null, colorChoice = null, options = {}) {
+    const moduleEl = el2.closest("[data-module]"), m = moduleEl ? slide().modules.find((n) => n.id === moduleEl.dataset.module) : null;
     let owner, key2, cell;
-    if (el.dataset.slideField) {
+    if (el2.dataset.slideField) {
       owner = slide();
-      key2 = el.dataset.slideField;
-    } else if (el.dataset.row !== void 0) {
-      owner = el.dataset.tablePart !== void 0 ? m.parts[Number(el.dataset.tablePart)] : m;
-      cell = el.dataset.row + "," + el.dataset.col;
+      key2 = el2.dataset.slideField;
+    } else if (el2.dataset.row !== void 0) {
+      owner = el2.dataset.tablePart !== void 0 ? m.parts[Number(el2.dataset.tablePart)] : m;
+      cell = el2.dataset.row + "," + el2.dataset.col;
       key2 = "cell";
-    } else if (el.dataset.moduleField) {
+    } else if (el2.dataset.moduleField) {
       owner = m;
-      key2 = el.dataset.moduleField;
+      key2 = el2.dataset.moduleField;
     } else if (m) {
-      owner = m.parts[Number(el.dataset.part)];
-      key2 = el.dataset.field;
+      owner = m.parts[Number(el2.dataset.part)];
+      key2 = el2.dataset.field;
     }
     if (!owner || !key2) return;
-    const value = readRich(el);
+    const value = readRich(el2);
     if (colorChoice) {
-      const theme = project.theme, base = getComputedStyle(el).color.match(/\d+/g), original = base ? "#" + base.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, "0")).join("") : "", target = colorChoice === "theme" ? theme.primary : colorChoice === "emphasis" ? theme.emphasis : colorChoice === "original" ? original : colorChoice;
+      const theme = project.theme, base = getComputedStyle(el2).color.match(/\d+/g), original = base ? "#" + base.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, "0")).join("") : "", target = colorChoice === "theme" ? theme.primary : colorChoice === "emphasis" ? theme.emphasis : colorChoice === "original" ? original : colorChoice;
       for (const run of value.runs) {
         if (run.color?.toLowerCase() !== target?.toLowerCase()) continue;
         if (colorChoice === "original") delete run.color;
@@ -18847,7 +19062,7 @@ body.export-view .toc-note:empty{display:none}
       }
     }
     if (cell) {
-      owner.rows[Number(el.dataset.row)][Number(el.dataset.col)] = value.text;
+      owner.rows[Number(el2.dataset.row)][Number(el2.dataset.col)] = value.text;
       owner.cellRich ??= {};
       owner.cellRich[cell] = value.runs;
       owner.cellParagraphs ??= {};
@@ -18913,11 +19128,11 @@ body.export-view .toc-note:empty{display:none}
     newDialog("toc-add-dialog", "添加目录子区域", `<label>选择目录条目<select id="toc-add-choice">${hidden.map((ch2) => `<option value="${ch2.id}">恢复：${esc5(ch2.number + " " + ch2.title)}</option>`).join("")}<option value="custom">自定义目录条目</option></select></label><p class="hint">删除自动目录条目不会删除实际章节；恢复后标题与页码继续自动更新。自定义条目可直接编辑标题与说明。</p>`);
   }
   function toast(t, error = false) {
-    const el = $("#toast");
-    el.textContent = t;
-    el.classList.toggle("error", error);
+    const el2 = $("#toast");
+    el2.textContent = t;
+    el2.classList.toggle("error", error);
     clearTimeout(timer);
-    timer = setTimeout(() => el.textContent = "", 7e3);
+    timer = setTimeout(() => el2.textContent = "", 7e3);
   }
   function savePoint() {
     history2.push(clone(project));
@@ -19027,7 +19242,7 @@ body.export-view .toc-note:empty{display:none}
     initInspectorResizer();
     new MutationObserver(() => {
       const stats = $$(".stat", $("#inspector"));
-      if (stats.length > 1) stats.slice(1).forEach((el) => el.classList.replace("stat", "icon-status"));
+      if (stats.length > 1) stats.slice(1).forEach((el2) => el2.classList.replace("stat", "icon-status"));
     }).observe($("#inspector"), { childList: true, subtree: true });
     document.addEventListener("click", click);
     document.addEventListener("input", input);
@@ -19046,13 +19261,13 @@ body.export-view .toc-note:empty{display:none}
     });
     document.addEventListener("focusin", (e) => {
       if (e.target.isContentEditable || e.target.id === "speaker-notes") savePoint();
-      const el = e.target.closest('[data-text][contenteditable="true"]');
-      if (el && $("#canvas").contains(el)) {
-        const owner = el.closest("[data-module]");
+      const el2 = e.target.closest('[data-text][contenteditable="true"]');
+      if (el2 && $("#canvas").contains(el2)) {
+        const owner = el2.closest("[data-module]");
         selected = owner?.dataset.module || null;
-        editingTarget = owner ? { slideId: slide().id, moduleId: owner.dataset.module, part: el.dataset.tablePart !== void 0 ? Number(el.dataset.tablePart) : el.dataset.part !== void 0 ? Number(el.dataset.part) : null } : null;
+        editingTarget = owner ? { slideId: slide().id, moduleId: owner.dataset.module, part: el2.dataset.tablePart !== void 0 ? Number(el2.dataset.tablePart) : el2.dataset.part !== void 0 ? Number(el2.dataset.part) : null } : null;
         if (editingTarget?.part !== null && editingTarget?.part !== void 0) childFocus.set(owner.dataset.module, editingTarget.part);
-        freeText.focus(el);
+        freeText.focus(el2);
         syncTextDelete();
         inspector();
       }
@@ -19161,7 +19376,7 @@ body.export-view .toc-note:empty{display:none}
   }
   function mountInlineMathControl() {
     const stats = $$(".stat", $("#inspector"));
-    if (stats.length > 1) stats.slice(1).forEach((el) => el.classList.replace("stat", "icon-status"));
+    if (stats.length > 1) stats.slice(1).forEach((el2) => el2.classList.replace("stat", "icon-status"));
     const m = selectedModule();
     if (m?.type !== "text" || m.textBox) return;
     const i2 = childIndex(m), p = m.parts[i2], section = document.createElement("section");
@@ -19212,11 +19427,11 @@ body.export-view .toc-note:empty{display:none}
     const canvas = $("#canvas"), layer = canvas && $(".slide", canvas);
     if (!layer) return;
     layer.classList.toggle("advanced-multi", advanced.mode === "multi");
-    $$(".module", layer).forEach((el) => {
-      const model = slide().modules.find((m) => m.id === el.dataset.module), active = advanced.ids.has(el.dataset.module), invalid = model && (!inside(model, pageBounds()) || layoutItems().some((n) => n.id !== model.id && intersects(model, n)));
-      el.classList.toggle("advanced-candidate", advanced.mode === "multi");
-      el.classList.toggle("advanced-selected", active);
-      el.classList.toggle("layout-invalid", !!invalid);
+    $$(".module", layer).forEach((el2) => {
+      const model = slide().modules.find((m) => m.id === el2.dataset.module), active = advanced.ids.has(el2.dataset.module), invalid = model && (!inside(model, pageBounds()) || layoutItems().some((n) => n.id !== model.id && intersects(model, n)));
+      el2.classList.toggle("advanced-candidate", advanced.mode === "multi");
+      el2.classList.toggle("advanced-selected", active);
+      el2.classList.toggle("layout-invalid", !!invalid);
     });
     if (advanced.ruler) {
       const ruler = document.createElement("div");
@@ -19237,12 +19452,10 @@ body.export-view .toc-note:empty{display:none}
       const move = (ev) => {
         let value = (axis === "x" ? ev.clientX - box.left : ev.clientY - box.top) / s;
         const bounds = pageBounds(), min = axis === "x" ? bounds.x : bounds.y, max = min + (axis === "x" ? bounds.w : bounds.h);
-        value = Math.max(min, Math.min(max, ev.shiftKey ? snap(value, project.grid, min) : value));
+        value = Math.max(min, Math.min(max, showGrid ? snap(value, project.grid, min) : value));
         if (axis === "x") advanced.guideX = value;
         else advanced.guideY = value;
         guide.style[axis === "x" ? "left" : "top"] = value + "px";
-        const input2 = $("#alignment-guide-value");
-        if (input2) input2.value = Math.round(value);
       };
       guide.addEventListener("pointermove", move);
       guide.addEventListener("pointerup", () => {
@@ -19265,8 +19478,8 @@ body.export-view .toc-note:empty{display:none}
     if (chosen.length < 2) throw Error("至少选择两个板块。");
     const key2 = axis === "x" ? "width" : "height", start2 = axis === "x" ? "left" : "top", end = axis === "x" ? "right" : "bottom", units = [];
     for (const m of chosen) {
-      const root = $(`[data-module="${m.id}"]`, $("#canvas")), parts = root ? $$(":scope .text-part,:scope .media-part,:scope .timeline-stage,:scope .formula-card", root).filter((el) => el.closest("[data-module]") === root) : [];
-      (parts.length ? parts : [root]).filter(Boolean).forEach((el) => units.push(el.getBoundingClientRect()));
+      const root = $(`[data-module="${m.id}"]`, $("#canvas")), parts = root ? $$(":scope .text-part,:scope .media-part,:scope .timeline-stage,:scope .formula-card", root).filter((el2) => el2.closest("[data-module]") === root) : [];
+      (parts.length ? parts : [root]).filter(Boolean).forEach((el2) => units.push(el2.getBoundingClientRect()));
     }
     const outerStart = Math.min(...units.map((r) => r[start2])), outerEnd = Math.max(...units.map((r) => r[end])), unitSum = units.reduce((n, r) => n + r[key2], 0), partGap = units.length > 1 ? Math.max(0, (outerEnd - outerStart - unitSum) / (units.length - 1) / scale) : 0;
     const next = distributeEven(chosen, axis), others = slide().modules.filter((m) => !advanced.ids.has(m.id));
@@ -19394,10 +19607,10 @@ body.export-view .toc-note:empty{display:none}
     container.style.cssText = themeCSS(project.theme) + ";position:fixed;left:-20000px;top:0;visibility:hidden;";
     container.innerHTML = renderModule({ ...m, ...rect });
     document.body.append(container);
-    const el = $(".module", container);
-    fitTable(el);
-    const target = m.type === "table" ? $(".table-wrap", el) : $(".module-content", el);
-    const good = measuredHeight(el, m) <= rect.h + 2 && target.scrollHeight <= target.clientHeight + 2 && target.scrollWidth <= target.clientWidth + 2;
+    const el2 = $(".module", container);
+    fitTable(el2);
+    const target = m.type === "table" ? $(".table-wrap", el2) : $(".module-content", el2);
+    const good = measuredHeight(el2, m) <= rect.h + 2 && target.scrollHeight <= target.clientHeight + 2 && target.scrollWidth <= target.clientWidth + 2;
     container.remove();
     return good;
   }
@@ -19407,22 +19620,22 @@ body.export-view .toc-note:empty{display:none}
   }
   function syncModulePositions() {
     for (const m of slide().modules) {
-      const el = $(`[data-module="${m.id}"]`, $("#canvas"));
-      if (el) {
-        el.style.left = m.x + "px";
-        el.style.top = m.y + "px";
-        el.style.width = m.w + "px";
-        el.style.height = m.h + "px";
-        fitTable(el);
+      const el2 = $(`[data-module="${m.id}"]`, $("#canvas"));
+      if (el2) {
+        el2.style.left = m.x + "px";
+        el2.style.top = m.y + "px";
+        el2.style.width = m.w + "px";
+        el2.style.height = m.h + "px";
+        fitTable(el2);
       }
     }
   }
   function autoGrow(m) {
     if (!m) return;
-    const el = $(`[data-module="${m.id}"]`, $("#canvas"));
-    if (!el) return;
-    fitTable(el);
-    const needed = Math.ceil(measuredHeight(el, m) / project.grid) * project.grid;
+    const el2 = $(`[data-module="${m.id}"]`, $("#canvas"));
+    if (!el2) return;
+    fitTable(el2);
+    const needed = Math.ceil(measuredHeight(el2, m) / project.grid) * project.grid;
     if (needed > m.h + 2) {
       const rect = { x: m.x, y: m.y, w: m.w, h: needed };
       const plan = planPageChange(m.id, rect);
@@ -19509,7 +19722,7 @@ body.export-view .toc-note:empty{display:none}
     }
   }
   async function themeDialog() {
-    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc5(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><p class="hint">留空保留原标志。标志等比适配，不改色、不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。可选色留空将由主题色派生。</p>`);
+    newDialog("theme-dialog", "主题与学校标志", `<label>学校 / 机构名称<input id="theme-name" value="${esc5(project.theme.name)}"></label><div class="row">${[["primary", "主题色 *"], ["secondary", "第二主题色（可选）"], ["accent", "装饰色（可选）"], ["emphasis", "强调色（可选）"], ["tint", "卡片浅底（可选）"], ["ink", "正文颜色（可选）"]].map(([k, t]) => `<label>${t}<span class="field-line"><input type="color" data-color-for="theme-${k}" value="${project.theme[k]}"><input id="theme-${k}" value="${project.theme[k]}" placeholder="#RRGGBB"></span></label>`).join("")}</div><label>独立校徽<input id="theme-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><label>包含校名的组合标识<input id="theme-wordmark" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"></label><p class="hint">换肤时应同时检查主色、浅底、正文色和两套标志；自定义标志优先上传 SVG。标志等比适配，不拉伸。<a href="https://www.cnblogs.com/cdz-111/articles/22432508" target="_blank" rel="noopener" title="发布于 2026-08-12 22:38">中国高校校徽（LOGO）官方下载资源汇总</a>。</p>`);
   }
   function pageSettings() {
     newDialog("page-dialog", "页面标题与来源", `<label>标题<textarea id="page-title" rows="2">${esc5(slide().title)}</textarea></label><label>章节归属<select id="page-chapter-mode"><option value="auto" ${slide().chapterMode !== "manual" ? "selected" : ""}>自动继承最近过渡页</option><option value="manual" ${slide().chapterMode === "manual" ? "selected" : ""}>自定义章节／无过渡页附录</option></select></label><div class="row"><label>章节号／附录标签<input id="page-section" value="${esc5(slide().section)}"></label><label>章节名称<input id="page-group" value="${esc5(slide().group)}"></label></div><label>页首句（可选，留空不显示）<textarea id="page-lead" rows="2">${esc5(slide().lead)}</textarea></label><label>页尾总结（可选；主题色底、白字、16 pt 加粗）<textarea id="page-summary" rows="2">${esc5(slide().summary)}</textarea></label><label>左下角脚注<input id="page-footer" value="${esc5(slide().footer ?? project.theme.name + " · 科研汇报")}"></label><label>本页备注（仅演讲者可见）<textarea id="page-notes" rows="5" placeholder="写下讲解要点、过渡提示或补充数据…">${esc5(slide().notes || "")}</textarea></label><p class="hint">保存后，点击顶部“页面备注”即自动载入；与备注面板共用同一份内容。</p><label>脚注来源文字<input id="page-source" value="${esc5(slide().source)}"></label><label>来源链接（http / https 或 #slide-页面ID）<input id="page-url" value="${esc5(slide().sourceUrl)}"></label>`);
@@ -19706,11 +19919,11 @@ body.export-view .toc-note:empty{display:none}
       }
       const action = button?.dataset.action;
       if (!action) {
-        const el = e.target.closest("[data-module]");
-        if (el && $("#canvas").contains(el) && ["edit", "delete"].includes(mode)) {
-          selected = el.dataset.module;
+        const el2 = e.target.closest("[data-module]");
+        if (el2 && $("#canvas").contains(el2) && ["edit", "delete"].includes(mode)) {
+          selected = el2.dataset.module;
           $$("#canvas .module.selected").forEach((node) => node.classList.remove("selected"));
-          el.classList.add("selected");
+          el2.classList.add("selected");
           inspector();
           if (mode === "delete") newDialog("delete-dialog", "删除模块", `<p>删除所选模块及其内容？其他模块将保留。</p>`, "确认删除");
         }
@@ -20184,51 +20397,51 @@ body.export-view .toc-note:empty{display:none}
     }
   }
   function input(e) {
-    const el = e.target;
-    if (el.id === "formula-latex") {
+    const el2 = e.target;
+    if (el2.id === "formula-latex") {
       previewFormula();
       return;
     }
-    if (el.id === "speaker-notes") {
-      slide().notes = el.value;
+    if (el2.id === "speaker-notes") {
+      slide().notes = el2.value;
       persist();
       return;
     }
-    if (el.id === "style-header-width") {
+    if (el2.id === "style-header-width") {
       refreshStylePreview();
       return;
     }
-    if (el.id === "module-header-width") {
+    if (el2.id === "module-header-width") {
       const target = $("#canvas .module.selected .text-parts") || $("#canvas .module.selected .text-group-shell");
-      target?.style.setProperty("--title-width", el.value + "%");
-      $("#header-width-value").textContent = el.value + "%";
+      target?.style.setProperty("--title-width", el2.value + "%");
+      $("#header-width-value").textContent = el2.value + "%";
       return;
     }
-    if (el.matches("[data-color-for]")) {
-      $("#" + el.dataset.colorFor).value = el.value;
+    if (el2.matches("[data-color-for]")) {
+      $("#" + el2.dataset.colorFor).value = el2.value;
       return;
     }
-    if (el.id.startsWith("media-")) return cropPreview();
-    if (el.id === "grid-step") {
-      project.grid = Number(el.value);
+    if (el2.id.startsWith("media-")) return cropPreview();
+    if (el2.id === "grid-step") {
+      project.grid = Number(el2.value);
       $("#grid-label").textContent = project.grid + " px";
       $("#canvas").style.setProperty("--grid", project.grid + "px");
       inspector();
       persist();
       return;
     }
-    if (!el.isContentEditable || !$("#canvas").contains(el)) return;
-    updateTextElement(el);
+    if (!el2.isContentEditable || !$("#canvas").contains(el2)) return;
+    updateTextElement(el2);
     persist();
     check();
     clearTimeout(window.thumbTimer);
     window.thumbTimer = setTimeout(updateSidebar, 500);
   }
-  function changeSpacing(el, m) {
+  function changeSpacing(el2, m) {
     const ids = { "table-row-height": ["rowHeightPt", 120], "table-cell-padding": ["cellPaddingPt", 18], "reference-row-height": ["referenceRowHeightPt", 120], "reference-cell-padding": ["referenceCellPaddingPt", 18] };
-    if (!ids[el.id]) return false;
-    const [key2, max] = ids[el.id], owner = el.id.startsWith("reference-") ? slide() : m ? currentTable(m) : m;
-    const value = el.value.trim() === "" ? void 0 : Number(el.value);
+    if (!ids[el2.id]) return false;
+    const [key2, max] = ids[el2.id], owner = el2.id.startsWith("reference-") ? slide() : m ? currentTable(m) : m;
+    const value = el2.value.trim() === "" ? void 0 : Number(el2.value);
     if (value !== void 0 && (!Number.isFinite(value) || value < 0 || value > max)) throw Error("请填写0到" + max + " pt之间的数值。");
     if (!owner) return true;
     savePoint();
@@ -20240,37 +20453,37 @@ body.export-view .toc-note:empty{display:none}
     return true;
   }
   function alignmentChange(e) {
-    const el = e.target;
-    if (el.id === "part-markdown-math") {
+    const el2 = e.target;
+    if (el2.id === "part-markdown-math") {
       e.stopImmediatePropagation();
       const m = selectedModule();
       if (!m) return;
       savePoint();
-      m.parts[childIndex(m)].markdownMath = el.checked;
+      m.parts[childIndex(m)].markdownMath = el2.checked;
       render3();
       persist();
       return;
     }
-    if (el.id === "part-icon-hidden") {
+    if (el2.id === "part-icon-hidden") {
       e.stopImmediatePropagation();
       const m = selectedModule();
       if (!m) return;
       savePoint();
-      m.parts[childIndex(m)].icon.hidden = el.checked;
+      m.parts[childIndex(m)].icon.hidden = el2.checked;
       render3();
       persist();
       return;
     }
-    if (el.id === "alignment-ruler") {
+    if (el2.id === "alignment-ruler") {
       e.stopImmediatePropagation();
-      advanced.ruler = el.checked;
+      advanced.ruler = el2.checked;
       render3({ sidebar: false });
       advancedPanel();
       return;
     }
-    if (el.id === "alignment-guide-value") {
+    if (el2.id === "alignment-guide-value") {
       e.stopImmediatePropagation();
-      const axis = alignmentAxis(advanced.mode), bounds = pageBounds(), value = Number(el.value), min = axis === "x" ? bounds.x : bounds.y, max = min + (axis === "x" ? bounds.w : bounds.h);
+      const axis = alignmentAxis(advanced.mode), bounds = pageBounds(), value = Number(el2.value), min = axis === "x" ? bounds.x : bounds.y, max = min + (axis === "x" ? bounds.w : bounds.h);
       if (!Number.isFinite(value) || value < min || value > max) {
         toast("参考线位置必须在正文安全区内。", true);
         return;
@@ -20296,39 +20509,39 @@ body.export-view .toc-note:empty{display:none}
     const mediaApply = e.target.id === "media-file" ? $('[data-action="media-dialog-apply"]') : null;
     if (mediaApply) mediaApply.disabled = true;
     try {
-      const el = e.target, m = selectedModule();
-      if (el.id === "formula-use-theme") {
+      const el2 = e.target, m = selectedModule();
+      if (el2.id === "formula-use-theme") {
         previewFormula();
         return;
       }
-      if (el.id === "formula-card-style") {
+      if (el2.id === "formula-card-style") {
         savePoint();
-        m.style = el.value;
-        if (m.type === "table") m.cardStyle = el.value;
+        m.style = el2.value;
+        if (m.type === "table") m.cardStyle = el2.value;
         render3();
         autoGrow(m);
         persist();
         return;
       }
-      if (el.id === "symbol-theme-color") {
+      if (el2.id === "symbol-theme-color") {
         if (!m) return;
         savePoint();
-        m.mathUseThemeColor = el.checked;
+        m.mathUseThemeColor = el2.checked;
         for (const p of m.parts) delete p.useThemeColor;
         for (const owner of m.sectionedTable ? m.parts : [m]) delete owner.cellMathColors;
         render3();
         persist();
         return;
       }
-      if (el.id === "table-auto-font") {
+      if (el2.id === "table-auto-font") {
         savePoint();
-        currentTable(m).fixedFont = !el.checked;
+        currentTable(m).fixedFont = !el2.checked;
         render3();
         persist();
         return;
       }
-      if (el.id === "table-font-size") {
-        const value = Number(el.value);
+      if (el2.id === "table-font-size") {
+        const value = Number(el2.value);
         if (![10, 12, 14, 16].includes(value)) return;
         savePoint();
         const owner = currentTable(m);
@@ -20341,18 +20554,18 @@ body.export-view .toc-note:empty{display:none}
         persist();
         return;
       }
-      if (el.id === "insert-menu") {
-        const value = el.value;
-        el.value = "";
+      if (el2.id === "insert-menu") {
+        const value = el2.value;
+        el2.value = "";
         drawRect = null;
         drawing = false;
         if (value === "more") insertDialog();
         else if (value) quickInsert(value);
         return;
       }
-      if (el.id === "delete-edit-scope") {
-        const scope = el.value;
-        el.value = "";
+      if (el2.id === "delete-edit-scope") {
+        const scope = el2.value;
+        el2.value = "";
         if (!scope) return;
         const target = editingTarget, owner = slide().modules.find((m2) => m2.id === target?.moduleId);
         if (!owner || target.slideId !== slide().id) {
@@ -20364,27 +20577,27 @@ body.export-view .toc-note:empty{display:none}
         newDialog("delete-edit-text-dialog", isPart ? "删除当前子区域" : "删除整个模块", "<p>确认删除“" + esc5(label) + "”及其中内容？可使用撤销恢复。</p>", "确认删除");
         return;
       }
-      if (el.id === "module-title-show") {
+      if (el2.id === "module-title-show") {
         savePoint();
-        m.showTitle = el.checked;
+        m.showTitle = el2.checked;
         render3();
         persist();
         return;
       }
-      if (el.id === "module-name") {
+      if (el2.id === "module-name") {
         savePoint();
         if (m.type === "table") {
-          if (m.sectionedTable) currentTable(m).title = el.value;
-          else m.tableTitle = el.value;
-        } else if (m.type === "text" && !m.groupTitle && m.parts.length === 1 && m.style !== "note") m.parts[0].title = el.value;
-        else if (m.type === "text") m.groupTitle = el.value;
+          if (m.sectionedTable) currentTable(m).title = el2.value;
+          else m.tableTitle = el2.value;
+        } else if (m.type === "text" && !m.groupTitle && m.parts.length === 1 && m.style !== "note") m.parts[0].title = el2.value;
+        else if (m.type === "text") m.groupTitle = el2.value;
         render3();
         autoGrow(m);
         persist();
         return;
       }
-      if (el.id === "card-padding") {
-        const value = el.value.trim() === "" ? void 0 : Number(el.value);
+      if (el2.id === "card-padding") {
+        const value = el2.value.trim() === "" ? void 0 : Number(el2.value);
         if (value !== void 0 && (!Number.isFinite(value) || value < 1 || value > 24)) throw Error("卡片内边距为1–24pt。");
         savePoint();
         if (value === void 0) delete m.cardPaddingPt;
@@ -20394,154 +20607,154 @@ body.export-view .toc-note:empty{display:none}
         persist();
         return;
       }
-      if (el.id === "history-table") {
+      if (el2.id === "history-table") {
         savePoint();
-        m.profileHistory = el.checked;
-        if (el.checked) m.borderless = false;
+        m.profileHistory = el2.checked;
+        if (el2.checked) m.borderless = false;
         render3();
         persist();
         return;
       }
-      if (changeSpacing(el, m)) return;
-      if (el.id === "text-box-tone") {
+      if (changeSpacing(el2, m)) return;
+      if (el2.id === "text-box-tone") {
         savePoint();
-        m.boxTone = el.value;
+        m.boxTone = el2.value;
         render3();
         persist();
         return;
       }
-      if (el.id === "insert-type") {
-        const box = el.value.startsWith("textbox");
+      if (el2.id === "insert-type") {
+        const box = el2.value.startsWith("textbox");
         $("#insert-count").disabled = box;
         if (box) $("#insert-count").value = "1";
         $("#insert-style").disabled = box;
         return;
       }
-      if (el.id === "adjust-multiplier") {
-        adjustMultiplier = Number(el.value);
+      if (el2.id === "adjust-multiplier") {
+        adjustMultiplier = Number(el2.value);
         return;
       }
-      if (el.id === "view-mode" || el.id === "view-columns") {
+      if (el2.id === "view-mode" || el2.id === "view-columns") {
         viewer.setView($("#view-mode").value, $("#view-columns").value);
         return;
       }
-      if (el.id === "grid-visible") {
-        showGrid = el.checked;
+      if (el2.id === "grid-visible") {
+        showGrid = el2.checked;
         render3();
         return;
       }
-      if (el.id === "resize-anchor") return inspector();
-      if (el.id === "toc-appendix") {
+      if (el2.id === "resize-anchor") return inspector();
+      if (el2.id === "toc-appendix") {
         savePoint();
-        slide().tocIncludeAppendix = el.checked;
-        render3();
-        persist();
-        return;
-      }
-      if (el.id === "toc-page-ranges") {
-        savePoint();
-        m.showPageRanges = el.checked;
+        slide().tocIncludeAppendix = el2.checked;
         render3();
         persist();
         return;
       }
-      if (el.id === "hide-timeline") {
+      if (el2.id === "toc-page-ranges") {
         savePoint();
-        m.hideTimeline = el.checked;
+        m.showPageRanges = el2.checked;
+        render3();
+        persist();
+        return;
+      }
+      if (el2.id === "hide-timeline") {
+        savePoint();
+        m.hideTimeline = el2.checked;
         render3();
         autoGrow(m);
         persist();
         return;
       }
-      if (el.id === "module-style") {
+      if (el2.id === "module-style") {
         savePoint();
-        m.style = el.value;
+        m.style = el2.value;
         if (m.style === "note") m.columns = 1;
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "module-columns") {
+      if (el2.id === "module-columns") {
         savePoint();
-        m.columns = Number(el.value);
+        m.columns = Number(el2.value);
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "bullet-marker") {
+      if (el2.id === "bullet-marker") {
         savePoint();
         m.parts.forEach((p) => {
-          p.bullet = !!el.value;
-          p.marker = el.value || "•";
+          p.bullet = !!el2.value;
+          p.marker = el2.value || "•";
         });
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "bullet-custom") {
-        if (/[<>\"';&\\]/.test(el.value)) throw Error("请使用简短的前导符，如 ✓、○、①。");
+      if (el2.id === "bullet-custom") {
+        if (/[<>\"';&\\]/.test(el2.value)) throw Error("请使用简短的前导符，如 ✓、○、①。");
         savePoint();
         m.parts.forEach((p) => {
-          p.bullet = !!el.value;
-          p.marker = el.value || "•";
+          p.bullet = !!el2.value;
+          p.marker = el2.value || "•";
         });
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "table-note") {
+      if (el2.id === "table-note") {
         savePoint();
-        currentTable(m).tableNote = el.value;
+        currentTable(m).tableNote = el2.value;
         render3();
         persist();
         return;
       }
-      if (el.id === "band-title") {
+      if (el2.id === "band-title") {
         savePoint();
-        m.bandTitle = el.checked;
+        m.bandTitle = el2.checked;
         render3();
         persist();
         return;
       }
-      if (el.id === "borderless-table") {
+      if (el2.id === "borderless-table") {
         savePoint();
-        m.borderless = el.checked;
+        m.borderless = el2.checked;
         render3();
         persist();
         return;
       }
-      if (el.id === "header-rows") {
+      if (el2.id === "header-rows") {
         savePoint();
-        currentTable(m).headerRows = Math.max(0, Math.min(currentTable(m).rows.length, Number(el.value)));
+        currentTable(m).headerRows = Math.max(0, Math.min(currentTable(m).rows.length, Number(el2.value)));
         render3();
         persist();
       }
-      if (el.id === "module-header-width") {
+      if (el2.id === "module-header-width") {
         savePoint();
-        m.headerWidth = Number(el.value);
+        m.headerWidth = Number(el2.value);
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "number-start") {
+      if (el2.id === "number-start") {
         savePoint();
-        m.numberStart = Math.max(1, Math.min(99, Number(el.value) || 1));
+        m.numberStart = Math.max(1, Math.min(99, Number(el2.value) || 1));
         render3();
         persist();
       }
-      if (el.id === "show-subheading" || el.id === "show-annotation") {
+      if (el2.id === "show-subheading" || el2.id === "show-annotation") {
         savePoint();
-        const flag = el.id === "show-subheading" ? "showSubheading" : "showAnnotation", field2 = el.id === "show-subheading" ? "subheading" : "annotation";
+        const flag = el2.id === "show-subheading" ? "showSubheading" : "showAnnotation", field2 = el2.id === "show-subheading" ? "subheading" : "annotation";
         m.parts.forEach((p) => {
-          p[flag] = el.checked;
-          if (el.checked && !p[field2]) p[field2] = field2 === "subheading" ? "正文子标题" : "补充注释信息";
+          p[flag] = el2.checked;
+          if (el2.checked && !p[field2]) p[field2] = field2 === "subheading" ? "正文子标题" : "补充注释信息";
         });
         render3();
         autoGrow(m);
         persist();
       }
-      if (el.id === "media-file") {
-        const f = el.files[0];
+      if (el2.id === "media-file") {
+        const f = el2.files[0];
         if (!f) return;
         if (f.size > 25 * 1024 * 1024) throw Error("单个媒体文件不得超过 25 MB。");
         if (!/^(image\/(png|jpeg|webp|svg\+xml)|video\/(mp4|webm))$/.test(f.type)) throw Error("请选择PNG/JPEG/WebP/SVG/SVG或MP4/WebM文件。");
@@ -20564,7 +20777,7 @@ body.export-view .toc-note:empty{display:none}
         currentAsset = { kind: f.type.startsWith("image/") ? "image" : "video", src, name: f.name, mime: f.type, naturalRatio: ratio, ratio: 16 / 9, zoom: 1, cx: 50, cy: 50, fit: "cover" };
         cropPreview();
       }
-      if (el.id === "media-ratio") cropPreview();
+      if (el2.id === "media-ratio") cropPreview();
     } catch (error) {
       toast(error.message, true);
     } finally {
@@ -20828,7 +21041,7 @@ body.export-view .toc-note:empty{display:none}
       project = await fetch("/api/render/" + token).then((r) => r.json());
       document.title = project.title;
       $("#app").innerHTML = project.slides.map((s, i2) => renderSlide(s, project.theme, i2, project.slides.length, false, project)).join("");
-      $$(".slide").forEach((el) => el.id = "slide-" + el.dataset.slide);
+      $$(".slide").forEach((el2) => el2.id = "slide-" + el2.dataset.slide);
       await document.fonts.ready;
       await Promise.all($$("img").map((im) => im.decode().catch(() => {
       })));
@@ -20876,6 +21089,15 @@ body.export-view .toc-note:empty{display:none}
       resizeCanvas();
       check();
     });
+    startTutorial({ onSkipTheme: () => {
+      const preset = project.theme.presets?.ustbRed;
+      if (!preset) return;
+      savePoint();
+      project.theme = { ...project.theme, ...clone(preset), presets: project.theme.presets };
+      render3();
+      persist();
+      toast("已跳过主题换肤练习，并自动切换到完整钢铁红状态。");
+    } });
     if (location.protocol !== "file:") {
       Promise.all([fetch("/styles.css").then((r) => r.text()), fetch("/app.bundle.js").then((r) => r.text())]).then(([css, js]) => {
         runtimeCSS = css;

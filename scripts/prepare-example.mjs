@@ -4,6 +4,7 @@ import {schoolOptions} from '../src/server/schools.mjs';
 import {writeDocument} from './build-document.mjs';
 import {validateProject,clone} from '../src/model.js';
 import {applyLishuiVariant} from '../src/school-variants.js';
+import {svgDataURL} from '../src/svg.js';
 await fs.mkdir('ect',{recursive:true});
 const family='templates/template-1';
 const blueFile=family+'/ustb-blue/template.html';
@@ -19,6 +20,7 @@ try{
 }catch(error){if(error.code!=='ENOENT')throw error;master=createExample(await schoolOptions('ustb'));}
 for(const school of (process.argv.includes('--lishui-only')?['lishui']:['ustb'])){
  const project=clone(master);if(school==='lishui')applyLishuiVariant(project,await schoolOptions('lishui'));
+ if(school==='ustb')project.theme.presets={...(project.theme.presets||{}),ustbRed:{name:'北京科技大学 · 钢铁红',primary:'#A31418',secondary:'#851014',accent:'#C53A3F',emphasis:'#A31418',tint:'#FCF1EE',ink:'#000000',logo:svgDataURL(await fs.readFile(family+'/ustb-blue/assets/red-logo-solo.svg','utf8')),wordmark:svgDataURL(await fs.readFile(family+'/ustb-blue/assets/logo-full-steel-red.svg','utf8'))}};
  project.title=school==='ustb'?'北京科技大学_WebSlide科研汇报示例':'丽水学院_WebSlide制作与演示指南';
  await fs.writeFile('ect/'+school+'-project.json',JSON.stringify(project));
  const target=school==='lishui'?lishuiFile:blueFile;
