@@ -17,6 +17,8 @@ try{
  await page.goto(pathToFileURL(path.resolve('templates/template-1/ustb-blue/tutorial.html')).href+'?tutorial=1');
  await page.waitForFunction(()=>window.slideStudio);
  const guide=page.locator('.tutorial-guide'),reward=page.locator('.tutorial-reward'),imageSource=async()=>decodeURI(await reward.locator('img').getAttribute('src'));await guide.waitFor();
+ await page.locator('[data-tutorial-full]').click();
+ await guide.locator('h2').filter({hasText:'欢迎进入交互训练场'}).waitFor();
 
  await page.getByRole('button',{name:'我已阅读，继续'}).click();
  await page.waitForTimeout(240);
@@ -50,12 +52,13 @@ try{
  assert.ok(Math.abs(completed.gaps[0]-completed.gaps[1])<.001,'multi-select teaching equalizes the two horizontal gaps');
  assert.equal(completed.ringCount,4,'radial teaching creates four copies from one line of text');
  assert.equal(completed.ringSafe,true,'the four-item radial example stays inside the content area without overlap');
- await page.getByRole('button',{name:'完成并退出'}).click();
+ await page.getByRole('button',{name:'完成全部教程'}).click();
  await page.locator('.tutorial-reward[data-feedback="complete"]').waitFor();
  assert.match(await imageSource(),/做完全部教程\.png/);
  assert.equal(await reward.getAttribute('data-audio'),'synthetic-applause');
  await page.waitForTimeout(520);
  await page.screenshot({path:'ect/tutorial-feedback-complete.png'});
- assert.equal(await guide.count(),0,'completion closes only the tutorial guide after showing the final reward');
+ await page.locator('[data-tutorial-full]').waitFor({timeout:5000});
+ assert.equal(await guide.count(),1,'completion returns to the tutorial home instead of discarding the catalog');
  console.log('PASS standard step cue, group-end reward rules, Tom skip feedback and final applause');
 }finally{await browser.close();}

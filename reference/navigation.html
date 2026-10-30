@@ -71,6 +71,17 @@
 @media(max-width:700px){.tutorial-reward{grid-template-columns:110px minmax(0,1fr);width:min(470px,calc(100vw - 34px));padding:10px}.tutorial-reward img,.tutorial-reward-skip img{height:150px}.tutorial-reward strong{font-size:21px}.tutorial-reward-complete{grid-template-columns:1fr}.tutorial-reward-complete img{height:230px}}
 .alignment-ruler.tutorial-target{position:absolute!important}
 
+/* Tutorial catalog: each course is independent and reconstructs its prerequisites. */
+.tutorial-guide [hidden]{display:none!important}
+.tutorial-guide.catalog-mode{inset:0!important;transform:none;width:100vw;max-height:100vh;height:100vh;padding:0;overflow:auto;border:0;border-radius:0;background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 5%,#fff),#fff 180px)}
+.tutorial-catalog-screen{width:min(1120px,calc(100vw - 48px));min-height:100%;margin:0 auto;padding:34px 0}
+.tutorial-catalog-heading{display:grid;gap:7px;margin-bottom:20px}.tutorial-catalog-heading h2{margin:0;font-size:28px}.tutorial-catalog-heading p{margin:0;max-width:800px;color:#5f7787;line-height:1.65}.tutorial-catalog-kicker{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--primary)}
+.tutorial-full-course{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:15px;width:100%;margin:0 0 16px;padding:16px 18px;text-align:left;color:#fff;background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 72%,#152f42));border:0;border-radius:13px;box-shadow:0 10px 28px color-mix(in srgb,var(--primary) 22%,transparent)}.tutorial-full-course:hover,.tutorial-full-course:focus-visible{color:#fff;background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 88%,#fff),color-mix(in srgb,var(--primary) 78%,#152f42));border-color:transparent;transform:translateY(-2px);box-shadow:0 14px 32px color-mix(in srgb,var(--primary) 30%,transparent)}.tutorial-full-course>b{display:grid;place-items:center;width:48px;height:48px;border:1px solid #ffffff7a;border-radius:50%;background:#ffffff1f;font-size:19px}.tutorial-full-course>span{display:grid;gap:4px}.tutorial-full-course strong{font-size:19px}.tutorial-full-course small{color:#ffffffd9;font-size:13px;line-height:1.5}.tutorial-full-course>i{padding:5px 10px;border-radius:12px;background:#fff;color:var(--primary);font-size:11px;font-style:normal;font-weight:800;white-space:nowrap}
+.tutorial-catalog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.tutorial-catalog-card{display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:76px;padding:12px 14px;text-align:left;color:#17384d;background:color-mix(in srgb,var(--primary) 5%,white);border:1px solid color-mix(in srgb,var(--primary) 22%,#d7e1e7);border-radius:12px}.tutorial-catalog-card:hover,.tutorial-catalog-card:focus-visible{background:color-mix(in srgb,var(--primary) 10%,white);border-color:var(--primary);box-shadow:0 8px 24px color-mix(in srgb,var(--primary) 16%,transparent);transform:translateY(-2px)}.tutorial-catalog-card>b{display:grid;place-items:center;width:42px;height:42px;border-radius:9px;background:var(--primary);color:#fff;font:700 17px/1 "Times New Roman",serif}.tutorial-catalog-card-copy{display:grid;gap:7px}.tutorial-catalog-card-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:17px;color:var(--primary)}.tutorial-catalog-card>em{align-self:center;padding:3px 7px;border-radius:10px;background:#fff;color:#71838e;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap}.tutorial-catalog-card.completed>em{background:#e6f5e9;color:#247238}.tutorial-catalog-card.completed{border-color:#8ec49a}.tutorial-card-progress{display:block;height:5px;overflow:hidden;border-radius:4px;background:#dbe5ea}.tutorial-card-progress>i{display:block;height:100%;background:var(--primary);border-radius:inherit;transition:width .2s ease}
+.tutorial-catalog-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid #dce5ea}.tutorial-catalog-foot p{margin:0;color:#60798a;font-size:13px}.tutorial-catalog-loading{display:grid;place-items:center;gap:14px;min-height:340px;text-align:center}.tutorial-catalog-loading strong{font-size:24px;color:var(--primary)}.tutorial-catalog-loading p{margin:0;color:#60798a}.tutorial-catalog-meter{width:min(520px,80%);height:10px;overflow:hidden;border-radius:8px;background:#dce6ec}.tutorial-catalog-meter i{display:block;width:0;height:100%;background:var(--primary);transition:width .18s ease}.tutorial-catalog-error{margin:0 26px 16px;padding:12px 15px;color:#9a1520;background:#fff1f1;border-left:4px solid #b81d2c}
+.tutorial-guide.settlement-mode{left:50%!important;right:auto!important;top:50%!important;bottom:auto!important;transform:translate(-50%,-50%);width:min(760px,calc(100vw - 40px));max-height:calc(100vh - 40px);padding:0;overflow:hidden;border-radius:16px}.tutorial-guide.settlement-mode .tutorial-catalog-screen{width:100%;min-height:0;margin:0;padding:0}.tutorial-settlement{display:grid;grid-template-columns:280px minmax(0,1fr);align-items:center;gap:24px;min-height:360px;padding:26px}.tutorial-settlement>img{display:block;width:100%;height:270px;object-fit:contain;filter:drop-shadow(0 14px 22px #102d412c)}.tutorial-settlement-copy{display:grid;gap:8px}.tutorial-settlement-copy>span{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--primary)}.tutorial-settlement-copy h2{margin:0;font-size:30px}.tutorial-settlement-copy p{margin:0;color:#536e7d;line-height:1.65}.tutorial-settlement-actions{grid-column:1/-1;display:flex;justify-content:flex-end;padding-top:16px;border-top:1px solid #dce5ea}
+@media(max-width:900px){.tutorial-catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){.tutorial-catalog-screen{width:calc(100vw - 30px);padding:22px 0}.tutorial-full-course{grid-template-columns:46px minmax(0,1fr)}.tutorial-full-course>i{display:none}.tutorial-catalog-grid{grid-template-columns:1fr}.tutorial-catalog-card{min-height:72px}.tutorial-catalog-foot{align-items:stretch;flex-direction:column}.tutorial-guide.settlement-mode{width:calc(100vw - 24px)}.tutorial-settlement{grid-template-columns:130px minmax(0,1fr);gap:14px;min-height:260px;padding:18px}.tutorial-settlement>img{height:160px}.tutorial-settlement-copy h2{font-size:24px}.tutorial-settlement-actions{grid-column:1/-1}}
+
 /* Shared text components. A/B/C codes correspond to 文本块样式规范.pdf. */
 .text-parts{position:relative;gap:24px;grid-auto-rows:auto}
 .text-part{position:relative;isolation:isolate;gap:14px;overflow:hidden;padding:22px 24px;min-width:0;color:var(--ink)}
@@ -20398,28 +20409,18 @@ body.export-view .toc-note:empty{display:none}
   }
 
   // src/tutorial.js
-  var TUTORIAL_PROGRESS_VERSION = 5;
+  var TUTORIAL_PROGRESS_VERSION = 7;
   var TUTORIAL_RUNTIME_ID = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
-  var tutorialProgressKey = () => `web-slide-tutorial:${location.pathname}`;
+  var tutorialMemoryProgress = null;
   function readTutorialProgress() {
-    try {
-      const saved = JSON.parse(sessionStorage.getItem(tutorialProgressKey()) || "null");
-      return saved?.version === TUTORIAL_PROGRESS_VERSION && Number.isInteger(saved.index) ? saved : null;
-    } catch {
-      return null;
-    }
+    const saved = tutorialMemoryProgress;
+    return saved?.version === TUTORIAL_PROGRESS_VERSION && Number.isInteger(saved.index) ? saved : null;
   }
-  function writeTutorialProgress(index2) {
-    try {
-      sessionStorage.setItem(tutorialProgressKey(), JSON.stringify({ version: TUTORIAL_PROGRESS_VERSION, index: index2, runtimeId: TUTORIAL_RUNTIME_ID, updatedAt: Date.now() }));
-    } catch {
-    }
+  function writeTutorialProgress(index2, state = {}) {
+    tutorialMemoryProgress = { version: TUTORIAL_PROGRESS_VERSION, index: index2, runtimeId: TUTORIAL_RUNTIME_ID, updatedAt: Date.now(), ...state };
   }
   function clearTutorialProgress() {
-    try {
-      sessionStorage.removeItem(tutorialProgressKey());
-    } catch {
-    }
+    tutorialMemoryProgress = null;
   }
   function hasTutorialProgress() {
     return !!readTutorialProgress();
@@ -20449,6 +20450,20 @@ body.export-view .toc-note:empty{display:none}
 改进方法 A	87.9	0.193	39.8
 改进方法 B	89.4	0.181	37.5
 本文方法	91.2	0.164	35.7`;
+  var groupCatalog = [
+    { name: "主题换肤", page: "主题与标志", summary: "逐项修改主题色、浅底、正文色与学校标志。" },
+    { name: "大纲教学", page: "文档大纲", summary: "粘贴三级大纲，建立章节、目录和页面标题。" },
+    { name: "页面设置", page: "页面信息与备注练习", summary: "设置标题、页首句、来源、页尾总结和备注。" },
+    { name: "模块编辑", page: "空白正文与卡片排版", summary: "插入卡片，调整网格、尺寸、位置、样式与子区域。" },
+    { name: "文字编辑", page: "空白正文与卡片排版", summary: "局部修改字号、颜色、列表、间距、对齐和行内公式。" },
+    { name: "表格编辑", page: "表格练习", summary: "导入与批量替换数据，调整行列、字号、行高和样式。" },
+    { name: "公式编辑", page: "公式练习", summary: "插入公式模块，编辑 LaTeX、解释文字和公式颜色。" },
+    { name: "图片与媒体", page: "图片与视频练习", summary: "上传素材，调整比例、取景、并列等高与图标题。" },
+    { name: "高级对齐", page: "高级对齐练习", summary: "练习参考线、标尺、吸附、单边拉伸和多选等距。" },
+    { name: "环形分布", page: "环形文字排版练习", summary: "实时调整半径与角度，并二次编辑已有环形组合。" },
+    { name: "时间轴与图文", page: "时间轴与图文练习", summary: "增删与排序阶段，并切换为普通并列图文卡片。" },
+    { name: "备注与放映", page: "备注、放映与导出练习", summary: "使用备注、演讲者视图、全屏放映、保存和导出。" }
+  ];
   var steps = [
     { group: "开始", title: "欢迎进入交互训练场", text: "这不是视频教程：接下来请直接操作真实工作台。完成一个动作，系统才会带你进入下一步。", notice: "教学统一使用北科科技蓝主模板。红色主题和其他学校版本由同一主模板增量换肤，不重复建设教学。" },
     { group: "主题换肤", title: "从蓝色主模板开始换肤", text: "点击“主题与标志”。接下来把科技蓝主模板改成钢铁红，同时保持页面结构和编辑能力不变。", target: '[data-action="theme"]', event: "click" },
@@ -20695,7 +20710,7 @@ body.export-view .toc-note:empty{display:none}
     } else playApplause();
     setTimeout(() => box.remove(), kind === "complete" ? 3600 : 2100);
   }
-  function startTutorial({ onSkipTheme, force = false, onStateChange } = {}) {
+  function startTutorial({ onSkipTheme, onResetTutorial, force = false, onStateChange } = {}) {
     const requested = new URLSearchParams(location.search).get("tutorial") === "1", existing = document.querySelector(".tutorial-guide");
     if (existing) {
       existing.focus({ preventScroll: false });
@@ -20704,23 +20719,25 @@ body.export-view .toc-note:empty{display:none}
     if (!requested && !force) return null;
     activeTutorialDestroy?.();
     const saved = readTutorialProgress();
-    let index2 = Math.max(0, Math.min(steps.length - 1, saved?.index ?? 0)), target = null, cleanups = [], waitTimer = 0, resuming = !!saved;
+    let index2 = Math.max(0, Math.min(steps.length - 1, saved?.index ?? 0)), target = null, cleanups = [], waitTimer = 0, resuming = !!saved, menuMode = !saved || saved.view === "menu", preparing = false, flowMode = saved?.flowMode || "catalog";
+    const completedGroups = new Set((saved?.completedGroups || []).filter((name) => groupCatalog.some((group) => group.name === name)));
+    const groupProgress = new Map(Object.entries(saved?.groupProgress || {}).filter(([name]) => groupCatalog.some((group) => group.name === name)));
     const root = el("section", "tutorial-guide");
     root.setAttribute("role", "dialog");
     root.setAttribute("aria-live", "polite");
     root.tabIndex = -1;
-    const progress = el("div", "tutorial-progress"), progressLabel = el("div", "tutorial-progress-label"), majorRuler = el("div", "tutorial-ruler major"), minorRuler = el("div", "tutorial-ruler minor"), title = el("h2"), text3 = el("p"), copyBox = el("div", "tutorial-copy"), actions = el("div", "tutorial-actions");
+    const catalog = el("div", "tutorial-catalog-screen"), progress = el("div", "tutorial-progress"), progressLabel = el("div", "tutorial-progress-label"), majorRuler = el("div", "tutorial-ruler major"), minorRuler = el("div", "tutorial-ruler minor"), title = el("h2"), text3 = el("p"), copyBox = el("div", "tutorial-copy"), actions = el("div", "tutorial-actions");
     progress.title = "按住此处可拖动教学卡片";
     progress.append(progressLabel, majorRuler, minorRuler);
-    const exit = el("button", "tutorial-exit", "退出教学"), back = el("button", "tutorial-back", "上一步"), skipStep = el("button", "", "代我完成此步"), skipGroup = el("button", "", "代我完成本项"), next = el("button", "primary", "我已阅读，继续");
-    actions.append(exit, back, skipStep, skipGroup, next);
-    root.append(progress, title, text3, copyBox, actions);
+    const home = el("button", "tutorial-home", "返回教程目录"), back = el("button", "tutorial-back", "上一步"), skipStep = el("button", "", "代我完成此步"), skipGroup = el("button", "", "代我完成本项"), next = el("button", "primary", "我已阅读，继续");
+    actions.append(home, back, skipStep, skipGroup, next);
+    root.append(catalog, progress, title, text3, copyBox, actions);
     document.body.append(root);
     const groupOf = (i2) => {
       for (let n = i2; n >= 0; n--) if (steps[n].group) return steps[n].group;
       return "开始";
     };
-    const groupNames = [...new Set(steps.map((_, i2) => groupOf(i2)))].filter((name) => name !== "开始");
+    const groupNames = groupCatalog.map((group) => group.name);
     const groupMeta = (i2) => {
       const name = groupOf(i2), indices = steps.map((_, n) => n).filter((n) => groupOf(n) === name), position = indices.indexOf(i2) + 1, number = groupNames.indexOf(name) + 1;
       return { name, indices, position, number, total: indices.length };
@@ -20810,9 +20827,14 @@ body.export-view .toc-note:empty{display:none}
       }));
       minorRuler.hidden = meta.name === "开始";
     };
-    const remember = () => {
-      writeTutorialProgress(index2);
-      onStateChange?.({ active: true, index: index2 });
+    const remember = (view = menuMode ? "menu" : "step") => {
+      writeTutorialProgress(index2, { view, flowMode, completedGroups: [...completedGroups], groupProgress: Object.fromEntries(groupProgress) });
+      onStateChange?.({ active: true, index: index2, view, flowMode });
+    };
+    const markProgress = (meta, count = meta.position) => {
+      if (meta.number < 1 || preparing) return;
+      const percent = Math.max(0, Math.min(100, Math.round(count / meta.total * 100))), before = Number(groupProgress.get(meta.name) || 0);
+      groupProgress.set(meta.name, Math.max(before, percent));
     };
     const clear = () => {
       clearTimeout(waitTimer);
@@ -20848,16 +20870,18 @@ body.export-view .toc-note:empty{display:none}
     };
     const destroy = () => stop();
     activeTutorialDestroy = destroy;
-    let feedbackOverride = null, groupRunning = false;
-    const go2 = (nextIndex, { closeModal = false, feedback = null } = {}) => {
+    let feedbackOverride = null, groupRunning = false, automationDelay = 280;
+    const go2 = (nextIndex, { closeModal = false, feedback = null, delay = 120 } = {}) => {
       const completedIndex = index2;
+      if (nextIndex > completedIndex) markProgress(groupMeta(completedIndex));
       if (closeModal) leaveModal();
       clear();
+      menuMode = false;
       index2 = Math.max(0, Math.min(steps.length - 1, nextIndex));
-      remember();
+      remember("step");
       if (feedback === "skip") reward("skip");
       else if (feedback) emitStepFeedback(feedback, completedIndex);
-      setTimeout(show, 120);
+      waitTimer = setTimeout(show, delay);
     };
     const waitFor = (selector) => new Promise((resolve, reject) => {
       let tries = 0;
@@ -20912,17 +20936,28 @@ body.export-view .toc-note:empty{display:none}
       feedbackOverride = null;
       go2(index2 + 1, { feedback });
     };
-    const autoGroup = async () => {
-      const meta = groupMeta(index2), nextIndex = meta.indices.at(-1) + 1;
+    const autoGroup = async ({ silent = false, delay = 340, returnHome = true, markComplete = !silent } = {}) => {
+      const meta = groupMeta(index2), nextIndex = meta.indices.at(-1) + 1, finishSkipped = () => {
+        if (markComplete) {
+          completedGroups.add(meta.name);
+          groupProgress.set(meta.name, 100);
+        }
+        if (silent || !returnHome) go2(nextIndex, { closeModal: true, delay });
+        else if (flowMode === "section") {
+          index2 = meta.indices.at(-1);
+          showSettlement(meta, { assisted: true });
+        } else go2(nextIndex, { closeModal: true, feedback: "skip", delay });
+      };
       try {
         skipGroup.disabled = true;
         skipStep.disabled = true;
         back.disabled = true;
+        next.disabled = true;
         feedbackOverride = null;
         if (meta.name === "主题换肤") {
           clear();
           onSkipTheme?.();
-          go2(nextIndex, { closeModal: true, feedback: "skip" });
+          finishSkipped();
           return;
         } else if (meta.name === "大纲教学") {
           clear();
@@ -20945,10 +20980,11 @@ body.export-view .toc-note:empty{display:none}
           await new Promise((resolve) => setTimeout(resolve, 180));
           dialog2.querySelector("#outline-apply")?.click();
           await new Promise((resolve) => setTimeout(resolve, 180));
-          go2(nextIndex, { closeModal: true, feedback: "skip" });
+          finishSkipped();
           return;
         }
         groupRunning = true;
+        automationDelay = delay;
         const waitState = (test, message) => new Promise((resolve, reject) => {
           let tries = 0;
           const check2 = () => {
@@ -20971,11 +21007,18 @@ body.export-view .toc-note:empty{display:none}
             go2(index2 + 1);
           } else autoStep();
           await waitState(() => index2 !== before, "自动操作没有推进教学");
-          await new Promise((resolve) => setTimeout(resolve, 340));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
         groupRunning = false;
         feedbackOverride = null;
-        reward("skip");
+        if (markComplete) {
+          completedGroups.add(meta.name);
+          groupProgress.set(meta.name, 100);
+        }
+        if (!silent && returnHome) {
+          if (flowMode === "section") showSettlement(meta, { assisted: true });
+          else reward("skip");
+        }
       } catch (error) {
         groupRunning = false;
         feedbackOverride = null;
@@ -20983,16 +21026,169 @@ body.export-view .toc-note:empty{display:none}
         n.innerHTML = "<strong>自动完成失败</strong><span></span>";
         n.querySelector("span").textContent = error.message + "，请完成当前控件或退出后重新进入教学。";
         copyBox.append(n);
+        if (silent) throw error;
       } finally {
         skipGroup.disabled = false;
         skipStep.disabled = false;
         back.disabled = false;
+        next.disabled = false;
+      }
+    };
+    const showMenu = (message = "") => {
+      leaveModal();
+      clear();
+      menuMode = true;
+      preparing = false;
+      flowMode = "catalog";
+      root.style.visibility = "";
+      root.classList.add("catalog-mode");
+      root.classList.remove("settlement-mode");
+      catalog.hidden = false;
+      for (const node of [progress, title, text3, copyBox, actions]) node.hidden = true;
+      const heading = el("div", "tutorial-catalog-heading");
+      heading.append(el("span", "tutorial-catalog-kicker", "WEB SLIDE · 交互教程"), el("h2", "", message || "选择学习方式"), el("p", "", message ? "可以继续完整学习，也可单独练习任意板块。系统会自动准备每个分项需要的前置状态。" : "从头连续完成完整教学，或按需要进入单个板块。进入第 N 项前，系统会自动还原到第 N−1 项完成后的标准状态。"));
+      const full = el("button", "tutorial-full-course");
+      full.type = "button";
+      full.dataset.tutorialFull = "true";
+      const fullIcon = el("b", "", "▶"), fullCopy = el("span"), fullTitle = el("strong", "", "完整教学流程"), fullText = el("small", "", "按原有顺序从主题换肤一直练到备注、放映与导出，板块之间自动衔接。"), fullAction = el("i", "", "从头开始");
+      fullCopy.append(fullTitle, fullText);
+      full.append(fullIcon, fullCopy, fullAction);
+      full.onclick = startFullFlow;
+      const grid = el("div", "tutorial-catalog-grid");
+      groupCatalog.forEach((group, n) => {
+        const button = el("button", "tutorial-catalog-card");
+        button.type = "button";
+        button.dataset.tutorialGroup = String(n + 1);
+        const percent = completedGroups.has(group.name) ? 100 : Number(groupProgress.get(group.name) || 0);
+        if (percent === 100) button.classList.add("completed");
+        const number = el("b", "", String(n + 1).padStart(2, "0")), body = el("span", "tutorial-catalog-card-copy"), name = el("strong", "", group.name), meter = el("span", "tutorial-card-progress"), fill = el("i"), status = el("em", "", `${percent}%`);
+        fill.style.width = `${percent}%`;
+        meter.append(fill);
+        body.append(name, meter);
+        button.append(number, body, status);
+        button.title = `${group.page}：${group.summary}`;
+        button.onclick = () => prepareGroup(n + 1);
+        grid.append(button);
+      });
+      const foot = el("div", "tutorial-catalog-foot"), hint = el("p", "", `本次已完成 ${completedGroups.size} / ${groupCatalog.length} 项。刷新页面或退出后重新进入，进度会清零。`), close2 = el("button", "", "退出教学");
+      close2.onclick = () => stop({ forget: true, removeQuery: true });
+      foot.append(hint, close2);
+      catalog.replaceChildren(heading, full, grid, foot);
+      remember("menu");
+      onStateChange?.({ active: true, index: index2, view: "menu" });
+      root.focus({ preventScroll: true });
+    };
+    const showSettlement = (meta, { assisted = false } = {}) => {
+      leaveModal();
+      clear();
+      menuMode = true;
+      preparing = false;
+      flowMode = "catalog";
+      root.style.visibility = "";
+      root.classList.remove("catalog-mode", "catalog-preparing");
+      root.classList.add("settlement-mode");
+      catalog.hidden = false;
+      for (const node of [progress, title, text3, copyBox, actions]) node.hidden = true;
+      const panel = el("section", "tutorial-settlement"), image = el("img"), copy = el("div", "tutorial-settlement-copy"), kicker = el("span", "", "SECTION COMPLETE"), heading = el("h2", "", `${meta.name} · 通关`), message = el("p", "", assisted ? "本项剩余操作已经自动完成，当前页面保留在该板块的完成状态。" : "本项练习已经完成，当前页面保留你的操作结果。"), buttons = el("div", "tutorial-settlement-actions"), done = el("button", "primary", "返回教程目录");
+      image.src = feedbackURL("做完全部教程.png");
+      image.alt = "汤姆手持奖杯的通关结算图";
+      copy.append(kicker, heading, message);
+      done.onclick = () => showMenu(`${meta.name}已完成`);
+      buttons.append(done);
+      panel.append(image, copy, buttons);
+      catalog.replaceChildren(panel);
+      remember("settlement");
+      root.focus({ preventScroll: true });
+    };
+    const startFullFlow = async () => {
+      if (preparing) return;
+      preparing = true;
+      clear();
+      root.classList.add("catalog-mode", "catalog-preparing");
+      catalog.hidden = false;
+      for (const node of [progress, title, text3, copyBox, actions]) node.hidden = true;
+      const loading = el("div", "tutorial-catalog-loading");
+      loading.append(el("strong", "", "正在恢复完整教学母稿"), el("p", "", "完成后将从主题换肤开始，按原有顺序连续学习。"));
+      catalog.replaceChildren(loading);
+      try {
+        await onResetTutorial?.();
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        completedGroups.clear();
+        groupProgress.clear();
+        index2 = 0;
+        flowMode = "full";
+        menuMode = false;
+        preparing = false;
+        root.classList.remove("catalog-mode", "catalog-preparing", "settlement-mode");
+        catalog.hidden = true;
+        for (const node of [progress, title, text3, copyBox, actions]) node.hidden = false;
+        remember("step");
+        show();
+      } catch (error) {
+        preparing = false;
+        showMenu();
+        const notice = el("aside", "tutorial-catalog-error");
+        notice.textContent = `完整教学准备失败：${error.message}`;
+        catalog.prepend(notice);
+      }
+    };
+    const prepareGroup = async (number) => {
+      const targetGroup = groupCatalog[number - 1];
+      if (!targetGroup || preparing) return;
+      preparing = true;
+      clear();
+      flowMode = "section";
+      root.classList.add("catalog-mode", "catalog-preparing");
+      root.classList.remove("settlement-mode");
+      catalog.hidden = false;
+      for (const node of [progress, title, text3, copyBox, actions]) node.hidden = true;
+      const loading = el("div", "tutorial-catalog-loading"), meter = el("div", "tutorial-catalog-meter"), fill = el("i"), label = el("strong", "", `正在准备：${targetGroup.name}`), detail = el("p", "", number === 1 ? "正在恢复教学母稿，请稍候…" : "正在后台重建本项所需的前置状态，请稍候…");
+      meter.append(fill);
+      loading.append(label, detail, meter);
+      catalog.replaceChildren(loading);
+      try {
+        await onResetTutorial?.();
+        await new Promise((resolve) => setTimeout(resolve, 80));
+        for (let n = 0; n < number - 1; n++) {
+          const name = groupNames[n], meta = groupMeta(steps.findIndex((step) => step.group === name));
+          fill.style.width = `${(n + 1) / (number - 1) * 100}%`;
+          index2 = meta.indices[0];
+          menuMode = false;
+          show();
+          await autoGroup({ silent: true, delay: 24, returnHome: false });
+          clear();
+        }
+        fill.style.width = "100%";
+        const targetIndex = steps.findIndex((step) => step.group === targetGroup.name);
+        index2 = targetIndex;
+        flowMode = "section";
+        menuMode = false;
+        preparing = false;
+        root.classList.remove("catalog-mode", "catalog-preparing", "settlement-mode");
+        catalog.hidden = true;
+        for (const node of [progress, title, text3, copyBox, actions]) node.hidden = false;
+        remember("step");
+        waitTimer = setTimeout(show, 80);
+      } catch (error) {
+        preparing = false;
+        root.classList.remove("catalog-preparing");
+        showMenu();
+        const notice = el("aside", "tutorial-catalog-error");
+        notice.textContent = `前置状态准备失败：${error.message}`;
+        catalog.prepend(notice);
       }
     };
     const show = () => {
       clear();
-      remember();
+      menuMode = false;
+      remember("step");
       manualPosition = false;
+      if (!preparing) {
+        root.classList.remove("catalog-mode", "catalog-preparing");
+        catalog.hidden = true;
+        for (const node of [progress, title, text3, copyBox, actions]) node.hidden = false;
+        root.style.visibility = "";
+      }
       root.style.removeProperty("left");
       root.style.removeProperty("top");
       root.style.removeProperty("right");
@@ -21006,7 +21202,7 @@ body.export-view .toc-note:empty{display:none}
       skipStep.hidden = step.finish;
       skipGroup.hidden = step.finish || meta.name === "开始";
       next.hidden = !!step.event;
-      next.textContent = step.finish ? "完成并退出" : step.input ? "完成填写，继续" : "我已阅读，继续";
+      next.textContent = step.finish ? flowMode === "full" ? "完成全部教程" : "完成本项并查看结算" : step.input ? "完成填写，继续" : "我已阅读，继续";
       if (step.notice) {
         const n = el("aside", "tutorial-notice");
         n.innerHTML = "<strong>必读告示</strong><span></span>";
@@ -21045,30 +21241,32 @@ body.export-view .toc-note:empty{display:none}
             if (fallback !== index2) {
               index2 = fallback;
               resuming = false;
-              remember();
+              remember("step");
               setTimeout(show, 0);
               return;
             }
           }
-          waitTimer = setTimeout(bind, 180);
+          waitTimer = setTimeout(bind, preparing ? 30 : 180);
           return;
         }
         resuming = false;
-        const modal = containingDialog?.open && !containingDialog.classList.contains("radial-dialog-floating") ? containingDialog : null;
+        const modal = !preparing && containingDialog?.open && !containingDialog.classList.contains("radial-dialog-floating") ? containingDialog : null;
         root.classList.toggle("tutorial-modal", !!modal);
         if (modal && !modal.contains(root)) modal.append(root);
         else if (!modal && !document.body.contains(root)) document.body.append(root);
         document.querySelectorAll(".tutorial-target").forEach((node) => node.classList.remove("tutorial-target"));
-        target.classList.add("tutorial-target");
-        target.scrollIntoView({ block: target.matches(".slide-thumb") ? "center" : "nearest", inline: "nearest", behavior: "smooth" });
-        requestAnimationFrame(() => placeGuide(target));
-        const reposition = () => placeGuide(target);
-        addEventListener("resize", reposition);
-        addEventListener("scroll", reposition, true);
-        cleanups.push(() => {
-          removeEventListener("resize", reposition);
-          removeEventListener("scroll", reposition, true);
-        });
+        if (!preparing) {
+          target.classList.add("tutorial-target");
+          target.scrollIntoView({ block: target.matches(".slide-thumb") ? "center" : "nearest", inline: "nearest", behavior: "smooth" });
+          requestAnimationFrame(() => placeGuide(target));
+          const reposition = () => placeGuide(target);
+          addEventListener("resize", reposition);
+          addEventListener("scroll", reposition, true);
+          cleanups.push(() => {
+            removeEventListener("resize", reposition);
+            removeEventListener("scroll", reposition, true);
+          });
+        }
         if (step.event) {
           const done = () => {
             if (step.selectValue !== void 0) {
@@ -21136,12 +21334,12 @@ body.export-view .toc-note:empty{display:none}
           }
         }
         if (meta.name === "大纲教学") {
-          const apply = document.querySelector("#outline-apply"), finish = () => {
-            const nextIndex = meta.indices.at(-1) + 1;
-            setTimeout(() => {
-              if (groupOf(index2) === "大纲教学") go2(nextIndex, { closeModal: true, feedback: "correct" });
-            }, 0);
-          };
+          const apply = document.querySelector("#outline-apply"), finish = () => setTimeout(() => {
+            if (groupOf(index2) !== "大纲教学") return;
+            index2 = meta.indices.at(-1);
+            feedbackOverride = "correct";
+            advance();
+          }, 0);
           apply?.addEventListener("click", finish, { once: true });
           if (apply) cleanups.push(() => apply.removeEventListener("click", finish));
         }
@@ -21149,19 +21347,40 @@ body.export-view .toc-note:empty{display:none}
       bind();
     };
     const advance = () => {
-      if (root.closest("dialog")) document.body.append(root);
+      const ownerDialog = root.closest("dialog"), applying = target?.matches?.('[data-action$="-apply"],#outline-apply');
+      if (ownerDialog) {
+        if (applying) leaveModal();
+        else document.body.append(root);
+      }
       clear();
-      const completedIndex = index2, complete = completedIndex >= steps.length - 1, mode2 = feedbackOverride || "correct";
+      const completedIndex = index2, meta = groupMeta(completedIndex), groupEnd = meta.name !== "开始" && meta.indices.at(-1) === completedIndex, mode2 = feedbackOverride || "correct";
       feedbackOverride = null;
-      if (complete) reward("complete");
-      else if (mode2 !== "silent") emitStepFeedback(mode2, completedIndex);
-      if (complete) {
-        stop({ forget: true, removeQuery: true });
+      markProgress(meta);
+      if (groupEnd && !groupRunning) {
+        completedGroups.add(meta.name);
+        groupProgress.set(meta.name, 100);
+        if (flowMode === "section") {
+          remember("settlement");
+          showSettlement(meta);
+          return;
+        }
+        const finalGroup = meta.name === groupNames.at(-1);
+        if (flowMode === "full" && finalGroup) {
+          reward("complete");
+          remember("menu");
+          waitTimer = setTimeout(() => showMenu("完整教学流程已完成"), 1100);
+          return;
+        }
+        if (mode2 !== "silent") emitStepFeedback(mode2, completedIndex);
+        index2 = Math.min(steps.length - 1, index2 + 1);
+        remember("step");
+        waitTimer = setTimeout(show, groupRunning ? automationDelay : 320);
         return;
       }
-      index2++;
-      remember();
-      setTimeout(show, 280);
+      if (mode2 !== "silent") emitStepFeedback(mode2, completedIndex);
+      index2 = Math.min(steps.length - 1, index2 + 1);
+      remember("step");
+      waitTimer = setTimeout(show, groupRunning ? automationDelay : 280);
     };
     next.onclick = advance;
     back.onclick = () => {
@@ -21170,9 +21389,10 @@ body.export-view .toc-note:empty{display:none}
       go2(index2 - 1, { closeModal });
     };
     skipStep.onclick = autoStep;
-    skipGroup.onclick = autoGroup;
-    exit.onclick = () => stop({ removeQuery: true });
-    show();
+    skipGroup.onclick = () => autoGroup();
+    home.onclick = () => showMenu();
+    if (menuMode) showMenu();
+    else show();
     return { active: true };
   }
 
@@ -21267,7 +21487,7 @@ body.export-view .toc-note:empty{display:none}
     return positionedMarkup(`<section class="slide body-slide" data-slide="${s.id}" style="${themeCSS(theme)}"><div class="top-trim" data-shape></div><header class="slide-header"><div class="section-line"><span class="section-index" data-text data-shape data-slide-field="section" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${s.kind === "toc" ? "目录" : esc5(s.section)}</span><span data-text data-slide-field="group" ${s.kind === "toc" || s.chapterId ? "" : editable(edit, "")}>${esc5(s.kind === "toc" ? "汇报概览" : s.group)}</span></div><h2 data-text data-slide-field="title" ${textStyle(s, "title")} ${editable(edit, "")}>${field(s, "title")}</h2>${s.hideLogo ? "" : theme.logo ? `<img class="slide-logo" data-image src="${esc5(theme.logo)}" alt="校徽">` : `<div class="slide-logo logo-placeholder" data-text>校徽</div>`}<div class="header-rule" data-shape></div></header><div class="slide-lead" data-text data-slide-field="lead" ${textStyle(s, "lead")} ${editable(edit, "")}>${field(s, "lead")}</div>${content}${s.summary ? `<div class="slide-summary" data-shape><div data-text data-slide-field="summary" ${textStyle(s, "summary")} ${editable(edit, "")}>${field(s, "summary")}</div></div>` : ""}<footer class="slide-footer"><span data-text data-slide-field="footer" ${editable(edit, "")}>${field(s, "footer", theme.name + " · 科研汇报")}</span><span class="source" data-text data-slide-field="source" ${textStyle(s, "source")} ${editable(edit, "")}>${s.sourceUrl ? `<a href="${/^(https?:\/\/|#slide-)/.test(s.sourceUrl) ? esc5(s.sourceUrl) : "#"}" target="_blank" rel="noopener">${field(s, "source")}</a>` : esc5(s.source)}</span><span data-text>${String(index2 + 1).padStart(2, "0")} / ${total}</span><div class="footer-rule" data-shape></div></footer></section>`, s);
   }
   function fitMedia(el2) {
-    const scope = el2.closest(".slide") || el2, scale2 = scope.classList.contains("slide") ? scope.getBoundingClientRect().width / W : 1;
+    const scope = el2.matches?.(".module") ? el2 : el2.closest?.(".module") || el2, slide2 = scope.closest?.(".slide"), scale2 = slide2 ? slide2.getBoundingClientRect().width / W : 1;
     const windows = [...scope.querySelectorAll(".media-window:not(.timeline-media)")];
     for (const window2 of windows) {
       window2.closest("figure").style.height = "100%";
@@ -21974,6 +22194,7 @@ body.export-view .toc-note:empty{display:none}
   var freeText;
   var pageList;
   var notesVisible = false;
+  var tutorialSeed = null;
   var adjustMultiplier = 1;
   var holdTimer;
   var holdInterval;
@@ -22020,8 +22241,30 @@ body.export-view .toc-note:empty{display:none}
     button.textContent = state.active || document.querySelector(".tutorial-guide") ? "教学进行中" : hasTutorialProgress() ? "继续教学" : "开始教学";
     button.classList.toggle("active", !!state.active || !!document.querySelector(".tutorial-guide"));
   }
+  function resetTutorialState() {
+    if (!tutorialSeed) tutorialSeed = clone(project);
+    document.querySelectorAll("dialog[open]").forEach((dialog2) => dialog2.close());
+    $("#alignment-panel")?.remove();
+    advanced.mode = null;
+    advanced.ids.clear();
+    advanced.ruler = false;
+    project = clone(tutorialSeed);
+    index = 0;
+    mode = "text";
+    selected = null;
+    notesVisible = false;
+    showGrid = false;
+    drawing = false;
+    drawRect = null;
+    history2 = [];
+    future = [];
+    render3();
+    pageList.reset();
+    viewer.scrollTo(0);
+    persist();
+  }
   function launchTutorial(force = false) {
-    const result = startTutorial({ force, onStateChange: updateTutorialControl, onSkipTheme: () => {
+    const result = startTutorial({ force, onStateChange: updateTutorialControl, onResetTutorial: resetTutorialState, onSkipTheme: () => {
       const preset = project.theme.presets?.ustbRed;
       if (!preset) return;
       savePoint();
@@ -24316,6 +24559,7 @@ body.export-view .toc-note:empty{display:none}
         await loadDefaultLogos();
       }
     }
+    if (isTutorialDocument()) tutorialSeed = clone(project);
     if (location.protocol === "file:") {
       try {
         project.title = decodeURIComponent(location.pathname.split("/").pop()).replace(/\.html?$/i, "") || project.title;

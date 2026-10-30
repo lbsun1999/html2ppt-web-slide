@@ -11,6 +11,13 @@ try{
  await page.locator('a[href*="ustb-blue"]').click();
  await page.waitForFunction(()=>window.slideStudio);
  await page.locator('.tutorial-guide').waitFor();
+ assert.equal(await page.locator('[data-tutorial-group]').count(),12,'tutorial home exposes all independent sections');
+ assert.equal(await page.locator('[data-tutorial-full]').count(),1,'tutorial home preserves the original continuous course');
+ assert.equal(await page.locator('.tutorial-actions').isVisible(),false,'step controls never leak into the tutorial home');
+ const catalogBox=await page.locator('.tutorial-guide').boundingBox();assert.equal(catalogBox.x,0);assert.equal(catalogBox.y,0);assert.equal(catalogBox.width,1720);assert.equal(catalogBox.height,1080);
+ await page.locator('[data-tutorial-full]').hover();const fullHover=await page.locator('[data-tutorial-full]').evaluate(node=>{const css=getComputedStyle(node);return {color:css.color,backgroundImage:css.backgroundImage};});assert.equal(fullHover.color,'rgb(255, 255, 255)');assert.match(fullHover.backgroundImage,/linear-gradient/,'full-course hover keeps a dark gradient instead of inheriting the pale global button hover');
+ await page.locator('[data-tutorial-full]').click();
+ await page.locator('.tutorial-guide h2').filter({hasText:'欢迎进入交互训练场'}).waitFor();
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick').count(),12,'major ruler combines reference and multi-select alignment while keeping radial distribution independent');
  assert.equal(await page.locator('.tutorial-ruler.major .major-tick.active').count(),0,'welcome does not mark a section as active');
  assert.match(await page.locator('.tutorial-guide').innerText(),/欢迎进入交互训练场/);

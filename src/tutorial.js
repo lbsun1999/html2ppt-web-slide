@@ -1,9 +1,9 @@
-const TUTORIAL_PROGRESS_VERSION=5;
+const TUTORIAL_PROGRESS_VERSION=7;
 const TUTORIAL_RUNTIME_ID=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`;
-const tutorialProgressKey=()=>`web-slide-tutorial:${location.pathname}`;
-function readTutorialProgress(){try{const saved=JSON.parse(sessionStorage.getItem(tutorialProgressKey())||'null');return saved?.version===TUTORIAL_PROGRESS_VERSION&&Number.isInteger(saved.index)?saved:null;}catch{return null;}}
-function writeTutorialProgress(index){try{sessionStorage.setItem(tutorialProgressKey(),JSON.stringify({version:TUTORIAL_PROGRESS_VERSION,index,runtimeId:TUTORIAL_RUNTIME_ID,updatedAt:Date.now()}));}catch{}}
-function clearTutorialProgress(){try{sessionStorage.removeItem(tutorialProgressKey());}catch{}}
+let tutorialMemoryProgress=null;
+function readTutorialProgress(){const saved=tutorialMemoryProgress;return saved?.version===TUTORIAL_PROGRESS_VERSION&&Number.isInteger(saved.index)?saved:null;}
+function writeTutorialProgress(index,state={}){tutorialMemoryProgress={version:TUTORIAL_PROGRESS_VERSION,index,runtimeId:TUTORIAL_RUNTIME_ID,updatedAt:Date.now(),...state};}
+function clearTutorialProgress(){tutorialMemoryProgress=null;}
 export function hasTutorialProgress(){return !!readTutorialProgress();}
 let activeTutorialDestroy=null;
 
@@ -32,6 +32,21 @@ const TABLE_TEXT=`方法\t准确率 / % ↑\tRMSE ↓\t耗时 / ms ↓
 改进方法 A\t87.9\t0.193\t39.8
 改进方法 B\t89.4\t0.181\t37.5
 本文方法\t91.2\t0.164\t35.7`;
+
+const groupCatalog=[
+ {name:'主题换肤',page:'主题与标志',summary:'逐项修改主题色、浅底、正文色与学校标志。'},
+ {name:'大纲教学',page:'文档大纲',summary:'粘贴三级大纲，建立章节、目录和页面标题。'},
+ {name:'页面设置',page:'页面信息与备注练习',summary:'设置标题、页首句、来源、页尾总结和备注。'},
+ {name:'模块编辑',page:'空白正文与卡片排版',summary:'插入卡片，调整网格、尺寸、位置、样式与子区域。'},
+ {name:'文字编辑',page:'空白正文与卡片排版',summary:'局部修改字号、颜色、列表、间距、对齐和行内公式。'},
+ {name:'表格编辑',page:'表格练习',summary:'导入与批量替换数据，调整行列、字号、行高和样式。'},
+ {name:'公式编辑',page:'公式练习',summary:'插入公式模块，编辑 LaTeX、解释文字和公式颜色。'},
+ {name:'图片与媒体',page:'图片与视频练习',summary:'上传素材，调整比例、取景、并列等高与图标题。'},
+ {name:'高级对齐',page:'高级对齐练习',summary:'练习参考线、标尺、吸附、单边拉伸和多选等距。'},
+ {name:'环形分布',page:'环形文字排版练习',summary:'实时调整半径与角度，并二次编辑已有环形组合。'},
+ {name:'时间轴与图文',page:'时间轴与图文练习',summary:'增删与排序阶段，并切换为普通并列图文卡片。'},
+ {name:'备注与放映',page:'备注、放映与导出练习',summary:'使用备注、演讲者视图、全屏放映、保存和导出。'}
+];
 
 const steps=[
  {group:'开始',title:'欢迎进入交互训练场',text:'这不是视频教程：接下来请直接操作真实工作台。完成一个动作，系统才会带你进入下一步。',notice:'教学统一使用北科科技蓝主模板。红色主题和其他学校版本由同一主模板增量换肤，不重复建设教学。'},
@@ -207,21 +222,23 @@ function reward(kind='correct'){
  setTimeout(()=>box.remove(),kind==='complete'?3600:2100);
 }
 
-export function startTutorial({onSkipTheme,force=false,onStateChange}={}){
+export function startTutorial({onSkipTheme,onResetTutorial,force=false,onStateChange}={}){
  const requested=new URLSearchParams(location.search).get('tutorial')==='1',existing=document.querySelector('.tutorial-guide');
  if(existing){existing.focus({preventScroll:false});return {active:true};}
  if(!requested&&!force)return null;
  activeTutorialDestroy?.();
  const saved=readTutorialProgress();
- let index=Math.max(0,Math.min(steps.length-1,saved?.index??0)),target=null,cleanups=[],waitTimer=0,resuming=!!saved;
+ let index=Math.max(0,Math.min(steps.length-1,saved?.index??0)),target=null,cleanups=[],waitTimer=0,resuming=!!saved,menuMode=!saved||saved.view==='menu',preparing=false,flowMode=saved?.flowMode||'catalog';
+ const completedGroups=new Set((saved?.completedGroups||[]).filter(name=>groupCatalog.some(group=>group.name===name)));
+ const groupProgress=new Map(Object.entries(saved?.groupProgress||{}).filter(([name])=>groupCatalog.some(group=>group.name===name)));
  const root=el('section','tutorial-guide');root.setAttribute('role','dialog');root.setAttribute('aria-live','polite');
  root.tabIndex=-1;
- const progress=el('div','tutorial-progress'),progressLabel=el('div','tutorial-progress-label'),majorRuler=el('div','tutorial-ruler major'),minorRuler=el('div','tutorial-ruler minor'),title=el('h2'),text=el('p'),copyBox=el('div','tutorial-copy'),actions=el('div','tutorial-actions');
+ const catalog=el('div','tutorial-catalog-screen'),progress=el('div','tutorial-progress'),progressLabel=el('div','tutorial-progress-label'),majorRuler=el('div','tutorial-ruler major'),minorRuler=el('div','tutorial-ruler minor'),title=el('h2'),text=el('p'),copyBox=el('div','tutorial-copy'),actions=el('div','tutorial-actions');
  progress.title='按住此处可拖动教学卡片';
  progress.append(progressLabel,majorRuler,minorRuler);
- const exit=el('button','tutorial-exit','退出教学'),back=el('button','tutorial-back','上一步'),skipStep=el('button','','代我完成此步'),skipGroup=el('button','','代我完成本项'),next=el('button','primary','我已阅读，继续');actions.append(exit,back,skipStep,skipGroup,next);root.append(progress,title,text,copyBox,actions);document.body.append(root);
+ const home=el('button','tutorial-home','返回教程目录'),back=el('button','tutorial-back','上一步'),skipStep=el('button','','代我完成此步'),skipGroup=el('button','','代我完成本项'),next=el('button','primary','我已阅读，继续');actions.append(home,back,skipStep,skipGroup,next);root.append(catalog,progress,title,text,copyBox,actions);document.body.append(root);
  const groupOf=i=>{for(let n=i;n>=0;n--)if(steps[n].group)return steps[n].group;return '开始';};
- const groupNames=[...new Set(steps.map((_,i)=>groupOf(i)))].filter(name=>name!=='开始');
+ const groupNames=groupCatalog.map(group=>group.name);
  const groupMeta=i=>{const name=groupOf(i),indices=steps.map((_,n)=>n).filter(n=>groupOf(n)===name),position=indices.indexOf(i)+1,number=groupNames.indexOf(name)+1;return {name,indices,position,number,total:indices.length};};
  if(saved&&saved.runtimeId!==TUTORIAL_RUNTIME_ID)index=groupMeta(index).indices[0];
  const emitStepFeedback=(mode,stepIndex=index)=>{const meta=groupMeta(stepIndex),kind=tutorialFeedbackKind({groupName:meta.name,isGroupEnd:meta.indices.at(-1)===stepIndex,assisted:mode==='assist'});if(kind==='cue')fallbackCue();else reward(kind);};
@@ -263,27 +280,28 @@ export function startTutorial({onSkipTheme,force=false,onStateChange}={}){
   minorRuler.replaceChildren(...meta.indices.map((stepIndex,n)=>{const dot=el('span','tutorial-tick minor-tick');dot.title=steps[stepIndex].title;if(n+1<meta.position)dot.classList.add('done');else if(n+1===meta.position)dot.classList.add('active');return dot;}));
   minorRuler.hidden=meta.name==='开始';
  };
- const remember=()=>{writeTutorialProgress(index);onStateChange?.({active:true,index});};
+ const remember=(view=menuMode?'menu':'step')=>{writeTutorialProgress(index,{view,flowMode,completedGroups:[...completedGroups],groupProgress:Object.fromEntries(groupProgress)});onStateChange?.({active:true,index,view,flowMode});};
+ const markProgress=(meta,count=meta.position)=>{if(meta.number<1||preparing)return;const percent=Math.max(0,Math.min(100,Math.round(count/meta.total*100))),before=Number(groupProgress.get(meta.name)||0);groupProgress.set(meta.name,Math.max(before,percent));};
  const clear=()=>{clearTimeout(waitTimer);for(const dispose of cleanups.splice(0))dispose();document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target=null;};
  const find=(selector,contains)=>{if(!selector)return null;const items=[...document.querySelectorAll(selector)];if(!contains)return items[0];return items.find(node=>{const label=node.matches?.('.slide-thumb')?(node.getAttribute('aria-label')||node.querySelector('.thumb-caption')?.textContent||''):(node.getAttribute('aria-label')||node.textContent||'');return label.includes(contains);});};
  const leaveModal=()=>{const modal=root.closest('dialog');root.classList.remove('tutorial-modal');if(modal){document.body.append(root);modal.close();}};
  const stop=({forget=false,removeQuery=false}={})=>{leaveModal();clear();root.remove();if(forget)clearTutorialProgress();if(removeQuery)history.replaceState(null,'',location.pathname+location.hash);if(activeTutorialDestroy===destroy)activeTutorialDestroy=null;onStateChange?.({active:false,index,complete:forget});};
  const destroy=()=>stop();activeTutorialDestroy=destroy;
- let feedbackOverride=null,groupRunning=false;
- const go=(nextIndex,{closeModal=false,feedback=null}={})=>{const completedIndex=index;if(closeModal)leaveModal();clear();index=Math.max(0,Math.min(steps.length-1,nextIndex));remember();if(feedback==='skip')reward('skip');else if(feedback)emitStepFeedback(feedback,completedIndex);setTimeout(show,120);};
+ let feedbackOverride=null,groupRunning=false,automationDelay=280;
+ const go=(nextIndex,{closeModal=false,feedback=null,delay=120}={})=>{const completedIndex=index;if(nextIndex>completedIndex)markProgress(groupMeta(completedIndex));if(closeModal)leaveModal();clear();menuMode=false;index=Math.max(0,Math.min(steps.length-1,nextIndex));remember('step');if(feedback==='skip')reward('skip');else if(feedback)emitStepFeedback(feedback,completedIndex);waitTimer=setTimeout(show,delay);};
  const waitFor=selector=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{const node=document.querySelector(selector);if(node)return resolve(node);if(++tries>40)return reject(Error('教学控件未出现'));setTimeout(check,100);};check();});
  const setValue=(node,value)=>{if(node.isContentEditable)node.textContent=value;else node.value=value;node.dispatchEvent(new Event('input',{bubbles:true}));node.dispatchEvent(new Event('change',{bubbles:true}));};
  const autoStep=()=>{const step=steps[index],feedback=groupRunning?null:'assist';feedbackOverride=groupRunning?'silent':'assist';if(step.input){const input=find(step.input);setValue(input,step.copy??'');return;}if(step.fileStep){feedbackOverride=null;onSkipTheme?.();go(index+1,{feedback});return;}if(step.selectValue!==undefined&&target){if(target.type==='checkbox')target.checked=Boolean(step.selectValue);else target.value=step.selectValue;target.dispatchEvent(new Event(step.event||'change',{bubbles:true}));return;}if(step.event&&target){if(step.event==='mouseup'){if(target.isContentEditable){const range=document.createRange();range.selectNodeContents(target);const selection=getSelection();selection.removeAllRanges();selection.addRange(range);}target.dispatchEvent(new MouseEvent('mouseup',{bubbles:true}));}else if(step.event==='dblclick')target.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));else target.click();return;}feedbackOverride=null;go(index+1,{feedback});};
- const autoGroup=async()=>{const meta=groupMeta(index),nextIndex=meta.indices.at(-1)+1;try{
-  skipGroup.disabled=true;skipStep.disabled=true;back.disabled=true;feedbackOverride=null;
-  if(meta.name==='主题换肤'){clear();onSkipTheme?.();go(nextIndex,{closeModal:true,feedback:'skip'});return;}
+ const autoGroup=async({silent=false,delay=340,returnHome=true,markComplete=!silent}={})=>{const meta=groupMeta(index),nextIndex=meta.indices.at(-1)+1,finishSkipped=()=>{if(markComplete){completedGroups.add(meta.name);groupProgress.set(meta.name,100);}if(silent||!returnHome)go(nextIndex,{closeModal:true,delay});else if(flowMode==='section'){index=meta.indices.at(-1);showSettlement(meta,{assisted:true});}else go(nextIndex,{closeModal:true,feedback:'skip',delay});};try{
+   skipGroup.disabled=true;skipStep.disabled=true;back.disabled=true;next.disabled=true;feedbackOverride=null;
+   if(meta.name==='主题换肤'){clear();onSkipTheme?.();finishSkipped();return;}
   else if(meta.name==='大纲教学'){
    clear();
    let dialog=document.querySelector('#outline-dialog');if(!dialog){document.querySelector('[data-action="outline"]')?.click();dialog=await waitFor('#outline-dialog');}
    setValue(dialog.querySelector('#outline-text'),OUTLINE);dialog.querySelector('#outline-mode').value='current';dialog.querySelector('#outline-mode').dispatchEvent(new Event('change',{bubbles:true}));for(const id of ['outline-toc','outline-closing']){const box=dialog.querySelector('#'+id);if(!box.checked)box.click();}for(const id of ['outline-transitions','outline-appendix']){const box=dialog.querySelector('#'+id);if(box.checked)box.click();}await new Promise(resolve=>setTimeout(resolve,180));dialog.querySelector('#outline-apply')?.click();await new Promise(resolve=>setTimeout(resolve,180));
-   go(nextIndex,{closeModal:true,feedback:'skip'});return;
+    finishSkipped();return;
   }
-  groupRunning=true;
+   groupRunning=true;automationDelay=delay;
   const waitState=(test,message)=>new Promise((resolve,reject)=>{let tries=0;const check=()=>{if(test())return resolve();if(++tries>80)return reject(Error(message));setTimeout(check,80);};check();});
   while(groupOf(index)===meta.name&&!steps[index].finish){
    const before=index,step=steps[index];
@@ -296,18 +314,44 @@ export function startTutorial({onSkipTheme,force=false,onStateChange}={}){
     document.querySelector('#inspector [data-select-module]')?.click();go(index+1);
    }else autoStep();
    await waitState(()=>index!==before,'自动操作没有推进教学');
-   await new Promise(resolve=>setTimeout(resolve,340));
+    await new Promise(resolve=>setTimeout(resolve,delay));
   }
-  groupRunning=false;feedbackOverride=null;reward('skip');
- }catch(error){groupRunning=false;feedbackOverride=null;const n=el('aside','tutorial-notice');n.innerHTML='<strong>自动完成失败</strong><span></span>';n.querySelector('span').textContent=error.message+'，请完成当前控件或退出后重新进入教学。';copyBox.append(n);}finally{skipGroup.disabled=false;skipStep.disabled=false;back.disabled=false;}};
+    groupRunning=false;feedbackOverride=null;if(markComplete){completedGroups.add(meta.name);groupProgress.set(meta.name,100);}if(!silent&&returnHome){if(flowMode==='section')showSettlement(meta,{assisted:true});else reward('skip');}
+   }catch(error){groupRunning=false;feedbackOverride=null;const n=el('aside','tutorial-notice');n.innerHTML='<strong>自动完成失败</strong><span></span>';n.querySelector('span').textContent=error.message+'，请完成当前控件或退出后重新进入教学。';copyBox.append(n);if(silent)throw error;}finally{skipGroup.disabled=false;skipStep.disabled=false;back.disabled=false;next.disabled=false;}};
+ const showMenu=(message='')=>{
+   leaveModal();clear();menuMode=true;preparing=false;flowMode='catalog';root.style.visibility='';root.classList.add('catalog-mode');root.classList.remove('settlement-mode');catalog.hidden=false;for(const node of [progress,title,text,copyBox,actions])node.hidden=true;
+   const heading=el('div','tutorial-catalog-heading');heading.append(el('span','tutorial-catalog-kicker','WEB SLIDE · 交互教程'),el('h2','',message||'选择学习方式'),el('p','',message?'可以继续完整学习，也可单独练习任意板块。系统会自动准备每个分项需要的前置状态。':'从头连续完成完整教学，或按需要进入单个板块。进入第 N 项前，系统会自动还原到第 N−1 项完成后的标准状态。'));
+   const full=el('button','tutorial-full-course');full.type='button';full.dataset.tutorialFull='true';const fullIcon=el('b','','▶'),fullCopy=el('span'),fullTitle=el('strong','','完整教学流程'),fullText=el('small','','按原有顺序从主题换肤一直练到备注、放映与导出，板块之间自动衔接。'),fullAction=el('i','','从头开始');fullCopy.append(fullTitle,fullText);full.append(fullIcon,fullCopy,fullAction);full.onclick=startFullFlow;
+   const grid=el('div','tutorial-catalog-grid');groupCatalog.forEach((group,n)=>{const button=el('button','tutorial-catalog-card');button.type='button';button.dataset.tutorialGroup=String(n+1);const percent=completedGroups.has(group.name)?100:Number(groupProgress.get(group.name)||0);if(percent===100)button.classList.add('completed');const number=el('b','',String(n+1).padStart(2,'0')),body=el('span','tutorial-catalog-card-copy'),name=el('strong','',group.name),meter=el('span','tutorial-card-progress'),fill=el('i'),status=el('em','',`${percent}%`);fill.style.width=`${percent}%`;meter.append(fill);body.append(name,meter);button.append(number,body,status);button.title=`${group.page}：${group.summary}`;button.onclick=()=>prepareGroup(n+1);grid.append(button);});
+   const foot=el('div','tutorial-catalog-foot'),hint=el('p','',`本次已完成 ${completedGroups.size} / ${groupCatalog.length} 项。刷新页面或退出后重新进入，进度会清零。`),close=el('button','','退出教学');close.onclick=()=>stop({forget:true,removeQuery:true});foot.append(hint,close);catalog.replaceChildren(heading,full,grid,foot);remember('menu');onStateChange?.({active:true,index,view:'menu'});root.focus({preventScroll:true});
+  };
+ const showSettlement=(meta,{assisted=false}={})=>{
+   leaveModal();clear();menuMode=true;preparing=false;flowMode='catalog';root.style.visibility='';root.classList.remove('catalog-mode','catalog-preparing');root.classList.add('settlement-mode');catalog.hidden=false;for(const node of [progress,title,text,copyBox,actions])node.hidden=true;
+   const panel=el('section','tutorial-settlement'),image=el('img'),copy=el('div','tutorial-settlement-copy'),kicker=el('span','','SECTION COMPLETE'),heading=el('h2','',`${meta.name} · 通关`),message=el('p','',assisted?'本项剩余操作已经自动完成，当前页面保留在该板块的完成状态。':'本项练习已经完成，当前页面保留你的操作结果。'),buttons=el('div','tutorial-settlement-actions'),done=el('button','primary','返回教程目录');
+   image.src=feedbackURL('做完全部教程.png');image.alt='汤姆手持奖杯的通关结算图';copy.append(kicker,heading,message);done.onclick=()=>showMenu(`${meta.name}已完成`);buttons.append(done);panel.append(image,copy,buttons);catalog.replaceChildren(panel);remember('settlement');root.focus({preventScroll:true});
+  };
+ const startFullFlow=async()=>{
+   if(preparing)return;preparing=true;clear();root.classList.add('catalog-mode','catalog-preparing');catalog.hidden=false;for(const node of [progress,title,text,copyBox,actions])node.hidden=true;const loading=el('div','tutorial-catalog-loading');loading.append(el('strong','','正在恢复完整教学母稿'),el('p','','完成后将从主题换肤开始，按原有顺序连续学习。'));catalog.replaceChildren(loading);
+   try{await onResetTutorial?.();await new Promise(resolve=>setTimeout(resolve,80));completedGroups.clear();groupProgress.clear();index=0;flowMode='full';menuMode=false;preparing=false;root.classList.remove('catalog-mode','catalog-preparing','settlement-mode');catalog.hidden=true;for(const node of [progress,title,text,copyBox,actions])node.hidden=false;remember('step');show();}catch(error){preparing=false;showMenu();const notice=el('aside','tutorial-catalog-error');notice.textContent=`完整教学准备失败：${error.message}`;catalog.prepend(notice);}
+  };
+ const prepareGroup=async number=>{
+   const targetGroup=groupCatalog[number-1];if(!targetGroup||preparing)return;preparing=true;clear();flowMode='section';root.classList.add('catalog-mode','catalog-preparing');root.classList.remove('settlement-mode');catalog.hidden=false;for(const node of [progress,title,text,copyBox,actions])node.hidden=true;const loading=el('div','tutorial-catalog-loading'),meter=el('div','tutorial-catalog-meter'),fill=el('i'),label=el('strong','',`正在准备：${targetGroup.name}`),detail=el('p','',number===1?'正在恢复教学母稿，请稍候…':'正在后台重建本项所需的前置状态，请稍候…');meter.append(fill);loading.append(label,detail,meter);catalog.replaceChildren(loading);
+  try{
+   await onResetTutorial?.();await new Promise(resolve=>setTimeout(resolve,80));
+   for(let n=0;n<number-1;n++){
+     const name=groupNames[n],meta=groupMeta(steps.findIndex(step=>step.group===name));fill.style.width=`${((n+1)/(number-1))*100}%`;index=meta.indices[0];menuMode=false;show();await autoGroup({silent:true,delay:24,returnHome:false});clear();
+   }
+    fill.style.width='100%';const targetIndex=steps.findIndex(step=>step.group===targetGroup.name);index=targetIndex;flowMode='section';menuMode=false;preparing=false;root.classList.remove('catalog-mode','catalog-preparing','settlement-mode');catalog.hidden=true;for(const node of [progress,title,text,copyBox,actions])node.hidden=false;remember('step');waitTimer=setTimeout(show,80);
+  }catch(error){preparing=false;root.classList.remove('catalog-preparing');showMenu();const notice=el('aside','tutorial-catalog-error');notice.textContent=`前置状态准备失败：${error.message}`;catalog.prepend(notice);}
+ };
  const show=()=>{
-  clear();remember();manualPosition=false;root.style.removeProperty('left');root.style.removeProperty('top');root.style.removeProperty('right');root.style.removeProperty('bottom');const step=steps[index],meta=groupMeta(index);renderRuler(meta);title.textContent=step.title;text.textContent=step.text;copyBox.replaceChildren();
-  back.hidden=index===0||meta.position===1;skipStep.hidden=step.finish;skipGroup.hidden=step.finish||meta.name==='开始';next.hidden=!!step.event;next.textContent=step.finish?'完成并退出':step.input?'完成填写，继续':'我已阅读，继续';
+   clear();menuMode=false;remember('step');manualPosition=false;if(!preparing){root.classList.remove('catalog-mode','catalog-preparing');catalog.hidden=true;for(const node of [progress,title,text,copyBox,actions])node.hidden=false;root.style.visibility='';}root.style.removeProperty('left');root.style.removeProperty('top');root.style.removeProperty('right');root.style.removeProperty('bottom');const step=steps[index],meta=groupMeta(index);renderRuler(meta);title.textContent=step.title;text.textContent=step.text;copyBox.replaceChildren();
+   back.hidden=index===0||meta.position===1;skipStep.hidden=step.finish;skipGroup.hidden=step.finish||meta.name==='开始';next.hidden=!!step.event;next.textContent=step.finish?(flowMode==='full'?'完成全部教程':'完成本项并查看结算'):step.input?'完成填写，继续':'我已阅读，继续';
   if(step.notice){const n=el('aside','tutorial-notice');n.innerHTML='<strong>必读告示</strong><span></span>';n.querySelector('span').textContent=step.notice;copyBox.append(n);}
   if(step.copy){const pre=el('pre','tutorial-copy-text',step.copy),button=el('button','','复制练习内容');button.type='button';button.onclick=async()=>{try{await navigator.clipboard.writeText(step.copy);button.textContent='已复制 ✓';}catch{pre.focus();const range=document.createRange();range.selectNodeContents(pre);getSelection().removeAllRanges();getSelection().addRange(range);button.textContent='已选中，请按 Ctrl+C';}};copyBox.append(pre,button);}
   let bindAttempts=0;
   const bind=()=>{
-   if(index>=steps.length||!step.target){resuming=false;return;}target=find(step.target,step.targetText);const containingDialog=target?.closest('dialog');if(!target||(containingDialog&&!containingDialog.open)){if(resuming&&++bindAttempts>20){const fallback=meta.indices[0];if(fallback!==index){index=fallback;resuming=false;remember();setTimeout(show,0);return;}}waitTimer=setTimeout(bind,180);return;}resuming=false;const modal=containingDialog?.open&&!containingDialog.classList.contains('radial-dialog-floating')?containingDialog:null;root.classList.toggle('tutorial-modal',!!modal);if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));target.classList.add('tutorial-target');target.scrollIntoView({block:target.matches('.slide-thumb')?'center':'nearest',inline:'nearest',behavior:'smooth'});requestAnimationFrame(()=>placeGuide(target));const reposition=()=>placeGuide(target);addEventListener('resize',reposition);addEventListener('scroll',reposition,true);cleanups.push(()=>{removeEventListener('resize',reposition);removeEventListener('scroll',reposition,true);});
+    if(index>=steps.length||!step.target){resuming=false;return;}target=find(step.target,step.targetText);const containingDialog=target?.closest('dialog');if(!target||(containingDialog&&!containingDialog.open)){if(resuming&&++bindAttempts>20){const fallback=meta.indices[0];if(fallback!==index){index=fallback;resuming=false;remember('step');setTimeout(show,0);return;}}waitTimer=setTimeout(bind,preparing?30:180);return;}resuming=false;const modal=!preparing&&containingDialog?.open&&!containingDialog.classList.contains('radial-dialog-floating')?containingDialog:null;root.classList.toggle('tutorial-modal',!!modal);if(modal&&!modal.contains(root))modal.append(root);else if(!modal&&!document.body.contains(root))document.body.append(root);document.querySelectorAll('.tutorial-target').forEach(node=>node.classList.remove('tutorial-target'));if(!preparing){target.classList.add('tutorial-target');target.scrollIntoView({block:target.matches('.slide-thumb')?'center':'nearest',inline:'nearest',behavior:'smooth'});requestAnimationFrame(()=>placeGuide(target));const reposition=()=>placeGuide(target);addEventListener('resize',reposition);addEventListener('scroll',reposition,true);cleanups.push(()=>{removeEventListener('resize',reposition);removeEventListener('scroll',reposition,true);});}
    if(step.event){
     const done=()=>{if(step.selectValue!==undefined){const actual=target.type==='checkbox'?target.checked:String(target.value),expected=target.type==='checkbox'?Boolean(step.selectValue):String(step.selectValue);if(actual!==expected)return;}advance();};
     if(step.event==='click'&&target.matches('.slide-thumb')){
@@ -325,13 +369,14 @@ export function startTutorial({onSkipTheme,force=false,onStateChange}={}){
    if(step.input){const input=find(step.input),inputValue=()=>input.isContentEditable?input.textContent||'':input.value||'',done=()=>{if(step.allowEmpty||inputValue().trim())advance();},paste=()=>setTimeout(done,30),dynamic=input.closest('#alignment-panel');if(dynamic){const delegated=event=>{if(event.target===input)done();};document.addEventListener('change',delegated,true);cleanups.push(()=>document.removeEventListener('change',delegated,true));}else{input.addEventListener('change',done,{once:true});input.addEventListener('paste',paste,{once:true});cleanups.push(()=>{input.removeEventListener('change',done);input.removeEventListener('paste',paste);});}
     if(step.input==='#outline-text'){const file=document.querySelector('#outline-file'),stepIndex=index,onFile=()=>{const timer=setTimeout(()=>{if(index===stepIndex&&input.value.trim())advance();},120);cleanups.push(()=>clearTimeout(timer));};file?.addEventListener('change',onFile,{once:true});if(file)cleanups.push(()=>file.removeEventListener('change',onFile));}
    }
-   if(meta.name==='大纲教学'){const apply=document.querySelector('#outline-apply'),finish=()=>{const nextIndex=meta.indices.at(-1)+1;setTimeout(()=>{if(groupOf(index)==='大纲教学')go(nextIndex,{closeModal:true,feedback:'correct'});},0);};apply?.addEventListener('click',finish,{once:true});if(apply)cleanups.push(()=>apply.removeEventListener('click',finish));}
+   if(meta.name==='大纲教学'){const apply=document.querySelector('#outline-apply'),finish=()=>setTimeout(()=>{if(groupOf(index)!=='大纲教学')return;index=meta.indices.at(-1);feedbackOverride='correct';advance();},0);apply?.addEventListener('click',finish,{once:true});if(apply)cleanups.push(()=>apply.removeEventListener('click',finish));}
   };bind();
  };
- const advance=()=>{if(root.closest('dialog'))document.body.append(root);clear();const completedIndex=index,complete=completedIndex>=steps.length-1,mode=feedbackOverride||'correct';feedbackOverride=null;if(complete)reward('complete');else if(mode!=='silent')emitStepFeedback(mode,completedIndex);if(complete){stop({forget:true,removeQuery:true});return;}index++;remember();setTimeout(show,280);};
+ const advance=()=>{const ownerDialog=root.closest('dialog'),applying=target?.matches?.('[data-action$="-apply"],#outline-apply');if(ownerDialog){if(applying)leaveModal();else document.body.append(root);}clear();const completedIndex=index,meta=groupMeta(completedIndex),groupEnd=meta.name!=='开始'&&meta.indices.at(-1)===completedIndex,mode=feedbackOverride||'correct';feedbackOverride=null;markProgress(meta);if(groupEnd&&!groupRunning){completedGroups.add(meta.name);groupProgress.set(meta.name,100);if(flowMode==='section'){remember('settlement');showSettlement(meta);return;}const finalGroup=meta.name===groupNames.at(-1);if(flowMode==='full'&&finalGroup){reward('complete');remember('menu');waitTimer=setTimeout(()=>showMenu('完整教学流程已完成'),1100);return;}if(mode!=='silent')emitStepFeedback(mode,completedIndex);index=Math.min(steps.length-1,index+1);remember('step');waitTimer=setTimeout(show,groupRunning?automationDelay:320);return;}if(mode!=='silent')emitStepFeedback(mode,completedIndex);index=Math.min(steps.length-1,index+1);remember('step');waitTimer=setTimeout(show,groupRunning?automationDelay:280);};
  next.onclick=advance;
  back.onclick=()=>{feedbackOverride=null;const previous=steps[index-1],node=find(previous?.target,previous?.targetText),modal=root.closest('dialog'),closeModal=!!modal&&node?.closest('dialog')!==modal;go(index-1,{closeModal});};
- skipStep.onclick=autoStep;
- skipGroup.onclick=autoGroup;
- exit.onclick=()=>stop({removeQuery:true});show();return {active:true};
+  skipStep.onclick=autoStep;
+  skipGroup.onclick=()=>autoGroup();
+   home.onclick=()=>showMenu();
+   if(menuMode)showMenu();else show();return {active:true};
 }

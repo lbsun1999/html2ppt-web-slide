@@ -35,6 +35,8 @@ try{
   });
   await tutorialPage.goto(pathToFileURL(path.resolve('templates/template-1/ustb-blue/tutorial.html')).href+'?tutorial=1');
   await tutorialPage.waitForFunction(()=>window.slideStudio);
+  await tutorialPage.locator('[data-tutorial-full]').click();
+  await tutorialPage.locator('.tutorial-guide h2').filter({hasText:'欢迎进入交互训练场'}).waitFor();
   await tutorialPage.getByRole('button',{name:'我已阅读，继续'}).click();
   await tutorialPage.waitForTimeout(240);
   assert.equal(await tutorialPage.evaluate(()=>window.__realTutorialPlayback.length),0,'an ordinary step must not start a voice pack');

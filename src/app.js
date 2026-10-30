@@ -26,7 +26,7 @@ import {findSpace,findSpaces,inside,intersects,planChange,anchoredResize,snap} f
 import {renderSlide,renderModule,audit,fitTable,measuredHeight,esc,themeCSS} from './render.js';
 import {alignmentAxis,alignToGuide,distributeEven,radialCenter,radialLayout,radialGroupEdit,makeRadialGroup} from './advanced-alignment.js';
 
-let viewer,presenter,formatter,textBlocks,freeText,pageList,notesVisible=false;
+let viewer,presenter,formatter,textBlocks,freeText,pageList,notesVisible=false,tutorialSeed=null;
 let adjustMultiplier=1,holdTimer,holdInterval,holdUsed=false,holdSuppressUntil=0;
 let project,index=0,mode='text',selected=null,showGrid=false,drawing=false,drawRect=null,scale=1,history=[],future=[],timer,saveTimer,present=false;
 let styleTarget=null,styleChoice='plain',styleHovered=null;
@@ -36,7 +36,8 @@ let childFocus=new Map(),tableFocus=new Map(),spaceChoices=[],spaceCallback=null
 const advanced={mode:null,guideX:SAFE.x+SAFE.w/2,guideY:SAFE.y+SAFE.h/2,ids:new Set(),ruler:false};
 function isTutorialDocument(){return !!project?.slides?.some(s=>(s.footer||'').includes('Web Slide 交互教学')||(s.notes||'').includes('独立教学文稿'));}
 function updateTutorialControl(state={}){const button=$('#tutorial-resume');if(!button)return;button.hidden=!isTutorialDocument();button.textContent=state.active||document.querySelector('.tutorial-guide')?'教学进行中':hasTutorialProgress()?'继续教学':'开始教学';button.classList.toggle('active',!!state.active||!!document.querySelector('.tutorial-guide'));}
-function launchTutorial(force=false){const result=startTutorial({force,onStateChange:updateTutorialControl,onSkipTheme:()=>{const preset=project.theme.presets?.ustbRed;if(!preset)return;savePoint();project.theme={...project.theme,...clone(preset),presets:project.theme.presets};render();persist();toast('已跳过主题换肤练习，并自动切换到完整钢铁红状态。');}});updateTutorialControl({active:!!document.querySelector('.tutorial-guide')});return result;}
+function resetTutorialState(){if(!tutorialSeed)tutorialSeed=clone(project);document.querySelectorAll('dialog[open]').forEach(dialog=>dialog.close());$('#alignment-panel')?.remove();advanced.mode=null;advanced.ids.clear();advanced.ruler=false;project=clone(tutorialSeed);index=0;mode='text';selected=null;notesVisible=false;showGrid=false;drawing=false;drawRect=null;history=[];future=[];render();pageList.reset();viewer.scrollTo(0);persist();}
+function launchTutorial(force=false){const result=startTutorial({force,onStateChange:updateTutorialControl,onResetTutorial:resetTutorialState,onSkipTheme:()=>{const preset=project.theme.presets?.ustbRed;if(!preset)return;savePoint();project.theme={...project.theme,...clone(preset),presets:project.theme.presets};render();persist();toast('已跳过主题换肤练习，并自动切换到完整钢铁红状态。');}});updateTutorialControl({active:!!document.querySelector('.tutorial-guide')});return result;}
 function pageBounds(){return slideBounds(slide());}
 function layoutItems(){return occupiedItems(slide());}
 function moduleName(m){return m.type==='table'?(m.sectionedTable?m.parts[tablePartIndex(m)]?.title||'':m.tableTitle||''):m.groupTitle||(m.parts.length===1?m.parts[0].title:'');}
@@ -445,7 +446,7 @@ async function start(){
  if(location.pathname==='/export.html'){
   document.body.classList.add('export-view');const token=new URLSearchParams(location.search).get('token');project=await fetch('/api/render/'+token).then(r=>r.json());document.title=project.title;$('#app').innerHTML=project.slides.map((s,i)=>renderSlide(s,project.theme,i,project.slides.length,false,project)).join('');$$('.slide').forEach(el=>el.id='slide-'+el.dataset.slide);await document.fonts.ready;await Promise.all($$('img').map(im=>im.decode().catch(()=>{})));await Promise.all($$('video').map(v=>new Promise(resolve=>{v.controls=false;const done=()=>resolve();v.addEventListener('loadeddata',()=>{if(Number.isFinite(v.duration))v.currentTime=Math.min(.1,v.duration/2);else done();},{once:true});v.addEventListener('seeked',done,{once:true});v.addEventListener('error',done,{once:true});setTimeout(done,3000);if(v.readyState>=2){v.currentTime=Math.min(.1,v.duration/2);}})));window.exportErrors=[];project.slides.forEach((s,i)=>window.exportErrors.push(...audit($$('.slide')[i],s)));window.exportReady=true;return;
  }
- const embedded=$('#project-data');project=embedded?validateProject(JSON.parse(embedded.textContent)):await draft();if(project)project=validateProject(project);if(!project){try{const response=await fetch('/api/example-project');if(!response.ok)throw Error('示例读取失败');project=validateProject(await response.json());}catch{project=createProject();await loadDefaultLogos();}}
+ const embedded=$('#project-data');project=embedded?validateProject(JSON.parse(embedded.textContent)):await draft();if(project)project=validateProject(project);if(!project){try{const response=await fetch('/api/example-project');if(!response.ok)throw Error('示例读取失败');project=validateProject(await response.json());}catch{project=createProject();await loadDefaultLogos();}}if(isTutorialDocument())tutorialSeed=clone(project);
  if(location.protocol==='file:'){try{project.title=decodeURIComponent(location.pathname.split('/').pop()).replace(/\.html?$/i,'')||project.title;}catch{}}bootUI();render();document.fonts.ready.then(()=>{resizeCanvas();check();});
  launchTutorial();
  if(location.protocol!=='file:'){Promise.all([fetch('/styles.css').then(r=>r.text()),fetch('/app.bundle.js').then(r=>r.text())]).then(([css,js])=>{runtimeCSS=css;runtimeBundle=js;});}

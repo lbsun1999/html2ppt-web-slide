@@ -15,12 +15,8 @@ const waitTitle=text=>title.filter({hasText:text}).waitFor({timeout:8000});
 const tutorialURL=pathToFileURL(path.resolve('templates/template-1/ustb-blue/tutorial.html'));tutorialURL.searchParams.set('tutorial','1');
 try{
  await page.goto(tutorialURL.href);
- await waitTitle('欢迎进入交互训练场');
- await page.getByRole('button',{name:'我已阅读，继续'}).click();
- for(const next of ['先建立文档骨架','打开页面信息练习页','进入空白正文练习页','进入文字编辑','打开已经放好表格的练习页']){
-  await page.getByRole('button',{name:'代我完成本项'}).click();
-  await waitTitle(next);
- }
+ await page.locator('[data-tutorial-group="6"]').click();
+ await waitTitle('打开已经放好表格的练习页');
 
  const completedGroups=await page.evaluate(()=>{const slides=window.slideStudio.getProject().slides,info=slides.find(slide=>slide.title==='页面信息与备注练习'),blank=slides.find(slide=>slide.title==='空白正文与卡片排版'),module=blank?.modules[0];return {notes:info?.notes||'',moduleCount:blank?.modules.length||0,parts:module?.parts?.length||0,style:module?.style||'',text:module?.parts?.[0]?.text||''};});
  assert.match(completedGroups.notes,/研究问题/,'completing the page-settings section writes the practice notes');
@@ -79,7 +75,11 @@ try{
  await page.locator('#table-data').dispatchEvent('change');
  await waitTitle('应用批量替换');
  await page.locator('.tutorial-target').click();
-
+ await page.locator('.tutorial-settlement').waitFor({timeout:10000});
+ assert.match(await page.locator('.tutorial-settlement h2').innerText(),/表格编辑/);
+ assert.equal(await page.locator('.tutorial-reward').count(),0,'independent section settlement does not reuse full-course character/audio feedback');
+ await page.locator('.tutorial-settlement .primary').click();
+ await page.locator('[data-tutorial-group="7"]').click();
  await waitTitle('打开公式练习页');
  await page.locator('.tutorial-target').click();
  await waitTitle('打开“更多模块”');

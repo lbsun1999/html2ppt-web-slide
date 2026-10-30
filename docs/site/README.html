@@ -31,7 +31,9 @@
 <h2 id="模板与交互教学">模板与交互教学<a class="anchor" href="#模板与交互教学">#</a></h2>
 <p>北科科技蓝是当前主模板。北科钢铁红演示同一版式如何迁移到党政主题；丽院青用于验证学校、主题和素材的增量扩展。模板之间共享工作台能力，但各自携带独立 HTML、素材、说明和导出快照。</p>
 <div class="table-scroll"><table><thead><tr><th>模板</th><th>图文说明</th><th>下载后打开</th><th>导出快照与预览</th></tr></thead><tbody><tr><td>北科科研·科技蓝</td><td><a href="template-ustb-blue.html">模板说明</a></td><td><code>templates/template-1/ustb-blue/template.html</code></td><td><a href="../../templates/template-1/ustb-blue/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-blue/output/template.pptx">PPTX</a> · <a href="../images/ustb-preview.png">30页总览</a></td></tr><tr><td>北科党政·钢铁红</td><td><a href="template-ustb-red.html">模板说明</a></td><td><code>templates/template-1/ustb-red/template.html</code></td><td><a href="../../templates/template-1/ustb-red/output/template.pdf">PDF</a> · <a href="../../templates/template-1/ustb-red/output/template.pptx">PPTX</a> · <a href="../images/red-formula-theme.png">公式页</a></td></tr><tr><td>丽水学院·主题青</td><td><a href="template-lishui-cyan.html">模板说明</a></td><td><code>templates/template-1/lishui-cyan/template.html</code></td><td><a href="../../templates/template-1/lishui-cyan/output/template.pdf">PDF</a> · <a href="../../templates/template-1/lishui-cyan/output/template.pptx">PPTX</a></td></tr></tbody></table></div>
-<p>交互教学使用独立的北科科技蓝训练文稿 <code>templates/template-1/ustb-blue/tutorial.html</code>。每页对应一个教学单元：需要理解空白布局的卡片页与环形页从空白正文开始；表格、公式和媒体页采用“左侧规范示范＋右侧连续练习区”，既可直接编辑成品，也可亲手插入新模块。逐项练习：</p>
+<p>交互教学使用独立的北科科技蓝训练文稿 <code>templates/template-1/ustb-blue/tutorial.html</code>。打开后先进入全屏教程目录：可从头运行原有完整教学，也可直接进入任意分项；进入第 N 项时，系统会在后台重建前 N−1 项完成后的标准状态，再直接落到该板块。每页对应一个教学单元：需要理解空白布局的卡片页与环形页从空白正文开始；表格、公式和媒体页采用“规范示范＋连续练习区”，既可直接编辑成品，也可亲手插入新模块。</p>
+<p><a href="../images/tutorial-catalog.png"><a class="image-link" href="../images/tutorial-catalog.png"><img src="../images/tutorial-catalog.png" alt="全屏交互教程目录：完整流程与12个分项入口"></a></a></p>
+<p>12 个分项覆盖：</p>
 <ol>
 <li>手动改成钢铁红主题，并上传独立校徽与组合标志 SVG；</li>
 <li>编写、粘贴和应用文档大纲；</li>
@@ -44,9 +46,10 @@
 <li>将时间轴切换为普通并列图文卡片；</li>
 <li>学习多页浏览、演讲者视图、全屏放映与导出。</li>
 </ol>
-<p>教学窗顶部使用两层“进度标尺”：大圆点表示教学大项，小圆点表示当前大项内的具体步骤；模块编辑、文字编辑、表格编辑和公式编辑分别计为独立大项。已完成、当前和未开始状态用不同主题色区分，并同步显示“第 1.1 步”一类编号。可用“上一步”回看前一条教学说明，已经完成的页面操作不会被擅自撤销。切换步骤时只高亮当前需要操作的控件；教学卡片会根据控件的实时位置自动选择左、右、上、下方的可见空间，窗口或弹窗变化后重新定位。按住标尺区域可手动拖动卡片。操作正确时保留礼花，并由杰瑞配图和“干得真棒”音效反馈；自动完成与跳过本项使用不同的杰瑞／汤姆配图和语音，全部完成后显示奖杯图并播放本地合成的欢呼掌声。</p>
-<p>“代我完成此步”只执行当前操作；“代我完成本项”会依次完成当前大项尚未进行的页面切换、插入、设置和内容填写，保留最终页面状态后再进入下一大项，不是简单略过。新的大项从第一步开始，不能跨项返回；到该大项第 2 步后才显示“上一步”。这些按钮都不会退出教学，只有“退出教学”才结束整个流程。需要手动上传的钢铁红 SVG 已集中放在 <code>tutorial-assets/</code>；表格练习页已经放好唯一一张可编辑表格，可直接导入 <code>table-import-demo.xlsx</code>，也可把 <code>table-replace-demo.txt</code> 的 Tab／回车文本粘贴到批量编辑框；两种方式均可在离线 HTML 中使用。媒体替换练习素材位于 <code>tutorial-assets/media/</code>，教学反馈图片和语音位于 <code>tutorial-assets/media/sounds/</code>。</p>
-<p>教学进度保存在当前浏览器会话中。图片、公式、表格等设置弹窗点击“应用／确定”后，引导会先记录下一步，再关闭弹窗，不会随弹窗一起消失。如果主动退出或引导意外中断，顶部会显示“继续教学”，同一工作台内可回到最近步骤；刷新练习页后则从最近教学大项的入口恢复，重新建立该页需要的模块与弹窗状态，避免停在一个已经不存在的控件上。</p>
+<p>教程目录为每个分项显示本次打开期间的百分比；返回目录后继续保留，刷新页面或从目录退出教学后重新进入则清零。步骤卡片顶部使用两层“进度标尺”：大圆点表示教学大项，小圆点表示当前大项内的具体步骤；模块编辑、文字编辑、表格编辑和公式编辑分别计为独立大项。已完成、当前和未开始状态用不同主题色区分，并同步显示“第 1.1 步”一类编号。可用“上一步”回看前一条教学说明，已经完成的页面操作不会被擅自撤销。切换步骤时只高亮当前需要操作的控件；教学卡片会根据控件的实时位置自动选择左、右、上、下方的可见空间，窗口或弹窗变化后重新定位。按住标尺区域可手动拖动卡片。操作正确时保留礼花，并由杰瑞配图和“干得真棒”音效反馈；自动完成与跳过本项使用不同的杰瑞／汤姆配图和语音，完整流程全部完成后显示奖杯图并播放本地合成的欢呼掌声。</p>
+<p>“代我完成此步”只执行当前操作；“代我完成本项”会依次完成当前大项尚未进行的页面切换、插入、设置和内容填写，不是简单略过。完整流程会继续进入下一大项；分项练习则保留最终页面状态，并打开无音效的奖杯汤姆结算弹窗，从右下角返回目录。分项结算不复用完整教程的杰瑞／汤姆语音或最终欢呼。新的大项从第一步开始，不能跨项返回；到该大项第 2 步后才显示“上一步”。步骤卡片不放“退出教学”，先返回教程目录再退出，避免误触。需要手动上传的钢铁红 SVG 已集中放在 <code>tutorial-assets/</code>；表格练习页已经放好唯一一张可编辑表格，可直接导入 <code>table-import-demo.xlsx</code>，也可把 <code>table-replace-demo.txt</code> 的 Tab／回车文本粘贴到批量编辑框；两种方式均可在离线 HTML 中使用。媒体替换练习素材位于 <code>tutorial-assets/media/</code>，教学反馈图片和语音位于 <code>tutorial-assets/media/sounds/</code>。</p>
+<p>教学进度只保存在当前已打开的教学实例中。返回全屏目录不会丢失各分项百分比；主动退出、刷新页面或关闭后重新进入时，从 0% 开始，避免旧状态与当前练习文稿错位。图片、公式、表格等设置弹窗点击“应用／确定”后，引导会先记录下一步并安全关闭弹窗，不会随弹窗一起消失。</p>
+<p><a href="../images/tutorial-section-settlement.png"><a class="image-link" href="../images/tutorial-section-settlement.png"><img src="../images/tutorial-section-settlement.png" alt="分项教程通关后的奖杯汤姆结算页"></a></a></p>
 <p>公式、媒体、Excel 工作表选择和表格批量编辑都使用原生设置弹窗。教学卡片会等弹窗真正打开后进入同一顶层弹窗，继续显示下一步说明、高亮目标控件和标准操作反馈，不会在双击公式后突然消失。</p>
 <p>高级对齐教学直接高亮真实插件控件，不用文字替代操作，并划分为两个大项。第一个大项打开一次插件，连续完成参考线平移、反向拉伸和多选等距：纵向参考线配合顶部0–1600横坐标，横向参考线切换为左侧0–900纵坐标；先执行左／上平移，再把另一侧向右／向下拉伸，最后直接进入多选并均分间隙。第二个大项是环形分布，切换到环形练习页后重新打开插件，使用数字框与滑杆在真实画布实时预览，只有点击“生成组合”才写入页面。内置练习以 4 个“研究目标”单行文本块、180 px 半径和 −45°～45°窄角度为基准；预览会检查正文安全区与两两重叠，状态合格后再提交。环形组合保留成员身份、顺序、圆心和角度参数；再次选中该组合并点击“环形分布”时进入二次调整，直接重排原成员，不会复制整个组合。</p>
 <p>大纲教学固定使用界面中的“更新当前文稿”，保证引导在当前页面中连续运行。工作台中的练习不会自动覆盖磁盘模板；只有主动执行“保存 HTML”才会写入文件，因此原始蓝色模板可反复用于重新教学。界面中的“另建文稿，沿用当前主题”保留给完成教学后的正式建稿，不作为教学中途步骤。</p>
