@@ -1,8 +1,25 @@
 import {clone,createProject,makePage,blankSlide,validateProject,documentSections} from './model.js';
 import {duplicatePages} from './page-operations.js';
 
-export const OUTLINE_EXAMPLE='# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n这里可以补充本页需要使用的材料，生成后保存在备注中。\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n';
+export const OUTLINE_EXAMPLE='# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n用一句完整的话概括本页的问题、证据或结论。\n\n用一句凝练的话写出本页页尾总结。\n\n> 本页制作要求、讲解提示或需要 AI 留意的材料写在引用块中。\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n';
 const headingText=s=>s.replace(/\s+#+\s*$/,'').trim().replace(/<br\s*\/?>|\\n/gi,'\n');
+function pagePayload(body){
+ const paragraphs=[],quotes=[],other=[];let current=[],quote=[],fence=null;
+ const flush=()=>{if(current.length){paragraphs.push(current.join('\n').trim());current=[];}},flushQuote=()=>{if(quote.length){quotes.push(quote.join('\n').trim());quote=[];}};
+ for(const line of String(body||'').split('\n')){
+  const marker=line.match(/^\s{0,3}(`{3,}|~{3,})/);
+  if(fence){other.push(line);if(marker&&marker[1][0]===fence.char&&marker[1].length>=fence.length)fence=null;continue;}
+  if(marker){flush();flushQuote();fence={char:marker[1][0],length:marker[1].length};other.push(line);continue;}
+  const quoted=line.match(/^\s{0,3}>\s?(.*)$/);
+  if(quoted){flush();quote.push(quoted[1]);continue;}
+  flushQuote();
+  if(!line.trim()){flush();continue;}
+  current.push(line.trim());
+ }
+ flush();flushQuote();
+ const extras=paragraphs.slice(2).concat(other.length?other.join('\n').trim():[]).filter(Boolean);
+ return {lead:paragraphs[0]||'',summary:paragraphs[1]||'',notes:[...quotes,...extras].filter(Boolean).join('\n\n')};
+}
 export function parseOutline(input){
  const text=String(input??'').replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n'),result={title:'',intro:'',sections:[],errors:[],warnings:[]};
  let section=null,page=null,fence=null;
@@ -21,7 +38,7 @@ export function parseOutline(input){
  if(!result.sections.length)result.errors.push('至少需要一个##章节。');
  if(!result.sections.some(s=>s.pages.length))result.errors.push('至少需要一个###页面标题。');
  if(fence)result.errors.push('代码围栏未结束，请补上对应的```或~~~。');
- for(const s of result.sections){s.body=s.body.trim();if(!s.pages.length)result.errors.push('章节“'+s.title+'”尚未列出###页面。');for(const p of s.pages)p.body=p.body.trim();}
+ for(const s of result.sections){s.body=s.body.trim();if(!s.pages.length)result.errors.push('章节“'+s.title+'”尚未列出###页面。');for(const p of s.pages){p.body=p.body.trim();Object.assign(p,pagePayload(p.body));}}
  result.intro=result.intro.trim();return result;
 }
 
@@ -60,6 +77,10 @@ export function reconcileOutlineBindings(previous,next,values,chapters=false){
 function newContent(title){
  const s=blankSlide();s.title=title;s.lead='';s.source='';s.modules=[];return s;
 }
+function applyPagePayload(slide,page){
+ if(page.lead)slide.lead=page.lead;
+ if(page.summary)slide.summary=page.summary;
+}
 export function buildOutlineProject(current,outline,{toc=true,closing=true,transitions=true,lastAppendix,reuse={},sourceText=''}={}){
  if(outline.errors.length)throw Error(outline.errors.join('\n'));
  if(outlinePageCount(outline,{toc,closing,transitions,lastAppendix})>100)throw Error('生成后超过100页，请精简大纲或分成多份文稿。');
@@ -79,9 +100,9 @@ export function buildOutlineProject(current,outline,{toc=true,closing=true,trans
   for(const page of section.pages){
    const original=current.slides.find(s=>s.id===reuse[page.key]&&s.kind==='body');
    const s=take(original,()=>newContent(page.title));if(original)reused++;
-   s.title=page.title;s.lead=original?s.lead:'';delete s.chapterId;delete s.chapterMode;
+   s.title=page.title;s.lead=original?s.lead:'';s.summary=original?s.summary:'';applyPagePayload(s,page);delete s.chapterId;delete s.chapterMode;
    if(!chapter){s.chapterMode='manual';s.section=sectionNumber;s.group=section.title;}
-   s.outlineDraft=true;s.notes=['【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。',original?'本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。':'本页为结构占位，尚未填写实际研究结论。',!chapter&&page===section.pages[0]?section.body:'',page.body,s.notes].filter(Boolean).join('\n\n');
+   s.outlineDraft=true;s.notes=['【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。',original?'本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。':'本页为结构占位，尚未填写实际研究结论。',!chapter&&page===section.pages[0]?section.body:'',page.notes,s.notes].filter(Boolean).join('\n\n');
    next.slides.push(s);if(!chapter)chapterNotes.set(s.id,section.body);
   }
   if(chapter)chapterNotes.set(chapter.id,section.body);
@@ -112,9 +133,9 @@ export function updateProjectOutline(current,outline,{toc=true,closing=true,tran
   for(const page of section.pages){
    const source=current.slides.find(s=>s.id===reuse[page.key]&&s.kind==='body'),s=take(source,()=>newContent(page.title));
    if(source)reused++;else{created++;s.outlineDraft=true;}
-   s.title=page.title;delete s.chapterId;if(s.chapterMode==='manual'||!chapter)delete s.chapterMode;
+   s.title=page.title;applyPagePayload(s,page);delete s.chapterId;if(s.chapterMode==='manual'||!chapter)delete s.chapterMode;
    if(!chapter){if(!prelude)s.chapterMode='manual';s.section=number;s.group=section.title;}
-   if(page.body)s.notes=[s.notes,'【大纲补充】\n'+page.body].filter(Boolean).join('\n\n');
+   if(page.notes)s.notes=[s.notes,'【大纲备注】\n'+page.notes].filter(Boolean).join('\n\n');
    if(!first){first=s;if(!chapter&&section.body)s.notes=[s.notes,'【章节补充】\n'+section.body].filter(Boolean).join('\n\n');}
    result.push(s);
   }

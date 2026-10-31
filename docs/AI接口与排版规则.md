@@ -12,7 +12,7 @@
 
 `src/outline.js`提供`parseOutline(text)`与`describeCurrentOutline(project)`，后者从实际页面生成当前三级大纲及页面／章节绑定。新建使用`buildOutlineProject`，继续制作使用`updateProjectOutline`，均在副本上操作；不能用新建函数覆盖当前文稿。配置含`reuse`（页key到旧页ID）、`chapters`、`toc/closing/transitions`及`lastAppendix`。末章明确勾选为附录时按附录处理，即使章名为“补充资料”；取消后按普通章处理。已有过渡结构默认逐章保留，显式修改开关后统一调整。
 
-可选`project.outline={format:'hash-outline-v1',status:'structure-confirmed',text}`记录最近应用的结构，非研究事实审批状态；之后编辑以slides为准，不从旧outline强行重放。新增／复制草稿页可有`outlineDraft:true`，AI完成真实内容加工与检查后再清除。解析大纲时，普通说明放备注，标题内`<br>`或字面量`\n`转换为手动换行。UI入口与流程见[AI制作与迭代流程](AI制作与迭代流程.md)。
+可选`project.outline={format:'hash-outline-v1',status:'structure-confirmed',text}`记录最近应用的结构，非研究事实审批状态；之后编辑以slides为准，不从旧outline强行重放。新增／复制草稿页可有`outlineDraft:true`，AI完成真实内容加工与检查后再清除。解析大纲时，三级标题后的第一、第二个普通段落分别映射为`slide.lead`与`slide.summary`，Markdown引用块映射为`slide.notes`；第三段及更多补充文字也并入备注，避免静默丢失。仅在大纲明确提供对应内容时更新已有字段。标题内`<br>`或字面量`\n`转换为手动换行。UI入口与流程见[AI制作与迭代流程](AI制作与迭代流程.md)。
 
 ## 普通模块
 

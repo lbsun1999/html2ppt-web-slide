@@ -3840,8 +3840,54 @@ body.export-view .toc-note:empty{display:none}
   }
 
   // src/outline.js
-  var OUTLINE_EXAMPLE = "# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n这里可以补充本页需要使用的材料，生成后保存在备注中。\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n";
+  var OUTLINE_EXAMPLE = "# 研究进展汇报\n\n## 问题背景与意义\n### 研究问题与应用场景\n用一句完整的话概括本页的问题、证据或结论。\n\n用一句凝练的话写出本页页尾总结。\n\n> 本页制作要求、讲解提示或需要 AI 留意的材料写在引用块中。\n### 现有方法与关键不足\n\n## 方法与实验\n### 方法框架与参数更新\n### 对照实验与结果分析\n\n## 总结与计划\n### 阶段结论与后续工作\n\n## 附录\n### 参考文献\n";
   var headingText = (s) => s.replace(/\s+#+\s*$/, "").trim().replace(/<br\s*\/?>|\\n/gi, "\n");
+  function pagePayload(body) {
+    const paragraphs = [], quotes = [], other = [];
+    let current = [], quote = [], fence = null;
+    const flush = () => {
+      if (current.length) {
+        paragraphs.push(current.join("\n").trim());
+        current = [];
+      }
+    }, flushQuote = () => {
+      if (quote.length) {
+        quotes.push(quote.join("\n").trim());
+        quote = [];
+      }
+    };
+    for (const line of String(body || "").split("\n")) {
+      const marker = line.match(/^\s{0,3}(`{3,}|~{3,})/);
+      if (fence) {
+        other.push(line);
+        if (marker && marker[1][0] === fence.char && marker[1].length >= fence.length) fence = null;
+        continue;
+      }
+      if (marker) {
+        flush();
+        flushQuote();
+        fence = { char: marker[1][0], length: marker[1].length };
+        other.push(line);
+        continue;
+      }
+      const quoted = line.match(/^\s{0,3}>\s?(.*)$/);
+      if (quoted) {
+        flush();
+        quote.push(quoted[1]);
+        continue;
+      }
+      flushQuote();
+      if (!line.trim()) {
+        flush();
+        continue;
+      }
+      current.push(line.trim());
+    }
+    flush();
+    flushQuote();
+    const extras = paragraphs.slice(2).concat(other.length ? other.join("\n").trim() : []).filter(Boolean);
+    return { lead: paragraphs[0] || "", summary: paragraphs[1] || "", notes: [...quotes, ...extras].filter(Boolean).join("\n\n") };
+  }
   function parseOutline(input2) {
     const text3 = String(input2 ?? "").replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n"), result = { title: "", intro: "", sections: [], errors: [], warnings: [] };
     let section = null, page = null, fence = null;
@@ -3897,7 +3943,10 @@ body.export-view .toc-note:empty{display:none}
     for (const s of result.sections) {
       s.body = s.body.trim();
       if (!s.pages.length) result.errors.push("章节“" + s.title + "”尚未列出###页面。");
-      for (const p of s.pages) p.body = p.body.trim();
+      for (const p of s.pages) {
+        p.body = p.body.trim();
+        Object.assign(p, pagePayload(p.body));
+      }
     }
     result.intro = result.intro.trim();
     return result;
@@ -3972,6 +4021,10 @@ body.export-view .toc-note:empty{display:none}
     s.modules = [];
     return s;
   }
+  function applyPagePayload(slide2, page) {
+    if (page.lead) slide2.lead = page.lead;
+    if (page.summary) slide2.summary = page.summary;
+  }
   function buildOutlineProject(current, outline, { toc = true, closing = true, transitions = true, lastAppendix, reuse = {}, sourceText = "" } = {}) {
     if (outline.errors.length) throw Error(outline.errors.join("\n"));
     if (outlinePageCount(outline, { toc, closing, transitions, lastAppendix }) > 100) throw Error("生成后超过100页，请精简大纲或分成多份文稿。");
@@ -4015,6 +4068,8 @@ body.export-view .toc-note:empty{display:none}
         if (original) reused++;
         s.title = page.title;
         s.lead = original ? s.lead : "";
+        s.summary = original ? s.summary : "";
+        applyPagePayload(s, page);
         delete s.chapterId;
         delete s.chapterMode;
         if (!chapter) {
@@ -4023,7 +4078,7 @@ body.export-view .toc-note:empty{display:none}
           s.group = section.title;
         }
         s.outlineDraft = true;
-        s.notes = ["【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。", original ? "本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。" : "本页为结构占位，尚未填写实际研究结论。", !chapter && page === section.pages[0] ? section.body : "", page.body, s.notes].filter(Boolean).join("\n\n");
+        s.notes = ["【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。", original ? "本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。" : "本页为结构占位，尚未填写实际研究结论。", !chapter && page === section.pages[0] ? section.body : "", page.notes, s.notes].filter(Boolean).join("\n\n");
         next.slides.push(s);
         if (!chapter) chapterNotes.set(s.id, section.body);
       }
@@ -4087,6 +4142,7 @@ body.export-view .toc-note:empty{display:none}
           s.outlineDraft = true;
         }
         s.title = page.title;
+        applyPagePayload(s, page);
         delete s.chapterId;
         if (s.chapterMode === "manual" || !chapter) delete s.chapterMode;
         if (!chapter) {
@@ -4094,7 +4150,7 @@ body.export-view .toc-note:empty{display:none}
           s.section = number;
           s.group = section.title;
         }
-        if (page.body) s.notes = [s.notes, "【大纲补充】\n" + page.body].filter(Boolean).join("\n\n");
+        if (page.notes) s.notes = [s.notes, "【大纲备注】\n" + page.notes].filter(Boolean).join("\n\n");
         if (!first2) {
           first2 = s;
           if (!chapter && section.body) s.notes = [s.notes, "【章节补充】\n" + section.body].filter(Boolean).join("\n\n");
@@ -4131,7 +4187,7 @@ body.export-view .toc-note:empty{display:none}
     const original = getProject(), initial = describeCurrentOutline(original), dialog2 = document.createElement("dialog");
     dialog2.id = "outline-dialog";
     dialog2.className = "outline-dialog";
-    dialog2.innerHTML = `<form method="dialog"><div class="dialog-head"><h2>文档大纲</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body"><p>制作过程中可随时打开。修改题目、章节或页序后应用到对应页面，已有正文、图表和格式保留；新增页面可选当前版式。</p><div class="outline-help"><code># 汇报总标题</code> → 封面标题；<code>## 章节标题</code> → 章节；<code>### 页面标题</code> → 正文页。直接写、粘贴或读文件均可；普通文字保存为备注，长标题可用<code>&lt;br&gt;</code>手动分行。</div><div class="outline-file"><label>选择大纲文件<input id="outline-file" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown"></label><button type="button" id="outline-example">填入格式示例</button></div><label for="outline-text">编写、粘贴或修改当前大纲</label><textarea id="outline-text" rows="10" spellcheck="false"></textarea><div class="outline-options"><label>应用方式<select id="outline-mode"><option value="current">更新当前文稿</option><option value="new">另建文稿，沿用当前主题</option></select></label><label><input id="outline-toc" type="checkbox"> 保留／生成目录</label><label><input id="outline-transitions" type="checkbox"> 章节过渡页</label><label><input id="outline-appendix" type="checkbox"> 最后一章为附录</label><label><input id="outline-closing" type="checkbox"> 保留／生成结束页</label></div><p class="hint">当前模式会将改题、章节归属和页序应用到原页面；原有过渡页默认保留，手动更改开关后统一调整。另建文稿默认正文留空，只保留大纲中的页题、章节和页眉页脚；提示放备注，不自动复制同名示例。需要旧内容时，可逐页明确选择复制。勾选“最后一章为附录”可将末章按附录处理，章名无需写成“附录”；默认无过渡页、不进目录。被移出的页会在下面计数，可撤销；应用后需保存HTML才写入文件。标题改动后的正文含义仍需核对。</p><div id="outline-status" role="status"></div><div id="outline-preview" class="outline-preview"></div></div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" id="outline-apply">应用大纲</button></div></form>`;
+    dialog2.innerHTML = `<form method="dialog"><div class="dialog-head"><h2>文档大纲</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body"><p>制作过程中可随时打开。修改题目、章节或页序后应用到对应页面，已有正文、图表和格式保留；新增页面可选当前版式。</p><div class="outline-help"><code># 汇报总标题</code> → 封面标题；<code>## 章节标题</code> → 章节；<code>### 页面标题</code> → 正文页。页面标题后的第一段写入页首句，空一行后的第二段写入页尾总结，<code>&gt; 引用块</code>写入页面备注；长标题可用<code>&lt;br&gt;</code>手动分行。</div><div class="outline-file"><label>选择大纲文件<input id="outline-file" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown"></label><button type="button" id="outline-example">填入格式示例</button></div><label for="outline-text">编写、粘贴或修改当前大纲</label><textarea id="outline-text" rows="10" spellcheck="false"></textarea><div class="outline-options"><label>应用方式<select id="outline-mode"><option value="current">更新当前文稿</option><option value="new">另建文稿，沿用当前主题</option></select></label><label><input id="outline-toc" type="checkbox"> 保留／生成目录</label><label><input id="outline-transitions" type="checkbox"> 章节过渡页</label><label><input id="outline-appendix" type="checkbox"> 最后一章为附录</label><label><input id="outline-closing" type="checkbox"> 保留／生成结束页</label></div><p class="hint">当前模式会将改题、章节归属和页序应用到原页面；大纲明确写出的页首句、页尾总结和引用块备注会同步更新。原有过渡页默认保留，手动更改开关后统一调整。另建文稿默认正文模块留空，只按大纲建立页面结构和辅助文字。勾选“最后一章为附录”可将末章按附录处理，章名无需写成“附录”；默认无过渡页、不进目录。被移出的页会在下面计数，可撤销；应用后需保存HTML才写入文件。标题改动后的正文含义仍需核对。</p><div id="outline-status" role="status"></div><div id="outline-preview" class="outline-preview"></div></div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" id="outline-apply">应用大纲</button></div></form>`;
     document.body.append(dialog2);
     let parsed = initial.parsed, choices = initial.bindings, chapters = initial.chapters, transitionTouched = false, appendixTouched = false, stable = initial.parsed;
     const $2 = (s) => dialog2.querySelector(s), options = () => ({ toc: $2("#outline-toc").checked, transitions: $2("#outline-transitions").checked, closing: $2("#outline-closing").checked, lastAppendix: $2("#outline-appendix").checked });

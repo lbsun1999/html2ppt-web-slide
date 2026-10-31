@@ -26,7 +26,7 @@ test('reuse copies authored content, formatting and positions; source is unchang
  assert.deepEqual(current,before);assert.equal(reused,2);assert.equal(project.slides.length,7);
  const copies=project.slides.filter(s=>['方法分析','方案复用'].includes(s.title));assert.equal(new Set(copies.map(s=>s.id)).size,2);
  for(const s of copies){assert.notEqual(s.id,source.id);assert.deepEqual(s.modules[0].parts,source.modules[0].parts);assert.equal(s.modules[0].x,source.modules[0].x);assert.equal(s.modules[0].w,source.modules[0].w);assert.equal(s.group,'研究方法');assert.match(s.notes,/原有讲解备注/);assert.ok(s.outlineDraft);}
- assert.match(copies[0].notes,/本页用户材料/);assert.equal(documentSections(project).length,1);assert.equal(project.slides.find(s=>s.title==='补充材料').section,'附录');assert.equal(project.outline.status,'structure-confirmed');
+ assert.equal(copies[0].lead,'本页用户材料');assert.equal(documentSections(project).length,1);assert.equal(project.slides.find(s=>s.title==='补充材料').section,'附录');assert.equal(project.outline.status,'structure-confirmed');
 });
 test('manual chapters work without transition pages and retain TOC numbering',()=>{
  const o=parseOutline('# 总标题\n## 背景\n### 问题\n## 方法\n### 模型'),{project}=buildOutlineProject(createProject(),o,{transitions:false,closing:false});
@@ -36,8 +36,15 @@ test('page limit rejects an oversized outline before building a document',()=>{
  const o=parseOutline('# 大纲\n## 章节\n'+Array.from({length:100},(_,i)=>'### 页面'+i).join('\n'));
  assert.throws(()=>buildOutlineProject(createProject(),o),/100页/);
 });
-test('new outline bodies are clean and do not inherit teaching modules or lead text',()=>{
- const o=parseOutline('# 新文稿\n## 章节\n### 待制作页面\n材料写在备注里'),{project}=buildOutlineProject(createProject(),o);const s=project.slides.find(s=>s.kind==='body');assert.deepEqual(s.modules,[]);assert.equal(s.lead,'');assert.equal(s.summary,'');assert.equal(s.source,'');assert.match(s.notes,/材料写在备注里/);assert.equal(s.title,'待制作页面');
+test('outline body paragraphs become lead and summary while quote blocks become notes',()=>{
+ const o=parseOutline('# 新文稿\n## 章节\n### 待制作页面\n第一段作为页首句。\n\n第二段作为页尾总结。\n\n> 核对数据来源。\n> 提醒 AI 保留术语。'),{project}=buildOutlineProject(createProject(),o);const s=project.slides.find(s=>s.kind==='body');assert.deepEqual(s.modules,[]);assert.equal(s.lead,'第一段作为页首句。');assert.equal(s.summary,'第二段作为页尾总结。');assert.equal(s.source,'');assert.match(s.notes,/核对数据来源。\n提醒 AI 保留术语。/);assert.equal(s.title,'待制作页面');
+});
+test('outline content updates only fields explicitly supplied for an existing page',()=>{
+ const current=createProject(),described=describeCurrentOutline(current),body=current.slides.find(s=>s.kind==='body'),next=parseOutline(`# ${current.title}\n## ${body.group}\n### ${body.title}\n新的页首句\n\n新的页尾句\n\n> 新的讲解备注`),reuse={[next.sections[0].pages[0].key]:body.id};
+ const {project}=updateProjectOutline(current,next,{reuse,transitions:false,toc:false,closing:false}),updated=project.slides.find(s=>s.kind==='body');assert.equal(updated.lead,'新的页首句');assert.equal(updated.summary,'新的页尾句');assert.match(updated.notes,/新的讲解备注/);assert.deepEqual(updated.modules,body.modules);
+});
+test('extra outline paragraphs are preserved in notes instead of being discarded',()=>{
+ const page=parseOutline('# 文稿\n## 章节\n### 页面\n页首\n\n页尾\n\n补充条件一\n\n补充条件二').sections[0].pages[0];assert.equal(page.lead,'页首');assert.equal(page.summary,'页尾');assert.match(page.notes,/补充条件一\n\n补充条件二/);
 });
 
 const master=()=>JSON.parse(fs.readFileSync('templates/template-1/ustb-blue/template.html','utf8').match(/<script[^>]*id="project-data"[^>]*>([\s\S]*?)<\/script>/)[1]);
