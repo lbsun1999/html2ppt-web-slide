@@ -112,7 +112,7 @@ export function audit(slideEl,model){
  const identity=slideEl.querySelector('.profile-fixed .profile-identity');if(identity&&(identity.scrollHeight>identity.clientHeight+2||identity.scrollWidth>identity.clientWidth+2))errors.push('Author card overflow.');
  const heading=slideEl.querySelector('h2');if(heading.scrollHeight>heading.clientHeight+2)errors.push('页面标题过长，请精简。');
  const lead=slideEl.querySelector('.slide-lead'),contentTop=Math.max(SAFE.y,model.modules.length?Math.min(...model.modules.map(m=>m.y)):SAFE.y);if(!model.textPositions?.lead&&lead.offsetTop+lead.scrollHeight>contentTop-16)errors.push('页首句过长：请精简或分成其他页面。');
- const summary=slideEl.querySelector('.slide-summary');if(summary&&summary.scrollHeight>summary.clientHeight+2)errors.push('页尾总结过长，请精简为一行。');
+ const summary=slideEl.querySelector('.slide-summary'),summaryOverflow=!!summary&&summary.scrollHeight>summary.clientHeight+2;if(summary)summary.classList.toggle('overflowing',summaryOverflow);if(summaryOverflow)errors.push('页尾总结超出可见区域：已裁切并用红框提示，请精简为一行。');
  for(const m of model.modules){
   if(model.summary&&m.y+m.h>750+.1)errors.push('模块进入页尾总结区域，请缩小或上移。');
   const el=slideEl.querySelector(`[data-module="${m.id}"]`);if(!el)continue;fitTable(el);const target=m.type==='table'?el.querySelector('.table-wrap'):el.querySelector('.module-content');

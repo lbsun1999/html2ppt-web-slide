@@ -184,6 +184,7 @@ html,body{height:100%;overflow:hidden}
 .slide-header h2{color:var(--primary)}
 .cover-band{margin-right:0;padding:30px 90px;border-right:0;background:var(--primary)}
 .slide-summary{position:absolute;left:58px;right:58px;top:750px;height:60px;display:flex;align-items:center;justify-content:center;padding:8px 22px;background:var(--primary);color:white;font-size:26.6667px;font-weight:700;line-height:1.5;overflow:hidden;text-align:center;white-space:pre-wrap}
+.slide-summary.overflowing{outline:5px solid #b81d2c;outline-offset:-5px}
 .canvas-frame.show-grid .body-slide::after{top:256px}
 .size-grid button{touch-action:none;user-select:none}
 #media-custom-fields[hidden]{display:none}
@@ -21705,8 +21706,9 @@ body.export-view .toc-note:empty{display:none}
     if (heading.scrollHeight > heading.clientHeight + 2) errors.push("页面标题过长，请精简。");
     const lead = slideEl.querySelector(".slide-lead"), contentTop = Math.max(SAFE.y, model.modules.length ? Math.min(...model.modules.map((m) => m.y)) : SAFE.y);
     if (!model.textPositions?.lead && lead.offsetTop + lead.scrollHeight > contentTop - 16) errors.push("页首句过长：请精简或分成其他页面。");
-    const summary = slideEl.querySelector(".slide-summary");
-    if (summary && summary.scrollHeight > summary.clientHeight + 2) errors.push("页尾总结过长，请精简为一行。");
+    const summary = slideEl.querySelector(".slide-summary"), summaryOverflow = !!summary && summary.scrollHeight > summary.clientHeight + 2;
+    if (summary) summary.classList.toggle("overflowing", summaryOverflow);
+    if (summaryOverflow) errors.push("页尾总结超出可见区域：已裁切并用红框提示，请精简为一行。");
     for (const m of model.modules) {
       if (model.summary && m.y + m.h > 750 + 0.1) errors.push("模块进入页尾总结区域，请缩小或上移。");
       const el2 = slideEl.querySelector(`[data-module="${m.id}"]`);

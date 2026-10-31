@@ -11,6 +11,7 @@ html,body{height:100%;overflow:hidden}
 .slide-header h2{color:var(--primary)}
 .cover-band{margin-right:0;padding:30px 90px;border-right:0;background:var(--primary)}
 .slide-summary{position:absolute;left:58px;right:58px;top:750px;height:60px;display:flex;align-items:center;justify-content:center;padding:8px 22px;background:var(--primary);color:white;font-size:26.6667px;font-weight:700;line-height:1.5;overflow:hidden;text-align:center;white-space:pre-wrap}
+.slide-summary.overflowing{outline:5px solid #b81d2c;outline-offset:-5px}
 .canvas-frame.show-grid .body-slide::after{top:256px}
 .size-grid button{touch-action:none;user-select:none}
 #media-custom-fields[hidden]{display:none}
