@@ -19,7 +19,7 @@ import {MANUAL_BREAK_SELECTOR} from './src/title-policy.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
 const PORT=Number(process.env.PORT||4317),HOST='127.0.0.1',APP_VERSION=JSON.parse(await fs.readFile(path.join(ROOT,'package.json'),'utf8')).version;
-const bundle=await build({absWorkingDir:ROOT,entryPoints:['src/app.js'],bundle:true,write:false,format:'iife',target:'chrome110',charset:'utf8'});
+const bundle=await build({absWorkingDir:ROOT,entryPoints:['src/app.js'],bundle:true,write:false,format:'iife',target:'chrome110',charset:'utf8',loader:{'.png':'dataurl'}});
 const code=bundle.outputFiles[0].text;
 const sessions=new Map();let browserPromise,exportQueue=Promise.resolve();
 async function browser(){if(!browserPromise)browserPromise=(async()=>{
@@ -160,7 +160,7 @@ const server=http.createServer(async(req,res)=>{try{
   const project=await body(req),kind=route.split('/').pop();const job=exportQueue.then(()=>exportProject(project,kind));exportQueue=job.catch(()=>{});const result=await job;res.writeHead(200,{'Content-Type':kind==='pdf'?'application/pdf':'application/vnd.openxmlformats-officedocument.presentationml.presentation','Content-Disposition':`attachment; filename="slides.${kind}"`,'Cache-Control':'no-store'});res.end(result);return;
  }
  if(req.method==='GET'&&route==='/styles.css'){res.writeHead(200,{'Content-Type':'text/css; charset=utf-8','Cache-Control':'no-store'});res.end(await sharedCSS(ROOT));return;}
- const files={'/':'index.html','/index.html':'index.html','/export.html':'index.html','/text-styles.html':'文本块样式展示.html'};
+ const files={'/':'index.html','/index.html':'index.html','/export.html':'index.html','/tutorial.html':'交互式入门教学.html','/text-styles.html':'文本块样式展示.html'};
  if(req.method==='GET'&&files[route]){const file=files[route];res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store'});res.end(await fs.readFile(path.join(ROOT,file)));return;}
  json(res,{error:'找不到该资源。'},404);
  }catch(e){console.error('[request]',e.message);if(!res.headersSent)json(res,{error:e.message},400);else res.end();}});

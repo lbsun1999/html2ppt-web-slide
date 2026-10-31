@@ -11,6 +11,7 @@
   "scripts": {
     "start": "node scripts/start.mjs --open",
     "build:styles": "node scripts/build-style-gallery.mjs",
+    "build:blank": "node scripts/build-blank-template.mjs",
     "test": "node --test tests/layout.test.mjs tests/advanced-alignment.test.mjs tests/outline.test.mjs tests/table-text.test.mjs tests/startup.test.mjs tests/html-drop.test.mjs",
     "test:e2e": "node tests/e2e.mjs",
     "test:styles": "node tests/text-styles.mjs",

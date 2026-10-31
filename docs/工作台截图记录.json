@@ -1,6 +1,6 @@
 {
   "source": "templates/template-1/ustb-blue/template.html",
-  "sha256": "6904257841e590b71b3e6073169479c805ebe22aafe88b187b827b8620672e62",
+  "sha256": "b8571df37a9b827e4c690358b67b6ba60cecfaa8d0a59f0c98794f4f5d837690",
   "viewport": {
     "width": 1920,
     "height": 1200
@@ -32,7 +32,7 @@
       "capture": {
         "kind": "detail",
         "clip": {
-          "x": 1123.625,
+          "x": 1008.1875,
           "y": 0,
           "width": 778.375,
           "height": 70
@@ -366,6 +366,34 @@
           "y": 136,
           "width": 700,
           "height": 928
+        }
+      },
+      "view": {
+        "mode": "single",
+        "columns": 2,
+        "present": false,
+        "overview": false,
+        "zoom": 1,
+        "pan": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "mode": "preview",
+      "currentPage": 22
+    },
+    {
+      "image": "images/presentation-presenter.png",
+      "description": "演讲者视图：原工作台保留当前页备注并同步切页，独立观众窗口只显示幻灯片，可拖到拓展屏后进入全屏。",
+      "capture": {
+        "kind": "presenter-composite",
+        "speakerViewport": {
+          "width": 1360,
+          "height": 860
+        },
+        "audienceViewport": {
+          "width": 960,
+          "height": 640
         }
       },
       "view": {

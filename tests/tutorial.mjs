@@ -6,13 +6,16 @@ import {pathToFileURL} from 'node:url';
 const browser=await chromium.launch({executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
  const page=await browser.newPage({viewport:{width:1720,height:1080}});
- await page.goto(pathToFileURL(path.resolve('文本块样式展示.html')).href);
+ await page.goto(pathToFileURL(path.resolve('交互式入门教学.html')).href);
+ const launcherType=await page.evaluate(()=>({body:parseFloat(getComputedStyle(document.body).fontSize),lead:parseFloat(getComputedStyle(document.querySelector('.hero p')).fontSize),card:parseFloat(getComputedStyle(document.querySelector('.card p')).fontSize)}));
+ assert.ok(launcherType.body>=18&&launcherType.lead>=21&&launcherType.card>=18,'tutorial launcher keeps body, lead and card copy comfortably readable');
  assert.equal(await page.locator('a[href*="tutorial=1"]').count(),1,'launcher offers one main-template tutorial');
  await page.locator('a[href*="ustb-blue"]').click();
  await page.waitForFunction(()=>window.slideStudio);
  await page.locator('.tutorial-guide').waitFor();
  assert.equal(await page.locator('[data-tutorial-group]').count(),12,'tutorial home exposes all independent sections');
  assert.equal(await page.locator('[data-tutorial-full]').count(),1,'tutorial home preserves the original continuous course');
+ await page.setViewportSize({width:900,height:900});const headingLines=await page.locator('.tutorial-catalog-heading p').evaluate(node=>{const range=document.createRange();range.selectNodeContents(node);return range.getClientRects().length;});assert.equal(headingLines,1,'tutorial catalog introduction avoids a one-character orphan line at a common compact width');await page.setViewportSize({width:1720,height:1080});
  assert.equal(await page.locator('.tutorial-actions').isVisible(),false,'step controls never leak into the tutorial home');
  const catalogBox=await page.locator('.tutorial-guide').boundingBox();assert.equal(catalogBox.x,0);assert.equal(catalogBox.y,0);assert.equal(catalogBox.width,1720);assert.equal(catalogBox.height,1080);
  await page.locator('[data-tutorial-full]').hover();const fullHover=await page.locator('[data-tutorial-full]').evaluate(node=>{const css=getComputedStyle(node);return {color:css.color,backgroundImage:css.backgroundImage};});assert.equal(fullHover.color,'rgb(255, 255, 255)');assert.match(fullHover.backgroundImage,/linear-gradient/,'full-course hover keeps a dark gradient instead of inheriting the pale global button hover');

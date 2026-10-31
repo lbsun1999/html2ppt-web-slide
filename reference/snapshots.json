@@ -10,41 +10,25 @@
     "notesVisible": false,
     "viewport": {
       "width": 1920,
-      "height": 1528
+      "height": 1829
     },
     "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
+    "runtimeSha256": "811ed2cc6697978c641bdf8a5e222775b28e25bc4bc1d9d38b5f42674b49a907"
   },
   {
-    "file": "navigation.html",
-    "sha256": "780a9ef615f4328fcedf169230d24f63dc8e52e7ddc2a0a9eeb7ed6ad639d734",
-    "preview": "images/navigation.png",
+    "file": "blank-template.html",
+    "sha256": "9a5d719e976f19f157ebcead6a2ecb12ca0f0f9679ef71c58f4d26acd0a42415",
+    "preview": "images/blank-template.png",
     "view": "grid",
     "columns": 3,
-    "pages": 12,
-    "focusPage": 10,
-    "notesVisible": false,
-    "viewport": {
-      "width": 1920,
-      "height": 1435
-    },
-    "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
-  },
-  {
-    "file": "text-styles-example.html",
-    "sha256": "7194cad78a1ebc281474766eedf8c579fb806303192682a08faeb401485bf3f6",
-    "preview": "images/text-styles-example.png",
-    "view": "grid",
-    "columns": 3,
-    "pages": 10,
+    "pages": 7,
     "focusPage": 5,
     "notesVisible": false,
     "viewport": {
       "width": 1920,
-      "height": 1435
+      "height": 1536
     },
     "runtimeSource": "templates/template-1/ustb-blue/template.html",
-    "runtimeSha256": "b5814032204164adeb5d0b7405c264555312827367ee2308758c47964855ba1a"
+    "runtimeSha256": "811ed2cc6697978c641bdf8a5e222775b28e25bc4bc1d9d38b5f42674b49a907"
   }
 ]

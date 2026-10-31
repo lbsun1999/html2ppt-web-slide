@@ -43,7 +43,7 @@ slide.modules = [m];
 
 渲染按数量均分卡片，统一实际媒体高度，按段落占用压缩媒体高度，最低72px；不缩文字字号。默认年份24pt、段落14pt、箭头短名18pt。图文连续浅底、图片上下16px间距、圆心与卡片左沿对齐，连接线直达年份块顶端，箭头超出内容两端各32px。长首句需要相应下移模块，逐页检查真实间隙。内容无法容纳时报溢出，不能裁掉说明、覆盖页脚或通过缩字硬塞。
 
-已有`history`快照可用`modularizeHistory(slide,assets)`一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 `reference/navigation.html`，第10页是可直接操作的例子，具体位置见[参考示例库说明](../reference/README.md)。迁移后使用标准`modules[].parts`迭代，不再修改`legacy_*`。
+已有`history`快照可用`modularizeHistory(slide,assets)`一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 `reference/blank-template.html`，第5页是可直接操作的空白时间轴，具体位置见[参考示例库说明](../reference/README.md)。迁移后使用标准`modules[].parts`迭代，不再修改`legacy_*`。
 
 ## 媒体、表格与格式编辑
 
@@ -98,4 +98,4 @@ node scripts/build-document.mjs ect/文稿.json 正式文稿.html --export
 页面复制通过`duplicatePages(pages)`克隆，重新生成页面／模块ID并重映射副本内章节引用、目录说明键和`#slide-ID`链接；复制范围外的链接保持指向原页面。拖排用`movePages`保持选中页相对顺序，修改后调用`syncSections`重新派生章节及目录。多选和剪贴板属于工作台临时状态，不写进HTML项目数据。
 
 
-学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference目录为人工认可的完整HTML快照，未经要求不重做；当前仅保留example-project、text-styles-example和navigation三份HTML；时间轴放在navigation第10页，移除学校标识，媒体使用占位符。更新实例时同步其哈希、实际多页截图与该目录README。
+学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference目录当前保留`example-project.html`和`blank-template.html`两份工作台HTML；后者使用校徽占位符，包含封面、自动目录、媒体、表格、时间轴、公式及附录简历。文字块快速比较位于根目录`文本块样式展示.html`。更新实例时同步其哈希、实际多页截图与该目录README。

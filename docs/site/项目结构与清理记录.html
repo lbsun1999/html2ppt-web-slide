@@ -5,7 +5,7 @@
 <div class="table-scroll"><table><thead><tr><th>依赖</th><th>实际用途</th><th>入口</th></tr></thead><tbody><tr><td>esbuild</td><td>工作台启动时打包浏览器脚本；生成独立 HTML</td><td>server.mjs、scripts/build-document.mjs</td></tr><tr><td>exceljs</td><td>读取 Excel 工作簿与合并单元格</td><td>server.mjs</td></tr><tr><td>katex</td><td>LaTeX 语法校验、预览和公式渲染</td><td>src/formula.js</td></tr><tr><td>playwright</td><td>PDF 导出及 PPTX 对象测量、媒体截图</td><td>server.mjs</td></tr><tr><td>pptxgenjs</td><td>写入可编辑 PPTX</td><td>server.mjs</td></tr><tr><td>jszip</td><td>规范PPTX段落XML，补全中文断行规则并保留原生列表属性</td><td>src/server/pptx-typography.mjs</td></tr></tbody></table></div>
 <p>v0.1.3将此前已被依赖树使用的JSZip显式列为直接依赖，用于PPTX段落规范化。以上六项均由实际功能引用，不删除或误移到仅开发依赖。<code>node_modules</code> 是安装产物，不手动裁剪其内部文件；分享源码时可不打包，由 <code>npm ci</code> 恢复。独立 HTML 的浏览、编辑与放映不读取 node_modules。</p>
 <h2 id="目录用途">目录用途<a class="anchor" href="#目录用途">#</a></h2>
-<div class="table-scroll"><table><thead><tr><th>位置</th><th>用途</th></tr></thead><tbody><tr><td>templates/</td><td>按版式族和模板包管理的正式HTML、素材、清单与导出快照</td></tr><tr><td>src/</td><td>编辑器、渲染、模型与学校变体</td></tr><tr><td>src/server/</td><td>服务端必需的学校资源和共享样式加载</td></tr><tr><td>scripts/</td><td>生成、检查、预览及清理等维护命令</td></tr><tr><td>reference/</td><td>三份参考HTML及截图／哈希；navigation第10页提供通用时间轴</td></tr><tr><td>docs/</td><td>说明、原始样式规范和正式预览图</td></tr><tr><td>tests/</td><td>回归测试；fixtures/ 为固定测试视频，不参与默认示例</td></tr><tr><td>ect/、test-results/</td><td>可再生检查产物，清理后按需重建</td></tr></tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>位置</th><th>用途</th></tr></thead><tbody><tr><td>templates/</td><td>按版式族和模板包管理的正式HTML、素材、清单与导出快照</td></tr><tr><td>src/</td><td>编辑器、渲染、模型与学校变体</td></tr><tr><td>src/server/</td><td>服务端必需的学校资源和共享样式加载</td></tr><tr><td>scripts/</td><td>生成、检查、预览及清理等维护命令</td></tr><tr><td>reference/</td><td>两份工作台参考HTML及截图／哈希；blank-template提供空白模块起点</td></tr><tr><td>docs/</td><td>说明、原始样式规范和正式预览图</td></tr><tr><td>tests/</td><td>回归测试；fixtures/ 为固定测试视频，不参与默认示例</td></tr><tr><td>ect/、test-results/</td><td>可再生检查产物，清理后按需重建</td></tr></tbody></table></div>
 <p>根目录保留使用说明、技能入口及运行入口；src存放模型与编辑逻辑，docs与reference分别承担说明和已确认参考。正式HTML、学校素材和对应PDF/PPTX全部进入各自模板包，避免学校成稿与公共运行时代码混放。</p>
 <p>GitHub包含公共源码、独立模板包、说明插图和reference；不包含node_modules、ect、test-results、本地备份和日志。依赖用package-lock.json锁定并通过npm ci恢复。发布前检查所有README本地链接可到达，避免移动模板后留下失效的HTML、素材或导出链接。</p>
 <h2 id="本轮清理">本轮清理<a class="anchor" href="#本轮清理">#</a></h2>
@@ -19,7 +19,7 @@
 </ul>
 <h2 id="清理后验证">清理后验证<a class="anchor" href="#清理后验证">#</a></h2>
 <p>从空临时目录重新启动服务、生成两校正式 HTML/PDF/PPTX，并验证模型单元测试、Excel 导入、媒体上传、HTML 离线保存、公式编辑、富文本编辑、目录增删、窄文本框、备注及放映操作。PPTX 另查章节标题禁止自动换行和正文标题主题色。</p>
-<p>两校共60页的版面检查均无溢出错误。v0.1.0五份reference HTML的哈希保持一致；v0.1.1按用户要求精简为三份参考HTML，时间轴加入navigation并更新其哈希，其余两份内容不改。v0.1.0入口依赖图确认16个顶层源模块均可达；v0.1.1新增timeline、sidebar-pages和page-operations，均由实际运行入口引用，没有新增运行依赖。</p>
+<p>两校共60页的版面检查均无溢出错误。早期reference曾由五份精简为三份；当前进一步整理为<code>example-project.html</code>和<code>blank-template.html</code>两份工作台参考，文字块样式改由根目录一屏速览页承担。空白模块模板由构建脚本生成并单独校验目录、媒体、表格、时间轴、公式和作者附录。入口依赖图确认顶层源模块均可达；timeline、sidebar-pages和page-operations均由实际运行入口引用，没有新增运行依赖。</p>
 <p>额外回归发现并修正两处旧问题：文字样式展示页的卡片高度不足，自定义列表符号的旧 CSS 覆盖了实际符号。十种文字样式、符号显示、撤销重做与离线导出均重新验证。发布整理时已删除examples空目录，其中没有运行文件或资源引用。</p>
 <h2 id="维护命令">维护命令<a class="anchor" href="#维护命令">#</a></h2>
 <pre data-lang="powershell"><code>npm.cmd start

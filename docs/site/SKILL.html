@@ -4,7 +4,7 @@
 <h1 id="ai-与人工协同的-web-slide">AI 与人工协同的 Web Slide<a class="anchor" href="#ai-与人工协同的-web-slide">#</a></h1>
 <h2 id="交互式入门与教学模式">交互式入门与教学模式<a class="anchor" href="#交互式入门与教学模式">#</a></h2>
 <ul>
-<li>根目录 <code>文本块样式展示.html</code> 是新用户训练入口，不再只是静态样式展板。</li>
+<li>根目录 <code>交互式入门教学.html</code> 是新用户训练入口；<code>文本块样式展示.html</code> 保留为 A／B／C 系列组件展示与回归测试页，二者不得混用。</li>
 <li>教学必须作用于真实工作台控件，不另造一套无法迁移的演示界面。</li>
 <li>教学只维护一套：从北科科技蓝主模板进入，先示范把主题色、浅底与正文色联动改为钢铁红，再覆盖大纲、页面设置、多子区域、表格、公式、图文与媒体、时间轴切换、高级对齐、等距／环形分布、文字、备注、放映和导出。其他学校或主题复用同一教学逻辑，不重复复制教学文件。</li>
 <li>教学首页必须同时保留“完整教学流程”和每个独立板块的入口。选择第N项时，先从教学母稿在后台重建前N−1项完成后的标准状态，再直接进入目标板块；前置重建不计入用户完成进度。返回目录时显示本次打开期间每项的百分比；刷新页面或退出后重新进入必须清零，不能把旧练习状态带到下一次。</li>
@@ -44,9 +44,9 @@
 <li><strong>丽院主题青</strong>：本地打开 <code>templates/template-1/lishui-cyan/template.html</code>；30页，验证同一版式族可只替换身份、单色主题和学校素材。说明见<a href="template-lishui-cyan.html">丽水学院主题青模板</a>。</li>
 </ul>
 <p>三套内置成稿位于<code>templates/template-1/</code>的独立模板包，公共编辑、放映和导出能力仍由同一运行时维护。丽水通过 <code>src/school-variants.js</code> 从共同底稿转换身份与主题，但转换结果也保存为独立模板包。新增学校或视觉主题时复制最接近的包，修改其<code>template.html</code>、<code>template.json</code>、README和<code>assets/</code>；单纯增加模板不得要求修改核心代码或复制一套编辑器。图片必须替换为对应材料，校史配图不代表对应年份时应说明。</p>
-<p>人工已确认的三份参考示例与截图保留在 <a href="reference-README.html">reference/README.md</a>。截图应先切换到多页视图，再截完整工作台，保留工具栏、侧栏、当前页与设置区，并注明实际页数和比较重点；只有一页的示例如实说明。先参考这些布局和交互，再修改正式文稿。HTML是不可随生成脚本覆盖的快照，不应因为升级运行时而重做其中内容；预览图可以重新生成。</p>
-<p><a href="../../reference/navigation.html"><a class="image-link" href="../../reference/images/navigation.png"><img src="../../reference/images/navigation.png" alt="导航与时间轴的实际多页工作台"></a></a></p>
-<p>选型时还可查看<a href="../../reference/images/example-project.png">科研正文</a>、<a href="../../reference/images/text-styles-example.png">文字样式</a>和<a href="../../reference/images/timeline.png">时间轴占位示例</a>。截图用于理解层级和对齐，源内容仍应从 HTML 的结构化数据读取。</p>
+<p>人工已确认的两份参考示例与截图保留在 <a href="reference-README.html">reference/README.md</a>。截图应先切换到多页视图，再截完整工作台，保留工具栏、侧栏、当前页与设置区，并注明实际页数和比较重点；只有一页的示例如实说明。先参考这些布局和交互，再修改正式文稿。综合示例保留为快照；空白模块模板由专用构建脚本生成，更新后须重新验收目录和各页模块。</p>
+<p><a href="../../reference/images/blank-template.png"><a class="image-link" href="../../reference/images/blank-template.png"><img src="../../reference/images/blank-template.png" alt="空白模块模板的实际多页工作台"></a></a></p>
+<p>选型时可查看<a href="../../reference/images/example-project.png">科研正文</a>和<a href="../../reference/images/blank-template.png">空白模块模板</a>；默认、A／B／C文字块则用根目录<code>文本块样式展示.html</code>快速比较。截图用于理解层级和对齐，源内容仍应从 HTML 的结构化数据读取。</p>
 <p>实际汇报的页数由内容决定；模板示例优先采用4或5的倍数只是方便总览，不能为凑页数编造结论。人可以直接打开HTML编辑；AI与人工端共同维护其中的<code>project-data</code>，不把截图当源稿。</p>
 <h2 id="工作方式">工作方式<a class="anchor" href="#工作方式">#</a></h2>
 <h3 id="人工与ai的责任边界">人工与AI的责任边界<a class="anchor" href="#人工与ai的责任边界">#</a></h3>
@@ -148,7 +148,7 @@
 <li>作者页保留身份、教育与工作经历、主要任职／项目／奖项、研究方向及粗体大数字成果占位。经历表 1/3/5 列写内容，2/4 列约半个字符宽且无线；浅底表头与正文用三段横线分开，正文居中，并与旁边任职说明保持字号一致。不生成真实个人经历或成果数字。</li>
 </ul>
 <h3 id="研究现状实验表与图像证据">研究现状、实验表与图像证据<a class="anchor" href="#研究现状实验表与图像证据">#</a></h3>
-<p>研究现状优先使用原生<code>timeline</code>时间轴模块。本地打开 <code>reference/navigation.html</code> 后查看第10页，页面说明见<a href="reference-README.html">参考示例库</a>，控件效果见<a href="../images/timeline-controls.png">实际截图</a>。第8页已使用此模块，不再依赖固定四列快照。每阶段用<code>year</code>写年份、<code>title</code>写事件短名、<code>text</code>写介绍，<code>asset</code>存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。</p>
+<p>研究现状优先使用原生<code>timeline</code>时间轴模块。本地打开 <code>reference/blank-template.html</code> 后查看第5页，页面说明见<a href="reference-README.html">参考示例库</a>，控件效果见<a href="../images/timeline-controls.png">实际截图</a>。第8页已使用此模块，不再依赖固定四列快照。每阶段用<code>year</code>写年份、<code>title</code>写事件短名、<code>text</code>写介绍，<code>asset</code>存照片或视频；支持1–6阶段，通常2–5阶段更易读，密集长文应拆页。通过右侧添加、删除任意阶段和前后移位，保持媒体与对应文字一起移动；复制页面、保存重开都须保留阶段内容。</p>
 <p>时间轴保留24pt年份、14pt说明，18pt阶段短名放在底部浅色大箭头，不上下重复。年份深色底、圆点、线段和短名统一使用当前主题色，不按阶段轮换深浅颜色；卡片与箭头保留浅底。增减和重排阶段不会改变配色规则。卡片等宽并随数量重算；同排媒体采用统一实际高度、等比裁剪，随卡片宽度与说明占用调整，不单向拉伸，不把文字缩小来强塞。照片／视频双击替换，可调缩放与取景。图文共用连续浅底，图片上下间隙一致；线段沿卡片左边从箭头圆心延伸到年份色块顶端，圆点完整落在箭头内，箭头两端比内容宽32px。真实文字仍放不下时提示扩区、凝练或拆页，不遮挡箭头、页脚。真实研究中改为代表工作、贡献及局限，不能把学校历史示例当成领域研究现状。</p>
 <p>多场景结果表用“算法列＋场景族＋各族相同顺序的子指标”。<code>xx.xx ± xx.xx</code>仅表示均值±标准差的格式占位，核对重复次数，不混同标准误或置信区间。数值单元格左右各至少0.5em；按真实算法名分配首列，不让首列空而数字挤。算法列右侧与场景族边界均划界，不能将竖线误放到组内。</p>
 <p>表格总体8–14pt；密集结果表优先12/11/10pt试排，左右半字符边距不能随缩字被压掉。仍放不下时拆场景、指标或页面。普通计划表保持自然高度，不套密集结果表的撑满规则。实验口径与符号说明无浅底时，使用对称栏宽、共同顶线和充分间隙，不贴成一团；表注按本表需要填写并允许删除。</p>

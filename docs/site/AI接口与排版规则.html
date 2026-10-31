@@ -22,7 +22,7 @@ m.parts[0].text = &#39;说明代表工作、证据与贡献，并交代适用范
 m.parts[0].asset = {kind:&#39;image&#39;,src:imageDataUrl,fit:&#39;cover&#39;,zoom:1,cx:50,cy:50};
 slide.modules = [m];</code></pre>
 <p>渲染按数量均分卡片，统一实际媒体高度，按段落占用压缩媒体高度，最低72px；不缩文字字号。默认年份24pt、段落14pt、箭头短名18pt。图文连续浅底、图片上下16px间距、圆心与卡片左沿对齐，连接线直达年份块顶端，箭头超出内容两端各32px。长首句需要相应下移模块，逐页检查真实间隙。内容无法容纳时报溢出，不能裁掉说明、覆盖页脚或通过缩字硬塞。</p>
-<p>已有<code>history</code>快照可用<code>modularizeHistory(slide,assets)</code>一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 <code>reference/navigation.html</code>，第10页是可直接操作的例子，具体位置见<a href="reference-README.html">参考示例库说明</a>。迁移后使用标准<code>modules[].parts</code>迭代，不再修改<code>legacy_*</code>。</p>
+<p>已有<code>history</code>快照可用<code>modularizeHistory(slide,assets)</code>一次性迁移：沿用该页已修改的年份、短名、介绍、媒体及格式，不重新套默认文案。正式两校第8页已迁移；本地打开 <code>reference/blank-template.html</code>，第5页是可直接操作的空白时间轴，具体位置见<a href="reference-README.html">参考示例库说明</a>。迁移后使用标准<code>modules[].parts</code>迭代，不再修改<code>legacy_*</code>。</p>
 <h2 id="媒体表格与格式编辑">媒体、表格与格式编辑<a class="anchor" href="#媒体表格与格式编辑">#</a></h2>
 <p>媒体子区域含 <code>asset:{src,kind,ratio,naturalRatio,fit,zoom,cx,cy}</code> 与 <code>caption,note,showCaption</code>。同排画面实际等高、图注底沿对齐；无图注设置 <code>showCaption:false</code>，不预留图注高度。表格用 <code>rows,headerRows,merges</code>，数字单元格左右各至少半字符间距。</p>
 <p><code>tableNote</code> 默认为空，按表格的实际需要填写；支持直接编辑与删除，不把指标箭头说明追加给所有表格。场景族表设置 <code>scenarioGroups:true</code>，第一列右侧及场景之间保留分隔线。<code>rowHeaders:true</code>只赋予首列行标题语义，不赋予深色底；深底只属于顶部表头行。成熟计划页优先使用summary快照。</p>
@@ -48,4 +48,4 @@ slide.modules = [m];</code></pre>
 <p>先启动本地服务。正式 HTML 在根目录或指定正式目录，PDF/PPTX 在 output，检查产物在 ect。等待字体、媒体加载，逐页检查 <code>window.slideStudio.check()</code>，目视复核单页与总览，保存重开后检查富文本、公式及备注。PPTX 保留原生文字，公式与复杂装饰为独立图像，不承诺 Office 原生公式。</p>
 <p>目录配置：tocIncludeAppendix 默认 false；tocExcluded 保存隐藏章节 ID，tocExtras 保存具有 tocCustomId 的自定义子区域。同步只更新自动章节，不能覆盖用户的增删与自定义文本。</p>
 <p>页面复制通过<code>duplicatePages(pages)</code>克隆，重新生成页面／模块ID并重映射副本内章节引用、目录说明键和<code>#slide-ID</code>链接；复制范围外的链接保持指向原页面。拖排用<code>movePages</code>保持选中页相对顺序，修改后调用<code>syncSections</code>重新派生章节及目录。多选和剪贴板属于工作台临时状态，不写进HTML项目数据。</p>
-<p>学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference目录为人工认可的完整HTML快照，未经要求不重做；当前仅保留example-project、text-styles-example和navigation三份HTML；时间轴放在navigation第10页，移除学校标识，媒体使用占位符。更新实例时同步其哈希、实际多页截图与该目录README。</p></article></main></body></html>
+<p>学校变体：先生成北科共同底稿，再用 applyLishuiVariant 替换丽水主题、校徽与学校介绍。学校变体不能删除标准页或改变公共模块几何结构。reference目录当前保留<code>example-project.html</code>和<code>blank-template.html</code>两份工作台HTML；后者使用校徽占位符，包含封面、自动目录、媒体、表格、时间轴、公式及附录简历。文字块快速比较位于根目录<code>文本块样式展示.html</code>。更新实例时同步其哈希、实际多页截图与该目录README。</p></article></main></body></html>
