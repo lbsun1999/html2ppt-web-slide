@@ -4079,7 +4079,9 @@ body.export-view .toc-note:empty{display:none}
           s.group = section.title;
         }
         s.outlineDraft = true;
-        s.notes = ["【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。", original ? "本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。" : "本页为结构占位，尚未填写实际研究结论。", !chapter && page === section.pages[0] ? section.body : "", page.notes, s.notes].filter(Boolean).join("\n\n");
+        if (original) {
+          if (page.notes) s.notes = [s.notes, "【大纲备注】\n" + page.notes].filter(Boolean).join("\n\n");
+        } else s.notes = ["【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。", "本页为结构占位，尚未填写实际研究结论。", !chapter && page === section.pages[0] ? section.body : "", page.notes].filter(Boolean).join("\n\n");
         next.slides.push(s);
         if (!chapter) chapterNotes.set(s.id, section.body);
       }

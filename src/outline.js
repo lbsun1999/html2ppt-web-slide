@@ -102,7 +102,9 @@ export function buildOutlineProject(current,outline,{toc=true,closing=true,trans
    const s=take(original,()=>newContent(page.title));if(original)reused++;
    s.title=page.title;s.lead=original?s.lead:'';s.summary=original?s.summary:'';applyPagePayload(s,page);delete s.chapterId;delete s.chapterMode;
    if(!chapter){s.chapterMode='manual';s.section=sectionNumber;s.group=section.title;}
-   s.outlineDraft=true;s.notes=['【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。',original?'本页复制了现有版式和内容；请核对正文、图表、引用与新题目是否一致。':'本页为结构占位，尚未填写实际研究结论。',!chapter&&page===section.pages[0]?section.body:'',page.notes,s.notes].filter(Boolean).join('\n\n');
+   s.outlineDraft=true;
+   if(original){if(page.notes)s.notes=[s.notes,'【大纲备注】\n'+page.notes].filter(Boolean).join('\n\n');}
+   else s.notes=['【大纲草稿】已按大纲建立页面题目及章节，正文仍需按真实材料加工。','本页为结构占位，尚未填写实际研究结论。',!chapter&&page===section.pages[0]?section.body:'',page.notes].filter(Boolean).join('\n\n');
    next.slides.push(s);if(!chapter)chapterNotes.set(s.id,section.body);
   }
   if(chapter)chapterNotes.set(chapter.id,section.body);

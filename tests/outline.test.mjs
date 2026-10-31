@@ -25,7 +25,7 @@ test('reuse copies authored content, formatting and positions; source is unchang
  const {project,reused}=buildOutlineProject(current,o,{reuse,sourceText:'原始大纲'});
  assert.deepEqual(current,before);assert.equal(reused,2);assert.equal(project.slides.length,7);
  const copies=project.slides.filter(s=>['方法分析','方案复用'].includes(s.title));assert.equal(new Set(copies.map(s=>s.id)).size,2);
- for(const s of copies){assert.notEqual(s.id,source.id);assert.deepEqual(s.modules[0].parts,source.modules[0].parts);assert.equal(s.modules[0].x,source.modules[0].x);assert.equal(s.modules[0].w,source.modules[0].w);assert.equal(s.group,'研究方法');assert.match(s.notes,/原有讲解备注/);assert.ok(s.outlineDraft);}
+ for(const s of copies){assert.notEqual(s.id,source.id);assert.deepEqual(s.modules[0].parts,source.modules[0].parts);assert.equal(s.modules[0].x,source.modules[0].x);assert.equal(s.modules[0].w,source.modules[0].w);assert.equal(s.group,'研究方法');assert.equal(s.notes,'原有讲解备注');assert.ok(s.outlineDraft);}
  assert.equal(copies[0].lead,'本页用户材料');assert.equal(documentSections(project).length,1);assert.equal(project.slides.find(s=>s.title==='补充材料').section,'附录');assert.equal(project.outline.status,'structure-confirmed');
 });
 test('manual chapters work without transition pages and retain TOC numbering',()=>{
@@ -42,6 +42,10 @@ test('outline body paragraphs become lead and summary while quote blocks become 
 test('outline content updates only fields explicitly supplied for an existing page',()=>{
  const current=createProject(),described=describeCurrentOutline(current),body=current.slides.find(s=>s.kind==='body'),next=parseOutline(`# ${current.title}\n## ${body.group}\n### ${body.title}\n新的页首句\n\n新的页尾句\n\n> 新的讲解备注`),reuse={[next.sections[0].pages[0].key]:body.id};
  const {project}=updateProjectOutline(current,next,{reuse,transitions:false,toc:false,closing:false}),updated=project.slides.find(s=>s.kind==='body');assert.equal(updated.lead,'新的页首句');assert.equal(updated.summary,'新的页尾句');assert.match(updated.notes,/新的讲解备注/);assert.deepEqual(updated.modules,body.modules);
+});
+test('empty outline payload preserves copied page content, guidance and notes unchanged',()=>{
+ const current=createProject(),source=current.slides.find(s=>s.kind==='body');source.lead='原页首句';source.summary='原页尾句';source.notes='原页面备注';const outline=parseOutline('# 新文稿\n## 新章节\n### 复用页面'),key=outline.sections[0].pages[0].key;
+ const copied=buildOutlineProject(current,outline,{reuse:{[key]:source.id},toc:false,closing:false,transitions:false}).project.slides.find(s=>s.kind==='body'),withoutIds=modules=>modules.map(({id,...module})=>module);assert.equal(copied.lead,'原页首句');assert.equal(copied.summary,'原页尾句');assert.equal(copied.notes,'原页面备注');assert.deepEqual(withoutIds(copied.modules),withoutIds(source.modules));
 });
 test('extra outline paragraphs are preserved in notes instead of being discarded',()=>{
  const page=parseOutline('# 文稿\n## 章节\n### 页面\n页首\n\n页尾\n\n补充条件一\n\n补充条件二').sections[0].pages[0];assert.equal(page.lead,'页首');assert.equal(page.summary,'页尾');assert.match(page.notes,/补充条件一\n\n补充条件二/);
