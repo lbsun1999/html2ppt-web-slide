@@ -69,9 +69,14 @@ export function describeCurrentOutline(project){
 }
 // Exact headings track reordered items; remaining rows track renames by position.
 export function reconcileOutlineBindings(previous,next,values,chapters=false){
- const items=o=>chapters?o.sections:o.sections.flatMap(s=>s.pages),old=items(previous),fresh=items(next),out={},used=new Set();
- for(const item of fresh){const matches=old.filter(p=>p.title===item.title);if(matches.length===1&&matches[0].key in values){out[item.key]=values[matches[0].key];used.add(matches[0].key);}}
- for(const item of fresh)if(!(item.key in out)){const prior=old.find(p=>p.key===item.key&&!used.has(p.key));if(prior&&prior.key in values){out[item.key]=values[prior.key];used.add(prior.key);}}
+ const mapItems=(old,fresh,byIndex=false)=>{const out={},used=new Set();for(const item of fresh){const matches=old.filter(p=>p.title===item.title);if(matches.length===1&&matches[0].key in values){out[item.key]=values[matches[0].key];used.add(matches[0].key);}}fresh.forEach((item,index)=>{if(item.key in out)return;const prior=byIndex?old[index]:old.find(p=>p.key===item.key);if(prior&&!used.has(prior.key)&&prior.key in values){out[item.key]=values[prior.key];used.add(prior.key);}});return out;};
+ if(chapters)return mapItems(previous.sections,next.sections);
+ const out={},usedSections=new Set();
+ next.sections.forEach((section,index)=>{
+  const matches=previous.sections.filter(s=>s.title===section.title&&!usedSections.has(s.key));
+  const prior=matches.length===1?matches[0]:previous.sections[index]&&!usedSections.has(previous.sections[index].key)?previous.sections[index]:null;
+  if(!prior)return;usedSections.add(prior.key);Object.assign(out,mapItems(prior.pages,section.pages,true));
+ });
  return out;
 }
 function newContent(title){

@@ -19,10 +19,9 @@ try{
  await page.locator('[data-action="undo"]').first().click();assert.deepEqual(await page.evaluate(()=>window.slideStudio.getProject()),original);
  await manager();
  await page.locator('#outline-text').fill('### 错误层级');assert.match(await page.locator('#outline-status').innerText(),/章节/);assert.equal(await page.locator('#outline-apply').isDisabled(),true);
- await page.locator('#outline-example').click();assert.ok(await page.locator('.outline-page-row').count()>3);assert.equal(await page.locator('#outline-apply').isEnabled(),true);
+ await page.locator('#outline-example').click();assert.ok(await page.locator('.outline-page-row').count()>3);assert.equal(await page.locator('#outline-apply').isEnabled(),true);assert.equal(await page.locator('#outline-mode').inputValue(),'blank');
  await page.locator('#outline-text').fill('# 新课题汇报\n## 研究方法\n### '+formula.title+'\n本页需补充参数与适用条件。\n\n> 核对公式来源，并保留讲解提示。\n### 新的方法说明\n用一句话说明新页面的任务。\n\n参数定义和更新口径必须保持一致。\n\n> 备注中保留本页的制作要求。\n## 附录\n### 参考文献');
- assert.equal(await page.locator('[data-outline-page="chapter-0-page-0"]').inputValue(),'','New documents default to clean body pages, even for same titles');await page.locator('[data-outline-page="chapter-0-page-0"]').selectOption(formula.id);
- await page.locator('[data-outline-page="chapter-1-page-0"]').selectOption(refs.id);
+ assert.equal(await page.locator('[data-outline-page="chapter-0-page-0"]').inputValue(),'','Blank draft mode does not reuse existing pages');assert.equal(await page.locator('[data-outline-page="chapter-0-page-0"]').isDisabled(),true);await page.locator('#outline-mode').selectOption('copy');assert.notEqual(await page.locator('[data-outline-page="chapter-0-page-0"]').inputValue(),'','Copy mode maps a page inside the matched chapter');await page.locator('[data-outline-page="chapter-0-page-0"]').selectOption(formula.id);await page.locator('[data-outline-page="chapter-0-page-1"]').selectOption('');await page.locator('[data-outline-page="chapter-1-page-0"]').selectOption(refs.id);
  assert.match(await page.locator('#outline-status').innerText(),/预计7页/);assert.equal(await page.locator('#outline-appendix').isChecked(),true);
  await page.locator('#outline-apply').click();assert.equal(await page.locator('#outline-dialog').count(),0);
  const p=await page.evaluate(()=>window.slideStudio.getProject());assert.equal(p.title,'新课题汇报');assert.equal(p.slides.length,7);assert.deepEqual(p.theme,original.theme);
@@ -34,7 +33,7 @@ try{
  const download=page.waitForEvent('download');await page.locator('[data-action="html"]').first().click();await(await download).saveAs('ect/outline-import-saved.html');
  const offline=await b.newPage();await offline.goto(pathToFileURL(path.resolve('ect/outline-import-saved.html')).href);await offline.waitForFunction(()=>window.slideStudio);assert.deepEqual((await offline.evaluate(()=>window.slideStudio.getProject())).outline,p.outline);await offline.close();
  await page.locator('[data-action="undo"]').first().click();assert.deepEqual(await page.evaluate(()=>window.slideStudio.getProject()),original,'Undo restores the original draft');
- await manager();await page.locator('#outline-mode').selectOption('new');
+ await manager();await page.locator('#outline-mode').selectOption('blank');
  const text='# 文件导入测试\n## 背景\n### 问题定义\n文件中的页首句。\n\n文件中的页尾句。\n\n> 文件中的页面备注。';await page.locator('#outline-file').setInputFiles({name:'outline.txt',mimeType:'text/plain',buffer:Buffer.concat([Buffer.from([0xff,0xfe]),Buffer.from(text,'utf16le')])});
  await page.waitForFunction(()=>document.querySelector('#outline-text').value.startsWith('# 文件导入测试'));assert.equal(await page.locator('#outline-apply').isEnabled(),true);
  await page.locator('#outline-transitions').uncheck();await page.locator('#outline-apply').click();const imported=await page.evaluate(()=>window.slideStudio.getProject()),importedBody=imported.slides.find(s=>s.kind==='body');assert.equal(imported.slides.filter(s=>s.kind==='transition').length,0);assert.equal(importedBody.lead,'文件中的页首句。');assert.equal(importedBody.summary,'文件中的页尾句。');assert.match(importedBody.notes,/文件中的页面备注。/);

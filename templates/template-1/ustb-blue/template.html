@@ -3970,9 +3970,6 @@ body.export-view .toc-note:empty{display:none}
   function outlinePageCount(outline, { toc = true, closing = true, transitions = true, lastAppendix, chapters = {}, preserveTransitions = false } = {}) {
     return 1 + Number(toc) + Number(closing) + outline.sections.reduce((n, s) => n + s.pages.length + Number(!outlineIsAppendix(outline, s, { lastAppendix, chapters }) && !chapters[s.key]?.prelude && (preserveTransitions && chapters[s.key] ? !!chapters[s.key].transitionId : transitions)), 0);
   }
-  function outlineMatches(project2, title) {
-    return project2.slides.filter((s) => s.kind === "body" && s.title === title);
-  }
   function describeCurrentOutline(project2) {
     const groups = [];
     let active;
@@ -3997,21 +3994,34 @@ body.export-view .toc-note:empty{display:none}
     return { text: text3, parsed, bindings, chapters };
   }
   function reconcileOutlineBindings(previous, next, values, chapters = false) {
-    const items = (o) => chapters ? o.sections : o.sections.flatMap((s) => s.pages), old = items(previous), fresh = items(next), out = {}, used = /* @__PURE__ */ new Set();
-    for (const item of fresh) {
-      const matches = old.filter((p) => p.title === item.title);
-      if (matches.length === 1 && matches[0].key in values) {
-        out[item.key] = values[matches[0].key];
-        used.add(matches[0].key);
+    const mapItems = (old, fresh, byIndex = false) => {
+      const out2 = {}, used = /* @__PURE__ */ new Set();
+      for (const item of fresh) {
+        const matches = old.filter((p) => p.title === item.title);
+        if (matches.length === 1 && matches[0].key in values) {
+          out2[item.key] = values[matches[0].key];
+          used.add(matches[0].key);
+        }
       }
-    }
-    for (const item of fresh) if (!(item.key in out)) {
-      const prior = old.find((p) => p.key === item.key && !used.has(p.key));
-      if (prior && prior.key in values) {
-        out[item.key] = values[prior.key];
-        used.add(prior.key);
-      }
-    }
+      fresh.forEach((item, index2) => {
+        if (item.key in out2) return;
+        const prior = byIndex ? old[index2] : old.find((p) => p.key === item.key);
+        if (prior && !used.has(prior.key) && prior.key in values) {
+          out2[item.key] = values[prior.key];
+          used.add(prior.key);
+        }
+      });
+      return out2;
+    };
+    if (chapters) return mapItems(previous.sections, next.sections);
+    const out = {}, usedSections = /* @__PURE__ */ new Set();
+    next.sections.forEach((section, index2) => {
+      const matches = previous.sections.filter((s) => s.title === section.title && !usedSections.has(s.key));
+      const prior = matches.length === 1 ? matches[0] : previous.sections[index2] && !usedSections.has(previous.sections[index2].key) ? previous.sections[index2] : null;
+      if (!prior) return;
+      usedSections.add(prior.key);
+      Object.assign(out, mapItems(prior.pages, section.pages, true));
+    });
     return out;
   }
   function newContent(title) {
@@ -4190,10 +4200,10 @@ body.export-view .toc-note:empty{display:none}
     const original = getProject(), initial = describeCurrentOutline(original), dialog2 = document.createElement("dialog");
     dialog2.id = "outline-dialog";
     dialog2.className = "outline-dialog";
-    dialog2.innerHTML = `<form method="dialog"><div class="dialog-head"><h2>文档大纲</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body"><p>制作过程中可随时打开。修改题目、章节或页序后应用到对应页面，已有正文、图表和格式保留；新增页面可选当前版式。</p><div class="outline-help"><code># 汇报总标题</code> → 封面标题；<code>## 章节标题</code> → 章节；<code>### 页面标题</code> → 正文页。页面标题后的第一段写入页首句，空一行后的第二段写入页尾总结，<code>&gt; 引用块</code>写入页面备注；长标题可用<code>&lt;br&gt;</code>手动分行。</div><div class="outline-file"><label>选择大纲文件<input id="outline-file" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown"></label><button type="button" id="outline-example">填入格式示例</button></div><label for="outline-text">编写、粘贴或修改当前大纲</label><textarea id="outline-text" rows="10" spellcheck="false"></textarea><div class="outline-options"><label>应用方式<select id="outline-mode"><option value="current">更新当前文稿</option><option value="new">另建文稿，沿用当前主题</option></select></label><label><input id="outline-toc" type="checkbox"> 保留／生成目录</label><label><input id="outline-transitions" type="checkbox"> 章节过渡页</label><label><input id="outline-appendix" type="checkbox"> 最后一章为附录</label><label><input id="outline-closing" type="checkbox"> 保留／生成结束页</label></div><p class="hint">当前模式会将改题、章节归属和页序应用到原页面；大纲明确写出的页首句、页尾总结和引用块备注会同步更新。原有过渡页默认保留，手动更改开关后统一调整。另建文稿默认正文模块留空，只按大纲建立页面结构和辅助文字。勾选“最后一章为附录”可将末章按附录处理，章名无需写成“附录”；默认无过渡页、不进目录。被移出的页会在下面计数，可撤销；应用后需保存HTML才写入文件。标题改动后的正文含义仍需核对。</p><div id="outline-status" role="status"></div><div id="outline-preview" class="outline-preview"></div></div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" id="outline-apply">应用大纲</button></div></form>`;
+    dialog2.innerHTML = `<form method="dialog"><div class="dialog-head"><h2>文档大纲</h2><button value="cancel" aria-label="关闭">×</button></div><div class="dialog-body"><p>制作过程中可随时打开。修改题目、章节或页序后应用到对应页面；也可以复制已匹配页面另建文稿，或只按新结构生成空白原稿。</p><div class="outline-help"><code># 汇报总标题</code> → 封面标题；<code>## 章节标题</code> → 章节；<code>### 页面标题</code> → 正文页。页面标题后的第一段写入页首句，空一行后的第二段写入页尾总结，<code>&gt; 引用块</code>写入页面备注；长标题可用<code>&lt;br&gt;</code>手动分行。</div><div class="outline-file"><label>选择大纲文件<input id="outline-file" type="file" accept=".md,.markdown,.txt,text/plain,text/markdown"></label><button type="button" id="outline-example">填入格式示例</button></div><label for="outline-text">编写、粘贴或修改当前大纲</label><textarea id="outline-text" rows="10" spellcheck="false"></textarea><div class="outline-options"><label>应用方式<select id="outline-mode"><option value="current">更新当前文稿</option><option value="copy">另建文稿并复制旧页</option><option value="blank">另建空白页原稿</option></select></label><label><input id="outline-toc" type="checkbox"> 保留／生成目录</label><label><input id="outline-transitions" type="checkbox"> 章节过渡页</label><label><input id="outline-appendix" type="checkbox"> 最后一章为附录</label><label><input id="outline-closing" type="checkbox"> 保留／生成结束页</label></div><p class="hint">更新当前文稿与复制旧页均按“同章同题优先、其次同章同位置”映射；新增题目使用空白页，被新大纲移除的章节和页面不再进入结果。复制模式生成独立新文档并要求另存；空白原稿模式不复制任何正文模块。大纲未填写的页首句、页尾总结和引用备注不会清空旧值。勾选“最后一章为附录”可将末章按附录处理；附录默认无过渡页、不进目录。应用后可撤销，保存HTML才写入文件。</p><div id="outline-status" role="status"></div><div id="outline-preview" class="outline-preview"></div></div><div class="dialog-actions"><button value="cancel">取消</button><button type="button" class="primary" id="outline-apply">应用大纲</button></div></form>`;
     document.body.append(dialog2);
     let parsed = initial.parsed, choices = initial.bindings, chapters = initial.chapters, transitionTouched = false, appendixTouched = false, stable = initial.parsed;
-    const $2 = (s) => dialog2.querySelector(s), options = () => ({ toc: $2("#outline-toc").checked, transitions: $2("#outline-transitions").checked, closing: $2("#outline-closing").checked, lastAppendix: $2("#outline-appendix").checked });
+    const $2 = (s) => dialog2.querySelector(s), mode2 = () => $2("#outline-mode").value, options = () => ({ toc: $2("#outline-toc").checked, transitions: $2("#outline-transitions").checked, closing: $2("#outline-closing").checked, lastAppendix: $2("#outline-appendix").checked });
     $2("#outline-text").value = initial.text;
     $2("#outline-toc").checked = original.slides.some((s) => s.kind === "toc");
     $2("#outline-transitions").checked = original.slides.some((s) => s.kind === "transition");
@@ -4201,31 +4211,31 @@ body.export-view .toc-note:empty{display:none}
     const render4 = (changed = false) => {
       const next = parseOutline($2("#outline-text").value);
       if (changed && !next.errors.length) {
-        choices = reconcileOutlineBindings(stable, next, choices);
-        chapters = reconcileOutlineBindings(stable, next, chapters, true);
-        if ($2("#outline-mode").value === "new") {
-          for (const page of next.sections.flatMap((s) => s.pages)) if (!stable.sections.flatMap((s) => s.pages).some((p) => p.title === page.title)) choices[page.key] = "";
+        if (mode2() === "blank") {
+          choices = {};
+          chapters = {};
+        } else {
+          choices = reconcileOutlineBindings(stable, next, choices);
+          chapters = reconcileOutlineBindings(stable, next, chapters, true);
         }
         stable = next;
       }
       if (!appendixTouched) $2("#outline-appendix").checked = !!next.sections.length && outlineIsAppendix(next, next.sections.at(-1), { chapters });
       parsed = next;
-      const current = $2("#outline-mode").value === "current", errors = [...parsed.errors];
+      const current = mode2() === "current", blank = mode2() === "blank", mapped = !blank, errors = [...parsed.errors];
       const count = outlinePageCount(parsed, { ...options(), ...current ? { chapters, preserveTransitions: !transitionTouched } : {} }) - (current && !original.slides.some((s) => s.kind === "cover") ? 1 : 0);
       if (count > 100) errors.push("生成后超过100页，请精简大纲或分成多份文稿。");
       const bodies = original.slides.filter((s) => s.kind === "body");
       $2("#outline-preview").innerHTML = parsed.sections.map((section) => `<section><h3>${esc2(section.title)}</h3>${section.pages.map((page) => {
-        if (!(page.key in choices)) {
-          const matches = current ? outlineMatches(original, page.title) : [];
-          choices[page.key] = matches.length === 1 ? matches[0].id : "";
-        }
-        return `<div class="outline-page-row"><span>${esc2(page.title)}</span><select data-outline-page="${page.key}" aria-label="${esc2(page.title)}的对应页面"><option value="">空白正文页</option>${bodies.map((s) => `<option value="${s.id}" ${choices[page.key] === s.id ? "selected" : ""}>${current ? "对应" : "复制"}第${original.slides.indexOf(s) + 1}页：${esc2(s.title.replace(/\n/g, " "))}</option>`).join("")}</select></div>`;
+        if (!(page.key in choices)) choices[page.key] = "";
+        return `<div class="outline-page-row"><span>${esc2(page.title)}</span><select data-outline-page="${page.key}" aria-label="${esc2(page.title)}的对应页面" ${blank ? "disabled" : ""}><option value="">空白正文页</option>${mapped ? bodies.map((s) => `<option value="${s.id}" ${choices[page.key] === s.id ? "selected" : ""}>${current ? "对应" : "复制"}第${original.slides.indexOf(s) + 1}页：${esc2(s.title.replace(/\n/g, " "))}</option>`).join("") : ""}</select></div>`;
       }).join("")}</section>`).join("");
       const retained = new Set(Object.values(choices)), removed = current ? bodies.filter((s) => !retained.has(s.id)).length : 0, status = $2("#outline-status");
+      const matched = Object.values(choices).filter(Boolean).length, detail = current ? removed ? "将从当前文稿移出" + removed + "个内容页，可撤销。" : "" : blank ? "正文页全部使用空白母版。" : `将复制${matched}个旧页，其余使用空白正文页。`;
       status.className = errors.length ? "outline-status error" : "outline-status";
-      status.textContent = errors.length ? errors.join("\n") : `${parsed.sections.length}个章节，${parsed.sections.reduce((n, s) => n + s.pages.length, 0)}个内容页，预计${count}页。${removed ? "将从当前文稿移出" + removed + "个内容页，可撤销。" : ""}${parsed.warnings.join(" ")}`;
+      status.textContent = errors.length ? errors.join("\n") : `${parsed.sections.length}个章节，${parsed.sections.reduce((n, s) => n + s.pages.length, 0)}个内容页，预计${count}页。${detail}${parsed.warnings.join(" ")}`;
       $2("#outline-apply").disabled = errors.length > 0;
-      $2("#outline-apply").textContent = current ? "应用到当前文稿" : "按大纲另建文稿";
+      $2("#outline-apply").textContent = current ? "应用到当前文稿" : blank ? "建立空白页原稿" : "复制旧页另建文稿";
     };
     $2("#outline-text").addEventListener("input", () => render4(true));
     for (const checkbox of dialog2.querySelectorAll(".outline-options input")) checkbox.addEventListener("change", () => {
@@ -4234,7 +4244,13 @@ body.export-view .toc-note:empty{display:none}
       render4();
     });
     $2("#outline-mode").onchange = () => {
-      choices = $2("#outline-mode").value === "current" ? reconcileOutlineBindings(initial.parsed, parsed, initial.bindings) : {};
+      if (mode2() === "blank") {
+        choices = {};
+        chapters = {};
+      } else {
+        choices = reconcileOutlineBindings(initial.parsed, parsed, initial.bindings);
+        chapters = reconcileOutlineBindings(initial.parsed, parsed, initial.chapters, true);
+      }
       render4();
     };
     $2("#outline-preview").addEventListener("change", (e) => {
@@ -4249,7 +4265,7 @@ body.export-view .toc-note:empty{display:none}
       chapters = {};
       parsed = stable = parseOutline("");
       appendixTouched = false;
-      $2("#outline-mode").value = "new";
+      $2("#outline-mode").value = "blank";
       $2("#outline-toc").checked = $2("#outline-transitions").checked = $2("#outline-closing").checked = true;
       render4(true);
     };
@@ -4270,10 +4286,10 @@ body.export-view .toc-note:empty{display:none}
     };
     $2("#outline-apply").onclick = () => {
       try {
-        const current = $2("#outline-mode").value === "current", config = { ...options(), reuse: choices, chapters, preserveTransitions: !transitionTouched, sourceText: $2("#outline-text").value }, result = current ? updateProjectOutline(original, parsed, config) : buildOutlineProject(original, parsed, config);
+        const current = mode2() === "current", blank = mode2() === "blank", config = { ...options(), reuse: blank ? {} : choices, chapters: blank ? {} : chapters, preserveTransitions: !transitionTouched, sourceText: $2("#outline-text").value }, result = current ? updateProjectOutline(original, parsed, config) : buildOutlineProject(original, parsed, config);
         applyProject(result.project, { newDocument: !current });
         dialog2.close();
-        toast2(`已${current ? "更新" : "建立"}${result.project.slides.length}页。已有内容保留，新页仍需补充真实材料；可撤销。`);
+        toast2(current ? `已更新${result.project.slides.length}页；未填写字段保持原值，可撤销。` : blank ? `已建立${result.project.slides.length}页空白原稿，请另存HTML。` : `已复制旧页并建立${result.project.slides.length}页新文稿，请另存HTML。`);
       } catch (error) {
         $2("#outline-status").textContent = error.message;
         $2("#outline-status").className = "outline-status error";
@@ -20549,7 +20565,7 @@ body.export-view .toc-note:empty{display:none}
     { title: "点击“应用”", text: "点击弹窗中的“应用”。工作台会用同一套模块结构重绘为钢铁红；校徽和组合标志也可在这个弹窗上传 SVG。", target: '[data-action="theme-dialog-apply"]', event: "click" },
     { group: "大纲教学", title: "先建立文档骨架", text: "点击顶部“文档大纲”。建议先和 AI 确认章节与每页标题，再开始填充正文。", target: '[data-action="outline"]', event: "click" },
     { title: "粘贴练习大纲", text: "复制下面的示例，粘贴到大纲编辑框。# 是总标题，## 是章节，### 是页面。", target: "#outline-text", input: "#outline-text", copy: OUTLINE },
-    { title: "选择“更新当前文稿”", text: "本次练习请选择界面中的“更新当前文稿”，让大纲直接作用于当前页面，后续教学才能连续衔接。完成教学后如需一份正文干净的新稿，再单独使用界面中的“另建文稿，沿用当前主题”。", target: "#outline-mode", notice: "工作台中的修改不会自动覆盖磁盘上的蓝色模板；只有你主动执行“保存 HTML”才会写文件。因此退出或刷新后，仍可从原始模板重新进入教学。" },
+    { title: "选择“更新当前文稿”", text: "本次练习请选择界面中的“更新当前文稿”，让大纲直接作用于当前页面，后续教学才能连续衔接。需要独立新稿时，可选“另建文稿并复制旧页”保留已匹配版式，或选“另建空白页原稿”只建立干净结构。", target: "#outline-mode", notice: "工作台中的修改不会自动覆盖磁盘上的蓝色模板；只有你主动执行“保存 HTML”才会写文件。因此退出或刷新后，仍可从原始模板重新进入教学。" },
     { title: "目录开关", text: "勾选后根据章节顺序自动生成目录，章节名与页码范围随页面变化更新。", target: "#outline-toc", notice: "目录条目之后仍可单独隐藏、恢复或补充说明；附录默认不进入目录。" },
     { title: "本练习不生成章节过渡页", text: "确认“章节过渡页”保持未勾选，避免教学文稿增加不参与练习的页面。正式长汇报可按需要开启，正文左上角的章节标签仍会跟随大纲。", target: "#outline-transitions", notice: "短汇报或操作教学通常不需要过渡页；附录一般也不生成过渡页。" },
     { title: "最后一章作为附录", text: "本练习最后一章仍是正文，请保持未勾选。正式文稿若末章是参考文献、作者简介或补充材料，再勾选此项。", target: "#outline-appendix", notice: "章节标题不必手写“附录”二字，勾选项负责语义与目录规则。" },
